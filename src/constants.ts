@@ -1,0 +1,1 @@
+export const fuelFactor = 0.01;
