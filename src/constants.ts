@@ -1,4 +1,5 @@
 export const fuelFactor = 0.01;
+export const worldAddress = "0x7fe660995b0c59b6975d5d59973e2668af6bb9c5";
 
 export type Fuel = {
   efficiency: number;

@@ -26,6 +26,12 @@ import DisplayAssembly from "@/components/DisplayAssembly";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import DisplayOwner from "@/components/DisplayOwner";
 import Error404 from "./Error404";
+import { formatCrypto, ldapDate } from "../tools";
+import DisplaySolarsystem from "../components/DisplaySolarsystem";
+import DisplayAssembly from "../components/DisplayAssembly";
+import DisplayAssemblyIcon from "../components/DisplayAssemblyIcon";
+import DisplayOwner from "../components/DisplayOwner";
+import Namespaces from "../fragments/Namespaces";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -245,6 +251,7 @@ const ExploreCharacter: React.FC = () => {
           </Paper>
         </>
       )}
+      <Namespaces owner={address} />
     </Box>
   );
 };

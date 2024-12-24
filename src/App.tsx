@@ -7,7 +7,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Routes, Route, NavLink, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
@@ -16,6 +16,9 @@ import Home from "./pages/Home";
 import Error404 from "./pages/Error404";
 import About from "./pages/About";
 import Calculate from "./pages/Calculate";
+
+import { MudContextProvider } from "./mud/MudContextProvider";
+import Routing from "./Routing";
 
 function App() {
   const location = useLocation();
@@ -85,6 +88,7 @@ function App() {
           </Toolbar>
         </AppBar>
       </Box>
+      <MudContextProvider>
       <Routes>
         <Route index element={<Home />} />
         <Route path="/explore/*" element={<Explore />} />
@@ -92,6 +96,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
+      </MudContextProvider>
     </Paper>
   );
 }
