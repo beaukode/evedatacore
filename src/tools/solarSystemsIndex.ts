@@ -24,6 +24,9 @@ export function createSolarSystemsIndex(
   });
 
   function searchByName(value: string): types_SolarSystem[] {
+    if (!value) {
+      return Object.values(data);
+    }
     const firstLetter = value.charAt(0).toLowerCase();
 
     if (indexByName[firstLetter]) {
