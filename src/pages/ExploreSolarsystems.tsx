@@ -37,7 +37,7 @@ const ExploreSolarsystems: React.FC = () => {
           <TableCell>
             <Button
               component={NavLink}
-              to={`/solarsystems/${ss.solarSystemId}`}
+              to={`/explore/solarsystems/${ss.solarSystemId}`}
             >
               {ss.solarSystemName}
             </Button>

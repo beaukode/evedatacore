@@ -21,6 +21,7 @@ import { useAppContext } from "../contexts/AppContext";
 import ExploreConfig from "./ExploreConfig";
 import ExploreKillmails from "./ExploreKillmails";
 import ExploreSolarsystems from "./ExploreSolarsystems";
+import ExploreSolarsystem from "./ExploreSolarsystem";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
@@ -102,6 +103,7 @@ const Explore: React.FC = () => {
           <Route path="/assemblies" element={<ExploreAssemblies />} />
           <Route path="/assemblies/:id" element={<ExploreAssembly />} />
           <Route path="/solarsystems" element={<ExploreSolarsystems />} />
+          <Route path="/solarsystems/:id" element={<ExploreSolarsystem />} />
           <Route path="/types" element={<ExploreTypes />} />
           <Route path="/types/:id" element={<ExploreType />} />
           <Route path="/killmails" element={<ExploreKillmails />} />
