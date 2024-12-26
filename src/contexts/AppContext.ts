@@ -1,11 +1,10 @@
 import React from "react";
 import { GetSolarsystemsResponse } from "../api/stillness";
+import { SolarSystemsIndex } from "../tools/solarSystemsIndex";
 
 interface AppContextProps {
-  solarSystems: GetSolarsystemsResponse;
-  setSolarSystems: React.Dispatch<
-    React.SetStateAction<GetSolarsystemsResponse>
-  >;
+  solarSystems: SolarSystemsIndex;
+  setSolarSystems: (data: GetSolarsystemsResponse) => void;
 }
 
 export const AppContext = React.createContext<AppContextProps | undefined>(
@@ -18,4 +17,9 @@ export function useAppContext() {
     throw new Error("useAppContext must be used within an AppContextProvider");
   }
   return context;
+}
+
+export function useSolarSystemsIndex() {
+  const { solarSystems } = useAppContext();
+  return solarSystems;
 }

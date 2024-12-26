@@ -1,8 +1,9 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { NoMaxWidthTooltip } from "./ui/NoMaxWidthTooltip";
-import { useAppContext } from "../contexts/AppContext";
+import { useSolarSystemsIndex } from "../contexts/AppContext";
+import { NavLink } from "react-router";
 
 interface DisplaySolarsystemProps {
   solarSystemId?: string | number;
@@ -11,7 +12,7 @@ interface DisplaySolarsystemProps {
 const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
   solarSystemId,
 }) => {
-  const { solarSystems } = useAppContext();
+  const solarSystems = useSolarSystemsIndex();
 
   if (solarSystemId === undefined) return null;
 
@@ -33,7 +34,7 @@ const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
       </NoMaxWidthTooltip>
     );
 
-  const solarSystem = solarSystems[id];
+  const solarSystem = solarSystems.getById(id);
   if (!solarSystem) return null;
 
   const title = (
@@ -55,13 +56,13 @@ const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
       placement="right"
       arrow
     >
-      <Typography
-        variant="body1"
-        sx={{ textTransform: "lowercase" }}
-        component="span"
+      <Button
+        sx={{ justifyContent: "flex-start" }}
+        component={NavLink}
+        to={`/explore/solarsystems/${solarSystem.solarSystemId}`}
       >
         {solarSystem.solarSystemName}
-      </Typography>
+      </Button>
     </NoMaxWidthTooltip>
   );
 };

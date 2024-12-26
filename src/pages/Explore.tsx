@@ -20,15 +20,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppContext } from "../contexts/AppContext";
 import ExploreConfig from "./ExploreConfig";
 import ExploreKillmails from "./ExploreKillmails";
+import ExploreSolarsystems from "./ExploreSolarsystems";
+import ExploreSolarsystem from "./ExploreSolarsystem";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
   "/explore/": 0,
   "/explore/characters": 0,
   "/explore/assemblies": 1,
-  "/explore/types": 2,
-  "/explore/killmails": 3,
-  "/explore/config": 4,
+  "/explore/killmails": 2,
+  "/explore/types": 3,
+  "/explore/solarsystems": 4,
+  "/explore/config": 5,
 };
 
 const Explore: React.FC = () => {
@@ -64,8 +67,13 @@ const Explore: React.FC = () => {
             component={NavLink}
             to="/explore/assemblies"
           />
-          <Tab label="Types" component={NavLink} to="/explore/types" />
           <Tab label="Killmails" component={NavLink} to="/explore/killmails" />
+          <Tab label="Types" component={NavLink} to="/explore/types" />
+          <Tab
+            label="Solar Systems"
+            component={NavLink}
+            to="/explore/solarsystems"
+          />
           <Tab label="Config" component={NavLink} to="/explore/config" />
         </Tabs>
       </Paper>
@@ -94,9 +102,11 @@ const Explore: React.FC = () => {
           <Route path="/characters/:address" element={<ExploreCharacter />} />
           <Route path="/assemblies" element={<ExploreAssemblies />} />
           <Route path="/assemblies/:id" element={<ExploreAssembly />} />
+          <Route path="/killmails" element={<ExploreKillmails />} />
           <Route path="/types" element={<ExploreTypes />} />
           <Route path="/types/:id" element={<ExploreType />} />
-          <Route path="/killmails" element={<ExploreKillmails />} />
+          <Route path="/solarsystems" element={<ExploreSolarsystems />} />
+          <Route path="/solarsystems/:id" element={<ExploreSolarsystem />} />
           <Route path="/config" element={<ExploreConfig />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
