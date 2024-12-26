@@ -2,7 +2,7 @@ import React from "react";
 import { Typography } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { NoMaxWidthTooltip } from "./ui/NoMaxWidthTooltip";
-import { useAppContext } from "../contexts/AppContext";
+import { useSolarSystemsIndex } from "../contexts/AppContext";
 
 interface DisplaySolarsystemProps {
   solarSystemId?: string | number;
@@ -11,7 +11,7 @@ interface DisplaySolarsystemProps {
 const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
   solarSystemId,
 }) => {
-  const { solarSystems } = useAppContext();
+  const solarSystems = useSolarSystemsIndex();
 
   if (solarSystemId === undefined) return null;
 
@@ -33,7 +33,7 @@ const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
       </NoMaxWidthTooltip>
     );
 
-  const solarSystem = solarSystems[id];
+  const solarSystem = solarSystems.getById(id);
   if (!solarSystem) return null;
 
   const title = (
