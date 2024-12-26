@@ -39,6 +39,14 @@ const Home: React.FC = () => {
         </Button>
         <Button
           component={NavLink}
+          to="/explore/killmails"
+          sx={{ m: 2, py: 2, px: 4 }}
+          variant="contained"
+        >
+          Killmails
+        </Button>
+        <Button
+          component={NavLink}
           to="/explore/types"
           sx={{ m: 2, py: 2, px: 4 }}
           variant="contained"
@@ -47,11 +55,11 @@ const Home: React.FC = () => {
         </Button>
         <Button
           component={NavLink}
-          to="/explore/killmails"
+          to="/explore/solarsystems"
           sx={{ m: 2, py: 2, px: 4 }}
           variant="contained"
         >
-          Killmails
+          Solar systems
         </Button>
         <Button
           component={NavLink}
