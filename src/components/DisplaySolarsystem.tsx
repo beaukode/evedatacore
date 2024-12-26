@@ -1,8 +1,9 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { NoMaxWidthTooltip } from "./ui/NoMaxWidthTooltip";
 import { useSolarSystemsIndex } from "../contexts/AppContext";
+import { NavLink } from "react-router";
 
 interface DisplaySolarsystemProps {
   solarSystemId?: string | number;
@@ -55,13 +56,13 @@ const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
       placement="right"
       arrow
     >
-      <Typography
-        variant="body1"
-        sx={{ textTransform: "lowercase" }}
-        component="span"
+      <Button
+        sx={{ justifyContent: "flex-start" }}
+        component={NavLink}
+        to={`/explore/solarsystems/${solarSystem.solarSystemId}`}
       >
         {solarSystem.solarSystemName}
-      </Typography>
+      </Button>
     </NoMaxWidthTooltip>
   );
 };
