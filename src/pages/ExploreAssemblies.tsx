@@ -24,7 +24,7 @@ import DisplaySolarsystem from "../components/DisplaySolarsystem";
 import useQuerySearch from "../tools/useQuerySearch";
 import DisplayAssemblyIcon from "../components/DisplayAssemblyIcon";
 
-const columns = ["Assembly", "Type", "Solar system"];
+const columns = ["Assembly", "Owner", "Solar system"];
 
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
