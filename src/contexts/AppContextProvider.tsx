@@ -1,10 +1,10 @@
 import React from "react";
-import { AppContext } from "./AppContext";
-import { GetSolarsystemsResponse } from "../api/stillness";
+import { GetSolarsystemsResponse } from "@/api/stillness";
 import {
   createSolarSystemsIndex,
   SolarSystemsIndex,
-} from "../tools/solarSystemsIndex";
+} from "@/tools/solarSystemsIndex";
+import { AppContext } from "./AppContext";
 
 interface AppContextProviderProps {
   children: React.ReactNode;

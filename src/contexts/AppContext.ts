@@ -1,6 +1,6 @@
 import React from "react";
-import { GetSolarsystemsResponse } from "../api/stillness";
-import { SolarSystemsIndex } from "../tools/solarSystemsIndex";
+import { GetSolarsystemsResponse } from "@/api/stillness";
+import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 
 interface AppContextProps {
   solarSystems: SolarSystemsIndex;

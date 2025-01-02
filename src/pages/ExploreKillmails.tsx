@@ -9,13 +9,13 @@ import {
   TableCell,
   Skeleton,
 } from "@mui/material";
-import DataTable, { DataTableContext } from "../components/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { getKillmails } from "../api/stillness";
-import useQuerySearch from "../tools/useQuerySearch";
-import DisplaySolarsystem from "../components/DisplaySolarsystem";
-import DisplayOwner from "../components/DisplayOwner";
-import { ldapDate } from "../tools";
+import DataTable, { DataTableContext } from "@/components/DataTable";
+import { getKillmails } from "@/api/stillness";
+import useQuerySearch from "@/tools/useQuerySearch";
+import DisplaySolarsystem from "@/components/DisplaySolarsystem";
+import DisplayOwner from "@/components/DisplayOwner";
+import { ldapDate } from "@/tools";
 
 const columns = ["Date", "Killer", "Victim", "Loss Type", "Solar System"];
 

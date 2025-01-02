@@ -8,6 +8,9 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { NavLink, Route, Routes, useLocation } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useAppContext } from "@/contexts/AppContext";
+import { getSolarsystems } from "@/api/stillness";
 import ExploreCharacters from "./ExploreCharacters";
 import ExploreAssemblies from "./ExploreAssemblies";
 import ExploreCharacter from "./ExploreCharacter";
@@ -15,9 +18,6 @@ import ExploreAssembly from "./ExploreAssembly";
 import Error404 from "./Error404";
 import ExploreTypes from "./ExploreTypes";
 import ExploreType from "./ExploreType";
-import { getSolarsystems } from "../api/stillness";
-import { useQuery } from "@tanstack/react-query";
-import { useAppContext } from "../contexts/AppContext";
 import ExploreConfig from "./ExploreConfig";
 import ExploreKillmails from "./ExploreKillmails";
 import ExploreSolarsystems from "./ExploreSolarsystems";

@@ -1,4 +1,4 @@
-import { GetSolarsystemsResponse, types_SolarSystem } from "../api/stillness";
+import { GetSolarsystemsResponse, types_SolarSystem } from "@/api/stillness";
 
 export interface SolarSystemsIndex {
   searchByName: (value: string) => types_SolarSystem[];

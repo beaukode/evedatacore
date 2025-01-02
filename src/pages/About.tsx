@@ -13,7 +13,7 @@ import SourceCodeIcon from "@mui/icons-material/Code";
 import LicenseIcon from "@mui/icons-material/Gavel";
 import DisclaimerIcon from "@mui/icons-material/WarningAmber";
 import { Helmet } from "react-helmet";
-import ExternalLink from "../components/ui/ExternalLink";
+import ExternalLink from "@/components/ui/ExternalLink";
 
 const About: React.FC = () => {
   return (

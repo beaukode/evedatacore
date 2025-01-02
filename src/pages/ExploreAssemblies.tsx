@@ -14,15 +14,15 @@ import {
   Skeleton,
 } from "@mui/material";
 
-import DataTable, { DataTableContext } from "../components/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { getSmartassemblies } from "../api/stillness";
-import DisplayOwner from "../components/DisplayOwner";
-import DisplayAssembly from "../components/DisplayAssembly";
-import { filterInProps, shorten } from "../tools";
-import DisplaySolarsystem from "../components/DisplaySolarsystem";
-import useQuerySearch from "../tools/useQuerySearch";
-import DisplayAssemblyIcon from "../components/DisplayAssemblyIcon";
+import DataTable, { DataTableContext } from "@/components/DataTable";
+import { getSmartassemblies } from "@/api/stillness";
+import DisplayOwner from "@/components/DisplayOwner";
+import DisplayAssembly from "@/components/DisplayAssembly";
+import { filterInProps, shorten } from "@/tools";
+import DisplaySolarsystem from "@/components/DisplaySolarsystem";
+import useQuerySearch from "@/tools/useQuerySearch";
+import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 
 const columns = ["Assembly", "Owner", "Solar system"];
 
