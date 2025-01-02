@@ -17,7 +17,7 @@ jobs:
       group: "build-${{github.ref}}"
       cancel-in-progress: false
     runs-on: "ubuntu-latest"
-    environment: main
+    environment: ${{github.ref}}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node 20.x Environment
