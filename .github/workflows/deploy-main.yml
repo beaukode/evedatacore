@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   build-and-deploy:
+    if: vars.AWS_ACCOUNT_ID && vars.AWS_ROLE_NAME && vars.S3_BUCKET
     concurrency:
       group: "build-${{github.ref}}"
       cancel-in-progress: false
@@ -20,7 +21,6 @@ jobs:
     environment: ${{github.ref_name}}
     steps:
       - uses: actions/checkout@v4
-      - run: echo ${{github.ref_name}}
       - name: Setup Node 20.x Environment
         uses: actions/setup-node@v3
         with:
