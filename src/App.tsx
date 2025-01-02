@@ -9,11 +9,13 @@ import {
 } from "@mui/material";
 import { Routes, Route, NavLink, useLocation } from "react-router";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
+import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
 import Explore from "./pages/Explore";
 import Home from "./pages/Home";
 import Error404 from "./pages/Error404";
 import About from "./pages/About";
+import Calculate from "./pages/Calculate";
 
 function App() {
   const location = useLocation();
@@ -53,6 +55,20 @@ function App() {
               >
                 Explore data
               </Button>
+              <Button
+                startIcon={<CalculateIcon />}
+                to="/calculate/various-calculators"
+                component={NavLink}
+                size="large"
+                sx={{ ml: 2 }}
+                variant={
+                  location.pathname.startsWith("/calculate")
+                    ? "outlined"
+                    : "contained"
+                }
+              >
+                Calculate
+              </Button>
             </Box>
             <Box>
               <IconButton
@@ -71,6 +87,7 @@ function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="/explore/*" element={<Explore />} />
+        <Route path="/calculate/*" element={<Calculate />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
