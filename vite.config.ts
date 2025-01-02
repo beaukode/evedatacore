@@ -7,15 +7,8 @@ export default defineConfig({
   plugins: [react(), visualizer()],
   server: {
     proxy: {
-      "/api-stillness/solarsystems": {
-        target: "https://blockchain-gateway-nova.nursery.reitnorf.com/",
-        rewrite: (path) => path.replace(/^\/api-stillness/, ""),
-        changeOrigin: true,
-      },
       "/api-stillness": {
-        target:
-          "https://blockchain-gateway-stillness.live.tech.evefrontier.com/",
-        rewrite: (path) => path.replace(/^\/api-stillness/, ""),
+        target: "https://eve.beaukode.net/",
         changeOrigin: true,
       },
     },
