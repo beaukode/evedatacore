@@ -1,11 +1,11 @@
-name: Build and deploy main branch
+name: Build and deploy
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-      - feat/ci-cd
+      - production
 
 permissions:
   id-token: write
