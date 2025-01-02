@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   build-and-deploy:
+    if: vars.AWS_ACCOUNT_ID && vars.AWS_ROLE_NAME && vars.S3_BUCKET
     concurrency:
       group: "build-${{github.ref}}"
       cancel-in-progress: false
