@@ -15,7 +15,7 @@ const keys = Object.keys(fuels);
 const schema = z
   .object({
     mass: z.number().int().positive(),
-    fuelLevel: z.number().int().positive(),
+    distance: z.number().int().positive(),
     fuelType: z.string().refine((value) => keys.includes(value)),
   })
   .required();
@@ -30,41 +30,44 @@ function removeSpaces(value: string) {
   return value.replace(/\D/g, "");
 }
 
-function calculateJumpDistance(mass: number, fuel: number, efficiency: number) {
-  return (fuel / mass) * efficiency * 1e7;
+function calculateFuelRequirement(
+  mass: number,
+  distance: number,
+  efficiency: number
+) {
+  return (distance / (efficiency * 1e7)) * mass;
 }
 
-const JumpDistance: React.FC = () => {
+const FuelRequirement: React.FC = () => {
   const [openShipSelect, setOpenShipSelect] = React.useState(false);
 
   const { control, watch, setValue } = useForm({
     defaultValues: {
       mass: "28000000",
-      fuelLevel: "539",
+      distance: "100",
       fuelType: "SOF-40",
     },
     resolver: zodResolver(schema),
   });
 
   const mass = watch("mass");
-  const fuelLevel = watch("fuelLevel");
+  const distance = watch("distance");
   const fuelType = watch("fuelType");
 
   const result = React.useMemo(() => {
     const fuel = isFuelType(fuelType) ? fuels[fuelType] : undefined;
     if (!fuel) return 0;
 
-    return calculateJumpDistance(
+    return calculateFuelRequirement(
       Number(mass),
-      Number(fuelLevel),
+      Number(distance),
       fuel.efficiency
     );
-  }, [mass, fuelLevel, fuelType]);
+  }, [mass, distance, fuelType]);
 
   const onShipSelect = (shipType?: ShipType, shipData?: Ship) => {
     if (shipType && shipData) {
       setValue("mass", shipData.mass.toString());
-      setValue("fuelLevel", shipData.fuel.toString());
       setValue("fuelType", shipData.fuelType.toString());
     }
     setOpenShipSelect(false);
@@ -108,22 +111,19 @@ const JumpDistance: React.FC = () => {
         />
         <Box display="flex" alignItems="center" my={2}>
           <TextFieldElement
-            name="fuelLevel"
-            label="Fuel level"
+            name="distance"
+            label="Distance (ly)"
             control={control}
             required
             fullWidth
           />
-          <Tooltip title="The number in the orange rectangle" sx={{ m: 1 }}>
-            <HelpIcon />
-          </Tooltip>
         </Box>
       </form>
       <Typography variant="body1" component="p" my={2}>
-        You can jump up to: <strong>{result.toFixed(2)} Ly</strong>
+        You need : <strong>{result.toFixed(2)} units</strong> of fuel
       </Typography>
     </>
   );
 };
 
-export default JumpDistance;
+export default FuelRequirement;
