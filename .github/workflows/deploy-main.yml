@@ -7,6 +7,10 @@ on:
       - main
       - feat/ci-cd
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-deploy:
     concurrency:
