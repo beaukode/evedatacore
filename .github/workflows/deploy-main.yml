@@ -44,3 +44,7 @@ jobs:
         if: vars.S3_BUCKET
         run: |
           aws s3 sync --no-progress ./dist/ s3://${{vars.S3_BUCKET}}/
+      - name: "Invalidate CDN cache"
+        if: vars.DISTRIBUTION_ID
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{vars.DISTRIBUTION_ID}} --paths "/*"
