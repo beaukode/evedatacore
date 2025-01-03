@@ -44,7 +44,15 @@ const AutoCompleteSolarSystem: React.FC<AutoCompleteSolarSystemProps> = ({
       onInputChange={(_, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      renderInput={(params) => <TextField {...params} label={label} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={label}
+          slotProps={{
+            inputLabel: { shrink: value === null ? undefined : true },
+          }}
+        />
+      )}
       fullWidth
     />
   );

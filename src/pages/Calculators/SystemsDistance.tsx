@@ -1,15 +1,42 @@
 import React from "react";
 import { Typography } from "@mui/material";
+import z from "zod";
 import Big from "big.js";
-
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import AutoCompleteSolarSystem, {
   SolarSystemValue,
 } from "@/components/AutoCompleteSolarSystem";
+import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
+
+const storageSchema = z.object({
+  system1: z
+    .object({
+      label: z.string(),
+      id: z.number(),
+    })
+    .nullable()
+    .default(null),
+  system2: z
+    .object({
+      label: z.string(),
+      id: z.number(),
+    })
+    .nullable()
+    .default(null),
+});
 
 const SystemsDistance: React.FC = () => {
-  const [system1, setSystem1] = React.useState<SolarSystemValue | null>(null);
-  const [system2, setSystem2] = React.useState<SolarSystemValue | null>(null);
+  const [store, setStore] = useAppLocalStorage(
+    "v1_calculator_systems_distance",
+    storageSchema
+  );
+
+  const [system1, setSystem1] = React.useState<SolarSystemValue | null>(
+    store.system1
+  );
+  const [system2, setSystem2] = React.useState<SolarSystemValue | null>(
+    store.system2
+  );
 
   const ssIndex = useSolarSystemsIndex();
 
@@ -33,11 +60,14 @@ const SystemsDistance: React.FC = () => {
         .plus(s1y.minus(s2y).pow(2))
         .plus(s1z.minus(s2z).pow(2))
         .sqrt();
-      console.log("meters", meters.toFixed(2));
       const ly = meters.div(new Big(9.461e15));
       return ly.toNumber();
     }
   }, [ssIndex, system1, system2]);
+
+  React.useEffect(() => {
+    setStore({ system1, system2 });
+  }, [system1, system2, setStore]);
 
   return (
     <>
