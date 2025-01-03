@@ -36,6 +36,7 @@ const routesMap: Record<string, number> = {
 
 const Explore: React.FC = () => {
   const location = useLocation();
+  const [loading, setLoading] = React.useState(true);
   const { setSolarSystems } = useAppContext();
 
   const path = location.pathname.split("/").slice(0, 3).join("/");
@@ -50,6 +51,7 @@ const Explore: React.FC = () => {
   React.useEffect(() => {
     if (query.data) {
       setSolarSystems(query.data);
+      setLoading(false);
     }
   }, [query.data, setSolarSystems]);
 
@@ -77,7 +79,7 @@ const Explore: React.FC = () => {
           <Tab label="Config" component={NavLink} to="/explore/config" />
         </Tabs>
       </Paper>
-      {query.isLoading && (
+      {loading && (
         <Box p={2} overflow="hidden">
           <Paper
             elevation={1}
@@ -95,7 +97,7 @@ const Explore: React.FC = () => {
           </Paper>
         </Box>
       )}
-      {query.data && (
+      {!loading && (
         <Routes>
           <Route path="" element={<ExploreCharacters />} />
           <Route path="/characters" element={<ExploreCharacters />} />
