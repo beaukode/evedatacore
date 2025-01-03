@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import JumpDistance from "./Calculators/JumpDistance";
 import FuelRequirement from "./Calculators/FuelRequirement";
+import SystemsDistance from "./Calculators/SystemsDistance";
 
 const CalculateVarious: React.FC = () => {
   return (
@@ -15,6 +16,9 @@ const CalculateVarious: React.FC = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           <PaperLevel1 title="Ship jump distance">
             <JumpDistance />
+          </PaperLevel1>
+          <PaperLevel1 title="Systems distance">
+            <SystemsDistance />
           </PaperLevel1>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
