@@ -9,14 +9,18 @@ import z from "zod";
 import { fuels, Ship, ShipType } from "@/constants";
 import { isFuelType } from "@/tools/typeGuards";
 import DialogShipSelect from "@/components/DialogShipSelect";
+import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 
 const keys = Object.keys(fuels);
 
 const schema = z
   .object({
-    mass: z.number().int().positive(),
-    fuelLevel: z.number().int().positive(),
-    fuelType: z.string().refine((value) => keys.includes(value)),
+    mass: z.number().int().positive().default(28000000),
+    fuelLevel: z.number().int().positive().default(539),
+    fuelType: z
+      .string()
+      .refine((value) => keys.includes(value))
+      .default("SOF-40"),
   })
   .required();
 
@@ -35,13 +39,17 @@ function calculateJumpDistance(mass: number, fuel: number, efficiency: number) {
 }
 
 const JumpDistance: React.FC = () => {
+  const [store, setStore] = useAppLocalStorage(
+    "v1_calculator_jump_distance",
+    schema
+  );
   const [openShipSelect, setOpenShipSelect] = React.useState(false);
 
   const { control, watch, setValue } = useForm({
     defaultValues: {
-      mass: "28000000",
-      fuelLevel: "539",
-      fuelType: "SOF-40",
+      mass: store.mass.toString(),
+      fuelLevel: store.fuelLevel.toString(),
+      fuelType: store.fuelType,
     },
     resolver: zodResolver(schema),
   });
@@ -69,6 +77,10 @@ const JumpDistance: React.FC = () => {
     }
     setOpenShipSelect(false);
   };
+
+  React.useEffect(() => {
+    setStore({ mass: Number(mass), fuelLevel: Number(fuelLevel), fuelType });
+  }, [mass, fuelLevel, fuelType, setStore]);
 
   return (
     <>
