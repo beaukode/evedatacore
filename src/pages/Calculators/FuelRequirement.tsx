@@ -9,14 +9,18 @@ import z from "zod";
 import { fuels, Ship, ShipType } from "@/constants";
 import { isFuelType } from "@/tools/typeGuards";
 import DialogShipSelect from "@/components/DialogShipSelect";
+import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 
 const keys = Object.keys(fuels);
 
 const schema = z
   .object({
-    mass: z.number().int().positive(),
-    distance: z.number().int().positive(),
-    fuelType: z.string().refine((value) => keys.includes(value)),
+    mass: z.number().int().positive().default(28000000),
+    distance: z.number().int().positive().default(100),
+    fuelType: z
+      .string()
+      .refine((value) => keys.includes(value))
+      .default("SOF-40"),
   })
   .required();
 
@@ -39,13 +43,17 @@ function calculateFuelRequirement(
 }
 
 const FuelRequirement: React.FC = () => {
+  const [store, setStore] = useAppLocalStorage(
+    "v1_calculator_fuel_requirement",
+    schema
+  );
   const [openShipSelect, setOpenShipSelect] = React.useState(false);
 
   const { control, watch, setValue } = useForm({
     defaultValues: {
-      mass: "28000000",
-      distance: "100",
-      fuelType: "SOF-40",
+      mass: store.mass.toString(),
+      distance: store.distance.toString(),
+      fuelType: store.fuelType,
     },
     resolver: zodResolver(schema),
   });
@@ -72,6 +80,10 @@ const FuelRequirement: React.FC = () => {
     }
     setOpenShipSelect(false);
   };
+
+  React.useEffect(() => {
+    setStore({ mass: Number(mass), distance: Number(distance), fuelType });
+  }, [mass, distance, fuelType, setStore]);
 
   return (
     <>
