@@ -11,15 +11,14 @@ import { NavLink, Route, Routes, useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getSolarsystems } from "@/api/stillness";
 import { useAppContext } from "@/contexts/AppContext";
-import CalculateJumpDistance from "./CalculateVarious";
 import Error404 from "./Error404";
 import CalculateVarious from "./CalculateVarious";
-import ErrorWip from "./ErrorWip";
+import CalculateRoute from "./CalculateRoute";
 
 const routesMap: Record<string, number> = {
   "/calculate": 0,
   "/calculate/": 0,
-  "/calculate/systems-distance": 0,
+  "/calculate/route-planner": 0,
   "/calculate/various-calculators": 1,
 };
 
@@ -49,9 +48,9 @@ const Calculate: React.FC = () => {
       <Paper elevation={1} sx={{ flexGrow: 0 }}>
         <Tabs value={currentTab}>
           <Tab
-            label="Systems distance"
+            label="Route planner"
             component={NavLink}
-            to="/calculate/systems-distance"
+            to="/calculate/route-planner"
           />
           <Tab
             label="Various calculators"
@@ -79,12 +78,14 @@ const Calculate: React.FC = () => {
         </Box>
       )}
       {!loading && (
-        <Routes>
-          <Route path="" element={<CalculateJumpDistance />} />
-          <Route path="/systems-distance" element={<ErrorWip />} />
-          <Route path="/various-calculators" element={<CalculateVarious />} />
-          <Route path="*" element={<Error404 />} />
-        </Routes>
+        <>
+          <Routes>
+            <Route path="" element={<CalculateVarious />} />
+            <Route path="/route-planner" element={<CalculateRoute />} />
+            <Route path="/various-calculators" element={<CalculateVarious />} />
+            <Route path="*" element={<Error404 />} />
+          </Routes>
+        </>
       )}
     </>
   );

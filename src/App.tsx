@@ -57,7 +57,7 @@ function App() {
               </Button>
               <Button
                 startIcon={<CalculateIcon />}
-                to="/calculate/various-calculators"
+                to="/calculate/route-planner"
                 component={NavLink}
                 size="large"
                 sx={{ ml: 2 }}
