@@ -41,11 +41,12 @@ function App() {
             >
               EVE Frontier tools
             </Typography>
-            <Box sx={{ flexGrow: 1, ml: 4 }}>
+            <Box sx={{ flexGrow: 1 }}>
               <Button
                 startIcon={<ExploreDataIcon />}
                 to="/explore/characters"
                 component={NavLink}
+                sx={{ m: 2 }}
                 size="large"
                 variant={
                   location.pathname.startsWith("/explore")
@@ -53,14 +54,14 @@ function App() {
                     : "contained"
                 }
               >
-                Explore data
+                Explore
               </Button>
               <Button
                 startIcon={<CalculateIcon />}
                 to="/calculate/route-planner"
                 component={NavLink}
                 size="large"
-                sx={{ ml: 2 }}
+                sx={{ m: 2 }}
                 variant={
                   location.pathname.startsWith("/calculate")
                     ? "outlined"
