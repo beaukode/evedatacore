@@ -86,7 +86,7 @@ const JumpDistance: React.FC = () => {
     <>
       <DialogShipSelect open={openShipSelect} onSelect={onShipSelect} />
       <form noValidate>
-        <Box display="flex" alignItems="center" my={2}>
+        <Box display="flex" alignItems="center" mb={2}>
           <TextFieldElement
             name="mass"
             label="Mass (kg)"
@@ -131,7 +131,7 @@ const JumpDistance: React.FC = () => {
           </Tooltip>
         </Box>
       </form>
-      <Typography variant="body1" component="p" my={2}>
+      <Typography variant="body1" component="p">
         You can jump up to: <strong>{result.toFixed(2)} Ly</strong>
       </Typography>
     </>
