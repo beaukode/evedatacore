@@ -4,6 +4,8 @@ import {
   getSmartcharacters as orgGetSmartcharacters,
   getConfig as orgGetConfig,
   GetConfigResponse,
+  getSolarsystems as orgGetSolarsystems,
+  types_SolarSystem,
 } from "./generated";
 
 client.setConfig({
@@ -20,6 +22,20 @@ type FixedGetSmartcharactersResponse = {
 
 type FixedGetConfigResponse = GetConfigResponse[];
 
+export type Location = {
+  x: string;
+  y: string;
+  z: string;
+};
+
+export type SolarSystem = Omit<types_SolarSystem, "location"> & {
+  location: Location;
+};
+
+export type FixedGetSolarsystemsResponse = {
+  [key: string]: SolarSystem;
+};
+
 export async function getSmartcharacters(
   ...args: Parameters<typeof orgGetSmartcharacters>
 ) {
@@ -30,4 +46,11 @@ export async function getSmartcharacters(
 export async function getConfig(...args: Parameters<typeof orgGetConfig>) {
   const r = await orgGetConfig(...args);
   return { ...r, data: r.data as unknown as FixedGetConfigResponse };
+}
+
+export async function getSolarsystems(
+  ...args: Parameters<typeof orgGetSolarsystems>
+) {
+  const r = await orgGetSolarsystems(...args);
+  return { ...r, data: r.data as unknown as FixedGetSolarsystemsResponse };
 }

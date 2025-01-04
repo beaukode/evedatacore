@@ -1,5 +1,5 @@
 import React from "react";
-import { GetSolarsystemsResponse } from "@/api/stillness";
+import { FixedGetSolarsystemsResponse } from "@/api/stillness";
 import {
   createSolarSystemsIndex,
   SolarSystemsIndex,
@@ -16,7 +16,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   const [solarSystems, setSolarSystemsIndex] =
     React.useState<SolarSystemsIndex>(createSolarSystemsIndex({}));
 
-  const setSolarSystems = React.useCallback((data: GetSolarsystemsResponse) => {
+  const setSolarSystems = React.useCallback((data: FixedGetSolarsystemsResponse) => {
     const index = createSolarSystemsIndex(data);
     setSolarSystemsIndex(index);
   }, []);
