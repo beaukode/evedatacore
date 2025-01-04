@@ -8,6 +8,9 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { NavLink, Route, Routes, useLocation } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useAppContext } from "@/contexts/AppContext";
+import { getSolarsystems } from "@/api/stillness";
 import ExploreCharacters from "./ExploreCharacters";
 import ExploreAssemblies from "./ExploreAssemblies";
 import ExploreCharacter from "./ExploreCharacter";
@@ -15,9 +18,6 @@ import ExploreAssembly from "./ExploreAssembly";
 import Error404 from "./Error404";
 import ExploreTypes from "./ExploreTypes";
 import ExploreType from "./ExploreType";
-import { getSolarsystems } from "../api/stillness";
-import { useQuery } from "@tanstack/react-query";
-import { useAppContext } from "../contexts/AppContext";
 import ExploreConfig from "./ExploreConfig";
 import ExploreKillmails from "./ExploreKillmails";
 import ExploreSolarsystems from "./ExploreSolarsystems";
@@ -36,6 +36,7 @@ const routesMap: Record<string, number> = {
 
 const Explore: React.FC = () => {
   const location = useLocation();
+  const [loading, setLoading] = React.useState(true);
   const { setSolarSystems } = useAppContext();
 
   const path = location.pathname.split("/").slice(0, 3).join("/");
@@ -50,6 +51,7 @@ const Explore: React.FC = () => {
   React.useEffect(() => {
     if (query.data) {
       setSolarSystems(query.data);
+      setLoading(false);
     }
   }, [query.data, setSolarSystems]);
 
@@ -77,7 +79,7 @@ const Explore: React.FC = () => {
           <Tab label="Config" component={NavLink} to="/explore/config" />
         </Tabs>
       </Paper>
-      {query.isLoading && (
+      {loading && (
         <Box p={2} overflow="hidden">
           <Paper
             elevation={1}
@@ -95,7 +97,7 @@ const Explore: React.FC = () => {
           </Paper>
         </Box>
       )}
-      {query.data && (
+      {!loading && (
         <Routes>
           <Route path="" element={<ExploreCharacters />} />
           <Route path="/characters" element={<ExploreCharacters />} />

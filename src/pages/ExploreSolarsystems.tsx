@@ -8,10 +8,10 @@ import {
   TableCell,
   Button,
 } from "@mui/material";
-import DataTable from "../components/DataTable";
-import useQuerySearch from "../tools/useQuerySearch";
-import { useSolarSystemsIndex } from "../contexts/AppContext";
 import { NavLink } from "react-router";
+import DataTable from "@/components/DataTable";
+import useQuerySearch from "@/tools/useQuerySearch";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 
 const columns = ["Name", "Id"];
 

@@ -1,16 +1,18 @@
-import { GetSolarsystemsResponse, types_SolarSystem } from "../api/stillness";
+import { FixedGetSolarsystemsResponse, SolarSystem } from "@/api/stillness";
 
 export interface SolarSystemsIndex {
-  searchByName: (value: string) => types_SolarSystem[];
-  getById: (id: string) => types_SolarSystem | undefined;
+  searchByName: (value: string) => SolarSystem[];
+  getById: (id: string) => SolarSystem | undefined;
 }
 
+type IndexedSolarSystem = SolarSystem & { lSolarSystemName: string };
+
 interface IndexByName {
-  [firstLetter: string]: types_SolarSystem[];
+  [firstLetter: string]: IndexedSolarSystem[];
 }
 
 export function createSolarSystemsIndex(
-  data: GetSolarsystemsResponse
+  data: FixedGetSolarsystemsResponse
 ): SolarSystemsIndex {
   const indexByName: IndexByName = {};
 
@@ -20,10 +22,13 @@ export function createSolarSystemsIndex(
     if (!indexByName[firstLetter]) {
       indexByName[firstLetter] = [];
     }
-    indexByName[firstLetter].push({ ...value, solarSystemName });
+    indexByName[firstLetter].push({
+      ...value,
+      lSolarSystemName: solarSystemName,
+    });
   });
 
-  function searchByName(value: string): types_SolarSystem[] {
+  function searchByName(value: string): SolarSystem[] {
     if (!value) {
       return Object.values(data);
     }
@@ -31,14 +36,14 @@ export function createSolarSystemsIndex(
 
     if (indexByName[firstLetter]) {
       return indexByName[firstLetter].filter((solarSystem) =>
-        solarSystem.solarSystemName.toLowerCase().includes(value.toLowerCase())
+        solarSystem.lSolarSystemName.toLowerCase().includes(value.toLowerCase())
       );
     }
 
     return [];
   }
 
-  function getById(id: string): types_SolarSystem {
+  function getById(id: string): SolarSystem {
     return data[id];
   }
 

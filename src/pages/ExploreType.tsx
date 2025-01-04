@@ -15,8 +15,8 @@ import {
 import BackIcon from "@mui/icons-material/ArrowBack";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { useQuery } from "@tanstack/react-query";
-import { getTypesById } from "../api/stillness";
 import { useNavigate, useParams } from "react-router";
+import { getTypesById } from "@/api/stillness";
 import Error404 from "./Error404";
 
 const ExploreType: React.FC = () => {

@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import { useSolarSystemsIndex } from "../contexts/AppContext";
 
 const ExploreSolarsystem: React.FC = () => {
   const { id } = useParams();
