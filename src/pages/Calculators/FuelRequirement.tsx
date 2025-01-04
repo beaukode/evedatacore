@@ -89,7 +89,7 @@ const FuelRequirement: React.FC = () => {
     <>
       <DialogShipSelect open={openShipSelect} onSelect={onShipSelect} />
       <form noValidate>
-        <Box display="flex" alignItems="center" my={2}>
+        <Box display="flex" alignItems="center" mb={2}>
           <TextFieldElement
             name="mass"
             label="Mass (kg)"
@@ -131,7 +131,7 @@ const FuelRequirement: React.FC = () => {
           />
         </Box>
       </form>
-      <Typography variant="body1" component="p" my={2}>
+      <Typography variant="body1" component="p">
         You need : <strong>{result.toFixed(2)} units</strong> of fuel
       </Typography>
     </>

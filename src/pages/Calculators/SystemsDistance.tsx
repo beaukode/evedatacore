@@ -74,11 +74,13 @@ const SystemsDistance: React.FC = () => {
       <AutoCompleteSolarSystem
         label="System 1"
         value={system1}
+        sx={{ mb: 2 }}
         onChange={setSystem1}
       />
       <AutoCompleteSolarSystem
         label="System 2"
         value={system2}
+        sx={{ my: 2 }}
         onChange={setSystem2}
       />
       {result === undefined ? (
@@ -86,7 +88,7 @@ const SystemsDistance: React.FC = () => {
           Please select two star systems
         </Typography>
       ) : (
-        <Typography variant="body1" component="p" my={2}>
+        <Typography variant="body1" component="p">
           These star systems are <strong>{result.toFixed(2)} Ly</strong> away
         </Typography>
       )}
