@@ -1,10 +1,15 @@
+import React from "react";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { Autocomplete, TextField } from "@mui/material";
-import React from "react";
 
-interface AutoCompleteSolarSystemProps {
+interface AutoCompleteSolarSystemProps
+  extends Omit<
+    React.ComponentProps<typeof Autocomplete>,
+    "onChange" | "renderInput" | "options"
+  > {
   label: string;
   value: SolarSystemValue | null;
+  error?: string;
   onChange: (value: SolarSystemValue | null) => void;
 }
 
@@ -13,11 +18,10 @@ export type SolarSystemValue = {
   id: number;
 };
 
-const AutoCompleteSolarSystem: React.FC<AutoCompleteSolarSystemProps> = ({
-  label,
-  value,
-  onChange,
-}) => {
+const AutoCompleteSolarSystem = React.forwardRef<
+  unknown,
+  AutoCompleteSolarSystemProps
+>(({ label, value, onChange, error, ...rest }, ref) => {
   const [inputValue, setInputValue] = React.useState<string>("");
   const ssIndex = useSolarSystemsIndex();
 
@@ -31,31 +35,32 @@ const AutoCompleteSolarSystem: React.FC<AutoCompleteSolarSystemProps> = ({
 
   return (
     <Autocomplete
-      sx={{ my: 2 }}
-      value={value}
+      value={value || null}
       noOptionsText={
         inputValue.length === 0 ? "Type to search" : "No solar system found"
       }
       options={options}
-      filterOptions={(x) => x}
       onChange={(_, newValue) => {
-        onChange(newValue);
+        onChange(newValue as SolarSystemValue | null);
       }}
       onInputChange={(_, newInputValue) => {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
         <TextField
+          inputRef={ref}
           {...params}
+          error={!!error}
+          helperText={error}
           label={label}
           slotProps={{
             inputLabel: { shrink: value === null ? undefined : true },
           }}
         />
       )}
-      fullWidth
+      {...rest}
     />
   );
-};
+});
 
 export default AutoCompleteSolarSystem;
