@@ -21,6 +21,10 @@ export default defineConfig({
         target: "https://eve.beaukode.net/",
         changeOrigin: true,
       },
+      "/api-shish": {
+        target: "https://eve.beaukode.net/",
+        changeOrigin: true,
+      },
     },
   },
   build: {

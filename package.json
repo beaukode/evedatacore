@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts"
+    "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts",
+    "api:shish": "openapi-ts -f src/api/shish/openapi-ts.config.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
