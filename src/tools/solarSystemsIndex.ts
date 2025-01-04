@@ -5,8 +5,10 @@ export interface SolarSystemsIndex {
   getById: (id: string) => types_SolarSystem | undefined;
 }
 
+type IndexedSolarSystem = types_SolarSystem & { lSolarSystemName: string };
+
 interface IndexByName {
-  [firstLetter: string]: types_SolarSystem[];
+  [firstLetter: string]: IndexedSolarSystem[];
 }
 
 export function createSolarSystemsIndex(
@@ -20,7 +22,10 @@ export function createSolarSystemsIndex(
     if (!indexByName[firstLetter]) {
       indexByName[firstLetter] = [];
     }
-    indexByName[firstLetter].push({ ...value, solarSystemName });
+    indexByName[firstLetter].push({
+      ...value,
+      lSolarSystemName: solarSystemName,
+    });
   });
 
   function searchByName(value: string): types_SolarSystem[] {
@@ -31,7 +36,7 @@ export function createSolarSystemsIndex(
 
     if (indexByName[firstLetter]) {
       return indexByName[firstLetter].filter((solarSystem) =>
-        solarSystem.solarSystemName.toLowerCase().includes(value.toLowerCase())
+        solarSystem.lSolarSystemName.toLowerCase().includes(value.toLowerCase())
       );
     }
 
