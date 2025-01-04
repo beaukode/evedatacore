@@ -48,19 +48,19 @@ const SystemsDistance: React.FC = () => {
       // TODO: Better error handling
       if (!s1 || !s2) return undefined;
 
-      const s1x = new Big(s1.location?.x || 0);
-      const s1y = new Big(s1.location?.y || 0);
-      const s1z = new Big(s1.location?.z || 0);
-      const s2x = new Big(s2.location?.x || 0);
-      const s2y = new Big(s2.location?.y || 0);
-      const s2z = new Big(s2.location?.z || 0);
+      const s1x = new Big(s1.location.x);
+      const s1y = new Big(s1.location.y);
+      const s1z = new Big(s1.location.z);
+      const s2x = new Big(s2.location.x);
+      const s2y = new Big(s2.location.y);
+      const s2z = new Big(s2.location.z);
       const meters = s1x
         .minus(s2x)
         .pow(2)
         .plus(s1y.minus(s2y).pow(2))
         .plus(s1z.minus(s2z).pow(2))
         .sqrt();
-      const ly = meters.div(new Big(9.461e15));
+      const ly = meters.div(new Big(9.46073047258e15));
       return ly.toNumber();
     }
   }, [ssIndex, system1, system2]);
