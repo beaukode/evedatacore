@@ -1,15 +1,17 @@
 import React from "react";
-import { Typography, Paper, LinearProgress, Box } from "@mui/material";
+import { Typography, Paper, LinearProgress, Box, Chip } from "@mui/material";
 
 interface RootPaperProps {
   title: string;
   loading?: boolean;
+  mudChip?: boolean;
   children?: React.ReactNode;
 }
 
 const PaperLevel1: React.FC<RootPaperProps> = ({
   title,
   loading,
+  mudChip,
   children,
 }) => {
   return (
@@ -21,6 +23,18 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
         gutterBottom
       >
         {title}
+        {mudChip && (
+          <Chip
+            label="Mud"
+            size="small"
+            sx={{
+              ml: 2,
+              backgroundColor: "#ff7612",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          />
+        )}
       </Typography>
       {loading && (
         <Box sx={{ position: "relative" }}>

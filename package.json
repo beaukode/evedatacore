@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts",
     "api:shish": "openapi-ts -f src/api/shish/openapi-ts.config.ts",
+    "api:mudsql": "openapi-ts -f src/api/mudsql/openapi-ts.config.ts",
     "data:solarsystems": "jiti scripts/data-solarsystems.ts"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "@tanstack/react-query": "^5.62.7",
     "@types/lodash-es": "^4.17.12",
     "@uidotdev/usehooks": "^2.4.1",
+    "async-cache-dedupe": "^2.2.0",
     "big.js": "^6.2.2",
     "lodash-es": "^4.17.21",
     "react": "^18.3.1",
@@ -37,6 +39,7 @@
     "react-hook-form-mui": "^7.4.1",
     "react-router": "^7.0.2",
     "react-virtuoso": "^4.12.3",
+    "viem": "^2.22.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
