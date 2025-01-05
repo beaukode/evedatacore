@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { shorten } from "../tools";
+import { shorten } from "@/tools";
 import { NavLink } from "react-router";
 
 interface DisplayAssemblyProps {

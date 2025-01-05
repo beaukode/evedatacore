@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { NoMaxWidthTooltip } from "./ui/NoMaxWidthTooltip";
-import { useSolarSystemsIndex } from "../contexts/AppContext";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { NavLink } from "react-router";
 
 interface DisplaySolarsystemProps {

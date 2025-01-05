@@ -9,11 +9,11 @@ import {
   Button,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { getConfig } from "../api/stillness";
 import { NavLink } from "react-router";
 import { startCase } from "lodash-es";
-import ListItemLink from "../components/ui/ListItemLink";
-import ListItem from "../components/ui/ListItem";
+import { getConfig } from "@/api/stillness";
+import ListItemLink from "@/components/ui/ListItemLink";
+import ListItem from "@/components/ui/ListItem";
 
 const ExploreConfig: React.FC = () => {
   const query = useQuery({

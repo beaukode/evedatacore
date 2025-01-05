@@ -1,10 +1,10 @@
 import React from "react";
-import { GetSolarsystemsResponse } from "../api/stillness";
-import { SolarSystemsIndex } from "../tools/solarSystemsIndex";
+import { FixedGetSolarsystemsResponse } from "@/api/stillness";
+import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 
 interface AppContextProps {
   solarSystems: SolarSystemsIndex;
-  setSolarSystems: (data: GetSolarsystemsResponse) => void;
+  setSolarSystems: (data: FixedGetSolarsystemsResponse) => void;
 }
 
 export const AppContext = React.createContext<AppContextProps | undefined>(

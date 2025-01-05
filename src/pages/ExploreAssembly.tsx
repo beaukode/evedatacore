@@ -14,16 +14,16 @@ import {
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useQuery } from "@tanstack/react-query";
-import { getSmartassembliesById } from "../api/stillness";
 import { useNavigate, useParams } from "react-router";
+import { getSmartassembliesById } from "@/api/stillness";
+import { fuel, shorten } from "@/tools";
+import DisplaySolarsystem from "@/components/DisplaySolarsystem";
+import DisplayOwner from "@/components/DisplayOwner";
+import SmartTurretProximity from "@/components/SmartTurretProximity";
+import SmartGateLink from "@/components/SmartGateLink";
+import SmartStorageUnitInventory from "@/components/SmartStorageUnitInventory";
+import { fuelFactor } from "@/constants";
 import Error404 from "./Error404";
-import { fuel, shorten } from "../tools";
-import DisplaySolarsystem from "../components/DisplaySolarsystem";
-import DisplayOwner from "../components/DisplayOwner";
-import SmartTurretProximity from "../components/SmartTurretProximity";
-import SmartGateLink from "../components/SmartGateLink";
-import SmartStorageUnitInventory from "../components/SmartStorageUnitInventory";
-import { fuelFactor } from "../constants";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();

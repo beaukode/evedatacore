@@ -12,7 +12,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { types_GateLinkModule } from "../api/stillness";
+import { types_GateLinkModule } from "@/api/stillness";
 import DisplayOwner from "./DisplayOwner";
 import DisplayAssembly from "./DisplayAssembly";
 import DisplaySolarsystem from "./DisplaySolarsystem";

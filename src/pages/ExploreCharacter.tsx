@@ -18,14 +18,14 @@ import {
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useQuery } from "@tanstack/react-query";
-import { getKillmails, getSmartcharactersById } from "../api/stillness";
 import { useNavigate, useParams } from "react-router";
+import { getKillmails, getSmartcharactersById } from "@/api/stillness";
+import { formatCrypto, ldapDate } from "@/tools";
+import DisplaySolarsystem from "@/components/DisplaySolarsystem";
+import DisplayAssembly from "@/components/DisplayAssembly";
+import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
+import DisplayOwner from "@/components/DisplayOwner";
 import Error404 from "./Error404";
-import { formatCrypto, ldapDate } from "../tools";
-import DisplaySolarsystem from "../components/DisplaySolarsystem";
-import DisplayAssembly from "../components/DisplayAssembly";
-import DisplayAssemblyIcon from "../components/DisplayAssemblyIcon";
-import DisplayOwner from "../components/DisplayOwner";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();

@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { Paper, Typography, Button } from "@mui/material";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
+import CalculateIcon from "@mui/icons-material/Calculate";
 import { NavLink } from "react-router";
 
 const Home: React.FC = () => {
@@ -19,7 +20,7 @@ const Home: React.FC = () => {
             fontSize="large"
             sx={{ verticalAlign: "middle", mr: 2 }}
           />
-          Explore data
+          Explore
         </Typography>
         <Button
           component={NavLink}
@@ -68,6 +69,31 @@ const Home: React.FC = () => {
           variant="contained"
         >
           Config
+        </Button>
+      </Paper>
+      <Paper elevation={1} sx={{ m: 2 }}>
+        <Typography variant="h5" component="h2" sx={{ m: 2 }}>
+          <CalculateIcon
+            fontSize="large"
+            sx={{ verticalAlign: "middle", mr: 2 }}
+          />
+          Calculate
+        </Typography>
+        <Button
+          component={NavLink}
+          to="/calculate/route-planner"
+          sx={{ m: 2, py: 2, px: 4 }}
+          variant="contained"
+        >
+          Route planner
+        </Button>
+        <Button
+          component={NavLink}
+          to="/calculate/various-calculators"
+          sx={{ m: 2, py: 2, px: 4 }}
+          variant="contained"
+        >
+          Various calculators
         </Button>
       </Paper>
       <Button component={NavLink} to="/about" size="small" variant="text">

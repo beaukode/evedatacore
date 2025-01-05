@@ -1,21 +1,28 @@
 import { defineConfig } from "vite";
+import path from "path";
+import { fileURLToPath } from "url";
 import { visualizer } from "rollup-plugin-visualizer";
 import react from "@vitejs/plugin-react";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), visualizer()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   server: {
     proxy: {
-      "/api-stillness/solarsystems": {
-        target: "https://blockchain-gateway-nova.nursery.reitnorf.com/",
-        rewrite: (path) => path.replace(/^\/api-stillness/, ""),
+      "/api-stillness": {
+        target: "https://eve.beaukode.net/",
         changeOrigin: true,
       },
-      "/api-stillness": {
-        target:
-          "https://blockchain-gateway-stillness.live.tech.evefrontier.com/",
-        rewrite: (path) => path.replace(/^\/api-stillness/, ""),
+      "/api-shish": {
+        target: "https://eve.beaukode.net/",
         changeOrigin: true,
       },
     },

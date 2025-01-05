@@ -1,0 +1,172 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Path Calculation API",
+        "version": "1.0.0",
+        "description": "API for calculating paths in a star map using the Rocket framework."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local development server"
+        }
+    ],
+    "paths": {
+        "/path": {
+            "get": {
+                "summary": "Calculate Path",
+                "description": "Calculate the path between two stars with given parameters.",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "description": "The starting star name.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "The ending star name.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "jump",
+                        "in": "query",
+                        "description": "The jump distance in light years.",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "optimize",
+                        "in": "query",
+                        "description": "Optimization parameter. Accepted values are 'fuel', 'distance', or 'hops'.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "fuel",
+                                "distance",
+                                "hops"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "use_smart_gates",
+                        "in": "query",
+                        "description": "Whether to use smart gates in the path calculation.",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful path calculation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "version": {
+                                            "type": "integer",
+                                            "description": "Version of the API response."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "from": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    },
+                                                    "to": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name"
+                                                        ]
+                                                    },
+                                                    "conn_type": {
+                                                        "type": "string",
+                                                        "description": "The type of connection (e.g., 'jump', 'npc_gate', 'smart_gate')."
+                                                    },
+                                                    "distance": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "description": "Distance of the connection in light years."
+                                                    }
+                                                },
+                                                "required": [
+                                                    "from",
+                                                    "to",
+                                                    "conn_type",
+                                                    "distance"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "version",
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "Error message describing the bad request."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Path not found",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "Error message indicating the path was not found."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

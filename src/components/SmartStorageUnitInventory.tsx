@@ -9,7 +9,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { types_InventoryModule } from "../api/stillness";
+import { types_InventoryModule } from "@/api/stillness";
 import DisplayOwner from "./DisplayOwner";
 import DisplayItem from "./DisplayItem";
 

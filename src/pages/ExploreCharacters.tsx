@@ -10,11 +10,11 @@ import {
   TableCell,
   Button,
 } from "@mui/material";
-import DataTable, { DataTableContext } from "../components/DataTable";
-import { useQuery } from "@tanstack/react-query";
-import { getSmartcharacters } from "../api/stillness";
 import { NavLink } from "react-router";
-import useQuerySearch from "../tools/useQuerySearch";
+import { useQuery } from "@tanstack/react-query";
+import { getSmartcharacters } from "@/api/stillness";
+import DataTable, { DataTableContext } from "@/components/DataTable";
+import useQuerySearch from "@/tools/useQuerySearch";
 
 const columns = ["Name", "Address"];
 

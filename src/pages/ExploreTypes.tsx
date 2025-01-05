@@ -12,12 +12,12 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import DataTable from "../components/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { getTypes } from "../api/stillness";
-import { filterInProps } from "../tools";
-import DisplayItem from "../components/DisplayItem";
-import useQuerySearch from "../tools/useQuerySearch";
+import DataTable from "@/components/DataTable";
+import { getTypes } from "@/api/stillness";
+import { filterInProps } from "@/tools";
+import DisplayItem from "@/components/DisplayItem";
+import useQuerySearch from "@/tools/useQuerySearch";
 
 const columns = ["Name", "Category", "Group"];
 
