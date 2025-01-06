@@ -7,8 +7,7 @@ import { ensureDirSync } from "fs-extra";
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
-const solarsystemsUrl = "https://eve.beaukode.net/api-stillness/solarsystems";
-// const solarsystemsUrl = "https://blockchain-gateway-nova.nursery.reitnorf.com/solarsystems"
+const solarsystemsUrl = "https://blockchain-gateway-nova.nursery.reitnorf.com/solarsystems"
 
 async function main() {
   ensureDirSync("./output");
