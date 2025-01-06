@@ -1,5 +1,7 @@
 import { worldAddress } from "@/constants";
-import { client } from "./client";
+import { createClient } from "./client";
 export * from "./queries/listNamespaces";
+
+export const client = createClient();
 
 client.setConfig({ worldAddress });

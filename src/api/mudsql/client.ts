@@ -26,7 +26,7 @@ function transformResult(
   });
 }
 
-function createClient() {
+export function createClient() {
   let worldAddress: string = "";
   const schemas = createSchemasRepository();
 
@@ -57,11 +57,17 @@ function createClient() {
     return transformResult(r.data.result) as T[];
   }
 
+  async function selectRaw(sql: string): Promise<Record<string, string>[]> {
+    const r = await postQ({ body: [{ address: worldAddress, query: sql }] });
+    if (r.error) {
+      throw new Error(r.error.msg);
+    }
+    return transformResult(r.data.result);
+  }
+
   function setConfig(config: MudSqlClientConfig) {
     worldAddress = config.worldAddress;
   }
 
-  return { selectFrom, setConfig };
+  return { selectFrom, selectRaw, setConfig };
 }
-
-export const client = createClient();

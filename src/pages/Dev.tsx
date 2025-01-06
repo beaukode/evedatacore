@@ -1,65 +1,62 @@
 import React from "react";
-import { Helmet } from "react-helmet";
-import { Paper } from "@mui/material";
-import { setupZustand } from "../mud/setupZustand";
-import { setupSqlIndexer } from "../mud/setupSqlIndexer";
-import { useMudSqlIndexer } from "../mud/MudContext";
+import { Alert, Box, Button, TextField } from "@mui/material";
+import z from "zod";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
+import { client } from "@/api/mudsql";
+import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 
-const DevZustand: React.FC<{ i: Awaited<ReturnType<typeof setupZustand>> }> = ({
-  i: { useStore, tables },
-}) => {
-  const records = useStore((state) => {
-    console.log("state", state);
-    return Object.values(state.getRecords(tables.Tables));
-  });
-
-  console.log("records", records);
-
-  return (
-    <>
-      <Helmet>
-        <title>Dev</title>
-      </Helmet>
-      <Paper elevation={1} sx={{ m: 2 }}>
-        <h1>{records.length}</h1>
-        {records.map((record) => (
-          <pre
-            key={record.id}
-            style={{ width: "100%", maxHeight: "50vh", overflow: "auto" }}
-          >
-            {JSON.stringify(record, null, 2)}
-          </pre>
-        ))}
-      </Paper>
-    </>
-  );
-};
-
-const DevStash: React.FC<{
-  i: Awaited<ReturnType<typeof setupSqlIndexer>>;
-}> = ({ i }) => {
-  return (
-    <>
-      <Helmet>
-        <title>Dev</title>
-      </Helmet>
-      <Paper elevation={1} sx={{ m: 2 }}></Paper>
-    </>
-  );
-};
+const schema = z
+  .object({
+    sql: z
+      .string()
+      .default('SELECT "namespaceId", "owner" FROM world__NamespaceOwner'),
+  })
+  .required();
 
 const Dev: React.FC = () => {
-  const { listNamespaces } = useMudSqlIndexer();
+  const [store, setStore] = useAppLocalStorage("v1_dev", schema);
 
-  const hasRun = React.useRef(false);
-  React.useEffect(() => {
-    if (!hasRun.current) {
-      hasRun.current = true;
-      listNamespaces({
-        owners: "0xf1e4a908467eb94c6eb9ccd3a4659684ebd360d1",
-      }).then(console.debug);
-    }
-  }, [listNamespaces]);
+  const [sql, setSql] = React.useState<string>(store.sql);
+  const [result, setResult] = React.useState<string>();
+  const [error, setError] = React.useState<string>();
+
+  const handleExecuteClick = () => {
+    setStore({ sql });
+    setError(undefined);
+    setResult(undefined);
+    client
+      .selectRaw(sql)
+      .then((result) => {
+        setResult(JSON.stringify(result, null, 2));
+      })
+      .catch((e) => {
+        setError(e.message);
+      });
+  };
+
+  return (
+    <Box p={2} flexGrow={1} overflow="auto">
+      <PaperLevel1 title="Raw MUD sql">
+        <TextField
+          value={sql}
+          onChange={(e) => setSql(e.target.value)}
+          minRows={5}
+          maxRows={10}
+          variant="outlined"
+          slotProps={{ input: { style: { fontFamily: "monospace" } } }}
+          multiline
+          fullWidth
+        />
+        <Box display="flex" justifyContent="right" my={2}>
+          <Button onClick={handleExecuteClick} variant="contained">
+            Execute
+          </Button>
+        </Box>
+        {error && <Alert severity="error">{error}</Alert>}
+        {result && <pre>{result}</pre>}
+      </PaperLevel1>
+    </Box>
+  );
 };
 
 export default Dev;

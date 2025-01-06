@@ -1,5 +1,5 @@
 import { hexToResource } from "@latticexyz/common";
-import { client } from "../client";
+import { client } from "..";
 import { ensureArray, toSqlHex } from "../utils";
 import { Hex } from "viem";
 
