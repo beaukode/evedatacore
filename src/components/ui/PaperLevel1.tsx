@@ -1,19 +1,33 @@
 import React from "react";
-import { Typography, Paper, LinearProgress, Box, Chip } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  LinearProgress,
+  Box,
+  Chip,
+  IconButton,
+} from "@mui/material";
+import BackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router";
 
 interface RootPaperProps {
   title: string;
   loading?: boolean;
   mudChip?: boolean;
+  backButton?: boolean;
   children?: React.ReactNode;
 }
 
 const PaperLevel1: React.FC<RootPaperProps> = ({
   title,
   loading,
+  backButton,
   mudChip,
+
   children,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Typography
@@ -22,6 +36,11 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
         sx={{ bgcolor: "background.default" }}
         gutterBottom
       >
+        {backButton && (
+          <IconButton color="primary" onClick={() => navigate(-1)}>
+            <BackIcon />
+          </IconButton>
+        )}
         {title}
         {mudChip && (
           <Chip
