@@ -23,6 +23,7 @@ import ExploreKillmails from "./ExploreKillmails";
 import ExploreSolarsystems from "./ExploreSolarsystems";
 import ExploreSolarsystem from "./ExploreSolarsystem";
 import ExploreNamespaces from "./ExploreNamespaces";
+import ExploreNamespace from "./ExploreNamespace";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
@@ -117,7 +118,7 @@ const Explore: React.FC = () => {
           <Route path="/solarsystems" element={<ExploreSolarsystems />} />
           <Route path="/solarsystems/:id" element={<ExploreSolarsystem />} />
           <Route path="/namespaces" element={<ExploreNamespaces />} />
-          <Route path="/namespaces/:id" element={<ExploreNamespaces />} />
+          <Route path="/namespaces/:id" element={<ExploreNamespace />} />
           <Route path="/config" element={<ExploreConfig />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
