@@ -10,6 +10,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { listNamespaces } from "@/api/mudsql";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
+import DisplayNamespace from "@/components/DisplayNamespace";
 
 interface NamespacesProps {
   address: string;
@@ -38,7 +39,9 @@ const Namespaces: React.FC<NamespacesProps> = ({ address }) => {
             {namespaces.map((ns) => {
               return (
                 <TableRow key={ns.namespaceId}>
-                  <TableCell>{ns.name}</TableCell>
+                  <TableCell>
+                    <DisplayNamespace id={ns.namespaceId} name={ns.name} />
+                  </TableCell>
                   <TableCell>{ns.namespaceId}</TableCell>
                 </TableRow>
               );

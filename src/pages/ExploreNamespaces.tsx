@@ -1,12 +1,12 @@
 import React from "react";
-import { TextField, TableCell, Button } from "@mui/material";
-import { NavLink } from "react-router";
+import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
 import { listNamespaces } from "@/api/mudsql";
 import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import DisplayOwner from "@/components/DisplayOwner";
+import DisplayNamespace from "@/components/DisplayNamespace";
 
 const columns = ["Name", "Owner"];
 
@@ -37,13 +37,7 @@ const ExploreNamespaces: React.FC = () => {
       return (
         <React.Fragment key={ns.namespaceId}>
           <TableCell>
-            <Button
-              sx={{ justifyContent: "flex-start" }}
-              component={NavLink}
-              to={`/explore/namespaces/${ns.namespaceId}`}
-            >
-              {ns.name}
-            </Button>
+            <DisplayNamespace name={ns.name} id={ns.namespaceId} />
           </TableCell>
           <TableCell sx={{ height: 49.5 }}>
             {ns.ownerName ? (
