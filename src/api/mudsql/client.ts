@@ -23,7 +23,9 @@ function transformResult(
   return results.map((row) => {
     const obj: Record<string, string> = {};
     header.forEach((key, index) => {
-      obj[key] = row[index];
+      if (row[index]) {
+        obj[key] = row[index];
+      }
     });
     return obj;
   });

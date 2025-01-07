@@ -64,13 +64,14 @@ const ExploreTypes: React.FC = () => {
                 }
               }
             }
-            if (!categories[categoryId]) {
+            const category = categories[categoryId];
+            if (!category) {
               categories[categoryId] = {
                 name: categoryName,
                 groups: { [groupId]: groupName },
               };
             } else {
-              categories[categoryId].groups[groupId] = groupName;
+              category.groups[groupId] = groupName;
             }
             return {
               id: k,

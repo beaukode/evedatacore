@@ -17,14 +17,16 @@ export function queryBuilder(
     throw new Error(`Missing schemas for tables: ${missingSchemas.join(", ")}`);
   }
 
-  const selectParts = Object.keys(schemas[mainTable]).map((f) => `"${f}"`);
+  const selectParts = Object.keys(schemas[mainTable] || {}).map(
+    (f) => `"${f}"`
+  );
   const whereParts: string[] = options.where ? [options.where] : [];
   Object.entries(options.rels || {}).forEach(([relName, rel]) => {
     const table = `${rel.ns}__${rel.table}`;
     const fkTable = `${rel.fkNs}__${rel.fkTable}`;
     const schema = schemas[table];
     selectParts.push(
-      ...Object.keys(schema).map(
+      ...Object.keys(schema || {}).map(
         (key) => `${table}."${key}" AS "${relName}__${key}"`
       )
     );

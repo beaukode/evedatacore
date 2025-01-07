@@ -24,6 +24,11 @@ export function createSchemasRepository() {
     if (!results || results.length !== 2) {
       throw new Error("Invalid schema response");
     }
+    const result = results.pop();
+
+    if (!result) {
+      throw new Error("Table schema not found");
+    }
     const [
       ,
       ,
@@ -31,7 +36,16 @@ export function createSchemasRepository() {
       valueSchema,
       abiEncodedKeyNames,
       abiEncodedFieldNames,
-    ] = results.pop() || [];
+    ] = result;
+
+    if (
+      !keySchema ||
+      !valueSchema ||
+      !abiEncodedKeyNames ||
+      !abiEncodedFieldNames
+    ) {
+      throw new Error("Invalid schema response");
+    }
 
     return decodeTable({
       tableId,

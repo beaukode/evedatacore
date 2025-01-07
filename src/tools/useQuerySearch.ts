@@ -22,7 +22,10 @@ const useQuerySearch = <S extends Record<string, string>>(
       () => {
         const next = new URLSearchParams();
         for (const key in debouncedState) {
-          if (debouncedState[key] !== initialState[key]) {
+          if (
+            debouncedState[key] !== undefined &&
+            debouncedState[key] !== initialState[key]
+          ) {
             next.set(key, debouncedState[key]);
           }
         }
