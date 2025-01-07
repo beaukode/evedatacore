@@ -4,6 +4,7 @@ import { createSchemasRepository } from "./schemasRepository";
 import { SelectOptions } from "./types";
 import { queryBuilder } from "./utils/queryBuilder";
 import { listSelectedTables } from "./utils";
+import { resourceToHex } from "@latticexyz/common";
 
 restClient.setConfig({ baseUrl: indexerBaseUrl });
 
@@ -46,7 +47,9 @@ export function createClient() {
         Object.entries(tables).map(([k, v]) =>
           // TODO: Optimize this to fetch all schemas in one request
           schemas
-            .getTableSchema(v.ns, v.table)
+            .getTableSchema(
+              resourceToHex({ type: "table", namespace: v.ns, name: v.table })
+            )
             .then((table) => [k, table.schema])
         )
       )
@@ -74,8 +77,8 @@ export function createClient() {
     worldAddress = config.worldAddress;
   }
 
-  async function getTableSchema(ns: string, table: string) {
-    return schemas.getTableSchema(ns, table);
+  async function getTableSchema(id: string) {
+    return schemas.getTableSchema(id);
   }
 
   return { selectFrom, selectRaw, getTableSchema, setConfig };

@@ -20,7 +20,7 @@ export async function getTable(id: string): Promise<Table | undefined> {
   });
 
   const [schema, namespace] = await Promise.all([
-    client.getTableSchema(table.namespace, table.name),
+    client.getTableSchema(id),
     getNamespace(namespaceId),
   ]);
 
