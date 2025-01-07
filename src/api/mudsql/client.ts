@@ -1,7 +1,9 @@
-import { resourceToHex } from "@latticexyz/common";
 import { client as restClient, postQ, PostQResponse } from "./generated/index";
 import { indexerBaseUrl } from "@/constants";
 import { createSchemasRepository } from "./schemasRepository";
+import { SelectOptions } from "./types";
+import { queryBuilder } from "./utils/queryBuilder";
+import { listSelectedTables } from "./utils";
 
 restClient.setConfig({ baseUrl: indexerBaseUrl });
 
@@ -14,6 +16,7 @@ function transformResult(
 ): Record<string, string>[] {
   const results = data.shift();
   const header = results?.shift();
+  console.log("header", header);
   if (!results || !header) {
     return [];
   }
@@ -33,23 +36,23 @@ export function createClient() {
   async function selectFrom<T extends object = Record<string, string>>(
     ns: string,
     table: string,
-    where?: string
+    options?: SelectOptions
   ): Promise<T[]> {
-    const tableId = resourceToHex({
-      type: "table",
-      namespace: ns,
-      name: table,
-    });
+    const tables = listSelectedTables(ns, table, options || {});
+    const schemasMap = Object.fromEntries(
+      await Promise.all(
+        Object.entries(tables).map(([k, v]) =>
+          // TODO: Optimize this to fetch all schemas in one request
+          schemas
+            .getTableSchema(v.ns, v.table)
+            .then((table) => [k, table.schema])
+        )
+      )
+    );
 
-    const schema = await schemas.getTableSchema(tableId);
-    const fields = Object.keys(schema.schema)
-      .map((key) => `"${key}"`)
-      .join(", ");
+    const query = queryBuilder(ns, table, options || {}, schemasMap);
 
-    let query = `SELECT ${fields} FROM ${ns}__${table}`;
-    if (where) {
-      query += ` WHERE ${where}`;
-    }
+    console.log("query", query);
     const r = await postQ({ body: [{ address: worldAddress, query }] });
     if (r.error) {
       throw new Error(r.error.msg);

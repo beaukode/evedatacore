@@ -4,6 +4,7 @@ import { worldAddress } from "@/constants";
 import { toSqlHex } from "./utils";
 import { Table } from "@latticexyz/config";
 import { decodeTable } from "./externals";
+import { resourceToHex } from "@latticexyz/common";
 
 export function createSchemasRepository() {
   const cache = createCache({
@@ -41,5 +42,15 @@ export function createSchemasRepository() {
     });
   });
 
-  return { getTableSchema: cache.getTableSchema };
+  async function getTableSchema(ns: string, table: string): Promise<Table> {
+    const tableId = resourceToHex({
+      type: "table",
+      namespace: ns,
+      name: table,
+    });
+
+    return cache.getTableSchema(tableId);
+  }
+
+  return { getTableSchema };
 }
