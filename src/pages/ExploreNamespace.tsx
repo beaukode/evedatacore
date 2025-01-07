@@ -1,9 +1,10 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Box, List, ListItem, ListItemText } from "@mui/material";
-
+import { hexToResource } from "@latticexyz/common";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import { isHex } from "viem";
 import Error404 from "./Error404";
 import { getNamespace } from "@/api/mudsql/queries";
 import DisplayOwner from "@/components/DisplayOwner";
@@ -12,18 +13,20 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 const ExploreNamespace: React.FC = () => {
   const { id } = useParams();
 
+  const namespace = isHex(id) ? hexToResource(id) : undefined;
+
   const query = useQuery({
     queryKey: ["Namespace", id],
     queryFn: async () => getNamespace(id ?? "0x"),
     enabled: !!id,
   });
 
-  if (!id || (!query.isLoading && !query.data)) {
+  if (!id || !namespace || (!query.isLoading && !query.data)) {
     return <Error404 />;
   }
 
   const data = query.data;
-  const title = data?.name ?? "Loading...";
+  const title = namespace.namespace;
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
