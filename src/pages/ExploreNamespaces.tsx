@@ -18,8 +18,6 @@ const ExploreNamespaces: React.FC = () => {
   const query = useQuery({
     queryKey: ["Namespaces"],
     queryFn: () => listNamespaces(),
-    retry: false,
-    throwOnError: true,
   });
 
   const namespaces = React.useMemo(() => {
