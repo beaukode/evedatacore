@@ -74,5 +74,9 @@ export function createClient() {
     worldAddress = config.worldAddress;
   }
 
-  return { selectFrom, selectRaw, setConfig };
+  async function getTableSchema(ns: string, table: string) {
+    return schemas.getTableSchema(ns, table);
+  }
+
+  return { selectFrom, selectRaw, getTableSchema, setConfig };
 }

@@ -1,7 +1,6 @@
 import { hexToResource } from "@latticexyz/common";
-import { client } from "..";
+import { client, getCharacter } from "..";
 import { Hex } from "viem";
-import { listCharacters } from "./listCharacters";
 import { toSqlHex } from "../utils";
 
 type DbRow = {
@@ -26,8 +25,7 @@ export async function getNamespace(id: string): Promise<Namespace | undefined> {
   const ns = result[0];
   if (!ns) return undefined;
 
-  const characters = await listCharacters({ addresses: [ns.owner] });
-  const owner = characters[0];
+  const owner = await getCharacter(ns.owner);
 
   return {
     namespaceId: ns.namespaceId,

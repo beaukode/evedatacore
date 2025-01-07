@@ -10,7 +10,7 @@ type DbRow = {
   owner: Hex;
 };
 
-type Namespace = {
+export type Namespace = {
   namespaceId: Hex;
   name: string;
   owner: Hex;
@@ -19,17 +19,28 @@ type Namespace = {
 
 type ListNamespacesOptions = {
   owners?: string[] | string;
+  ids?: string[] | string;
 };
 
 export async function listNamespaces(
   options?: ListNamespacesOptions
 ): Promise<Namespace[]> {
-  const where = options?.owners
-    ? `"owner" IN ('${ensureArray(options.owners).map(toSqlHex).join("', '")}') AND "namespaceId" <> '\\x6e73000000000000000000000000000000000000000000000000000000000000'`
-    : `"namespaceId" <> '\\x6e73000000000000000000000000000000000000000000000000000000000000'`; // exclude the null namespace
+  const where = [
+    `"namespaceId" <> '\\x6e73000000000000000000000000000000000000000000000000000000000000'`, // exclude the null namespace
+  ];
+  if (options?.owners) {
+    where.push(
+      `"owner" IN ('${ensureArray(options.owners).map(toSqlHex).join("', '")}')`
+    );
+  }
+  if (options?.ids) {
+    where.push(
+      `"namespaceId" IN ('${ensureArray(options.ids).map(toSqlHex).join("', '")}')`
+    );
+  }
 
   const result = await client.selectFrom<DbRow>("world", "NamespaceOwner", {
-    where,
+    where: where.join(" AND "),
     orderBy: "namespaceId",
   });
 
