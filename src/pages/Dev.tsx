@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Box, Button, TextField } from "@mui/material";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import z from "zod";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { client } from "@/api/mudsql";
@@ -17,7 +17,7 @@ const Dev: React.FC = () => {
   const [store, setStore] = useAppLocalStorage("v1_dev", schema);
 
   const [sql, setSql] = React.useState<string>(store.sql);
-  const [result, setResult] = React.useState<string>();
+  const [result, setResult] = React.useState<Record<string, string>[]>();
   const [error, setError] = React.useState<string>();
 
   const handleExecuteClick = () => {
@@ -27,7 +27,7 @@ const Dev: React.FC = () => {
     client
       .selectRaw(sql)
       .then((result) => {
-        setResult(JSON.stringify(result, null, 2));
+        setResult(result);
       })
       .catch((e) => {
         setError(e.message);
@@ -53,7 +53,13 @@ const Dev: React.FC = () => {
           </Button>
         </Box>
         {error && <Alert severity="error">{error}</Alert>}
-        {result && <pre>{result}</pre>}
+
+        {result && (
+          <>
+            <Typography variant="caption">{result?.length} records</Typography>
+            <pre>{JSON.stringify(result, null, 2)}</pre>
+          </>
+        )}
       </PaperLevel1>
     </Box>
   );
