@@ -1,6 +1,7 @@
 import { Schema } from "@latticexyz/config";
 import { SelectOptions } from "../types";
 import { listSelectedTables } from "./listSelectedTables";
+import { ensureArray } from ".";
 
 export function queryBuilder(
   ns: string,
@@ -37,7 +38,10 @@ export function queryBuilder(
   const from = Object.keys(tables).join(", ");
   const where =
     whereParts.length > 0 ? " WHERE " + whereParts.join(" AND ") : "";
-  const orderBy = options.orderBy ? ` ORDER BY "${options.orderBy}"` : "";
+
+  const orderByParts = ensureArray(options.orderBy || []);
+  const orderBy =
+    orderByParts.length > 0 ? ` ORDER BY "${orderByParts.join('", "')}"` : "";
 
   return `SELECT ${select} FROM ${from}${where}${orderBy}`;
 }

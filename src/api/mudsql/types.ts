@@ -9,7 +9,7 @@ export type SelectRelation = {
 
 export type SelectOptions = {
   where?: string;
-  orderBy?: string;
+  orderBy?: string | string[];
   rels?: Record<string, SelectRelation>;
 };
 

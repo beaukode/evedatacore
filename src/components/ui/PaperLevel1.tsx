@@ -10,7 +10,7 @@ import {
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router";
 
-interface RootPaperProps {
+interface RootPaperProps extends React.ComponentProps<typeof Paper> {
   title: string;
   loading?: boolean;
   mudChip?: boolean;
@@ -23,8 +23,9 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
   loading,
   backButton,
   mudChip,
-
   children,
+  sx,
+  ...rest
 }) => {
   const navigate = useNavigate();
 
@@ -67,7 +68,7 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
           />
         </Box>
       )}
-      <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+      <Paper elevation={1} sx={{ p: 2, mb: 2, ...sx }} {...rest}>
         {children}
       </Paper>
     </>
