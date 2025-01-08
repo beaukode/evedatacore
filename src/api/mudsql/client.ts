@@ -48,7 +48,11 @@ export function createClient() {
           // TODO: Optimize this to fetch all schemas in one request
           schemas
             .getTableSchema(
-              resourceToHex({ type: "table", namespace: v.ns, name: v.table })
+              resourceToHex({
+                type: v.type || "table",
+                namespace: v.ns,
+                name: v.table,
+              })
             )
             .then((table) => [k, table.schema])
         )

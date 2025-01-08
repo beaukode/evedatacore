@@ -11,6 +11,7 @@ export type SelectOptions = {
   where?: string;
   orderBy?: string | string[];
   rels?: Record<string, SelectRelation>;
+  tableType?: TableType;
 };
 
 export type TableType = "table" | "offchainTable";
