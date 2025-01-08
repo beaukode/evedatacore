@@ -133,7 +133,7 @@ const ExploreTable: React.FC = () => {
       <PaperLevel1
         title={`${queryRecords.data?.length || ""} Records`}
         loading={queryRecords.isFetching}
-        sx={{ flexGrow: 1 }}
+        sx={{ flexGrow: 1, minHeight: "50vh" }}
         mudChip
       >
         {data && (
@@ -141,6 +141,7 @@ const ExploreTable: React.FC = () => {
             data={queryRecords.data || []}
             columns={columnsLabels}
             itemContent={itemContent}
+            dynamicWidth
             rememberScroll
           />
         )}
