@@ -141,7 +141,7 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
           );
           return acc;
         },
-        [`${data[0].from.name} → ${data[data.length - 1].to.name}`, ""]
+        [`${data[0]?.from.name} → ${data[data.length - 1]?.to.name}`, ""]
       )
       .join("\n");
 

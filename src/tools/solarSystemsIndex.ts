@@ -43,7 +43,7 @@ export function createSolarSystemsIndex(
     return [];
   }
 
-  function getById(id: string): SolarSystem {
+  function getById(id: string): SolarSystem | undefined {
     return data[id];
   }
 

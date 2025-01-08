@@ -1,17 +1,34 @@
 import React from "react";
-import { Typography, Paper, LinearProgress, Box } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  LinearProgress,
+  Box,
+  Chip,
+  IconButton,
+} from "@mui/material";
+import BackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router";
 
-interface RootPaperProps {
+interface RootPaperProps extends React.ComponentProps<typeof Paper> {
   title: string;
   loading?: boolean;
+  mudChip?: boolean;
+  backButton?: boolean;
   children?: React.ReactNode;
 }
 
 const PaperLevel1: React.FC<RootPaperProps> = ({
   title,
   loading,
+  backButton,
+  mudChip,
   children,
+  sx,
+  ...rest
 }) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Typography
@@ -20,7 +37,24 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
         sx={{ bgcolor: "background.default" }}
         gutterBottom
       >
+        {backButton && (
+          <IconButton color="primary" onClick={() => navigate(-1)}>
+            <BackIcon />
+          </IconButton>
+        )}
         {title}
+        {mudChip && (
+          <Chip
+            label="Mud"
+            size="small"
+            sx={{
+              ml: 2,
+              backgroundColor: "#ff7612",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          />
+        )}
       </Typography>
       {loading && (
         <Box sx={{ position: "relative" }}>
@@ -34,7 +68,7 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
           />
         </Box>
       )}
-      <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+      <Paper elevation={1} sx={{ p: 2, mb: 2, ...sx }} {...rest}>
         {children}
       </Paper>
     </>

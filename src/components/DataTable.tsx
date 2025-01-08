@@ -25,6 +25,7 @@ interface DataTableProps<T extends Record<string, unknown>> {
   columns: string[];
   itemContent: DataTableItemContentCallback<T>;
   rememberScroll?: boolean;
+  dynamicWidth?: boolean;
 }
 
 const DataTable = <T extends Record<string, unknown>>({
@@ -32,6 +33,7 @@ const DataTable = <T extends Record<string, unknown>>({
   itemContent,
   columns,
   rememberScroll,
+  dynamicWidth,
 }: DataTableProps<T>) => {
   const [isScrolling, setIsScrolling] = React.useState(false);
   const [scroll, setScroll] = React.useState<number | undefined>(undefined);
@@ -54,6 +56,18 @@ const DataTable = <T extends Record<string, unknown>>({
     }
   }, [debounceScroll, location.search, navigate]);
 
+  const sx = dynamicWidth
+    ? ({
+        borderCollapse: "separate",
+        tableLayout: "fixed",
+        width: "auto",
+        minWidth: "100%",
+      } as const)
+    : ({
+        borderCollapse: "separate",
+        tableLayout: "fixed",
+      } as const);
+
   return (
     <>
       <TableVirtuoso
@@ -73,12 +87,7 @@ const DataTable = <T extends Record<string, unknown>>({
         )}
         components={{
           Table: (props) => (
-            <Table
-              size="small"
-              {...props}
-              sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
-              stickyHeader
-            />
+            <Table size="small" {...props} sx={sx} stickyHeader />
           ),
           TableHead: React.forwardRef((props, ref) => (
             <TableHead {...props} ref={ref} />
