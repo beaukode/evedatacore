@@ -1,9 +1,10 @@
-import { Hex } from "viem";
+import { Hex, isHex, sliceHex } from "viem";
 import { Table as MudTable } from "@latticexyz/config";
-import { resourceToHex } from "@latticexyz/common";
+import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { keyBy } from "lodash-es";
 import { client, listNamespaces } from "..";
 import { decodeTable } from "../externals";
+import { ensureArray, toSqlHex } from "../utils";
 
 type DbRow = {
   tableId: Hex;
@@ -27,11 +28,34 @@ type ListTablesOptions = {
 export async function listTables(
   options?: ListTablesOptions
 ): Promise<Table[]> {
+  let where = "";
   if (options?.namespaceIds) {
-    // TODO: Implement this
+    const namespaceIds = ensureArray(options.namespaceIds);
+    if (namespaceIds.length === 0) return []; // No namespaces to query
+    where = namespaceIds
+      .flatMap((id) => {
+        if (!isHex(id)) return [];
+        const { namespace } = hexToResource(id);
+        const tableId = sliceHex(
+          resourceToHex({ type: "table", namespace, name: "" }),
+          0,
+          16
+        );
+        const offchainId = sliceHex(
+          resourceToHex({ type: "offchainTable", namespace, name: "" }),
+          0,
+          16
+        );
+
+        return [
+          `"tableId" >= '${toSqlHex(tableId)}' AND "tableId" < '${toSqlHex(tableId.slice(0, -1))}1'`,
+          `"tableId" >= '${toSqlHex(offchainId)}' AND "tableId" < '${toSqlHex(offchainId.slice(0, -1))}1'`,
+        ];
+      })
+      .join(" OR ");
   }
   const tables = await client
-    .selectFrom<DbRow>("store", "Tables", { orderBy: "tableId" })
+    .selectFrom<DbRow>("store", "Tables", { orderBy: "tableId", where })
     .then((result) =>
       result.map((r) => {
         const decoded = decodeTable({
