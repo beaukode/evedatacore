@@ -17,7 +17,6 @@ function transformResult(
 ): Record<string, string>[] {
   const results = data.shift();
   const header = results?.shift();
-  console.log("header", header);
   if (!results || !header) {
     return [];
   }
@@ -61,7 +60,6 @@ export function createClient() {
 
     const query = queryBuilder(ns, table, options || {}, schemasMap);
 
-    console.log("query", query);
     const r = await postQ({ body: [{ address: worldAddress, query }] });
     if (r.error) {
       throw new Error(r.error.msg);
