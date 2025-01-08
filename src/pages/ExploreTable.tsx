@@ -1,6 +1,13 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Box, List, ListItem, ListItemText, TableCell } from "@mui/material";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  TableCell,
+  TextField,
+} from "@mui/material";
 import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
@@ -13,9 +20,14 @@ import DisplayNamespace from "@/components/DisplayNamespace";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import { client } from "@/api/mudsql";
 import DataTable from "@/components/DataTable";
+import useQuerySearch from "@/tools/useQuerySearch";
+import { filterInProps } from "@/tools";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
+  const [search, setSearch, debouncedSearch] = useQuerySearch({
+    text: "",
+  });
 
   const table = isHex(id) ? hexToResource(id) : undefined;
   const namespaceId = table
@@ -73,6 +85,11 @@ const ExploreTable: React.FC = () => {
       {} as Record<string, string>
     );
   }, [query.data]);
+
+  const records = React.useMemo(() => {
+    if (!queryRecords.data) return [];
+    return filterInProps(queryRecords.data, debouncedSearch.text, columnsKeys);
+  }, [queryRecords.data, columnsKeys, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (idx: number, item: Record<string, string>) => {
@@ -153,9 +170,21 @@ const ExploreTable: React.FC = () => {
         sx={{ flexGrow: 1, minHeight: "50vh" }}
         mudChip
       >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) => {
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            );
+          }}
+          sx={{ mb: 2 }}
+          fullWidth
+        />
         {data && (
           <DataTable
-            data={queryRecords.data || []}
+            data={records}
             columns={columnsLabels}
             itemContent={itemContent}
             dynamicWidth
