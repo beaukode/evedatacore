@@ -9,6 +9,7 @@ import Error404 from "./Error404";
 import { getNamespace } from "@/api/mudsql/queries";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
+import TableTables from "@/components/tables/TableTables";
 
 const ExploreNamespace: React.FC = () => {
   const { id } = useParams();
@@ -51,6 +52,13 @@ const ExploreNamespace: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
+      <TableTables
+        namespaces={[
+          id,
+          "0x6e7341544c4153415a0000000000000000000000000000000000000000000000",
+        ]}
+        hideNamespaceColumn
+      />
     </Box>
   );
 };

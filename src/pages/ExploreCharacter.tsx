@@ -26,7 +26,9 @@ import DisplayAssembly from "@/components/DisplayAssembly";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import DisplayOwner from "@/components/DisplayOwner";
 import Error404 from "./Error404";
-import Namespaces from "@/fragments/Character/Namespaces";
+import TableNamespaces from "@/components/tables/TableNamespaces";
+import TableTables from "@/components/tables/TableTables";
+import { listNamespaces } from "@/api/mudsql";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -59,6 +61,13 @@ const ExploreCharacter: React.FC = () => {
       );
     });
   }, [queryKillmails.data, address]);
+
+  const queryNamespaces = useQuery({
+    queryKey: ["Namespaces", address],
+    queryFn: async () => await listNamespaces({ owners: address }),
+  });
+
+  const namespaces = queryNamespaces.data || [];
 
   if (!address || (!query.isLoading && !query.data)) {
     return <Error404 />;
@@ -246,7 +255,8 @@ const ExploreCharacter: React.FC = () => {
           </Paper>
         </>
       )}
-      <Namespaces address={address} />
+      <TableNamespaces address={address} />
+      <TableTables namespaces={namespaces.map((ns) => ns.namespaceId)} />
     </Box>
   );
 };

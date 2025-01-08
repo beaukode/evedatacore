@@ -21,20 +21,9 @@ import DisplayTable from "@/components/DisplayTable";
 import { DataTableContext } from "@/components/DataTable";
 import { NoMaxWidthTooltip } from "@/components/ui/NoMaxWidthTooltip";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
+import DisplayTableContent from "@/components/DisplayTableContent";
 
 const columns = ["Name", "Namespace", "Owner", "Fields"];
-
-function buildFieldText(fieldCount: number, keyCount: number) {
-  let fieldText = `${fieldCount} field`;
-  if (fieldCount > 1) {
-    fieldText += "s";
-  }
-  fieldText += `, ${keyCount} key`;
-  if (keyCount > 1) {
-    fieldText += "s";
-  }
-  return fieldText;
-}
 
 const ExploreTables: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -177,7 +166,7 @@ const ExploreTables: React.FC = () => {
               {t.namespaceOwnerName || t.namespaceOwner}
             </TableCell>
             <TableCell>
-              {buildFieldText(Object.keys(t.schema).length, t.key.length)}
+              <DisplayTableContent table={t} />
             </TableCell>
           </React.Fragment>
         );
@@ -216,7 +205,7 @@ const ExploreTables: React.FC = () => {
                   cursor: "help",
                 }}
               >
-                {buildFieldText(Object.keys(t.schema).length, t.key.length)}
+                <DisplayTableContent table={t} />
               </Box>
             </NoMaxWidthTooltip>
           </TableCell>

@@ -16,7 +16,7 @@ interface NamespacesProps {
   address: string;
 }
 
-const Namespaces: React.FC<NamespacesProps> = ({ address }) => {
+const TableNamespaces: React.FC<NamespacesProps> = ({ address }) => {
   const query = useQuery({
     queryKey: ["Namespaces", address],
     queryFn: async () => await listNamespaces({ owners: address }),
@@ -53,4 +53,4 @@ const Namespaces: React.FC<NamespacesProps> = ({ address }) => {
   );
 };
 
-export default Namespaces;
+export default TableNamespaces;
