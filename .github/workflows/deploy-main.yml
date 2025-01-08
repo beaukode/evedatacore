@@ -26,6 +26,8 @@ jobs:
           node-version: 20.x
       - name: "Pre build"
         run: "npm ci"
+      - name: "Test"
+        run: "npm run test"
       - name: "Build"
         env:
           DOT_ENV_FILE: ".env.${{ github.ref_name }}"

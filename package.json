@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "vitest",
     "lint": "eslint .",
     "preview": "vite preview",
     "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts",
