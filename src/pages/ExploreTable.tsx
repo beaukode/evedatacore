@@ -40,6 +40,7 @@ const ExploreTable: React.FC = () => {
       }
       return client.selectFrom(table.namespace, table.name, {
         orderBy: [...query.data.key],
+        tableType: query.data.type,
       });
     },
     enabled: !!query.data,
@@ -63,18 +64,34 @@ const ExploreTable: React.FC = () => {
     return query.data.key;
   }, [query.data]);
 
+  const columnsTypes = React.useMemo(() => {
+    if (!query.data) return {};
+    return Object.entries(query.data.schema).reduce(
+      (acc, [k, { type }]) => {
+        return { ...acc, [k]: type };
+      },
+      {} as Record<string, string>
+    );
+  }, [query.data]);
+
   const itemContent = React.useCallback(
     (idx: number, item: Record<string, string>) => {
       const key = tableKeys.map((k) => item[k]).join("|") || idx.toString();
       return (
         <React.Fragment key={key}>
           {columnsKeys.map((k, i) => (
-            <TableCell key={i}>{item[k]}</TableCell>
+            <TableCell key={i} sx={{ fontFamily: "monospace" }}>
+              {columnsTypes[k] === "bool"
+                ? item[k]
+                  ? "true"
+                  : "false"
+                : item[k]}
+            </TableCell>
           ))}
         </React.Fragment>
       );
     },
-    [tableKeys, columnsKeys]
+    [tableKeys, columnsKeys, columnsTypes]
   );
 
   if (!id || !table || !namespaceId || (!query.isLoading && !query.data)) {
