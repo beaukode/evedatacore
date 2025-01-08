@@ -52,13 +52,7 @@ const ExploreNamespace: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
-      <TableTables
-        namespaces={[
-          id,
-          "0x6e7341544c4153415a0000000000000000000000000000000000000000000000",
-        ]}
-        hideNamespaceColumn
-      />
+      <TableTables namespaces={[id]} hideNamespaceColumn />
     </Box>
   );
 };
