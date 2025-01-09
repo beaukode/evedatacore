@@ -4,6 +4,7 @@ import { worldAddress } from "@/constants";
 import { toSqlHex } from "./utils";
 import { Table } from "@latticexyz/config";
 import { decodeTable } from "./externals";
+import { omit } from "lodash-es";
 
 export function createSchemasRepository() {
   const cache = createCache({
@@ -46,13 +47,21 @@ export function createSchemasRepository() {
       throw new Error("Invalid schema response");
     }
 
-    return decodeTable({
-      tableId,
-      keySchema,
-      valueSchema,
-      abiEncodedKeyNames,
-      abiEncodedFieldNames,
-    });
+    const table = {
+      ...decodeTable({
+        tableId,
+        keySchema,
+        valueSchema,
+        abiEncodedKeyNames,
+        abiEncodedFieldNames,
+      }),
+    };
+
+    if (table.namespace === "eveworld" && table.name === "SmartGateConfigT") {
+      table.schema = omit(table.schema, ["maxDistance"]);
+    }
+
+    return table;
   });
 
   async function getTableSchema(id: string): Promise<Table> {
