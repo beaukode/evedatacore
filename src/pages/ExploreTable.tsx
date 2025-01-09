@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import {
+  Alert,
   Box,
   List,
   ListItem,
@@ -187,7 +188,11 @@ const ExploreTable: React.FC = () => {
             }}
             fullWidth
           />
+          {queryRecords.isError && (
+            <Alert severity="error">{queryRecords.error.message}</Alert>
+          )}
         </Box>
+
         {data && (
           <Box flexGrow={1} overflow="auto">
             <DataTable
