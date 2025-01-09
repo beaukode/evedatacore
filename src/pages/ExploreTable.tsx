@@ -167,29 +167,37 @@ const ExploreTable: React.FC = () => {
       <PaperLevel1
         title={`${queryRecords.data?.length || ""} Records`}
         loading={queryRecords.isFetching}
-        sx={{ flexGrow: 1, minHeight: "50vh" }}
+        sx={{
+          flexGrow: 1,
+          minHeight: "50vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
         mudChip
       >
-        <TextField
-          label="Search"
-          value={search.text}
-          onChange={(e) => {
-            setSearch(
-              "text",
-              e.currentTarget.value.substring(0, 255).toLowerCase()
-            );
-          }}
-          sx={{ mb: 2 }}
-          fullWidth
-        />
-        {data && (
-          <DataTable
-            data={records}
-            columns={columnsLabels}
-            itemContent={itemContent}
-            dynamicWidth
-            rememberScroll
+        <Box mb={2}>
+          <TextField
+            label="Search"
+            value={search.text}
+            onChange={(e) => {
+              setSearch(
+                "text",
+                e.currentTarget.value.substring(0, 255).toLowerCase()
+              );
+            }}
+            fullWidth
           />
+        </Box>
+        {data && (
+          <Box flexGrow={1} overflow="auto">
+            <DataTable
+              data={records}
+              columns={columnsLabels}
+              itemContent={itemContent}
+              dynamicWidth
+              rememberScroll
+            />
+          </Box>
         )}
       </PaperLevel1>
     </Box>
