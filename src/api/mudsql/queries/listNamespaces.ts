@@ -29,14 +29,14 @@ export async function listNamespaces(
     `"namespaceId" <> '\\x6e73000000000000000000000000000000000000000000000000000000000000'`, // exclude the null namespace
   ];
   if (options?.owners) {
-    where.push(
-      `"owner" IN ('${ensureArray(options.owners).map(toSqlHex).join("', '")}')`
-    );
+    const owners = ensureArray(options.owners);
+    if (owners.length === 0) return []; // No owners to query
+    where.push(`"owner" IN ('${owners.map(toSqlHex).join("', '")}')`);
   }
   if (options?.ids) {
-    where.push(
-      `"namespaceId" IN ('${ensureArray(options.ids).map(toSqlHex).join("', '")}')`
-    );
+    const ids = ensureArray(options.ids);
+    if (ids.length === 0) return []; // No ids to query
+    where.push(`"namespaceId" IN ('${ids.map(toSqlHex).join("', '")}')`);
   }
 
   const result = await client.selectFrom<DbRow>("world", "NamespaceOwner", {

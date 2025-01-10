@@ -22,12 +22,15 @@ type ListCharactersOptions = {
   orderBy?: "name" | "owner";
 };
 
-export function listCharacters(
+export async function listCharacters(
   options?: ListCharactersOptions
 ): Promise<Character[]> {
-  const where = options?.addresses
-    ? `"characterAddress" IN ('${ensureArray(options.addresses).map(toSqlHex).join("', '")}')`
-    : undefined;
+  let where: string | undefined = undefined;
+  if (options?.addresses) {
+    const addresses = ensureArray(options.addresses);
+    if (addresses.length === 0) return []; // No addresses to query
+    where = `"characterAddress" IN ('${ensureArray(addresses).map(toSqlHex).join("', '")}')`;
+  }
 
   return client
     .selectFrom<DbRow>("eveworld", "CharactersByAddr", {
