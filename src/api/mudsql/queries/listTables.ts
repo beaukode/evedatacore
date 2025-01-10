@@ -4,7 +4,7 @@ import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { keyBy } from "lodash-es";
 import { client, listNamespaces } from "..";
 import { decodeTable } from "../externals";
-import { ensureArray, toSqlHex } from "../utils";
+import { ensureArray, incrementHex, toSqlHex } from "../utils";
 
 type DbRow = {
   tableId: Hex;
@@ -46,10 +46,12 @@ export async function listTables(
           0,
           16
         );
+        const tableBound = incrementHex(tableId);
+        const offchainBound = incrementHex(offchainId);
 
         return [
-          `"tableId" >= '${toSqlHex(tableId)}' AND "tableId" < '${toSqlHex(tableId.slice(0, -1))}1'`,
-          `"tableId" >= '${toSqlHex(offchainId)}' AND "tableId" < '${toSqlHex(offchainId.slice(0, -1))}1'`,
+          `"tableId" >= '${toSqlHex(tableId)}' AND "tableId" < '${toSqlHex(tableBound)}'`,
+          `"tableId" >= '${toSqlHex(offchainId)}' AND "tableId" < '${toSqlHex(offchainBound)}'`,
         ];
       })
       .join(" OR ");
