@@ -8,6 +8,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Button,
 } from "@mui/material";
 import OffChainIcon from "@mui/icons-material/BackupTable";
 import useQuerySearch from "@/tools/useQuerySearch";
@@ -22,6 +23,7 @@ import { DataTableContext } from "@/components/DataTable";
 import { NoMaxWidthTooltip } from "@/components/ui/NoMaxWidthTooltip";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DisplayTableContent from "@/components/DisplayTableContent";
+import ExternalLink from "@/components/ui/ExternalLink";
 
 const columns = ["Name", "Namespace", "Owner", "Fields"];
 
@@ -155,6 +157,20 @@ const ExploreTables: React.FC = () => {
     );
   }, [namespaces, search.namespace, setSearch]);
 
+  const copySchemas = React.useCallback(() => {
+    const content = tables
+      .map((t) => {
+        const fields = Object.entries(t.schema)
+          .map(([k, v]) => {
+            return `  ${k} ${v.type}`;
+          })
+          .join("\n");
+        return `Table ${t.namespace}.${t.name} {\n` + fields + `\n}\n`;
+      })
+      .join("\n");
+    navigator.clipboard.writeText(content);
+  }, [tables]);
+
   const itemContent = React.useCallback(
     (_: number, t: (typeof tables)[number], context: DataTableContext) => {
       if (context.isScrolling) {
@@ -234,6 +250,29 @@ const ExploreTables: React.FC = () => {
       />
       {ownerSelect}
       {namespaceSelect}
+      <Box
+        flexGrow="1"
+        display="flex"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        marginRight={2}
+      >
+        <Tooltip
+          title={
+            <>
+              Copy schemas as DBML format.{" "}
+              <ExternalLink
+                href="https://dbml.dbdiagram.io/docs/"
+                title="DBML documentation"
+              />
+            </>
+          }
+        >
+          <Button variant="outlined" size="small" onClick={copySchemas}>
+            Copy schemas
+          </Button>
+        </Tooltip>
+      </Box>
     </DataTableLayout>
   );
 };
