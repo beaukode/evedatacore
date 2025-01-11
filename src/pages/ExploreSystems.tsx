@@ -7,7 +7,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Tooltip,
 } from "@mui/material";
+import PrivateIcon from "@mui/icons-material/Lock";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
 import { filterInProps } from "@/tools";
@@ -158,12 +160,26 @@ const ExploreSystems: React.FC = () => {
     );
   }, [namespaces, search.namespace, setSearch]);
 
+  const privateIcon = React.useMemo(
+    () => (
+      <Tooltip title="Public access is disabled" placement="right" arrow>
+        <PrivateIcon color="info" />
+      </Tooltip>
+    ),
+    []
+  );
+
   const itemContent = React.useCallback(
     (_: number, sys: (typeof tables)[number], context: DataTableContext) => {
       if (context.isScrolling) {
         return (
           <React.Fragment key={sys.systemId}>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{sys.name}</TableCell>
+            <TableCell sx={{ height: 49.5, px: 3 }}>
+              <Box display="flex" alignItems="center">
+                <span style={{ paddingRight: 8 }}>{sys.name}</span>
+                {!sys.publicAccess && privateIcon}
+              </Box>
+            </TableCell>
             <TableCell sx={{ height: 49.5, px: 3 }}>{sys.namespace}</TableCell>
             <TableCell sx={{ height: 49.5, px: 3 }}>
               {sys.namespaceOwnerName || sys.namespaceOwner}
@@ -175,7 +191,10 @@ const ExploreSystems: React.FC = () => {
       return (
         <React.Fragment key={sys.systemId}>
           <TableCell>
-            <DisplaySystem id={sys.systemId} name={sys.name} />
+            <Box display="flex" alignItems="center">
+              <DisplaySystem id={sys.systemId} name={sys.name} />
+              {!sys.publicAccess && privateIcon}
+            </Box>
           </TableCell>
           <TableCell>
             <DisplayNamespace id={sys.namespaceId} name={sys.namespace} />
@@ -201,7 +220,7 @@ const ExploreSystems: React.FC = () => {
         </React.Fragment>
       );
     },
-    []
+    [privateIcon]
   );
 
   return (
