@@ -59,7 +59,9 @@ export function createClient() {
     );
 
     const query = queryBuilder(ns, table, options || {}, schemasMap);
-
+    if (import.meta.env.DEV) {
+      console.log("MUD Sql:", query);
+    }
     const r = await postQ({ body: [{ address: worldAddress, query }] });
     if (r.error) {
       throw new Error(r.error.msg);
