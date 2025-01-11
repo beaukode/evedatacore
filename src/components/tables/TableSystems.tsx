@@ -1,0 +1,97 @@
+import React from "react";
+import {
+  TableCell,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  Typography,
+  Tooltip,
+  Box,
+} from "@mui/material";
+import PrivateIcon from "@mui/icons-material/Lock";
+import { useQuery } from "@tanstack/react-query";
+import { listSystems } from "@/api/mudsql";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
+import DisplayNamespace from "@/components/DisplayNamespace";
+import DisplaySystem from "../DisplaySystem";
+import ExternalLink from "../ui/ExternalLink";
+
+interface TableSystemsProps {
+  namespaces: string[];
+  hideNamespaceColumn?: boolean;
+}
+
+const TableSystems: React.FC<TableSystemsProps> = ({
+  namespaces,
+  hideNamespaceColumn,
+}) => {
+  const queryKey = namespaces.join("|");
+
+  const query = useQuery({
+    queryKey: ["Systems", queryKey],
+    queryFn: async () => listSystems({ namespaceIds: namespaces }),
+    retry: false,
+    throwOnError: true,
+  });
+
+  const privateIcon = React.useMemo(
+    () => (
+      <Tooltip title="Public access is disabled" placement="right" arrow>
+        <PrivateIcon color="info" />
+      </Tooltip>
+    ),
+    []
+  );
+
+  const systems = query.data || [];
+
+  return (
+    <PaperLevel1 title="Systems" loading={query.isFetching} mudChip>
+      {namespaces.length === 0 && <Typography variant="body1">None</Typography>}
+      {namespaces.length > 0 && (
+        <Table size="small" stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              {!hideNamespaceColumn && <TableCell>Namespace</TableCell>}
+              <TableCell>Contract</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {systems.map((sys) => {
+              return (
+                <TableRow key={sys.systemId}>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      <DisplaySystem id={sys.systemId} name={sys.name} />
+                      {!sys.publicAccess && privateIcon}
+                    </Box>
+                  </TableCell>
+                  {!hideNamespaceColumn && (
+                    <TableCell>
+                      <DisplayNamespace
+                        id={sys.namespaceId}
+                        name={sys.namespace}
+                      />
+                    </TableCell>
+                  )}
+                  <TableCell>
+                    <ExternalLink
+                      href={`https://explorer.garnetchain.com/address/${sys.contract}`}
+                      title={sys.contract}
+                    >
+                      {sys.contract}
+                    </ExternalLink>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      )}
+    </PaperLevel1>
+  );
+};
+
+export default TableSystems;

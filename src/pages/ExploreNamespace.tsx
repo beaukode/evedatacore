@@ -10,6 +10,7 @@ import { getNamespace } from "@/api/mudsql/queries";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import TableTables from "@/components/tables/TableTables";
+import TableSystems from "@/components/tables/TableSystems";
 
 const ExploreNamespace: React.FC = () => {
   const { id } = useParams();
@@ -53,6 +54,7 @@ const ExploreNamespace: React.FC = () => {
         )}
       </PaperLevel1>
       <TableTables namespaces={[id]} hideNamespaceColumn />
+      <TableSystems namespaces={[id]} hideNamespaceColumn />
     </Box>
   );
 };

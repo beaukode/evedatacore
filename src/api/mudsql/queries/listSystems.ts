@@ -37,7 +37,7 @@ export async function listSystems(
         if (!isHex(id)) return [];
         const { namespace } = hexToResource(id);
         const systemId = sliceHex(
-          resourceToHex({ type: "table", namespace, name: "" }),
+          resourceToHex({ type: "system", namespace, name: "" }),
           0,
           16
         );

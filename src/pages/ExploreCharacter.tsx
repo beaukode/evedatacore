@@ -29,6 +29,7 @@ import Error404 from "./Error404";
 import TableNamespaces from "@/components/tables/TableNamespaces";
 import TableTables from "@/components/tables/TableTables";
 import { listNamespaces } from "@/api/mudsql";
+import TableSystems from "@/components/tables/TableSystems";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -257,6 +258,7 @@ const ExploreCharacter: React.FC = () => {
       )}
       <TableNamespaces address={address} />
       <TableTables namespaces={namespaces.map((ns) => ns.namespaceId)} />
+      <TableSystems namespaces={namespaces.map((ns) => ns.namespaceId)} />
     </Box>
   );
 };
