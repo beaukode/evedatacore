@@ -18,8 +18,7 @@ type Character = {
 };
 
 export async function getCharacter(id: string): Promise<Character | undefined> {
-  if (id.length !== 66 || !isHex(id)) return undefined;
-
+  if (id.length !== 42 || !isHex(id)) return undefined;
   const result = await client.selectFrom<DbRow>(
     "eveworld",
     "CharactersByAddr",
