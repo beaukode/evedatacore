@@ -13,7 +13,7 @@ import { NavLink } from "react-router";
 import { startCase } from "lodash-es";
 import { getConfig } from "@/api/stillness";
 import ListItemLink from "@/components/ui/ListItemLink";
-import ListItem from "@/components/ui/ListItem";
+import BasicListItem from "@/components/ui/BasicListItem";
 
 const ExploreConfig: React.FC = () => {
   const query = useQuery({
@@ -42,12 +42,12 @@ const ExploreConfig: React.FC = () => {
         {!query.isLoading && data && (
           <Box>
             <List sx={{ width: "100%", overflow: "hidden" }}>
-              <ListItem title="Chain Id">{data.chainId}</ListItem>
-              <ListItem title="Native Currency">
+              <BasicListItem title="Chain Id">{data.chainId}</BasicListItem>
+              <BasicListItem title="Native Currency">
                 {data.nativeCurrency?.name} [{data.nativeCurrency?.symbol}]{" "}
                 {data.nativeCurrency?.decimals} decimals
-              </ListItem>
-              <ListItem title="Fuel type" disableGutters>
+              </BasicListItem>
+              <BasicListItem title="Fuel type" disableGutters>
                 <Button
                   variant="outlined"
                   component={NavLink}
@@ -55,7 +55,7 @@ const ExploreConfig: React.FC = () => {
                 >
                   {data.itemTypeIDs?.fuel}
                 </Button>
-              </ListItem>
+              </BasicListItem>
               <ListItemLink
                 title="Block Explorer"
                 href={data.blockExplorerUrl}
@@ -106,9 +106,11 @@ const ExploreConfig: React.FC = () => {
             <List sx={{ width: "100%" }}>
               {Object.entries(data.contracts || {}).map(([key, value]) => {
                 return typeof value === "string" ? (
-                  <ListItem title={startCase(key)}>{value}</ListItem>
+                  <BasicListItem title={startCase(key)}>{value}</BasicListItem>
                 ) : (
-                  <ListItem title={startCase(key)}>{value.address}</ListItem>
+                  <BasicListItem title={startCase(key)}>
+                    {value.address}
+                  </BasicListItem>
                 );
               })}
             </List>
@@ -124,7 +126,7 @@ const ExploreConfig: React.FC = () => {
           <Paper elevation={1} sx={{ mb: 2 }}>
             <List sx={{ width: "100%" }}>
               {Object.entries(data.systems || {}).map(([key, value]) => (
-                <ListItem title={startCase(key)}>{value}</ListItem>
+                <BasicListItem title={startCase(key)}>{value}</BasicListItem>
               ))}
             </List>
           </Paper>

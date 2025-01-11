@@ -26,6 +26,8 @@ import ExploreNamespaces from "./ExploreNamespaces";
 import ExploreNamespace from "./ExploreNamespace";
 import ExploreTables from "./ExploreTables";
 import ExploreTable from "./ExploreTable";
+import ExploreSystems from "./ExploreSystems";
+import ExploreSystem from "./ExploreSystem";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
@@ -37,7 +39,8 @@ const routesMap: Record<string, number> = {
   "/explore/solarsystems": 4,
   "/explore/namespaces": 5,
   "/explore/tables": 6,
-  "/explore/config": 7,
+  "/explore/systems": 7,
+  "/explore/config": 8,
 };
 
 const Explore: React.FC = () => {
@@ -88,6 +91,7 @@ const Explore: React.FC = () => {
             to="/explore/namespaces"
           />
           <Tab label="Tables" component={NavLink} to="/explore/tables" />
+          <Tab label="Systems" component={NavLink} to="/explore/systems" />
           <Tab label="Config" component={NavLink} to="/explore/config" />
         </Tabs>
       </Paper>
@@ -125,6 +129,8 @@ const Explore: React.FC = () => {
           <Route path="/namespaces/:id" element={<ExploreNamespace />} />
           <Route path="/tables" element={<ExploreTables />} />
           <Route path="/tables/:id" element={<ExploreTable />} />
+          <Route path="/systems" element={<ExploreSystems />} />
+          <Route path="/systems/:id" element={<ExploreSystem />} />
           <Route path="/config" element={<ExploreConfig />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
