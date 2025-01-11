@@ -1,19 +1,13 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import {
-  Box,
-  Paper,
-  LinearProgress,
-  List,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Box, List, Button } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router";
 import { startCase } from "lodash-es";
 import { getConfig } from "@/api/stillness";
 import ListItemLink from "@/components/ui/ListItemLink";
 import BasicListItem from "@/components/ui/BasicListItem";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
 
 const ExploreConfig: React.FC = () => {
   const query = useQuery({
@@ -23,25 +17,24 @@ const ExploreConfig: React.FC = () => {
 
   const data = query.data;
   return (
-    <Box p={2} flexGrow={1} overflow="auto">
+    <Box
+      p={2}
+      flexGrow={1}
+      overflow="auto"
+      display={"flex"}
+      flexDirection={"column"}
+    >
       <Helmet>
         <title>Config</title>
       </Helmet>
-      <Typography
-        variant="h6"
-        component="h2"
-        sx={{ bgcolor: "background.default" }}
-        gutterBottom
+      <PaperLevel1
+        title={data?.name || "..."}
+        loading={query.isFetching}
+        backButton
       >
-        {data?.name || "..."}
-      </Typography>
-      <Paper elevation={1} sx={{ mb: 2 }}>
-        <LinearProgress
-          sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-        />
-        {!query.isLoading && data && (
+        {data && (
           <Box>
-            <List sx={{ width: "100%", overflow: "hidden" }}>
+            <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
               <BasicListItem title="Chain Id">{data.chainId}</BasicListItem>
               <BasicListItem title="Native Currency">
                 {data.nativeCurrency?.name} [{data.nativeCurrency?.symbol}]{" "}
@@ -69,19 +62,11 @@ const ExploreConfig: React.FC = () => {
             </List>
           </Box>
         )}
-      </Paper>
-      {!query.isLoading && data && (
-        <>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{ bgcolor: "background.default" }}
-            gutterBottom
-          >
-            Rpc
-          </Typography>
-          <Paper elevation={1} sx={{ mb: 2 }}>
-            {Object.entries(data.rpcUrls || {}).map(([key, value]) => (
+      </PaperLevel1>
+      <PaperLevel1 title="Rpc" loading={query.isFetching}>
+        <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+          {data &&
+            Object.entries(data.rpcUrls || {}).map(([key, value]) => (
               <>
                 <ListItemLink
                   title={startCase(`${key} Http`)}
@@ -93,45 +78,30 @@ const ExploreConfig: React.FC = () => {
                 />
               </>
             ))}
-          </Paper>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{ bgcolor: "background.default" }}
-            gutterBottom
-          >
-            Contracts
-          </Typography>
-          <Paper elevation={1} sx={{ mb: 2 }}>
-            <List sx={{ width: "100%" }}>
-              {Object.entries(data.contracts || {}).map(([key, value]) => {
-                return typeof value === "string" ? (
-                  <BasicListItem title={startCase(key)}>{value}</BasicListItem>
-                ) : (
-                  <BasicListItem title={startCase(key)}>
-                    {value.address}
-                  </BasicListItem>
-                );
-              })}
-            </List>
-          </Paper>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{ bgcolor: "background.default" }}
-            gutterBottom
-          >
-            Systems
-          </Typography>
-          <Paper elevation={1} sx={{ mb: 2 }}>
-            <List sx={{ width: "100%" }}>
-              {Object.entries(data.systems || {}).map(([key, value]) => (
+        </List>
+      </PaperLevel1>
+      <PaperLevel1 title="Contracts" loading={query.isFetching}>
+        <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+          {data &&
+            Object.entries(data.contracts || {}).map(([key, value]) => {
+              return typeof value === "string" ? (
                 <BasicListItem title={startCase(key)}>{value}</BasicListItem>
-              ))}
-            </List>
-          </Paper>
-        </>
-      )}
+              ) : (
+                <BasicListItem title={startCase(key)}>
+                  {value.address}
+                </BasicListItem>
+              );
+            })}
+        </List>
+      </PaperLevel1>
+      <PaperLevel1 title="Systems" loading={query.isFetching}>
+        <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+          {data &&
+            Object.entries(data.systems || {}).map(([key, value]) => (
+              <BasicListItem title={startCase(key)}>{value}</BasicListItem>
+            ))}
+        </List>
+      </PaperLevel1>
     </Box>
   );
 };
