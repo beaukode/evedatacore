@@ -19,7 +19,6 @@ type Character = {
 
 type ListCharactersOptions = {
   addresses?: string[] | string;
-  orderBy?: "name" | "owner";
 };
 
 export const listCharacters =
@@ -35,6 +34,7 @@ export const listCharacters =
     return client
       .selectFrom<DbRow>("eveworld", "CharactersByAddr", {
         where,
+        orderBy: "name",
         rels: {
           entity: {
             ns: "eveworld",

@@ -12,30 +12,31 @@ import {
 } from "@mui/material";
 import { NavLink } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getSmartcharacters } from "@/api/stillness";
+import { useMudSql } from "@/contexts/AppContext";
 import DataTable, { DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
+import { filterInProps } from "@/tools";
 
-const columns = ["Name", "Address"];
+const columns = ["Name", "Address", "Id"];
 
 const ExploreCharacters: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Smartcharacters"],
-    queryFn: async () => await getSmartcharacters().then((r) => r.data),
+    queryFn: async () => mudSql.listCharacters(),
   });
 
   const smartcharacters = React.useMemo(() => {
     if (!query.data) return [];
-    return query.data.filter(
-      (sm) =>
-        sm.address !== "0x0000000000000000000000000000000000000000" &&
-        (!debouncedSearch.text ||
-          sm.name.toLowerCase().includes(debouncedSearch.text) ||
-          sm.address.toLowerCase().includes(debouncedSearch.text))
+    return filterInProps(
+      query.data,
+      debouncedSearch.text,
+      ["address", "name", "id"],
+      (sm) => sm.address !== "0x0000000000000000000000000000000000000000"
     );
   }, [query.data, debouncedSearch.text]);
 
@@ -52,7 +53,11 @@ const ExploreCharacters: React.FC = () => {
               <Avatar
                 alt={sm.name}
                 sx={{ bgcolor: "black", color: "silver" }}
-                src={context.isScrolling ? undefined : sm.image}
+                src={
+                  context.isScrolling
+                    ? undefined
+                    : "https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
+                }
                 variant="rounded"
               />
               <Button
@@ -64,6 +69,7 @@ const ExploreCharacters: React.FC = () => {
             </Box>
           </TableCell>
           <TableCell>{sm.address}</TableCell>
+          <TableCell> {sm.id}</TableCell>
         </React.Fragment>
       );
     },

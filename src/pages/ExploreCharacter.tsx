@@ -46,7 +46,7 @@ const ExploreCharacter: React.FC = () => {
   });
 
   const queryKillmails = useQuery({
-    queryKey: ["Killmails"],
+    queryKey: ["Killmails", address],
     queryFn: async () =>
       await getKillmails().then((r) =>
         r.data?.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))

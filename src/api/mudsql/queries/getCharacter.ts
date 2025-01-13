@@ -19,13 +19,13 @@ type Character = {
 
 export const getCharacter =
   (client: MudSqlClient) =>
-  async (id: string): Promise<Character | undefined> => {
-    if (id.length !== 42 || !isHex(id)) return undefined;
+  async (address: string): Promise<Character | undefined> => {
+    if (address.length !== 42 || !isHex(address)) return undefined;
     const result = await client.selectFrom<DbRow>(
       "eveworld",
       "CharactersByAddr",
       {
-        where: `"characterAddress" = '${toSqlHex(id)}'`,
+        where: `"characterAddress" = '${toSqlHex(address)}'`,
         rels: {
           entity: {
             ns: "eveworld",
