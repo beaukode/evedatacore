@@ -19,6 +19,7 @@ type Character = {
 
 type ListCharactersOptions = {
   addresses?: string[] | string;
+  ids?: string[] | string;
 };
 
 export const listCharacters =
@@ -28,12 +29,16 @@ export const listCharacters =
     if (options?.addresses) {
       const addresses = ensureArray(options.addresses);
       if (addresses.length === 0) return []; // No addresses to query
-      where = `"characterAddress" IN ('${ensureArray(addresses).map(toSqlHex).join("', '")}')`;
+      where = `"characterAddress" IN ('${addresses.map(toSqlHex).join("', '")}')`;
+    } else if (options?.ids) {
+      const ids = ensureArray(options.ids);
+      if (ids.length === 0) return []; // No ids to query
+      where = `"characterId" IN ('${ids.join("', '")}')`;
     }
 
     return client
       .selectFrom<DbRow>("eveworld", "CharactersByAddr", {
-        where,
+        where: where,
         orderBy: "name",
         rels: {
           entity: {

@@ -40,8 +40,11 @@ export function queryBuilder(
     whereParts.length > 0 ? " WHERE " + whereParts.join(" AND ") : "";
 
   const orderByParts = ensureArray(options.orderBy || []);
+  const orderDirection = options.orderDirection || "ASC";
   const orderBy =
-    orderByParts.length > 0 ? ` ORDER BY "${orderByParts.join('", "')}"` : "";
+    orderByParts.length > 0
+      ? ` ORDER BY "${orderByParts.join('", "')}" ${orderDirection}`
+      : "";
 
   return `SELECT ${select} FROM ${from}${where}${orderBy}`;
 }

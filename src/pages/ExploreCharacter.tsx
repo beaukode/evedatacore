@@ -20,7 +20,7 @@ import BackIcon from "@mui/icons-material/ArrowBack";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
-import { getKillmails, getSmartcharactersById } from "@/api/stillness";
+import { getSmartcharactersById } from "@/api/stillness";
 import { formatCrypto, ldapDate } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import DisplayAssembly from "@/components/DisplayAssembly";
@@ -45,24 +45,11 @@ const ExploreCharacter: React.FC = () => {
     enabled: !!address,
   });
 
-  const queryKillmails = useQuery({
+  const killmails = useQuery({
     queryKey: ["Killmails", address],
-    queryFn: async () =>
-      await getKillmails().then((r) =>
-        r.data?.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-      ),
-    enabled: !!address,
+    queryFn: async () => mudSql.listKillmails({ characterId: query.data?.id }),
+    enabled: !!query.data?.id,
   });
-
-  const killmails = React.useMemo(() => {
-    if (!queryKillmails.data || !address) return [];
-    return queryKillmails.data.filter((km) => {
-      return (
-        km.killer?.address?.toLowerCase().includes(address) ||
-        km.victim?.address?.toLowerCase().includes(address)
-      );
-    });
-  }, [queryKillmails.data, address]);
 
   const queryNamespaces = useQuery({
     queryKey: ["Namespaces", address],
@@ -193,7 +180,7 @@ const ExploreCharacter: React.FC = () => {
           </Paper>
         </>
       )}
-      {!queryKillmails.isLoading && killmails && (
+      {!killmails.isLoading && killmails.data && (
         <>
           <Typography
             variant="h6"
@@ -207,10 +194,10 @@ const ExploreCharacter: React.FC = () => {
             <LinearProgress
               sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
             />
-            {killmails.length === 0 && (
+            {killmails.data.length === 0 && (
               <Typography variant="body1">None</Typography>
             )}
-            {killmails.length > 0 && (
+            {killmails.data.length > 0 && (
               <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -222,30 +209,29 @@ const ExploreCharacter: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {killmails.map((km) => {
-                    const key = `${km.killer?.address}-${km.victim?.address}-${km.timestamp}`;
+                  {killmails.data.map((km) => {
                     const isoDate = ldapDate(km.timestamp).toISOString();
                     const date = isoDate.substring(0, 10);
                     const time = isoDate.substring(11, 19);
                     return (
-                      <TableRow key={key}>
+                      <TableRow key={km.id}>
                         <TableCell>{`${date} ${time}`}</TableCell>
                         <TableCell>
                           <DisplayOwner
-                            name={km.killer?.name}
-                            address={km.killer?.address}
+                            name={km.killerName}
+                            address={km.killerAddress}
                           />
                         </TableCell>
                         <TableCell>
                           <DisplayOwner
-                            name={km.victim?.name}
-                            address={km.victim?.address}
+                            name={km.victimName}
+                            address={km.victimAddress}
                           />
                         </TableCell>
-                        <TableCell>{km.loss_type}</TableCell>
+                        <TableCell>{km.lossType}</TableCell>
                         <TableCell>
                           <DisplaySolarsystem
-                            solarSystemId={km.solar_system_id}
+                            solarSystemId={km.solarSystemId}
                           />
                         </TableCell>
                       </TableRow>

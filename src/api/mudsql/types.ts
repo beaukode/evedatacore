@@ -15,6 +15,7 @@ export type SelectRelation = {
 export type SelectOptions = {
   where?: string;
   orderBy?: string | string[];
+  orderDirection?: "ASC" | "DESC";
   rels?: Record<string, SelectRelation>;
   tableType?: TableType;
 };

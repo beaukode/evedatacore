@@ -4,6 +4,7 @@ export * from "./getSystem";
 export * from "./getTable";
 export * from "./getTableSchema";
 export * from "./listCharacters";
+export * from "./listKillmails";
 export * from "./listNamespaces";
 export * from "./listSystems";
 export * from "./listTables";
