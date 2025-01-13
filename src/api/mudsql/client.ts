@@ -1,89 +1,28 @@
-import { client as restClient, postQ, PostQResponse } from "./generated/index";
-import { indexerBaseUrl } from "@/constants";
-import { createSchemasRepository } from "./schemasRepository";
-import { SelectOptions } from "./types";
-import { queryBuilder } from "./utils/queryBuilder";
-import { listSelectedTables } from "./utils";
-import { resourceToHex } from "@latticexyz/common";
+import {
+  createClient as createApiClient,
+  createConfig,
+} from "@hey-api/client-fetch";
+import { MudSqlClientConfig } from "./types";
+import * as queries from "./queries";
 
-restClient.setConfig({ baseUrl: indexerBaseUrl });
-
-export type MudSqlClientConfig = {
-  worldAddress: string;
+export type MudSqlClient = {
+  [K in keyof typeof queries]: ReturnType<(typeof queries)[K]>;
 };
 
-function transformResult(
-  data: PostQResponse["result"]
-): Record<string, string>[] {
-  const results = data.shift();
-  const header = results?.shift();
-  if (!results || !header) {
-    return [];
-  }
-  return results.map((row) => {
-    const obj: Record<string, string> = {};
-    header.forEach((key, index) => {
-      if (row[index]) {
-        obj[key] = row[index];
-      }
-    });
-    return obj;
-  });
-}
+type QueryKey = keyof typeof queries;
 
-export function createClient() {
-  let worldAddress: string = "";
-  const schemas = createSchemasRepository();
+export function createClient(config: MudSqlClientConfig): MudSqlClient {
+  const restClient = createApiClient(
+    createConfig({ baseUrl: config.indexerBaseUrl })
+  );
 
-  async function selectFrom<T extends object = Record<string, string>>(
-    ns: string,
-    table: string,
-    options?: SelectOptions
-  ): Promise<T[]> {
-    const tables = listSelectedTables(ns, table, options || {});
-    const schemasMap = Object.fromEntries(
-      await Promise.all(
-        Object.entries(tables).map(([k, v]) =>
-          // TODO: Optimize this to fetch all schemas in one request
-          schemas
-            .getTableSchema(
-              resourceToHex({
-                type: v.type || "table",
-                namespace: v.ns,
-                name: v.table,
-              })
-            )
-            .then((table) => [k, table.schema])
-        )
-      )
+  const client: Record<string, unknown> = {};
+  for (const key in queries) {
+    client[key] = queries[key as QueryKey](
+      client as MudSqlClient,
+      config,
+      restClient
     );
-
-    const query = queryBuilder(ns, table, options || {}, schemasMap);
-    if (import.meta.env.DEV) {
-      console.log("MUD Sql:", query);
-    }
-    const r = await postQ({ body: [{ address: worldAddress, query }] });
-    if (r.error) {
-      throw new Error(r.error.msg);
-    }
-    return transformResult(r.data.result) as T[];
   }
-
-  async function selectRaw(sql: string): Promise<Record<string, string>[]> {
-    const r = await postQ({ body: [{ address: worldAddress, query: sql }] });
-    if (r.error) {
-      throw new Error(r.error.msg);
-    }
-    return transformResult(r.data.result);
-  }
-
-  function setConfig(config: MudSqlClientConfig) {
-    worldAddress = config.worldAddress;
-  }
-
-  async function getTableSchema(id: string) {
-    return schemas.getTableSchema(id);
-  }
-
-  return { selectFrom, selectRaw, getTableSchema, setConfig };
+  return client as MudSqlClient;
 }

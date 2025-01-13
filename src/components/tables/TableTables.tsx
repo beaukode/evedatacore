@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import OffChainIcon from "@mui/icons-material/BackupTable";
 import { useQuery } from "@tanstack/react-query";
-import { listTables } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import DisplayNamespace from "@/components/DisplayNamespace";
 import DisplayTable from "@/components/DisplayTable";
@@ -22,12 +22,16 @@ interface TablesProps {
   hideNamespaceColumn?: boolean;
 }
 
-const TableTables: React.FC<TablesProps> = ({ namespaces, hideNamespaceColumn }) => {
-  const queryKey = namespaces.join("|");
+const TableTables: React.FC<TablesProps> = ({
+  namespaces,
+  hideNamespaceColumn,
+}) => {
+  const mudSql = useMudSql();
 
+  const queryKey = namespaces.join("|");
   const query = useQuery({
     queryKey: ["Tables", queryKey],
-    queryFn: async () => listTables({ namespaceIds: namespaces }),
+    queryFn: async () => mudSql.listTables({ namespaceIds: namespaces }),
     retry: false,
     throwOnError: true,
   });

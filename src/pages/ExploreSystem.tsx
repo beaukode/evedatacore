@@ -4,17 +4,18 @@ import { Box, List } from "@mui/material";
 import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import { hexToResource, resourceToHex } from "@latticexyz/common";
+import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import { getSystem } from "@/api/mudsql";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import { hexToResource, resourceToHex } from "@latticexyz/common";
 import DisplayNamespace from "@/components/DisplayNamespace";
 import BasicListItem from "@/components/ui/BasicListItem";
 import ExternalLink from "@/components/ui/ExternalLink";
 
 const ExploreSystem: React.FC = () => {
   const { id } = useParams();
+  const mudSql = useMudSql();
 
   const system = isHex(id) ? hexToResource(id) : undefined;
   const namespaceId = system
@@ -27,7 +28,7 @@ const ExploreSystem: React.FC = () => {
 
   const query = useQuery({
     queryKey: ["System", id],
-    queryFn: async () => getSystem(id ?? "0x"),
+    queryFn: async () => mudSql.getSystem(id ?? "0x"),
     enabled: !!id,
     throwOnError: true,
     retry: false,

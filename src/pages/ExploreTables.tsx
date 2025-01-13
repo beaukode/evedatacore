@@ -13,7 +13,7 @@ import {
 import OffChainIcon from "@mui/icons-material/BackupTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
-import { listTables } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import DisplayOwner from "@/components/DisplayOwner";
@@ -33,10 +33,11 @@ const ExploreTables: React.FC = () => {
     owner: "0",
     namespace: "0",
   });
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Tables"],
-    queryFn: () => listTables(),
+    queryFn: () => mudSql.listTables(),
   });
 
   const tables = React.useMemo(() => {

@@ -1,5 +1,5 @@
 import { Hex, isHex } from "viem";
-import { client } from "..";
+import { MudSqlClient } from "../client";
 import { toSqlHex } from "../utils";
 
 type DbRow = {
@@ -17,32 +17,34 @@ type Character = {
   name: string;
 };
 
-export async function getCharacter(id: string): Promise<Character | undefined> {
-  if (id.length !== 42 || !isHex(id)) return undefined;
-  const result = await client.selectFrom<DbRow>(
-    "eveworld",
-    "CharactersByAddr",
-    {
-      where: `"characterAddress" = '${toSqlHex(id)}'`,
-      rels: {
-        entity: {
-          ns: "eveworld",
-          table: "EntityRecordOffc",
-          field: "entityId",
-          fkNs: "eveworld",
-          fkTable: "CharactersByAddr",
-          fkField: "characterId",
+export const getCharacter =
+  (client: MudSqlClient) =>
+  async (id: string): Promise<Character | undefined> => {
+    if (id.length !== 42 || !isHex(id)) return undefined;
+    const result = await client.selectFrom<DbRow>(
+      "eveworld",
+      "CharactersByAddr",
+      {
+        where: `"characterAddress" = '${toSqlHex(id)}'`,
+        rels: {
+          entity: {
+            ns: "eveworld",
+            table: "EntityRecordOffc",
+            field: "entityId",
+            fkNs: "eveworld",
+            fkTable: "CharactersByAddr",
+            fkField: "characterId",
+          },
         },
-      },
-    }
-  );
+      }
+    );
 
-  const c = result[0];
-  if (!c) return undefined;
+    const c = result[0];
+    if (!c) return undefined;
 
-  return {
-    address: c.characterAddress,
-    id: c.characterId,
-    name: c.entity__name,
+    return {
+      address: c.characterAddress,
+      id: c.characterId,
+      name: c.entity__name,
+    };
   };
-}

@@ -2,6 +2,7 @@ import { isHex } from "viem";
 
 export * from "./listSelectedTables";
 export * from "./queryBuilder";
+export * from "./transformResults";
 
 export function toSqlHex(value: string) {
   if (value.startsWith("0x")) {

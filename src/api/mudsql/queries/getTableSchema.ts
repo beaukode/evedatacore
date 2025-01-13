@@ -1,12 +1,11 @@
 import { createCache } from "async-cache-dedupe";
-import { postQ } from "./generated";
-import { worldAddress } from "@/constants";
-import { toSqlHex } from "./utils";
 import { Table } from "@latticexyz/config";
-import { decodeTable } from "./externals";
+import { MudSqlClient } from "../client";
+import { toSqlHex } from "../utils";
+import { decodeTable } from "../externals";
 import { omit } from "lodash-es";
 
-export function createSchemasRepository() {
+export const getTableSchema = (client: MudSqlClient) => {
   const cache = createCache({
     ttl: 86400 * 365,
     storage: { type: "memory" },
@@ -15,34 +14,20 @@ export function createSchemasRepository() {
     FROM store__Tables
     WHERE "tableId" = '${toSqlHex(tableId)}'`;
 
-    const r = await postQ({ body: [{ address: worldAddress, query }] });
-    if (r.error) {
-      throw new Error(r.error.msg);
-    }
+    const res = await client.selectRaw(query);
+    const r = res.pop();
 
-    const results = r.data.result.shift();
-    if (!results || results.length !== 2) {
-      throw new Error("Invalid schema response");
-    }
-    const result = results.pop();
-
-    if (!result) {
+    if (!r) {
       throw new Error("Table schema not found");
     }
-    const [
-      ,
-      ,
-      keySchema,
-      valueSchema,
-      abiEncodedKeyNames,
-      abiEncodedFieldNames,
-    ] = result;
+    const { keySchema, valueSchema, abiEncodedKeyNames, abiEncodedFieldNames } =
+      r;
 
     if (
-      !keySchema ||
-      !valueSchema ||
-      !abiEncodedKeyNames ||
-      !abiEncodedFieldNames
+      typeof keySchema !== "string" ||
+      typeof valueSchema !== "string" ||
+      typeof abiEncodedKeyNames !== "string" ||
+      typeof abiEncodedFieldNames !== "string"
     ) {
       throw new Error("Invalid schema response");
     }
@@ -64,9 +49,7 @@ export function createSchemasRepository() {
     return table;
   });
 
-  async function getTableSchema(id: string): Promise<Table> {
+  return (id: string) => {
     return cache.getTableSchema(id);
-  }
-
-  return { getTableSchema };
-}
+  };
+};

@@ -1,10 +1,12 @@
 import React from "react";
 import { FixedGetSolarsystemsResponse } from "@/api/stillness";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
+import { MudSqlClient } from "@/api/mudsql";
 
 interface AppContextProps {
   solarSystems: SolarSystemsIndex;
   setSolarSystems: (data: FixedGetSolarsystemsResponse) => void;
+  mudSql: MudSqlClient;
 }
 
 export const AppContext = React.createContext<AppContextProps | undefined>(
@@ -22,4 +24,9 @@ export function useAppContext() {
 export function useSolarSystemsIndex() {
   const { solarSystems } = useAppContext();
   return solarSystems;
+}
+
+export function useMudSql() {
+  const { mudSql } = useAppContext();
+  return mudSql;
 }

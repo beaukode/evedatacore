@@ -13,13 +13,13 @@ import PrivateIcon from "@mui/icons-material/Lock";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
 import { filterInProps } from "@/tools";
+import { useMudSql } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import DisplayOwner from "@/components/DisplayOwner";
 import DisplayNamespace from "@/components/DisplayNamespace";
 import { DataTableContext } from "@/components/DataTable";
 import ExternalLink from "@/components/ui/ExternalLink";
 import DisplaySystem from "@/components/DisplaySystem";
-import { listSystems } from "@/api/mudsql";
 
 const columns = ["Name", "Namespace", "Owner", "Contract"];
 
@@ -29,10 +29,11 @@ const ExploreSystems: React.FC = () => {
     owner: "0",
     namespace: "0",
   });
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Systems"],
-    queryFn: () => listSystems(),
+    queryFn: () => mudSql.listSystems(),
   });
 
   const tables = React.useMemo(() => {

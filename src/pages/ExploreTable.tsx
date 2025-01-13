@@ -12,14 +12,13 @@ import {
 import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import { getTable } from "@/api/mudsql/queries";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
 import DisplayNamespace from "@/components/DisplayNamespace";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
-import { client } from "@/api/mudsql";
 import DataTable from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
@@ -29,6 +28,7 @@ const ExploreTable: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+  const mudSql = useMudSql();
 
   const table = isHex(id) ? hexToResource(id) : undefined;
   const namespaceId = table
@@ -41,7 +41,7 @@ const ExploreTable: React.FC = () => {
 
   const query = useQuery({
     queryKey: ["Table", id],
-    queryFn: async () => getTable(id ?? "0x"),
+    queryFn: async () => mudSql.getTable(id ?? "0x"),
     enabled: !!id,
   });
 
@@ -51,7 +51,7 @@ const ExploreTable: React.FC = () => {
       if (!(table && query.data)) {
         return [];
       }
-      return client.selectFrom(table.namespace, table.name, {
+      return mudSql.selectFrom(table.namespace, table.name, {
         orderBy: [...query.data.key],
         tableType: query.data.type,
       });

@@ -19,6 +19,7 @@ import {
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
+import { useMudSql } from "@/contexts/AppContext";
 import { getKillmails, getSmartcharactersById } from "@/api/stillness";
 import { formatCrypto, ldapDate } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
@@ -28,12 +29,12 @@ import DisplayOwner from "@/components/DisplayOwner";
 import Error404 from "./Error404";
 import TableNamespaces from "@/components/tables/TableNamespaces";
 import TableTables from "@/components/tables/TableTables";
-import { listNamespaces } from "@/api/mudsql";
 import TableSystems from "@/components/tables/TableSystems";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
   const navigate = useNavigate();
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["SmartcharactersById", address],
@@ -65,7 +66,7 @@ const ExploreCharacter: React.FC = () => {
 
   const queryNamespaces = useQuery({
     queryKey: ["Namespaces", address],
-    queryFn: async () => await listNamespaces({ owners: address }),
+    queryFn: async () => mudSql.listNamespaces({ owners: address }),
   });
 
   const namespaces = queryNamespaces.data || [];

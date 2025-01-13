@@ -2,7 +2,7 @@ import React from "react";
 import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
-import { listNamespaces } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import DisplayOwner from "@/components/DisplayOwner";
@@ -14,10 +14,11 @@ const ExploreNamespaces: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Namespaces"],
-    queryFn: () => listNamespaces(),
+    queryFn: () => mudSql.listNamespaces(),
   });
 
   const namespaces = React.useMemo(() => {

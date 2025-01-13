@@ -1,7 +1,7 @@
 import { hexToResource } from "@latticexyz/common";
-import { client, getCharacter } from "..";
 import { Hex } from "viem";
 import { toSqlHex } from "../utils";
+import { MudSqlClient } from "../client";
 
 type DbRow = {
   namespaceId: Hex;
@@ -15,22 +15,24 @@ type Namespace = {
   ownerName?: string;
 };
 
-export async function getNamespace(id: string): Promise<Namespace | undefined> {
-  if (id.length !== 66) return undefined;
+export const getNamespace =
+  (client: MudSqlClient) =>
+  async (id: string): Promise<Namespace | undefined> => {
+    if (id.length !== 66) return undefined;
 
-  const result = await client.selectFrom<DbRow>("world", "NamespaceOwner", {
-    where: `"namespaceId" = '${toSqlHex(id)}'`,
-  });
+    const result = await client.selectFrom<DbRow>("world", "NamespaceOwner", {
+      where: `"namespaceId" = '${toSqlHex(id)}'`,
+    });
 
-  const ns = result[0];
-  if (!ns) return undefined;
+    const ns = result[0];
+    if (!ns) return undefined;
 
-  const owner = await getCharacter(ns.owner);
+    const owner = await client.getCharacter(ns.owner);
 
-  return {
-    namespaceId: ns.namespaceId,
-    name: hexToResource(ns.namespaceId).namespace,
-    owner: ns.owner,
-    ownerName: owner?.name,
+    return {
+      namespaceId: ns.namespaceId,
+      name: hexToResource(ns.namespaceId).namespace,
+      owner: ns.owner,
+      ownerName: owner?.name,
+    };
   };
-}

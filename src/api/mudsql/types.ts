@@ -1,3 +1,8 @@
+export type MudSqlClientConfig = {
+  worldAddress: string;
+  indexerBaseUrl: string;
+};
+
 export type SelectRelation = {
   ns: string;
   table: string;

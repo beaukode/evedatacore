@@ -5,8 +5,8 @@ import { hexToResource } from "@latticexyz/common";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { isHex } from "viem";
+import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import { getNamespace } from "@/api/mudsql/queries";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import TableTables from "@/components/tables/TableTables";
@@ -14,12 +14,13 @@ import TableSystems from "@/components/tables/TableSystems";
 
 const ExploreNamespace: React.FC = () => {
   const { id } = useParams();
+  const mudSql = useMudSql();
 
   const namespace = isHex(id) ? hexToResource(id) : undefined;
 
   const query = useQuery({
     queryKey: ["Namespace", id],
-    queryFn: async () => getNamespace(id ?? "0x"),
+    queryFn: async () => mudSql.getNamespace(id ?? "0x"),
     enabled: !!id,
   });
 

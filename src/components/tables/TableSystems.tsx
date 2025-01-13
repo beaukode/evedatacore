@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import PrivateIcon from "@mui/icons-material/Lock";
 import { useQuery } from "@tanstack/react-query";
-import { listSystems } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import DisplayNamespace from "@/components/DisplayNamespace";
 import DisplaySystem from "../DisplaySystem";
@@ -26,11 +26,12 @@ const TableSystems: React.FC<TableSystemsProps> = ({
   namespaces,
   hideNamespaceColumn,
 }) => {
-  const queryKey = namespaces.join("|");
+  const mudSql = useMudSql();
 
+  const queryKey = namespaces.join("|");
   const query = useQuery({
     queryKey: ["Systems", queryKey],
-    queryFn: async () => listSystems({ namespaceIds: namespaces }),
+    queryFn: async () => mudSql.listSystems({ namespaceIds: namespaces }),
     retry: false,
     throwOnError: true,
   });

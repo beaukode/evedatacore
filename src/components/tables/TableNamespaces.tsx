@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { listNamespaces } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import DisplayNamespace from "@/components/DisplayNamespace";
 
@@ -17,9 +17,11 @@ interface NamespacesProps {
 }
 
 const TableNamespaces: React.FC<NamespacesProps> = ({ address }) => {
+  const mudSql = useMudSql();
+
   const query = useQuery({
     queryKey: ["Namespaces", address],
-    queryFn: async () => await listNamespaces({ owners: address }),
+    queryFn: async () => mudSql.listNamespaces({ owners: address }),
   });
 
   const namespaces = query.data || [];

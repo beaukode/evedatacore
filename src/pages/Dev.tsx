@@ -1,9 +1,9 @@
 import React from "react";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import z from "zod";
-import PaperLevel1 from "@/components/ui/PaperLevel1";
-import { client } from "@/api/mudsql";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
+import { useMudSql } from "@/contexts/AppContext";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
 
 const schema = z
   .object({
@@ -20,11 +20,13 @@ const Dev: React.FC = () => {
   const [result, setResult] = React.useState<Record<string, string>[]>();
   const [error, setError] = React.useState<string>();
 
+  const mudSql = useMudSql();
+
   const handleExecuteClick = () => {
     setStore({ sql });
     setError(undefined);
     setResult(undefined);
-    client
+    mudSql
       .selectRaw(sql)
       .then((result) => {
         setResult(result);
