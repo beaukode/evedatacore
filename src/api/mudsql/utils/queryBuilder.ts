@@ -19,7 +19,7 @@ export function queryBuilder(
   }
 
   const selectParts = Object.keys(schemas[mainTable] || {}).map(
-    (f) => `"${f}"`
+    (f) => `${mainTable}."${f}" AS "${f}"`
   );
   const whereParts: string[] = options.where ? [options.where] : [];
   Object.entries(options.rels || {}).forEach(([relName, rel]) => {
