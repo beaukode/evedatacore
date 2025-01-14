@@ -122,6 +122,7 @@ export const listAssemblies =
     );
 
     const ids = assemblies.map((a) => a.smartObjectId);
+    if(ids.length === 0) return [];
 
     const entities = await client.selectFrom<EntityDbRow>(
       "eveworld",
