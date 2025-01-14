@@ -3,6 +3,7 @@ export * from "./getNamespace";
 export * from "./getSystem";
 export * from "./getTable";
 export * from "./getTableSchema";
+export * from "./listAssemblies";
 export * from "./listCharacters";
 export * from "./listKillmails";
 export * from "./listNamespaces";

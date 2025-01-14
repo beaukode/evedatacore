@@ -57,11 +57,7 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({ gateLink }) => {
             <ListItem sx={{ py: 0 }}>
               <ListItemText>
                 Assembly:{" "}
-                <DisplayAssembly
-                  itemId={linkedGate.itemId}
-                  id={linkedGate.id}
-                  name={linkedGate.name}
-                />
+                <DisplayAssembly id={linkedGate.id} name={linkedGate.name} />
               </ListItemText>
             </ListItem>
             <ListItem sx={{ py: 0 }}>
@@ -122,11 +118,7 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({ gateLink }) => {
                           stateId={g.stateId}
                           tooltip
                         />
-                        <DisplayAssembly
-                          id={g.id}
-                          itemId={g.itemId}
-                          name={g.name}
-                        />
+                        <DisplayAssembly id={g.id} name={g.name} />
                       </Box>
                     </TableCell>
                     <TableCell>

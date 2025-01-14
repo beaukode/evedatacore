@@ -6,7 +6,6 @@ import { NavLink } from "react-router";
 interface DisplayAssemblyProps {
   name?: string;
   id?: string;
-  itemId?: number;
 }
 
 const DisplayAssembly: React.FC<DisplayAssemblyProps> = ({ name, id }) => {

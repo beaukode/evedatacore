@@ -158,11 +158,7 @@ const ExploreCharacter: React.FC = () => {
                             stateId={sa.stateId}
                             tooltip
                           />
-                          <DisplayAssembly
-                            id={sa.id}
-                            itemId={sa.itemId}
-                            name={sa.name}
-                          />
+                          <DisplayAssembly id={sa.id} name={sa.name} />
                         </Box>
                       </TableCell>
                       <TableCell>

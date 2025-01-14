@@ -11,12 +11,10 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Skeleton,
 } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
+import { useMudSql } from "@/contexts/AppContext";
 import DataTable, { DataTableContext } from "@/components/DataTable";
-import { getSmartassemblies } from "@/api/stillness";
 import DisplayOwner from "@/components/DisplayOwner";
 import DisplayAssembly from "@/components/DisplayAssembly";
 import { filterInProps, shorten } from "@/tools";
@@ -24,7 +22,7 @@ import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 
-const columns = ["Assembly", "Owner", "Solar system"];
+const columns = ["Assembly", "Owner", "Solar system", "Date"];
 
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -32,13 +30,12 @@ const ExploreAssemblies: React.FC = () => {
     typeId: "0",
     stateId: "0",
   });
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Smartassemblies"],
-    queryFn: async () =>
-      await getSmartassemblies().then((r) =>
-        r.data?.filter((sa) => !!sa.typeId)
-      ),
+    queryFn: async () => mudSql.listAssemblies(),
+    staleTime: 1000 * 60,
   });
 
   const smartassemblies = React.useMemo(() => {
@@ -48,11 +45,11 @@ const ExploreAssemblies: React.FC = () => {
     return filterInProps(
       query.data,
       debouncedSearch.text,
-      ["name", "id", "itemId", "ownerName", "ownerId"],
+      ["name", "id", "ownerName", "ownerId"],
       (sa) => {
         return (
           (sa.typeId === iTypeId || iTypeId === 0) &&
-          (sa.stateId === iStateId || iStateId === 0)
+          (sa.state === iStateId || iStateId === 0)
         );
       }
     );
@@ -64,12 +61,15 @@ const ExploreAssemblies: React.FC = () => {
       sa: (typeof smartassemblies)[number],
       context: DataTableContext
     ) => {
+      const isoDate = new Date(sa.anchoredAt).toISOString();
+      const date = isoDate.substring(0, 10);
+      const time = isoDate.substring(11, 19);
       if (context.isScrolling) {
         return (
           <React.Fragment key={sa.id}>
             <TableCell>
               <Box display="flex" alignItems="center">
-                <DisplayAssemblyIcon typeId={sa.typeId} stateId={sa.stateId} />
+                <DisplayAssemblyIcon typeId={sa.typeId} stateId={sa.state} />
                 <Box sx={{ px: 1, py: 0.75, lineHeight: "24.5px" }}>
                   {sa.name ? sa.name : shorten(sa.id)}
                 </Box>
@@ -80,7 +80,10 @@ const ExploreAssemblies: React.FC = () => {
             >
               {sa.ownerName}
             </TableCell>
-            <TableCell>{sa.stateId !== 1 && <Skeleton width={80} />}</TableCell>
+            <TableCell>
+              <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
+            </TableCell>
+            <TableCell>{`${date} ${time}`}</TableCell>
           </React.Fragment>
         );
       } else {
@@ -90,22 +93,19 @@ const ExploreAssemblies: React.FC = () => {
               <Box display="flex" alignItems="center">
                 <DisplayAssemblyIcon
                   typeId={sa.typeId}
-                  stateId={sa.stateId}
+                  stateId={sa.state}
                   tooltip
                 />
-                <DisplayAssembly name={sa.name} id={sa.id} itemId={sa.itemId} />
+                <DisplayAssembly name={sa.name} id={sa.id} />
               </Box>
             </TableCell>
             <TableCell>
               <DisplayOwner name={sa.ownerName} address={sa.ownerId} />
             </TableCell>
             <TableCell>
-              {sa.stateId !== 1 && (
-                <DisplaySolarsystem
-                  solarSystemId={sa.solarSystem?.solarSystemId}
-                />
-              )}
+              <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
+            <TableCell>{`${date} ${time}`}</TableCell>
           </React.Fragment>
         );
       }
