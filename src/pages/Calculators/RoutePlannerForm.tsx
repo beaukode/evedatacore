@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AutoCompleteSolarSystem from "@/components/AutoCompleteSolarSystem";
 import HintIcon from "@/components/ui/Hint";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
+import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 
 const schema = z
   .object({
@@ -49,10 +50,14 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 interface RoutePlannerFormProps {
+  solarSystemsIndex: SolarSystemsIndex;
   onSubmit: SubmitHandler<FormData>;
 }
 
-const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({ onSubmit }) => {
+const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
+  onSubmit,
+  solarSystemsIndex,
+}) => {
   const [store, setStore] = useAppLocalStorage(
     "v1_calculator_route_planner",
     schema
@@ -85,6 +90,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({ onSubmit }) => {
               error={fieldState.error?.message}
               label="From system"
               sx={{ mb: 2 }}
+              solarSystemsIndex={solarSystemsIndex}
               fullWidth
             />
           );
@@ -98,6 +104,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({ onSubmit }) => {
             <AutoCompleteSolarSystem
               {...field}
               error={fieldState.error?.message}
+              solarSystemsIndex={solarSystemsIndex}
               label="To system"
               sx={{ my: 2 }}
               fullWidth

@@ -1,7 +1,7 @@
 import React from "react";
-import { Button } from "@mui/material";
-import { useSolarSystemsIndex } from "@/contexts/AppContext";
+import { Button, Skeleton } from "@mui/material";
 import { NavLink } from "react-router";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 
 interface DisplaySolarsystemProps {
   solarSystemId?: string | number;
@@ -13,6 +13,7 @@ const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
   const solarSystems = useSolarSystemsIndex();
 
   if (solarSystemId === undefined) return null;
+  if (!solarSystems) return <Skeleton width={80} />;
 
   const solarSystem = solarSystems.getById(solarSystemId.toString());
   if (!solarSystem) return null;
