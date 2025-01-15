@@ -1,8 +1,9 @@
 import React from "react";
-import { getSolarsystems } from "@/api/stillness";
+import { getSolarsystems, getTypes } from "@/api/stillness";
 import { createSolarSystemsIndex } from "@/tools/solarSystemsIndex";
 import { MudSqlClient } from "@/api/mudsql";
 import { useQuery } from "@tanstack/react-query";
+import { createTypesIndex } from "@/tools/typesIndex";
 
 interface AppContextProps {
   mudSql: MudSqlClient;
@@ -30,6 +31,19 @@ export function useSolarSystemsIndex() {
     queryKey: ["Solarsystems"],
     queryFn: async () =>
       getSolarsystems().then((r) => createSolarSystemsIndex(r.data)),
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  return query.data;
+}
+
+export function useTypesIndex() {
+  const query = useQuery({
+    queryKey: ["Types"],
+    queryFn: async () => getTypes().then((r) => createTypesIndex(r.data)),
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

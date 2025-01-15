@@ -59,7 +59,11 @@ const SmartStorageUnitInventory: React.FC<SmartStorageUnitInventoryProps> = ({
               {inventory.storageItems.map((i) => (
                 <TableRow key={i.itemId}>
                   <TableCell>
-                    <DisplayItem item={i} />
+                    <DisplayItem
+                      name={i.name}
+                      typeId={i.typeId}
+                      image={i.image}
+                    />
                   </TableCell>
                   <TableCell>{i.quantity}</TableCell>
                 </TableRow>
@@ -105,7 +109,11 @@ const SmartStorageUnitInventory: React.FC<SmartStorageUnitInventoryProps> = ({
                   {u.ephemeralInventoryItems?.map((i) => (
                     <TableRow key={i.itemId}>
                       <TableCell>
-                        <DisplayItem item={i} />
+                        <DisplayItem
+                          name={i.name}
+                          typeId={i.typeId}
+                          image={i.image}
+                        />
                       </TableCell>
                       <TableCell>{i.quantity}</TableCell>
                     </TableRow>
