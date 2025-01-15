@@ -86,3 +86,9 @@ export function ldapDate(value?: number) {
   const msSinceUnixEpoch = (value - 116444736000000000) / 10000;
   return new Date(msSinceUnixEpoch);
 }
+
+export function tsToDateTime(value?: number): string {
+  if (!value) return "";
+  const isoDate = new Date(value).toISOString();
+  return isoDate.substring(0, 10) + " " + isoDate.substring(11, 19);
+}

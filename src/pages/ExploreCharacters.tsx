@@ -15,9 +15,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import DataTable, { DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { filterInProps } from "@/tools";
+import { filterInProps, tsToDateTime } from "@/tools";
 
-const columns = ["Name", "Address", "Id"];
+const columns = ["Name", "Address", "Created At"];
 
 const ExploreCharacters: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -69,7 +69,7 @@ const ExploreCharacters: React.FC = () => {
             </Box>
           </TableCell>
           <TableCell>{sm.address}</TableCell>
-          <TableCell> {sm.id}</TableCell>
+          <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
         </React.Fragment>
       );
     },

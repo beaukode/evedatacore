@@ -3,18 +3,22 @@ import { ensureArray, toSqlHex } from "../utils";
 import { Hex } from "viem";
 
 type DbRow = {
-  characterAddress: Hex;
   characterId: string;
+  characterAddress: Hex;
+  corpId: string;
+  createdAt: string;
   entity__entityId: string;
   entity__name: string;
-  entity__dappURL: string;
-  entity__description: string;
+  entity__dappURL?: string;
+  entity__description?: string;
 };
 
 type Character = {
   address: Hex;
   id: string;
   name: string;
+  corpId: number;
+  createdAt: number;
 };
 
 type ListCharactersOptions = {
@@ -37,25 +41,28 @@ export const listCharacters =
     }
 
     return client
-      .selectFrom<DbRow>("eveworld", "CharactersByAddr", {
+      .selectFrom<DbRow>("eveworld", "CharactersTable", {
         where: where,
-        orderBy: "name",
+        orderBy: "createdAt",
+        orderDirection: "DESC",
         rels: {
           entity: {
             ns: "eveworld",
             table: "EntityRecordOffc",
             field: "entityId",
             fkNs: "eveworld",
-            fkTable: "CharactersByAddr",
+            fkTable: "CharactersTable",
             fkField: "characterId",
           },
         },
       })
       .then((result) =>
-        result.map((r) => ({
-          address: r.characterAddress,
-          id: r.characterId,
-          name: r.entity__name,
+        result.map((c) => ({
+          address: c.characterAddress,
+          id: c.characterId,
+          name: c.entity__name,
+          corpId: Number.parseInt(c.corpId, 10),
+          createdAt: Number.parseInt(c.createdAt, 10) * 1000,
         }))
       );
   };

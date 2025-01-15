@@ -1,4 +1,5 @@
 export * from "./getCharacter";
+export * from "./getEveBalance";
 export * from "./getNamespace";
 export * from "./getSystem";
 export * from "./getTable";

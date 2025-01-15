@@ -17,12 +17,12 @@ import { useMudSql } from "@/contexts/AppContext";
 import DataTable, { DataTableContext } from "@/components/DataTable";
 import DisplayOwner from "@/components/DisplayOwner";
 import DisplayAssembly from "@/components/DisplayAssembly";
-import { filterInProps, shorten } from "@/tools";
+import { filterInProps, shorten, tsToDateTime } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 
-const columns = ["Assembly", "Owner", "Solar system", "Date"];
+const columns = ["Assembly", "Owner", "Solar system", "Anchored At"];
 
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -61,9 +61,6 @@ const ExploreAssemblies: React.FC = () => {
       sa: (typeof smartassemblies)[number],
       context: DataTableContext
     ) => {
-      const isoDate = new Date(sa.anchoredAt).toISOString();
-      const date = isoDate.substring(0, 10);
-      const time = isoDate.substring(11, 19);
       if (context.isScrolling) {
         return (
           <React.Fragment key={sa.id}>
@@ -83,7 +80,7 @@ const ExploreAssemblies: React.FC = () => {
             <TableCell>
               <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
-            <TableCell>{`${date} ${time}`}</TableCell>
+            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
           </React.Fragment>
         );
       } else {
@@ -105,7 +102,7 @@ const ExploreAssemblies: React.FC = () => {
             <TableCell>
               <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
-            <TableCell>{`${date} ${time}`}</TableCell>
+            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
           </React.Fragment>
         );
       }

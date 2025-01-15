@@ -3,8 +3,10 @@ import { MudSqlClient } from "../client";
 import { toSqlHex } from "../utils";
 
 type DbRow = {
-  characterAddress: Hex;
   characterId: string;
+  characterAddress: Hex;
+  corpId: string;
+  createdAt: string;
   entity__entityId: string;
   entity__name: string;
   entity__dappURL: string;
@@ -15,6 +17,8 @@ type Character = {
   address: Hex;
   id: string;
   name: string;
+  corpId: number;
+  createdAt: number;
 };
 
 export const getCharacter =
@@ -23,7 +27,7 @@ export const getCharacter =
     if (address.length !== 42 || !isHex(address)) return undefined;
     const result = await client.selectFrom<DbRow>(
       "eveworld",
-      "CharactersByAddr",
+      "CharactersTable",
       {
         where: `"characterAddress" = '${toSqlHex(address)}'`,
         rels: {
@@ -32,7 +36,7 @@ export const getCharacter =
             table: "EntityRecordOffc",
             field: "entityId",
             fkNs: "eveworld",
-            fkTable: "CharactersByAddr",
+            fkTable: "CharactersTable",
             fkField: "characterId",
           },
         },
@@ -46,5 +50,7 @@ export const getCharacter =
       address: c.characterAddress,
       id: c.characterId,
       name: c.entity__name,
+      corpId: Number.parseInt(c.corpId, 10),
+      createdAt: Number.parseInt(c.createdAt, 10) * 1000,
     };
   };
