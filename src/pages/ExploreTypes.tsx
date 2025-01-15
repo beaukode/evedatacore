@@ -1,11 +1,6 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import {
-  Box,
-  Paper,
   TextField,
-  Typography,
-  LinearProgress,
   TableCell,
   MenuItem,
   Select,
@@ -13,11 +8,11 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import DataTable from "@/components/DataTable";
 import { getTypes } from "@/api/stillness";
 import { filterInProps } from "@/tools";
 import DisplayItem from "@/components/DisplayItem";
 import useQuerySearch from "@/tools/useQuerySearch";
+import DataTableLayout from "@/components/layouts/DataTableLayout";
 
 const columns = ["Name", "Category", "Group"];
 
@@ -200,53 +195,26 @@ const ExploreTypes: React.FC = () => {
     []
   );
   return (
-    <>
-      <Helmet>
-        <title>Types</title>
-      </Helmet>
-      <Box p={2} flexGrow={1} overflow="hidden">
-        <Paper
-          elevation={1}
-          sx={{
-            p: 2,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box display="flex" alignItems="flex-end">
-            <TextField
-              label="Search"
-              value={search.text}
-              onChange={(e) => {
-                setSearch(
-                  "text",
-                  e.currentTarget.value.substring(0, 255).toLowerCase()
-                );
-              }}
-            />
-            {categorySelect}
-            {groupSelect}
-            <Box flexGrow={1} textAlign="right">
-              <Typography variant="caption" color="textPrimary">
-                {types.length} types
-              </Typography>
-            </Box>
-          </Box>
-          <Box mt={2}>
-            <LinearProgress
-              sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-            />
-          </Box>
-          <DataTable
-            data={types}
-            columns={columns}
-            itemContent={itemContent}
-            rememberScroll
-          />
-        </Paper>
-      </Box>
-    </>
+    <DataTableLayout
+      title="Types"
+      columns={columns}
+      data={types}
+      itemContent={itemContent}
+      loading={query.isFetching}
+    >
+      <TextField
+        label="Search"
+        value={search.text}
+        onChange={(e) => {
+          setSearch(
+            "text",
+            e.currentTarget.value.substring(0, 255).toLowerCase()
+          );
+        }}
+      />
+      {categorySelect}
+      {groupSelect}
+    </DataTableLayout>
   );
 };
 

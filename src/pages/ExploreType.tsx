@@ -1,27 +1,16 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import {
-  Avatar,
-  Box,
-  IconButton,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import BackIcon from "@mui/icons-material/ArrowBack";
+import { Avatar, Box, List, Typography } from "@mui/material";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { getTypesById } from "@/api/stillness";
 import Error404 from "./Error404";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
+import BasicListItem from "@/components/ui/BasicListItem";
 
 const ExploreType: React.FC = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const query = useQuery({
     queryKey: ["SmartcharactersById", id],
@@ -45,29 +34,15 @@ const ExploreType: React.FC = () => {
           <title>{name}</title>
         </Helmet>
       )}
-      <Typography
-        variant="h6"
-        component="h2"
-        sx={{ bgcolor: "background.default" }}
-        gutterBottom
-      >
-        <IconButton color="primary" onClick={() => navigate(-1)}>
-          <BackIcon />
-        </IconButton>
-        {name}
-      </Typography>
-      <Paper elevation={1}>
-        <LinearProgress
-          sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-        />
-        {!query.isLoading && data && (
-          <Box>
-            <Box display="flex" p={1}>
+      <PaperLevel1 title={name} loading={query.isFetching} backButton>
+        {data && (
+          <>
+            <Box display="flex" p={0}>
               <Avatar
                 src={data.image}
                 alt={data.name}
                 variant="rounded"
-                sx={{ width: 120, height: 120, m: 1 }}
+                sx={{ width: 120, height: 120, mr: 1 }}
               >
                 <QuestionMarkIcon fontSize="large" />
               </Avatar>
@@ -79,31 +54,19 @@ const ExploreType: React.FC = () => {
                 {data.description}
               </Typography>
             </Box>
-            <List sx={{ width: "100%", overflow: "hidden" }}>
-              <ListItem>
-                <ListItemText>
-                  <TextField
-                    label="itemId"
-                    value={data.smartItemId}
-                    variant="outlined"
-                    onChange={() => {}}
-                    fullWidth
-                  />
-                </ListItemText>
-              </ListItem>
+            <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+              <BasicListItem title="itemId">{data.smartItemId}</BasicListItem>
               {attributes.map((a) => {
                 return (
-                  <ListItem key={a.trait_type}>
-                    <ListItemText>
-                      {a.trait_type}: {a.value as unknown as string}
-                    </ListItemText>
-                  </ListItem>
+                  <BasicListItem key={a.trait_type} title={a.trait_type || ""}>
+                    {a.value as unknown as string}
+                  </BasicListItem>
                 );
               })}
             </List>
-          </Box>
+          </>
         )}
-      </Paper>
+      </PaperLevel1>
     </Box>
   );
 };
