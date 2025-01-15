@@ -20,9 +20,16 @@ export type DataTableItemContentCallback<T extends Record<string, unknown>> = (
   context: DataTableContext
 ) => React.ReactNode;
 
+type ColumnAttributes = {
+  label: string;
+  width?: number;
+};
+
+export type DataTableColumn = string | ColumnAttributes;
+
 interface DataTableProps<T extends Record<string, unknown>> {
   data: T[];
-  columns: string[];
+  columns: DataTableColumn[];
   itemContent: DataTableItemContentCallback<T>;
   rememberScroll?: boolean;
   dynamicWidth?: boolean;
@@ -31,7 +38,7 @@ interface DataTableProps<T extends Record<string, unknown>> {
 const DataTable = <T extends Record<string, unknown>>({
   data,
   itemContent,
-  columns,
+  columns: rawColumns,
   rememberScroll,
   dynamicWidth,
 }: DataTableProps<T>) => {
@@ -68,6 +75,15 @@ const DataTable = <T extends Record<string, unknown>>({
         tableLayout: "fixed",
       } as const);
 
+  const columns: ColumnAttributes[] = React.useMemo(() => {
+    return rawColumns.map((v) => {
+      if (typeof v === "string") {
+        return { label: v };
+      }
+      return v;
+    });
+  }, [rawColumns]);
+
   return (
     <>
       <TableVirtuoso
@@ -80,8 +96,10 @@ const DataTable = <T extends Record<string, unknown>>({
         initialTopMostItemIndex={initialScrollTo || 0}
         fixedHeaderContent={() => (
           <TableRow>
-            {columns.map((c, i) => (
-              <TableCell key={i}>{c}</TableCell>
+            {columns.map(({ label, ...rest }, i) => (
+              <TableCell key={i} {...rest}>
+                {label}
+              </TableCell>
             ))}
           </TableRow>
         )}

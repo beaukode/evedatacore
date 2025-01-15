@@ -1,11 +1,14 @@
 import React from "react";
 import { Box, LinearProgress, Paper, Typography } from "@mui/material";
 import { Helmet } from "react-helmet";
-import DataTable, { DataTableItemContentCallback } from "../DataTable";
+import DataTable, {
+  DataTableColumn,
+  DataTableItemContentCallback,
+} from "../DataTable";
 
 interface DataTableLayoutProps<T extends Record<string, unknown>> {
   title: string;
-  columns: string[];
+  columns: DataTableColumn[];
   loading?: boolean;
   data: T[];
   itemContent: DataTableItemContentCallback<T>;
