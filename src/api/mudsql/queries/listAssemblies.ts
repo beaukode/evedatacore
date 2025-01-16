@@ -21,10 +21,6 @@ type DbRow = {
   type__smartAssemblyType: keyof typeof assemblyTypeMap;
   owner__tokenId: string;
   owner__owner: string;
-  character__characterAddress: string;
-  character__characterId: string;
-  entity__entityId: string;
-  entity__name: string;
   location__smartObjectId: string;
   location__solarSystemId: string;
   location__x: string;
@@ -69,7 +65,7 @@ export const listAssemblies =
       if (owners.length === 0) return []; // No owner to query
 
       whereParts.push(
-        `eveworld__CharactersByAddr."characterAddress" IN ('${owners.map(toSqlHex).join("', '")}')`
+        `erc721deploybl__Owners."owner" IN ('${owners.map(toSqlHex).join("', '")}')`
       );
     }
     if (options?.states) {
@@ -110,22 +106,6 @@ export const listAssemblies =
             fkTable: "DeployableState",
             fkField: "smartObjectId",
           },
-          character: {
-            ns: "eveworld",
-            table: "CharactersByAddr",
-            field: "characterAddress",
-            fkNs: "erc721deploybl",
-            fkTable: "Owners",
-            fkField: "owner",
-          },
-          entity: {
-            ns: "eveworld",
-            table: "EntityRecordOffc",
-            field: "entityId",
-            fkNs: "eveworld",
-            fkTable: "CharactersByAddr",
-            fkField: "characterId",
-          },
           location: {
             ns: "eveworld",
             table: "LocationTable",
@@ -138,17 +118,19 @@ export const listAssemblies =
       }
     );
 
-    const ids = assemblies.map((a) => a.smartObjectId);
-    if (ids.length === 0) return [];
+    const smartObjectIds = assemblies.map((a) => a.smartObjectId);
+    if (smartObjectIds.length === 0) return [];
 
-    const entities = await client.selectFrom<EntityDbRow>(
-      "eveworld",
-      "EntityRecordOffc",
-      {
-        where: `"entityId" IN ('${ensureArray(ids).join("', '")}')`,
-      }
-    );
+    const ownersAddresses = assemblies.map((a) => a.owner__owner);
+
+    const [entities, owners] = await Promise.all([
+      client.selectFrom<EntityDbRow>("eveworld", "EntityRecordOffc", {
+        where: `"entityId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
+      }),
+      client.listCharacters({ addresses: ownersAddresses }),
+    ]);
     const entitiesById = keyBy(entities, "entityId");
+    const ownersById = keyBy(owners, "address");
 
     return assemblies.map((a) => ({
       id: a.smartObjectId,
@@ -158,7 +140,7 @@ export const listAssemblies =
       isValid: a.isValid || false,
       typeId: assemblyTypeMap[a.type__smartAssemblyType],
       ownerId: a.owner__owner,
-      ownerName: a.entity__name,
+      ownerName: ownersById[a.owner__owner]?.name || "Unknown",
       solarSystemId:
         a.location__solarSystemId !== "0"
           ? Number.parseInt(a.location__solarSystemId, 10)
