@@ -45,6 +45,7 @@ type Assembly = {
   typeId: number;
   isValid: boolean;
   anchoredAt: number;
+  updatedAt: number;
   ownerId: string;
   ownerName: string;
   solarSystemId?: number;
@@ -56,24 +57,40 @@ type Assembly = {
 
 type ListAssembliesOptions = {
   owners?: string[] | string;
+  states?: string[] | string; // Not used, very slow filter
 };
 
 export const listAssemblies =
   (client: MudSqlClient) =>
   async (options?: ListAssembliesOptions): Promise<Assembly[]> => {
-    let where: string | undefined = undefined;
+    const whereParts: string[] = [];
     if (options?.owners) {
       const owners = ensureArray(options.owners);
       if (owners.length === 0) return []; // No owner to query
 
-      where = `eveworld__CharactersByAddr."characterAddress" IN ('${owners.map(toSqlHex).join("', '")}')`;
+      whereParts.push(
+        `eveworld__CharactersByAddr."characterAddress" IN ('${owners.map(toSqlHex).join("', '")}')`
+      );
+    }
+    if (options?.states) {
+      const states = ensureArray(options.states);
+      if (states.length === 0) return []; // No state to query
+      if (states.length === 1) {
+        whereParts.push(
+          `eveworld__DeployableState."currentState" = '${states[0]}'`
+        );
+      } else {
+        whereParts.push(
+          `eveworld__DeployableState."currentState" IN ('${states.join("', '")}')`
+        );
+      }
     }
 
     const assemblies = await client.selectFrom<DbRow>(
       "eveworld",
       "DeployableState",
       {
-        where: where,
+        where: whereParts.join(" AND "),
         orderBy: "createdAt",
         orderDirection: "DESC",
         rels: {
@@ -122,7 +139,7 @@ export const listAssemblies =
     );
 
     const ids = assemblies.map((a) => a.smartObjectId);
-    if(ids.length === 0) return [];
+    if (ids.length === 0) return [];
 
     const entities = await client.selectFrom<EntityDbRow>(
       "eveworld",
@@ -137,6 +154,7 @@ export const listAssemblies =
       id: a.smartObjectId,
       state: Number.parseInt(a.currentState, 10),
       anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
+      updatedAt: Number.parseInt(a.updatedBlockTime, 10) * 1000,
       isValid: a.isValid || false,
       typeId: assemblyTypeMap[a.type__smartAssemblyType],
       ownerId: a.owner__owner,
