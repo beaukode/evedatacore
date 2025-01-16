@@ -1,21 +1,10 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import {
-  Box,
-  List,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Box, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
-import { formatCrypto, ldapDate, tsToDateTime } from "@/tools";
-import DisplaySolarsystem from "@/components/DisplaySolarsystem";
-import DisplayOwner from "@/components/DisplayOwner";
+import { formatCrypto, tsToDateTime } from "@/tools";
 import Error404 from "./Error404";
 import TableNamespaces from "@/components/tables/TableNamespaces";
 import TableTables from "@/components/tables/TableTables";
@@ -23,6 +12,7 @@ import TableSystems from "@/components/tables/TableSystems";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import TableAssemblies from "@/components/tables/TableAssemblies";
+import TableKillmails from "@/components/tables/TableKillmails";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -38,12 +28,6 @@ const ExploreCharacter: React.FC = () => {
     queryKey: ["CharacterBalanceById", address],
     queryFn: async () => mudSql.getEveBalance(address || "0x0"),
     enabled: !!address,
-  });
-
-  const killmails = useQuery({
-    queryKey: ["Killmails", address],
-    queryFn: async () => mudSql.listKillmails({ characterId: query.data?.id }),
-    enabled: !!query.data?.id,
   });
 
   const queryNamespaces = useQuery({
@@ -83,58 +67,7 @@ const ExploreCharacter: React.FC = () => {
         </List>
       </PaperLevel1>
       <TableAssemblies owner={address} />
-      <PaperLevel1 title="Killmails" loading={killmails.isFetching}>
-        {killmails.data && (
-          <>
-            {killmails.data.length === 0 && (
-              <Typography variant="body1">None</Typography>
-            )}
-            {killmails.data.length > 0 && (
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Killer</TableCell>
-                    <TableCell>Victim</TableCell>
-                    <TableCell>Loss Type</TableCell>
-                    <TableCell>Solar System</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {killmails.data.map((km) => {
-                    const isoDate = ldapDate(km.timestamp).toISOString();
-                    const date = isoDate.substring(0, 10);
-                    const time = isoDate.substring(11, 19);
-                    return (
-                      <TableRow key={km.id}>
-                        <TableCell>{`${date} ${time}`}</TableCell>
-                        <TableCell>
-                          <DisplayOwner
-                            name={km.killerName}
-                            address={km.killerAddress}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <DisplayOwner
-                            name={km.victimName}
-                            address={km.victimAddress}
-                          />
-                        </TableCell>
-                        <TableCell>{km.lossType}</TableCell>
-                        <TableCell>
-                          <DisplaySolarsystem
-                            solarSystemId={km.solarSystemId}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </>
-        )}
-      </PaperLevel1>
+      <TableKillmails characterId={data?.id} />
       <TableNamespaces address={address} />
       <TableTables namespaces={namespaces.map((ns) => ns.namespaceId)} />
       <TableSystems namespaces={namespaces.map((ns) => ns.namespaceId)} />

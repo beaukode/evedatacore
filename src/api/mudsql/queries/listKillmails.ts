@@ -36,7 +36,7 @@ export const listKillmails =
       const characterIds = ensureArray(options.characterId);
       if (characterIds.length === 0) return []; // No addresses to query
 
-      where = `"killerCharacterId" IN ('${ensureArray(characterIds).join("', '")}') OR "victimCharacterId" IN ('${ensureArray(characterIds).join("', '")}')`;
+      where = `"killerCharacterId" IN ('${characterIds.join("', '")}') OR "victimCharacterId" IN ('${characterIds.join("', '")}')`;
     }
 
     const killmails = await client.selectFrom<DbRow>(
