@@ -11,27 +11,47 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DataTable, { DataTableContext } from "@/components/DataTable";
+import DataTable, {
+  DataTableColumn,
+  DataTableContext,
+} from "@/components/DataTable";
 import DisplayOwner from "@/components/DisplayOwner";
 import DisplayAssembly from "@/components/DisplayAssembly";
-import { filterInProps, shorten, tsToDateTime } from "@/tools";
+import { ensureArray, filterInProps, shorten, tsToDateTime } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
-import { smartAssemblyStates } from "@/constants";
+import {
+  smartAssembliesTypes,
+  SmartAssemblyState,
+  smartAssemblyStates,
+} from "@/constants";
 
-const columns = ["Assembly", "Owner", "Solar system", "Anchored At"];
+const columns: DataTableColumn[] = [
+  "Assembly",
+  { label: "Owner", width: 250 },
+  { label: "Solar system", width: 180 },
+  { label: "Anchored At", width: 250 },
+];
 
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
     typeId: "0",
-    stateId: "0",
+    stateId: "2-3",
   });
   const mudSql = useMudSql();
+
+  const { selectedStates, iSelectedState } = React.useMemo(() => {
+    const selectedStates = search.stateId.split("-").filter((v) => v !== "");
+    const iSelectedState = selectedStates.map((v) => Number.parseInt(v, 10));
+    return { selectedStates, iSelectedState };
+  }, [search.stateId]);
 
   const query = useQuery({
     queryKey: ["Smartassemblies"],
@@ -42,7 +62,6 @@ const ExploreAssemblies: React.FC = () => {
   const smartassemblies = React.useMemo(() => {
     if (!query.data) return [];
     const iTypeId = parseInt(search.typeId, 10);
-    const iStateId = parseInt(search.stateId, 10);
     return filterInProps(
       query.data,
       debouncedSearch.text,
@@ -50,11 +69,11 @@ const ExploreAssemblies: React.FC = () => {
       (sa) => {
         return (
           (sa.typeId === iTypeId || iTypeId === 0) &&
-          (sa.state === iStateId || iStateId === 0)
+          iSelectedState.includes(sa.state)
         );
       }
     );
-  }, [query.data, debouncedSearch.text, search.typeId, search.stateId]);
+  }, [query.data, debouncedSearch.text, search.typeId, iSelectedState]);
 
   const itemContent = React.useCallback(
     (
@@ -155,30 +174,44 @@ const ExploreAssemblies: React.FC = () => {
                 fullWidth
               >
                 <MenuItem value="0">All</MenuItem>
-                <MenuItem value="84955">SmartGate</MenuItem>
-                <MenuItem value="84556">SmartTurret</MenuItem>
-                <MenuItem value="77917">SmartStorageUnit</MenuItem>
+                {Object.entries(smartAssembliesTypes).map(([id, name]) => (
+                  <MenuItem value={`${id}`} key={id}>
+                    {name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl
               variant="standard"
-              sx={{ width: 150, flexShrink: 0, ml: 2 }}
+              sx={{ minWidth: 150, flexShrink: 0, ml: 2 }}
             >
               <InputLabel id="select-state-label">State</InputLabel>
               <Select
                 labelId="select-state-label"
                 id="select-state"
-                value={search.stateId}
+                value={selectedStates.map((v) => `${v}`)}
                 variant="standard"
+                renderValue={(selected) =>
+                  selected
+                    .map(
+                      (v) =>
+                        smartAssemblyStates[Number(v) as SmartAssemblyState]
+                    )
+                    .join(", ")
+                }
                 onChange={(e) => {
-                  setSearch("stateId", e.target.value);
+                  const value = ensureArray(e.target.value).sort();
+                  setSearch("stateId", value.join("-"));
                 }}
                 label="State"
+                multiple
                 fullWidth
               >
-                <MenuItem value="0">Any</MenuItem>
                 {Object.entries(smartAssemblyStates).map(([id, name]) => (
-                  <MenuItem value={`${id}`}>{name}</MenuItem>
+                  <MenuItem value={`${id}`} key={id}>
+                    <Checkbox checked={selectedStates.includes(id)} />
+                    <ListItemText primary={name} />
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>

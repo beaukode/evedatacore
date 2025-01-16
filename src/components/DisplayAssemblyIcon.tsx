@@ -4,13 +4,13 @@ import SmartGateIcon from "@mui/icons-material/Share";
 import SmartStorateIcon from "@mui/icons-material/Warehouse";
 import SmartTurretIcon from "@mui/icons-material/Security";
 import {
-  smartAssemblies,
+  smartAssembliesTypes,
   SmartAssemblyState,
   smartAssemblyStates,
   SmartAssemblyType,
 } from "@/constants";
 
-const iconMap: Record<keyof typeof smartAssemblies, typeof SvgIcon> = {
+const iconMap: Record<keyof typeof smartAssembliesTypes, typeof SvgIcon> = {
   84955: SmartGateIcon,
   84556: SmartTurretIcon,
   77917: SmartStorateIcon,
@@ -42,7 +42,7 @@ const DisplayAssemblyIcon: React.FC<DisplayAssemblyIconProps> = React.memo(
 
     if (!tooltip) return <Icon color={color} />;
 
-    const title = ` ${smartAssemblyStates[stateId as SmartAssemblyState]} - ${smartAssemblies[typeId as SmartAssemblyType]}`;
+    const title = ` ${smartAssemblyStates[stateId as SmartAssemblyState]} - ${smartAssembliesTypes[typeId as SmartAssemblyType]}`;
     return (
       <Tooltip title={title} placement="right" arrow>
         <Icon color={color} />

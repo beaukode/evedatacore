@@ -1,5 +1,9 @@
 import Big from "big.js";
 
+export function ensureArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value];
+}
+
 export function shorten(
   text?: string,
   length: number = 16

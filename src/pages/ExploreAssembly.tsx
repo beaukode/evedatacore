@@ -9,7 +9,7 @@ import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
-import { fuelFactor, smartAssemblies, smartAssemblyStates } from "@/constants";
+import { fuelFactor, smartAssembliesTypes, smartAssemblyStates } from "@/constants";
 import Error404 from "./Error404";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
@@ -36,7 +36,7 @@ const ExploreAssembly: React.FC = () => {
   const { name, type, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
     const type =
-      smartAssemblies[data.typeId as keyof typeof smartAssemblies] || "Unknown";
+      smartAssembliesTypes[data.typeId as keyof typeof smartAssembliesTypes] || "Unknown";
     const state =
       smartAssemblyStates[data.state as keyof typeof smartAssemblyStates] ||
       "Unknown";
