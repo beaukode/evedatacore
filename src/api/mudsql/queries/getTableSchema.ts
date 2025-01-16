@@ -45,6 +45,12 @@ export const getTableSchema = (client: MudSqlClient) => {
     if (table.namespace === "eveworld" && table.name === "SmartGateConfigT") {
       table.schema = omit(table.schema, ["maxDistance"]);
     }
+    if (table.namespace === "eveworld" && table.name === "EphemeralInvTabl") {
+      table.schema = omit(table.schema, ["items"]);
+    }
+    if (table.namespace === "eveworld" && table.name === "InventoryTable") {
+      table.schema = omit(table.schema, ["items"]);
+    }
 
     return table;
   });

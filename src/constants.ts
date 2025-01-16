@@ -2,6 +2,18 @@ export const fuelFactor = 0.01;
 export const worldAddress = "0x7fe660995b0c59b6975d5d59973e2668af6bb9c5";
 export const indexerBaseUrl = "https://indexer.mud.garnetchain.com";
 
+export const smartAssemblies = {
+  84955: "SmartGate",
+  84556: "SmartTurret",
+  77917: "SmartStorageUnit",
+} as const;
+
+export const smartAssemblyStates = {
+  1: "Unanchored",
+  2: "Anchored",
+  3: "Online",
+} as const;
+
 export type Fuel = {
   efficiency: number;
 };

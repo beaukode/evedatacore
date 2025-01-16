@@ -1,139 +1,89 @@
 import React from "react";
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-import { types_GateLinkModule } from "@/api/stillness";
+import { Alert, Box, List } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { useMudSql } from "@/contexts/AppContext";
 import DisplayOwner from "./DisplayOwner";
 import DisplayAssembly from "./DisplayAssembly";
 import DisplaySolarsystem from "./DisplaySolarsystem";
-import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
+import PaperLevel1 from "./ui/PaperLevel1";
+import BasicListItem from "./ui/BasicListItem";
+import { shorten, tsToDateTime } from "@/tools";
+import { smartAssemblyStates } from "@/constants";
 
 interface SmartGateLinkProps {
-  gateLink?: types_GateLinkModule;
+  sourceGateId: string;
 }
 
-const SmartGateLink: React.FC<SmartGateLinkProps> = ({ gateLink }) => {
-  const { linkStatus, linkedGate } = React.useMemo(() => {
-    if (!gateLink?.isLinked) return { linkStatus: "Not linked" };
-    const linkedGate = gateLink.gatesInRange.find(
-      (g) => g.id === gateLink.destinationGate
-    );
-    if (!linkedGate) return { linkStatus: "Linked gate not found in range" };
-    return { linkStatus: "Ok", linkedGate };
-  }, [gateLink]);
+const SmartGateLink: React.FC<SmartGateLinkProps> = ({ sourceGateId }) => {
+  const mudSql = useMudSql();
 
-  const gateInRange = gateLink?.gatesInRange || [];
+  const query = useQuery({
+    queryKey: ["SmartGateLink", sourceGateId],
+    queryFn: async () => mudSql.getGateLink(sourceGateId),
+    enabled: !!sourceGateId,
+  });
 
-  if (!gateLink) return;
+  const data = query.data;
+
+  const { name, state } = React.useMemo(() => {
+    if (!data) return { name: "..." };
+
+    const state =
+      smartAssemblyStates[data.state as keyof typeof smartAssemblyStates] ||
+      "Unknown";
+    return {
+      name: `${data.name || shorten(data.id)}`,
+      state,
+    };
+  }, [data]);
 
   return (
-    <>
-      <Typography
-        variant="h6"
-        component="h2"
-        sx={{ bgcolor: "background.default" }}
-        gutterBottom
-      >
-        Destination
-      </Typography>
-      <Paper elevation={1} sx={{ mb: 2 }}>
-        {!linkedGate && (
-          <Typography variant="body1" padding={2}>
-            {linkStatus}
-          </Typography>
-        )}
-        {linkedGate && (
-          <List sx={{ width: "100%", overflow: "hidden" }}>
-            <ListItem sx={{ py: 0 }}>
-              <ListItemText>
-                Assembly:{" "}
-                <DisplayAssembly id={linkedGate.id} name={linkedGate.name} />
-              </ListItemText>
-            </ListItem>
-            <ListItem sx={{ py: 0 }}>
-              <ListItemText>
-                Owner:{" "}
-                <DisplayOwner
-                  address={linkedGate.ownerId}
-                  name={linkedGate.ownerName}
-                />
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText>
-                State: {linkedGate.state} [{linkedGate.stateId}]
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText>
-                Solar system:{" "}
-                <DisplaySolarsystem
-                  solarSystemId={linkedGate.solarSystem?.solarSystemId.toString()}
-                />
-              </ListItemText>
-            </ListItem>
+    <PaperLevel1 title="Destination" loading={query.isFetching}>
+      {data && (
+        <>
+          <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+            <BasicListItem title="Gate" disableGutters>
+              <DisplayAssembly id={data.id} name={name} />
+            </BasicListItem>
+            <BasicListItem title="Id">{data.id}</BasicListItem>
+            <BasicListItem title="Owner" disableGutters>
+              <DisplayOwner address={data.ownerId} name={data.ownerName} />
+            </BasicListItem>
+            <BasicListItem title="State">
+              {state} [{data.state}]
+            </BasicListItem>
+            <BasicListItem title="Anchored at">
+              {tsToDateTime(data.anchoredAt)}
+            </BasicListItem>
+            <BasicListItem title="Solar system" disableGutters>
+              <DisplaySolarsystem solarSystemId={data.solarSystemId} />
+            </BasicListItem>
+            <BasicListItem title="Location">
+              <Box sx={{ pl: 4 }}>
+                <span style={{ textWrap: "nowrap" }}>
+                  x: {data.location?.x}
+                </span>{" "}
+                <span style={{ textWrap: "nowrap" }}>
+                  y: {data.location?.y}
+                </span>{" "}
+                <span style={{ textWrap: "nowrap" }}>
+                  z: {data.location?.z}
+                </span>
+              </Box>
+            </BasicListItem>
+            <BasicListItem title="Is link active" disableGutters>
+              {data.isLinked ? "Yes" : "No"}
+            </BasicListItem>
           </List>
-        )}
-      </Paper>
-      <Typography
-        variant="h6"
-        component="h2"
-        sx={{ bgcolor: "background.default" }}
-        gutterBottom
-      >
-        Gates In Range
-      </Typography>
-      <Paper elevation={1}>
-        {gateInRange.length === 0 && (
-          <Typography variant="body1" padding={2}>
-            None
-          </Typography>
-        )}
-        {gateInRange.length > 0 && (
-          <Box p={2}>
-            <Table size="small" stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Id</TableCell>
-                  <TableCell>Solar system</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {gateInRange.map((g) => (
-                  <TableRow key={g.itemId}>
-                    <TableCell>
-                      <Box display="flex" alignItems="center">
-                        <DisplayAssemblyIcon
-                          typeId={g.typeId}
-                          stateId={g.stateId}
-                          tooltip
-                        />
-                        <DisplayAssembly id={g.id} name={g.name} />
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <DisplaySolarsystem
-                        solarSystemId={g.solarSystem?.solarSystemId.toString()}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        )}
-      </Paper>
-    </>
+          {!data.isLinked && (
+            <Alert severity="warning">
+              The link exists in the SmartGateLinkTab MUD table, but is set to
+              false
+            </Alert>
+          )}
+        </>
+      )}
+    </PaperLevel1>
   );
 };
 

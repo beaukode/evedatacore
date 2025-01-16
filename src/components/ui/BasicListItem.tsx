@@ -3,7 +3,7 @@ import { ListItem, ListItemText } from "@mui/material";
 
 interface ListItemProps {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   disableGutters?: boolean;
 }
 

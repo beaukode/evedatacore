@@ -1,52 +1,49 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import {
-  Box,
-  IconButton,
-  LinearProgress,
-  Link,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import BackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Link, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
-import { getSmartassembliesById } from "@/api/stillness";
-import { fuel, shorten } from "@/tools";
+import { useParams } from "react-router";
+import { useMudSql } from "@/contexts/AppContext";
+import { fuel, shorten, tsToDateTime } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import DisplayOwner from "@/components/DisplayOwner";
-import SmartTurretProximity from "@/components/SmartTurretProximity";
-import SmartGateLink from "@/components/SmartGateLink";
-import SmartStorageUnitInventory from "@/components/SmartStorageUnitInventory";
-import { fuelFactor } from "@/constants";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
+import BasicListItem from "@/components/ui/BasicListItem";
+import { fuelFactor, smartAssemblies, smartAssemblyStates } from "@/constants";
 import Error404 from "./Error404";
+import SmartGateLink from "@/components/SmartGateLink";
+import SmartStorageInventory from "@/components/SmartStorageInventory";
+import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["SmartassembliesById", id],
-    queryFn: async () =>
-      await getSmartassembliesById({ path: { id: id || "0x" } }).then(
-        (r) => r.data
-      ),
+    queryFn: async () => mudSql.getAssembly(id || ""),
+    enabled: !!id,
+  });
+
+  const queryFuel = useQuery({
+    queryKey: ["SmartassembliesFuel", id],
+    queryFn: async () => mudSql.getAssemblyFuel(id || ""),
     enabled: !!id,
   });
 
   const data = query.data;
 
-  const { name, anchoredAt } = React.useMemo(() => {
+  const { name, type, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
+    const type =
+      smartAssemblies[data.typeId as keyof typeof smartAssemblies] || "Unknown";
+    const state =
+      smartAssemblyStates[data.state as keyof typeof smartAssemblyStates] ||
+      "Unknown";
     return {
-      name: `${data?.name || shorten(data?.id)} [${data?.assemblyType}]`,
-      anchoredAt: new Date(
-        Number.parseInt(data.anchoredAtTime, 10) * 1000
-      ).toLocaleString(),
+      name: `${data.name || shorten(data.id)} [${type}]`,
+      type,
+      state,
     };
   }, [data]);
 
@@ -55,138 +52,81 @@ const ExploreAssembly: React.FC = () => {
   }
 
   const fuelAmount = fuel(
-    data?.fuel.fuelAmount || "0",
-    data?.fuel.fuelUnitVolume || "0",
+    queryFuel.data?.fuelAmount || "0",
+    queryFuel.data?.fuelUnitVolume || "0",
     fuelFactor
   );
   const fuelMaxCapacity = fuel(
-    data?.fuel.fuelMaxCapacity || "0",
-    data?.fuel.fuelUnitVolume || "0"
+    queryFuel.data?.fuelMaxCapacity || "0",
+    queryFuel.data?.fuelUnitVolume || "0"
   );
-  const fuelConsumption =
-    Number.parseInt((data?.fuel.fuelConsumptionPerMin || "0") as string) /
-    60 /
-    60;
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
-      {!query.isLoading && data && (
+      {data && (
         <Helmet>
           <title>{name}</title>
         </Helmet>
       )}
-      <Typography
-        variant="h6"
-        component="h2"
-        sx={{ bgcolor: "background.default" }}
-        gutterBottom
-      >
-        <IconButton color="primary" onClick={() => navigate(-1)}>
-          <BackIcon />
-        </IconButton>
-        {name}
-      </Typography>
-      <Paper elevation={1} sx={{ mb: 2 }}>
-        <LinearProgress
-          sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-        />
-        {!query.isLoading && data && (
-          <Box>
-            <List sx={{ width: "100%", overflow: "hidden" }}>
-              <ListItem>
-                <ListItemText>
-                  <TextField
-                    label="Id"
-                    value={data.id}
-                    variant="outlined"
-                    onChange={() => {}}
-                    fullWidth
-                  />
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>Item Id: {data.itemId}</ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  Type: {data.assemblyType} [{data.typeId}]
-                </ListItemText>
-              </ListItem>
-              <ListItem sx={{ py: 0 }}>
-                <ListItemText>
-                  Owner:{" "}
-                  <DisplayOwner address={data.ownerId} name={data.ownerName} />
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  State: {data.state} [{data.stateId}]
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>Anchored date: {anchoredAt}</ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  Solar system:{" "}
-                  {data.solarSystemId === 0 ? (
-                    <>None</>
-                  ) : (
-                    <DisplaySolarsystem solarSystemId={data.solarSystemId} />
-                  )}
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  Location:{" "}
-                  <span style={{ textWrap: "nowrap" }}>
-                    x: {data.location?.x}
-                  </span>{" "}
-                  <span style={{ textWrap: "nowrap" }}>
-                    y: {data.location?.y}
-                  </span>{" "}
-                  <span style={{ textWrap: "nowrap" }}>
-                    z: {data.location?.z}
-                  </span>
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>Description: {data.description}</ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  Dapp Url:{" "}
-                  {data.dappUrl ? (
-                    <Link
-                      href={data.dappUrl}
-                      title={name}
-                      rel="noopener"
-                      target="_blank"
-                    >
-                      {data.dappUrl}
-                    </Link>
-                  ) : (
-                    ""
-                  )}
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  Fuel: {fuelAmount.toFixed(2)} / {fuelMaxCapacity}
-                </ListItemText>
-              </ListItem>
-              <ListItem>
-                <ListItemText>
-                  Fuel consumption: {fuelConsumption} per hour ? tbc
-                </ListItemText>
-              </ListItem>
-            </List>
-            <SmartTurretProximity proximity={data.proximity} />
-          </Box>
+      <PaperLevel1 title={name} loading={query.isFetching} backButton>
+        {data && (
+          <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+            <BasicListItem title="Id">{data.id}</BasicListItem>
+            <BasicListItem title="Type">
+              {type} [{data.typeId}]
+            </BasicListItem>
+            <BasicListItem title="Owner" disableGutters>
+              <DisplayOwner address={data.ownerId} name={data.ownerName} />
+            </BasicListItem>
+            <BasicListItem title="State">
+              {state} [{data.state}]
+            </BasicListItem>
+            <BasicListItem title="Anchored at">
+              {tsToDateTime(data.anchoredAt)}
+            </BasicListItem>
+            <BasicListItem title="Solar system" disableGutters>
+              <DisplaySolarsystem solarSystemId={data.solarSystemId} />
+            </BasicListItem>
+            <BasicListItem title="Location">
+              <Box sx={{ pl: 4 }}>
+                <span style={{ textWrap: "nowrap" }}>
+                  x: {data.location?.x}
+                </span>{" "}
+                <span style={{ textWrap: "nowrap" }}>
+                  y: {data.location?.y}
+                </span>{" "}
+                <span style={{ textWrap: "nowrap" }}>
+                  z: {data.location?.z}
+                </span>
+              </Box>
+            </BasicListItem>
+            <BasicListItem title="Description">
+              {data.description}
+            </BasicListItem>
+            <BasicListItem title="Dapp Url">
+              {data.dappUrl ? (
+                <Link
+                  href={data.dappUrl}
+                  title={name}
+                  rel="noopener"
+                  target="_blank"
+                >
+                  {data.dappUrl}
+                </Link>
+              ) : (
+                ""
+              )}
+            </BasicListItem>
+            <BasicListItem title="Fuel">
+              {fuelAmount.toFixed(2)} / {fuelMaxCapacity} (
+              {((fuelAmount / fuelMaxCapacity) * 100).toFixed(2)}%)
+            </BasicListItem>
+          </List>
         )}
-      </Paper>
-      {data && <SmartGateLink gateLink={data.gateLink} />}
-      {data && <SmartStorageUnitInventory inventory={data.inventory} />}
+      </PaperLevel1>
+      {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
+      {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
+      {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
     </Box>
   );
 };
