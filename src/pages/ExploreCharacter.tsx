@@ -1,7 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import {
-  Alert,
   Box,
   List,
   Table,
@@ -16,8 +15,6 @@ import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
 import { formatCrypto, ldapDate, tsToDateTime } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
-import DisplayAssembly from "@/components/DisplayAssembly";
-import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import DisplayOwner from "@/components/DisplayOwner";
 import Error404 from "./Error404";
 import TableNamespaces from "@/components/tables/TableNamespaces";
@@ -25,6 +22,7 @@ import TableTables from "@/components/tables/TableTables";
 import TableSystems from "@/components/tables/TableSystems";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
+import TableAssemblies from "@/components/tables/TableAssemblies";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -40,14 +38,6 @@ const ExploreCharacter: React.FC = () => {
     queryKey: ["CharacterBalanceById", address],
     queryFn: async () => mudSql.getEveBalance(address || "0x0"),
     enabled: !!address,
-  });
-
-  const queryAssemblies = useQuery({
-    queryKey: ["Assemblies", address],
-    queryFn: async () => mudSql.listAssemblies({ owners: address }),
-    staleTime: 1000 * 60,
-    enabled: !!query.data?.id,
-    retry: false,
   });
 
   const killmails = useQuery({
@@ -92,59 +82,7 @@ const ExploreCharacter: React.FC = () => {
           </BasicListItem>
         </List>
       </PaperLevel1>
-      <PaperLevel1 title="Assemblies" loading={queryAssemblies.isFetching}>
-        {queryAssemblies.isError && (
-          <Alert severity="error">
-            Error loading assemblies, contact me if the error is permanent for
-            this user
-          </Alert>
-        )}
-        {queryAssemblies.data && (
-          <>
-            {queryAssemblies.data.length === 0 && (
-              <Typography variant="body1">None</Typography>
-            )}
-            {queryAssemblies.data.length > 0 && (
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Id</TableCell>
-                    <TableCell>Solar system</TableCell>
-                    <TableCell>Anchored At</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {queryAssemblies.data.map((sa) => {
-                    const isoDate = new Date(sa.anchoredAt).toISOString();
-                    const date = isoDate.substring(0, 10);
-                    const time = isoDate.substring(11, 19);
-                    return (
-                      <TableRow key={sa.id}>
-                        <TableCell>
-                          <Box display="flex" alignItems="center">
-                            <DisplayAssemblyIcon
-                              typeId={sa.typeId}
-                              stateId={sa.state}
-                              tooltip
-                            />
-                            <DisplayAssembly id={sa.id} name={sa.name} />
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <DisplaySolarsystem
-                            solarSystemId={sa.solarSystemId}
-                          />
-                        </TableCell>
-                        <TableCell>{`${date} ${time}`}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </>
-        )}
-      </PaperLevel1>
+      <TableAssemblies owner={address} />
       <PaperLevel1 title="Killmails" loading={killmails.isFetching}>
         {killmails.data && (
           <>

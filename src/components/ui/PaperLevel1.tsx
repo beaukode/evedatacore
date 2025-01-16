@@ -16,10 +16,12 @@ interface RootPaperProps extends React.ComponentProps<typeof Paper> {
   mudChip?: boolean;
   backButton?: boolean;
   children?: React.ReactNode;
+  titleAdornment?: React.ReactNode;
 }
 
 const PaperLevel1: React.FC<RootPaperProps> = ({
   title,
+  titleAdornment,
   loading,
   backButton,
   mudChip,
@@ -31,31 +33,34 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
 
   return (
     <>
-      <Typography
-        variant="h6"
-        component="h2"
-        sx={{ bgcolor: "background.default" }}
-        gutterBottom
-      >
-        {backButton && (
-          <IconButton color="primary" onClick={() => navigate(-1)}>
-            <BackIcon />
-          </IconButton>
-        )}
-        {title}
-        {mudChip && (
-          <Chip
-            label="Mud"
-            size="small"
-            sx={{
-              ml: 2,
-              backgroundColor: "#ff7612",
-              color: "white",
-              fontWeight: "bold",
-            }}
-          />
-        )}
-      </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography
+          variant="h6"
+          component="h2"
+          sx={{ bgcolor: "background.default" }}
+          gutterBottom
+        >
+          {backButton && (
+            <IconButton color="primary" onClick={() => navigate(-1)}>
+              <BackIcon />
+            </IconButton>
+          )}
+          {title}
+          {mudChip && (
+            <Chip
+              label="Mud"
+              size="small"
+              sx={{
+                ml: 2,
+                backgroundColor: "#ff7612",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            />
+          )}
+        </Typography>
+        {titleAdornment}
+      </Box>
       {loading && (
         <Box sx={{ position: "relative" }}>
           <LinearProgress
