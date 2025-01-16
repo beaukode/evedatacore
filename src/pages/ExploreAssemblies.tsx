@@ -21,6 +21,7 @@ import { filterInProps, shorten, tsToDateTime } from "@/tools";
 import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
+import { smartAssemblyStates } from "@/constants";
 
 const columns = ["Assembly", "Owner", "Solar system", "Anchored At"];
 
@@ -176,9 +177,9 @@ const ExploreAssemblies: React.FC = () => {
                 fullWidth
               >
                 <MenuItem value="0">Any</MenuItem>
-                <MenuItem value="3">Online</MenuItem>
-                <MenuItem value="2">Anchored</MenuItem>
-                <MenuItem value="1">Unanchored</MenuItem>
+                {Object.entries(smartAssemblyStates).map(([id, name]) => (
+                  <MenuItem value={`${id}`}>{name}</MenuItem>
+                ))}
               </Select>
             </FormControl>
             <Box sx={{ textWrap: "nowrap", ml: 2 }}>

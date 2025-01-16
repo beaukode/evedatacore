@@ -3,16 +3,21 @@ export const worldAddress = "0x7fe660995b0c59b6975d5d59973e2668af6bb9c5";
 export const indexerBaseUrl = "https://indexer.mud.garnetchain.com";
 
 export const smartAssemblies = {
-  84955: "SmartGate",
-  84556: "SmartTurret",
-  77917: "SmartStorageUnit",
+  84955: "Smart Gate",
+  84556: "Smart Turret",
+  77917: "Smart Storage Unit",
 } as const;
+
+export type SmartAssemblyType = keyof typeof smartAssemblies;
 
 export const smartAssemblyStates = {
   1: "Unanchored",
   2: "Anchored",
   3: "Online",
+  4: "Destroyed",
 } as const;
+
+export type SmartAssemblyState = keyof typeof smartAssemblyStates;
 
 export type Fuel = {
   efficiency: number;
