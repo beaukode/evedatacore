@@ -4,7 +4,6 @@ import {
   Paper,
   LinearProgress,
   Box,
-  Chip,
   IconButton,
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
@@ -13,7 +12,6 @@ import { useNavigate } from "react-router";
 interface RootPaperProps extends React.ComponentProps<typeof Paper> {
   title: string;
   loading?: boolean;
-  mudChip?: boolean;
   backButton?: boolean;
   children?: React.ReactNode;
   titleAdornment?: React.ReactNode;
@@ -24,7 +22,6 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
   titleAdornment,
   loading,
   backButton,
-  mudChip,
   children,
   sx,
   ...rest
@@ -46,18 +43,6 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
             </IconButton>
           )}
           {title}
-          {mudChip && (
-            <Chip
-              label="Mud"
-              size="small"
-              sx={{
-                ml: 2,
-                backgroundColor: "#ff7612",
-                color: "white",
-                fontWeight: "bold",
-              }}
-            />
-          )}
         </Typography>
         {titleAdornment}
       </Box>

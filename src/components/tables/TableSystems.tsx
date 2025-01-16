@@ -48,7 +48,7 @@ const TableSystems: React.FC<TableSystemsProps> = ({
   const systems = query.data || [];
 
   return (
-    <PaperLevel1 title="Systems" loading={query.isFetching} mudChip>
+    <PaperLevel1 title="Systems" loading={query.isFetching}>
       {namespaces.length === 0 && <Typography variant="body1">None</Typography>}
       {namespaces.length > 0 && (
         <Table size="small" stickyHeader>

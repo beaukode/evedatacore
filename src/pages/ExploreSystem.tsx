@@ -53,7 +53,7 @@ const ExploreSystem: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PaperLevel1 title={title} loading={query.isFetching} backButton mudChip>
+      <PaperLevel1 title={title} loading={query.isFetching} backButton>
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{system.resourceId}</BasicListItem>
           <BasicListItem title="Namespace" disableGutters>

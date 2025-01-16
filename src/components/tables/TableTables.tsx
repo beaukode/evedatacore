@@ -39,7 +39,7 @@ const TableTables: React.FC<TablesProps> = ({
   const tables = query.data || [];
 
   return (
-    <PaperLevel1 title="Tables" loading={query.isFetching} mudChip>
+    <PaperLevel1 title="Tables" loading={query.isFetching}>
       {namespaces.length === 0 && <Typography variant="body1">None</Typography>}
       {namespaces.length > 0 && (
         <Table size="small" stickyHeader>

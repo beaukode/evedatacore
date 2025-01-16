@@ -36,7 +36,7 @@ const ExploreNamespace: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PaperLevel1 title={title} loading={query.isFetching} backButton mudChip>
+      <PaperLevel1 title={title} loading={query.isFetching} backButton>
         {data && (
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
             <ListItem disableGutters>

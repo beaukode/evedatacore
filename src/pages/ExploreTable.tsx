@@ -130,7 +130,7 @@ const ExploreTable: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PaperLevel1 title={title} loading={query.isFetching} backButton mudChip>
+      <PaperLevel1 title={title} loading={query.isFetching} backButton>
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <ListItem disableGutters>
             <ListItemText>Id: {table.resourceId}</ListItemText>
@@ -174,7 +174,6 @@ const ExploreTable: React.FC = () => {
           display: "flex",
           flexDirection: "column",
         }}
-        mudChip
       >
         <Box mb={2}>
           <TextField
