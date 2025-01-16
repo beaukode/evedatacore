@@ -43,7 +43,7 @@ const Explore: React.FC = () => {
   return (
     <>
       <Paper elevation={1} sx={{ flexGrow: 0 }}>
-        <Tabs value={currentTab}>
+        <Tabs value={currentTab} variant="scrollable" scrollButtons>
           <Tab
             label="Characters"
             component={NavLink}
