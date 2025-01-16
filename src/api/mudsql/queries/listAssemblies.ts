@@ -56,6 +56,11 @@ type ListAssembliesOptions = {
   states?: string[] | string; // Not used, very slow filter
 };
 
+type Owner = {
+  tokenId: string;
+  owner: string;
+};
+
 export const listAssemblies =
   (client: MudSqlClient) =>
   async (options?: ListAssembliesOptions): Promise<Assembly[]> => {
@@ -64,8 +69,17 @@ export const listAssemblies =
       const owners = ensureArray(options.owners);
       if (owners.length === 0) return []; // No owner to query
 
+      const tokens = await client.selectFrom<Owner>(
+        "erc721deploybl",
+        "Owners",
+        {
+          where: `"owner" IN ('${owners.map(toSqlHex).join("', '")}')`,
+        }
+      );
+      const tokenIds = tokens.map((t) => t.tokenId);
+
       whereParts.push(
-        `erc721deploybl__Owners."owner" IN ('${owners.map(toSqlHex).join("', '")}')`
+        `eveworld__DeployableState."smartObjectId" IN ('${tokenIds.join("', '")}')`
       );
     }
     if (options?.states) {
@@ -121,7 +135,7 @@ export const listAssemblies =
     const smartObjectIds = assemblies.map((a) => a.smartObjectId);
     if (smartObjectIds.length === 0) return [];
 
-    const ownersAddresses = assemblies.map((a) => a.owner__owner);
+    const ownersAddresses = [...new Set(assemblies.map((a) => a.owner__owner))];
 
     const [entities, owners] = await Promise.all([
       client.selectFrom<EntityDbRow>("eveworld", "EntityRecordOffc", {
