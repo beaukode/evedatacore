@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import {
+  Alert,
   Box,
   List,
   Table,
@@ -46,6 +47,7 @@ const ExploreCharacter: React.FC = () => {
     queryFn: async () => mudSql.listAssemblies({ owners: address }),
     staleTime: 1000 * 60,
     enabled: !!query.data?.id,
+    retry: false,
   });
 
   const killmails = useQuery({
@@ -91,6 +93,12 @@ const ExploreCharacter: React.FC = () => {
         </List>
       </PaperLevel1>
       <PaperLevel1 title="Assemblies" loading={queryAssemblies.isFetching}>
+        {queryAssemblies.isError && (
+          <Alert severity="error">
+            Error loading assemblies, contact me if the error is permanent for
+            this user
+          </Alert>
+        )}
         {queryAssemblies.data && (
           <>
             {queryAssemblies.data.length === 0 && (
