@@ -1,9 +1,9 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Paper, Typography, Button } from "@mui/material";
-import ExploreDataIcon from "@mui/icons-material/TravelExplore";
-import CalculateIcon from "@mui/icons-material/Calculate";
+import { Typography, Button } from "@mui/material";
 import { NavLink } from "react-router";
+import ExternalLink from "@/components/ui/ExternalLink";
+import InternalLink from "@/components/ui/InternalLink";
 
 const Home: React.FC = () => {
   return (
@@ -11,93 +11,91 @@ const Home: React.FC = () => {
       <Helmet>
         <title>EVE:F tools</title>
       </Helmet>
-      <Typography variant="h5" component="h1" sx={{ m: 2 }}>
-        Hello Awaken,
-      </Typography>
-      <Paper elevation={1} sx={{ m: 2 }}>
-        <Typography variant="h5" component="h2" sx={{ m: 2 }}>
-          <ExploreDataIcon
-            fontSize="large"
-            sx={{ verticalAlign: "middle", mr: 2 }}
-          />
-          Explore
-        </Typography>
-        <Button
-          component={NavLink}
-          to="/explore/characters"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Characters
-        </Button>
-        <Button
-          component={NavLink}
-          to="/explore/assemblies"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Assemblies
-        </Button>
-        <Button
-          component={NavLink}
-          to="/explore/killmails"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Killmails
-        </Button>
-        <Button
-          component={NavLink}
-          to="/explore/types"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Types
-        </Button>
-        <Button
-          component={NavLink}
-          to="/explore/solarsystems"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Solar systems
-        </Button>
-        <Button
-          component={NavLink}
-          to="/explore/config"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Config
-        </Button>
-      </Paper>
-      <Paper elevation={1} sx={{ m: 2 }}>
-        <Typography variant="h5" component="h2" sx={{ m: 2 }}>
-          <CalculateIcon
-            fontSize="large"
-            sx={{ verticalAlign: "middle", mr: 2 }}
-          />
-          Calculate
-        </Typography>
-        <Button
-          component={NavLink}
-          to="/calculate/route-planner"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
-        >
-          Route planner
-        </Button>
-        <Button
-          component={NavLink}
+      <Typography sx={{ m: 2 }}>Hello Awaken,</Typography>
+      <Typography sx={{ m: 2 }}>
+        Welcome to EVE Frontier tools website, a collection of tools and data
+        for the game EVE Frontier. The game is actually in alpha test and take
+        place in a large space universe like EVE Online, but with a different
+        gameplay. The game empowers players to shape the world using the{" "}
+        <ExternalLink title="Redstone blockchain" href="https://redstone.xyz/">
+          Redstone blockchain
+        </ExternalLink>{" "}
+        (Actually{" "}
+        <ExternalLink title="Garnet testnet" href="https://garnetchain.com/">
+          Garnet testnet
+        </ExternalLink>{" "}
+        during the alpha).
+        <br />
+        Visit the website for more informations:{" "}
+        <ExternalLink
+          title="EVE Frontier website"
+          href="https://www.evefrontier.com/"
+        />{" "}
+        <br /> <br />
+        Here you can explore world users data like{" "}
+        <InternalLink to="/explore/characters" title="Explore characters">
+          characters
+        </InternalLink>
+        ,{" "}
+        <InternalLink to="/explore/assemblies" title="Explore assemblies">
+          assemblies
+        </InternalLink>
+        ,{" "}
+        <InternalLink to="/explore/killmails" title="Explore killmails">
+          killmails
+        </InternalLink>
+        .
+        <br />
+        As well it provide a simple access to blockchain{" "}
+        <ExternalLink title="MUD Frameworkd website" href="https://mud.dev/">
+          Mud
+        </ExternalLink>{" "}
+        world data:{" "}
+        <InternalLink to="/explore/namespaces" title="Explore namespaces">
+          namespaces
+        </InternalLink>
+        ,{" "}
+        <InternalLink to="/explore/tables" title="Explore tables">
+          tables
+        </InternalLink>
+        ,{" "}
+        <InternalLink to="/explore/systems" title="Explore systems">
+          systems
+        </InternalLink>{" "}
+        and{" "}
+        <InternalLink to="/explore/functions" title="Explore functions">
+          functions
+        </InternalLink>{" "}
+        <br />
+        <br />
+        Data displayed is very accurate and fresh as it comes directly from the
+        blockchain tables via the Mud indexer.
+        <br />
+        <br />
+        Additionally, you'll find{" "}
+        <InternalLink
           to="/calculate/various-calculators"
-          sx={{ m: 2, py: 2, px: 4 }}
-          variant="contained"
+          title="Various calculators"
         >
-          Various calculators
-        </Button>
-      </Paper>
+          various calculators
+        </InternalLink>{" "}
+        and an advanced{" "}
+        <InternalLink to="/calculate/route-planner" title="Route planner">
+          route planner
+        </InternalLink>{" "}
+        to help optimize your journey through the universe.
+        <br />
+        <br />
+        Feedbacks and bug reports are welcome,{" "}
+        <InternalLink to="/about" title="Contact">
+          contact me
+        </InternalLink>
+        <br />
+        <br />
+        Fly safe <span style={{ fontSize: "80%" }}>o</span>7
+      </Typography>
       <Button component={NavLink} to="/about" size="small" variant="text">
-        About the website
+        About
       </Button>
     </>
   );
