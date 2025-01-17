@@ -37,7 +37,6 @@ const ExploreSystem: React.FC = () => {
   }
 
   const data = query.data;
-  console.log("data", data);
   const title = `${system.name} [${system.namespace}]`;
 
   return (
