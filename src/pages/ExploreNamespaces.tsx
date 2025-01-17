@@ -5,8 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import DisplayOwner from "@/components/DisplayOwner";
-import DisplayNamespace from "@/components/DisplayNamespace";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 
 const columns = ["Name", "Owner"];
 
@@ -36,11 +36,11 @@ const ExploreNamespaces: React.FC = () => {
       return (
         <React.Fragment key={ns.namespaceId}>
           <TableCell>
-            <DisplayNamespace name={ns.name} id={ns.namespaceId} />
+            <ButtonNamespace name={ns.name} id={ns.namespaceId} />
           </TableCell>
           <TableCell sx={{ height: 49.5 }}>
             {ns.ownerName ? (
-              <DisplayOwner name={ns.ownerName} address={ns.owner} />
+              <ButtonCharacter name={ns.ownerName} address={ns.owner} />
             ) : (
               ns.owner
             )}

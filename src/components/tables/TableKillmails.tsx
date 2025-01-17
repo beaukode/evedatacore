@@ -10,8 +10,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import DisplaySolarsystem from "../DisplaySolarsystem";
-import DisplayOwner from "../DisplayOwner";
+import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
+import ButtonCharacter from "../buttons/ButtonCharacter";
 import { ldapDate } from "@/tools";
 
 interface TableKillmailsProps {
@@ -66,13 +66,13 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
                     <TableRow key={km.id}>
                       <TableCell>{`${date} ${time}`}</TableCell>
                       <TableCell>
-                        <DisplayOwner
+                        <ButtonCharacter
                           name={km.killerName}
                           address={km.killerAddress}
                         />
                       </TableCell>
                       <TableCell>
-                        <DisplayOwner
+                        <ButtonCharacter
                           name={km.victimName}
                           address={km.victimAddress}
                         />
@@ -80,7 +80,7 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
                       <TableCell>{km.lossType}</TableCell>
                       {!solarSystemId && (
                         <TableCell>
-                          <DisplaySolarsystem
+                          <ButtonSolarsystem
                             solarSystemId={km.solarSystemId}
                           />
                         </TableCell>

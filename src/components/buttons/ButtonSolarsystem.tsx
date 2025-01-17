@@ -3,11 +3,11 @@ import { Button, Skeleton } from "@mui/material";
 import { NavLink } from "react-router";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 
-interface DisplaySolarsystemProps {
+interface ButtonSolarsystemProps {
   solarSystemId?: string | number;
 }
 
-const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
+const ButtonSolarsystem: React.FC<ButtonSolarsystemProps> = ({
   solarSystemId,
 }) => {
   const solarSystems = useSolarSystemsIndex();
@@ -29,4 +29,4 @@ const DisplaySolarsystem: React.FC<DisplaySolarsystemProps> = ({
   );
 };
 
-export default DisplaySolarsystem;
+export default ButtonSolarsystem;

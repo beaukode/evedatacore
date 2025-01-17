@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "./ui/PaperLevel1";
 import BasicListItem from "./ui/BasicListItem";
-import DisplaySystem from "./DisplaySystem";
-import DisplayOwner from "./DisplayOwner";
-import DisplayNamespace from "./DisplayNamespace";
+import ButtonSystem from "./buttons/ButtonSystem";
+import ButtonCharacter from "./buttons/ButtonCharacter";
+import ButtonNamespace from "./buttons/ButtonNamespace";
 
 interface SmartGateConfigProps {
   gateId: string;
@@ -32,16 +32,16 @@ const SmartGateConfig: React.FC<SmartGateConfigProps> = ({ gateId }) => {
             {!data.defaultSystem && system && (
               <>
                 <BasicListItem title="System name" disableGutters>
-                  <DisplaySystem id={system.systemId} name={system.name} />
+                  <ButtonSystem id={system.systemId} name={system.name} />
                 </BasicListItem>
                 <BasicListItem title="System namespace" disableGutters>
-                  <DisplayNamespace
+                  <ButtonNamespace
                     id={system.namespaceId}
                     name={system.namespace}
                   />
                 </BasicListItem>
                 <BasicListItem title="System owner" disableGutters>
-                  <DisplayOwner
+                  <ButtonCharacter
                     address={system.namespaceOwner}
                     name={system.namespaceOwnerName}
                   />

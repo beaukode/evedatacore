@@ -14,10 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import DisplayOwner from "@/components/DisplayOwner";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
-import DisplayNamespace from "@/components/DisplayNamespace";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DataTable from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
@@ -138,7 +138,7 @@ const ExploreTable: React.FC = () => {
           <ListItem disableGutters>
             <ListItemText sx={{ my: 0 }}>
               Namespace:{" "}
-              <DisplayNamespace id={namespaceId} name={table.namespace} />
+              <ButtonNamespace id={namespaceId} name={table.namespace} />
             </ListItemText>
           </ListItem>
           {data && (
@@ -147,7 +147,7 @@ const ExploreTable: React.FC = () => {
                 <ListItemText sx={{ my: 0 }}>
                   Owner:{" "}
                   {data.namespaceOwnerName ? (
-                    <DisplayOwner
+                    <ButtonCharacter
                       address={data.namespaceOwner}
                       name={data.namespaceOwnerName}
                     />

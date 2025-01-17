@@ -16,9 +16,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import DisplayOwner from "@/components/DisplayOwner";
-import DisplayNamespace from "@/components/DisplayNamespace";
-import DisplayTable from "@/components/DisplayTable";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import ButtonTable from "@/components/buttons/ButtonTable";
 import { DataTableContext } from "@/components/DataTable";
 import { NoMaxWidthTooltip } from "@/components/ui/NoMaxWidthTooltip";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
@@ -193,21 +193,21 @@ const ExploreTables: React.FC = () => {
           <TableCell>
             {t.type === "offchainTable" ? (
               <Box display="flex" alignItems="center">
-                <DisplayTable id={t.tableId} name={t.name} />
+                <ButtonTable id={t.tableId} name={t.name} />
                 <Tooltip title="Off-chain table">
                   <OffChainIcon color="secondary" />
                 </Tooltip>
               </Box>
             ) : (
-              <DisplayTable id={t.tableId} name={t.name} />
+              <ButtonTable id={t.tableId} name={t.name} />
             )}
           </TableCell>
           <TableCell>
-            <DisplayNamespace id={t.namespaceId} name={t.namespace} />
+            <ButtonNamespace id={t.namespaceId} name={t.namespace} />
           </TableCell>
           <TableCell>
             {t.namespaceOwnerName ? (
-              <DisplayOwner
+              <ButtonCharacter
                 address={t.namespaceOwner}
                 name={t.namespaceOwnerName}
               />

@@ -7,7 +7,7 @@ import { useParams } from "react-router";
 import { isHex } from "viem";
 import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import DisplayOwner from "@/components/DisplayOwner";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import TableTables from "@/components/tables/TableTables";
 import TableSystems from "@/components/tables/TableSystems";
@@ -46,7 +46,7 @@ const ExploreNamespace: React.FC = () => {
               <ListItemText sx={{ my: 0 }}>
                 Owner:{" "}
                 {data.ownerName && (
-                  <DisplayOwner address={data.owner} name={data.ownerName} />
+                  <ButtonCharacter address={data.owner} name={data.ownerName} />
                 )}
                 {!data.ownerName && data.owner}
               </ListItemText>

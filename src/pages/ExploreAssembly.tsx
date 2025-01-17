@@ -5,8 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
 import { fuel, shorten, tsToDateTime } from "@/tools";
-import DisplaySolarsystem from "@/components/DisplaySolarsystem";
-import DisplayOwner from "@/components/DisplayOwner";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import {
@@ -83,7 +83,7 @@ const ExploreAssembly: React.FC = () => {
               {type} [{data.typeId}]
             </BasicListItem>
             <BasicListItem title="Owner" disableGutters>
-              <DisplayOwner address={data.ownerId} name={data.ownerName} />
+              <ButtonCharacter address={data.ownerId} name={data.ownerName} />
             </BasicListItem>
             <BasicListItem title="State">
               {state} [{data.state}]
@@ -92,7 +92,7 @@ const ExploreAssembly: React.FC = () => {
               {tsToDateTime(data.anchoredAt)}
             </BasicListItem>
             <BasicListItem title="Solar system" disableGutters>
-              <DisplaySolarsystem solarSystemId={data.solarSystemId} />
+              <ButtonSolarsystem solarSystemId={data.solarSystemId} />
             </BasicListItem>
             <BasicListItem title="Location">
               <Box sx={{ pl: 4 }}>

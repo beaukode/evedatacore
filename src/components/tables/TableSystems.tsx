@@ -13,8 +13,8 @@ import PrivateIcon from "@mui/icons-material/Lock";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import DisplayNamespace from "@/components/DisplayNamespace";
-import DisplaySystem from "../DisplaySystem";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import ButtonSystem from "../buttons/ButtonSystem";
 import ExternalLink from "../ui/ExternalLink";
 
 interface TableSystemsProps {
@@ -65,13 +65,13 @@ const TableSystems: React.FC<TableSystemsProps> = ({
                 <TableRow key={sys.systemId}>
                   <TableCell>
                     <Box display="flex" alignItems="center">
-                      <DisplaySystem id={sys.systemId} name={sys.name} />
+                      <ButtonSystem id={sys.systemId} name={sys.name} />
                       {!sys.publicAccess && privateIcon}
                     </Box>
                   </TableCell>
                   {!hideNamespaceColumn && (
                     <TableCell>
-                      <DisplayNamespace
+                      <ButtonNamespace
                         id={sys.namespaceId}
                         name={sys.namespace}
                       />

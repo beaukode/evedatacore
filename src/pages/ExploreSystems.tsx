@@ -15,11 +15,11 @@ import { useQuery } from "@tanstack/react-query";
 import { filterInProps } from "@/tools";
 import { useMudSql } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import DisplayOwner from "@/components/DisplayOwner";
-import DisplayNamespace from "@/components/DisplayNamespace";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { DataTableContext } from "@/components/DataTable";
 import ExternalLink from "@/components/ui/ExternalLink";
-import DisplaySystem from "@/components/DisplaySystem";
+import ButtonSystem from "@/components/buttons/ButtonSystem";
 
 const columns = ["Name", "Namespace", "Owner", "Contract"];
 
@@ -193,16 +193,16 @@ const ExploreSystems: React.FC = () => {
         <React.Fragment key={sys.systemId}>
           <TableCell>
             <Box display="flex" alignItems="center">
-              <DisplaySystem id={sys.systemId} name={sys.name} />
+              <ButtonSystem id={sys.systemId} name={sys.name} />
               {!sys.publicAccess && privateIcon}
             </Box>
           </TableCell>
           <TableCell>
-            <DisplayNamespace id={sys.namespaceId} name={sys.namespace} />
+            <ButtonNamespace id={sys.namespaceId} name={sys.namespace} />
           </TableCell>
           <TableCell>
             {sys.namespaceOwnerName ? (
-              <DisplayOwner
+              <ButtonCharacter
                 address={sys.namespaceOwner}
                 name={sys.namespaceOwnerName}
               />

@@ -2,9 +2,9 @@ import React from "react";
 import { Alert, Box, List, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DisplayOwner from "./DisplayOwner";
-import DisplayAssembly from "./DisplayAssembly";
-import DisplaySolarsystem from "./DisplaySolarsystem";
+import ButtonCharacter from "./buttons/ButtonCharacter";
+import ButtonAssembly from "./buttons/ButtonAssembly";
+import ButtonSolarsystem from "./buttons/ButtonSolarsystem";
 import PaperLevel1 from "./ui/PaperLevel1";
 import BasicListItem from "./ui/BasicListItem";
 import { shorten, tsToDateTime } from "@/tools";
@@ -46,11 +46,11 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({ sourceGateId }) => {
         <>
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
             <BasicListItem title="Gate" disableGutters>
-              <DisplayAssembly id={data.id} name={name} />
+              <ButtonAssembly id={data.id} name={name} />
             </BasicListItem>
             <BasicListItem title="Id">{data.id}</BasicListItem>
             <BasicListItem title="Owner" disableGutters>
-              <DisplayOwner address={data.ownerId} name={data.ownerName} />
+              <ButtonCharacter address={data.ownerId} name={data.ownerName} />
             </BasicListItem>
             <BasicListItem title="State">
               {state} [{data.state}]
@@ -59,7 +59,7 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({ sourceGateId }) => {
               {tsToDateTime(data.anchoredAt)}
             </BasicListItem>
             <BasicListItem title="Solar system" disableGutters>
-              <DisplaySolarsystem solarSystemId={data.solarSystemId} />
+              <ButtonSolarsystem solarSystemId={data.solarSystemId} />
             </BasicListItem>
             <BasicListItem title="Location">
               <Box sx={{ pl: 4 }}>

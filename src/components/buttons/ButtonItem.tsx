@@ -2,13 +2,13 @@ import React from "react";
 import { Avatar, Box, Button } from "@mui/material";
 import { NavLink } from "react-router";
 
-interface DisplayItemProps {
+interface ButtonItemProps {
   name: string;
   typeId: number | string;
   image?: string;
 }
 
-const DisplayItem: React.FC<DisplayItemProps> = ({ name, typeId, image }) => {
+const ButtonItem: React.FC<ButtonItemProps> = ({ name, typeId, image }) => {
   return (
     <Box display="flex" alignItems="center">
       {image && (
@@ -26,4 +26,4 @@ const DisplayItem: React.FC<DisplayItemProps> = ({ name, typeId, image }) => {
   );
 };
 
-export default DisplayItem;
+export default ButtonItem;

@@ -8,7 +8,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { filterInProps } from "@/tools";
-import DisplayItem from "@/components/DisplayItem";
+import ButtonItem from "@/components/buttons/ButtonItem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import { useTypesIndex } from "@/contexts/AppContext";
@@ -129,7 +129,7 @@ const ExploreTypes: React.FC = () => {
       return (
         <React.Fragment key={type.id}>
           <TableCell>
-            <DisplayItem typeId={type.id} name={type.name} />
+            <ButtonItem typeId={type.id} name={type.name} />
           </TableCell>
           <TableCell>{type.id}</TableCell>
           <TableCell>{type.categoryName}</TableCell>

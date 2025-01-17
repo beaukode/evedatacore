@@ -14,9 +14,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import DisplayAssembly from "../DisplayAssembly";
+import ButtonAssembly from "../buttons/ButtonAssembly";
 import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
-import DisplaySolarsystem from "../DisplaySolarsystem";
+import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
 
 interface TableAssembliesProps {
   owner?: string;
@@ -102,11 +102,11 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
                             stateId={sa.state}
                             tooltip
                           />
-                          <DisplayAssembly id={sa.id} name={sa.name} />
+                          <ButtonAssembly id={sa.id} name={sa.name} />
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
+                        <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
                       </TableCell>
                       <TableCell>{`${date} ${time}`}</TableCell>
                     </TableRow>

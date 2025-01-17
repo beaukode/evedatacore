@@ -13,8 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import DataTable, { DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
-import DisplaySolarsystem from "@/components/DisplaySolarsystem";
-import DisplayOwner from "@/components/DisplayOwner";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { filterInProps, ldapDate } from "@/tools";
 
 const columns = ["Date", "Killer", "Victim", "Loss Type", "Solar System"];
@@ -72,14 +72,14 @@ const ExploreKillmails: React.FC = () => {
           <React.Fragment key={km.id}>
             <TableCell>{`${date} ${time}`}</TableCell>
             <TableCell>
-              <DisplayOwner name={km.killerName} address={km.killerAddress} />
+              <ButtonCharacter name={km.killerName} address={km.killerAddress} />
             </TableCell>
             <TableCell>
-              <DisplayOwner name={km.victimName} address={km.victimAddress} />
+              <ButtonCharacter name={km.victimName} address={km.victimAddress} />
             </TableCell>
             <TableCell>{km.lossType}</TableCell>
             <TableCell>
-              <DisplaySolarsystem solarSystemId={km.solarSystemId} />
+              <ButtonSolarsystem solarSystemId={km.solarSystemId} />
             </TableCell>
           </React.Fragment>
         );

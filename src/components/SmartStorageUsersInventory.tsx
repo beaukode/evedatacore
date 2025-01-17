@@ -11,9 +11,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql, useTypesIndex } from "@/contexts/AppContext";
 import PaperLevel1 from "./ui/PaperLevel1";
-import DisplayItem from "./DisplayItem";
+import ButtonItem from "./buttons/ButtonItem";
 import { bigPercentage, formatCrypto, formatLargeNumber } from "@/tools";
-import DisplayOwner from "./DisplayOwner";
+import ButtonCharacter from "./buttons/ButtonCharacter";
 
 interface SmartStorageUsersInventoryProps {
   id: string;
@@ -69,7 +69,7 @@ const SmartStorageUsersInventory: React.FC<SmartStorageUsersInventoryProps> = ({
               justifyContent="space-between"
               alignItems="flex-end"
             >
-              <DisplayOwner address={inv.ownerId} name={inv.ownerName} />
+              <ButtonCharacter address={inv.ownerId} name={inv.ownerName} />
               <Box sx={{ textWrap: "nowrap", ml: 2 }}>
                 <Typography variant="caption">
                   Usage: {formatLargeNumber(formatCrypto(inv.used, 0))} of{" "}
@@ -89,7 +89,7 @@ const SmartStorageUsersInventory: React.FC<SmartStorageUsersInventoryProps> = ({
                 {inv.items.map((i) => (
                   <TableRow key={i.itemId}>
                     <TableCell>
-                      <DisplayItem
+                      <ButtonItem
                         name={i.name}
                         typeId={i.id}
                         image={i.image}

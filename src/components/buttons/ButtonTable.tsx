@@ -2,21 +2,23 @@ import React from "react";
 import { Button } from "@mui/material";
 import { NavLink } from "react-router";
 
-interface DisplayNamespaceProps {
-  name: string;
-  id: string;
+interface ButtonTableProps {
+  name?: string;
+  id?: string;
 }
 
-const DisplayNamespace: React.FC<DisplayNamespaceProps> = ({ name, id }) => {
+const ButtonTable: React.FC<ButtonTableProps> = ({ name, id }) => {
+  if (!id) return null;
+
   return (
     <Button
       sx={{ justifyContent: "flex-start" }}
       component={NavLink}
-      to={`/explore/namespaces/${id}`}
+      to={`/explore/tables/${id}`}
     >
       {name}
     </Button>
   );
 };
 
-export default DisplayNamespace;
+export default ButtonTable;

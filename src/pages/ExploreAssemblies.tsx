@@ -20,10 +20,10 @@ import DataTable, {
   DataTableColumn,
   DataTableContext,
 } from "@/components/DataTable";
-import DisplayOwner from "@/components/DisplayOwner";
-import DisplayAssembly from "@/components/DisplayAssembly";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonAssembly from "@/components/buttons/ButtonAssembly";
 import { ensureArray, filterInProps, shorten, tsToDateTime } from "@/tools";
-import DisplaySolarsystem from "@/components/DisplaySolarsystem";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import {
@@ -98,7 +98,7 @@ const ExploreAssemblies: React.FC = () => {
               {sa.ownerName}
             </TableCell>
             <TableCell>
-              <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
+              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
             <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
           </React.Fragment>
@@ -113,14 +113,14 @@ const ExploreAssemblies: React.FC = () => {
                   stateId={sa.state}
                   tooltip
                 />
-                <DisplayAssembly name={sa.name} id={sa.id} />
+                <ButtonAssembly name={sa.name} id={sa.id} />
               </Box>
             </TableCell>
             <TableCell>
-              <DisplayOwner name={sa.ownerName} address={sa.ownerId} />
+              <ButtonCharacter name={sa.ownerName} address={sa.ownerId} />
             </TableCell>
             <TableCell>
-              <DisplaySolarsystem solarSystemId={sa.solarSystemId} />
+              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
             <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
           </React.Fragment>

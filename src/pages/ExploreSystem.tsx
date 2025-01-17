@@ -7,9 +7,9 @@ import { useParams } from "react-router";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import DisplayOwner from "@/components/DisplayOwner";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import DisplayNamespace from "@/components/DisplayNamespace";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import BasicListItem from "@/components/ui/BasicListItem";
 import ExternalLink from "@/components/ui/ExternalLink";
 
@@ -54,13 +54,13 @@ const ExploreSystem: React.FC = () => {
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{system.resourceId}</BasicListItem>
           <BasicListItem title="Namespace" disableGutters>
-            <DisplayNamespace id={namespaceId} name={system.namespace} />
+            <ButtonNamespace id={namespaceId} name={system.namespace} />
           </BasicListItem>
           {data && (
             <>
               {data.namespaceOwnerName ? (
                 <BasicListItem title="Owner" disableGutters>
-                  <DisplayOwner
+                  <ButtonCharacter
                     address={data.namespaceOwner}
                     name={data.namespaceOwnerName}
                   />

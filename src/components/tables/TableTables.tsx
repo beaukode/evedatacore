@@ -13,8 +13,8 @@ import OffChainIcon from "@mui/icons-material/BackupTable";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import DisplayNamespace from "@/components/DisplayNamespace";
-import DisplayTable from "@/components/DisplayTable";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import ButtonTable from "@/components/buttons/ButtonTable";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 
 interface TablesProps {
@@ -57,18 +57,18 @@ const TableTables: React.FC<TablesProps> = ({
                   <TableCell>
                     {t.type === "offchainTable" ? (
                       <Box display="flex" alignItems="center">
-                        <DisplayTable id={t.tableId} name={t.name} />
+                        <ButtonTable id={t.tableId} name={t.name} />
                         <Tooltip title="Off-chain table">
                           <OffChainIcon color="secondary" />
                         </Tooltip>
                       </Box>
                     ) : (
-                      <DisplayTable id={t.tableId} name={t.name} />
+                      <ButtonTable id={t.tableId} name={t.name} />
                     )}
                   </TableCell>
                   {!hideNamespaceColumn && (
                     <TableCell>
-                      <DisplayNamespace id={t.namespaceId} name={t.namespace} />
+                      <ButtonNamespace id={t.namespaceId} name={t.namespace} />
                     </TableCell>
                   )}
                   <TableCell>

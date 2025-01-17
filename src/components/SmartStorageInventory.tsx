@@ -11,7 +11,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql, useTypesIndex } from "@/contexts/AppContext";
 import PaperLevel1 from "./ui/PaperLevel1";
-import DisplayItem from "./DisplayItem";
+import ButtonItem from "./buttons/ButtonItem";
 import { bigPercentage, formatCrypto, formatLargeNumber } from "@/tools";
 
 interface SmartStorageInventoryProps {
@@ -78,7 +78,7 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
               {items.map((i) => (
                 <TableRow key={i.itemId}>
                   <TableCell>
-                    <DisplayItem name={i.name} typeId={i.id} image={i.image} />
+                    <ButtonItem name={i.name} typeId={i.id} image={i.image} />
                   </TableCell>
                   <TableCell>{i.quantity}</TableCell>
                 </TableRow>
