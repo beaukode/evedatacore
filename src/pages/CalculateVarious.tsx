@@ -6,8 +6,11 @@ import JumpDistance from "./Calculators/JumpDistance";
 import FuelRequirement from "./Calculators/FuelRequirement";
 import SystemsDistance from "./Calculators/SystemsDistance";
 import ExternalLink from "@/components/ui/ExternalLink";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 
 const CalculateVarious: React.FC = () => {
+  const solarSystemsIndex = useSolarSystemsIndex();
+
   return (
     <Box p={2} flexGrow={1} overflow="auto">
       <Helmet>
@@ -18,8 +21,10 @@ const CalculateVarious: React.FC = () => {
           <PaperLevel1 title="Ship jump distance">
             <JumpDistance />
           </PaperLevel1>
-          <PaperLevel1 title="Systems distance">
-            <SystemsDistance />
+          <PaperLevel1 title="Systems distance" loading={!solarSystemsIndex}>
+            {solarSystemsIndex && (
+              <SystemsDistance solarSystemsIndex={solarSystemsIndex} />
+            )}
           </PaperLevel1>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>

@@ -20,18 +20,27 @@ export type DataTableItemContentCallback<T extends Record<string, unknown>> = (
   context: DataTableContext
 ) => React.ReactNode;
 
+type ColumnAttributes = {
+  label: string;
+  width?: number;
+};
+
+export type DataTableColumn = string | ColumnAttributes;
+
 interface DataTableProps<T extends Record<string, unknown>> {
   data: T[];
-  columns: string[];
+  columns: DataTableColumn[];
   itemContent: DataTableItemContentCallback<T>;
   rememberScroll?: boolean;
+  dynamicWidth?: boolean;
 }
 
 const DataTable = <T extends Record<string, unknown>>({
   data,
   itemContent,
-  columns,
+  columns: rawColumns,
   rememberScroll,
+  dynamicWidth,
 }: DataTableProps<T>) => {
   const [isScrolling, setIsScrolling] = React.useState(false);
   const [scroll, setScroll] = React.useState<number | undefined>(undefined);
@@ -54,6 +63,27 @@ const DataTable = <T extends Record<string, unknown>>({
     }
   }, [debounceScroll, location.search, navigate]);
 
+  const sx = dynamicWidth
+    ? ({
+        borderCollapse: "separate",
+        tableLayout: "fixed",
+        width: "auto",
+        minWidth: "100%",
+      } as const)
+    : ({
+        borderCollapse: "separate",
+        tableLayout: "fixed",
+      } as const);
+
+  const columns: ColumnAttributes[] = React.useMemo(() => {
+    return rawColumns.map((v) => {
+      if (typeof v === "string") {
+        return { label: v };
+      }
+      return v;
+    });
+  }, [rawColumns]);
+
   return (
     <>
       <TableVirtuoso
@@ -66,19 +96,16 @@ const DataTable = <T extends Record<string, unknown>>({
         initialTopMostItemIndex={initialScrollTo || 0}
         fixedHeaderContent={() => (
           <TableRow>
-            {columns.map((c, i) => (
-              <TableCell key={i}>{c}</TableCell>
+            {columns.map(({ label, ...rest }, i) => (
+              <TableCell key={i} {...rest}>
+                {label}
+              </TableCell>
             ))}
           </TableRow>
         )}
         components={{
           Table: (props) => (
-            <Table
-              size="small"
-              {...props}
-              sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
-              stickyHeader
-            />
+            <Table size="small" {...props} sx={sx} stickyHeader />
           ),
           TableHead: React.forwardRef((props, ref) => (
             <TableHead {...props} ref={ref} />

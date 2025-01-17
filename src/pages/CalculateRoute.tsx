@@ -7,12 +7,14 @@ import ExternalLink from "@/components/ui/ExternalLink";
 import { getPath } from "@/api/shish";
 import RoutePlannerForm from "./Calculators/RoutePlannerForm";
 import RoutePlannerRoute from "./Calculators/RoutePlannerRoute";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 
 type SubmitHandler = React.ComponentProps<typeof RoutePlannerForm>["onSubmit"];
 type RoutePlannerFormData = Parameters<SubmitHandler>[0];
 
 const CalculateRoute: React.FC = () => {
   const [queryData, setQueryData] = React.useState<RoutePlannerFormData>();
+  const solarSystemsIndex = useSolarSystemsIndex();
 
   const query = useQuery({
     queryKey: ["CalculateRoute", queryData],
@@ -53,8 +55,13 @@ const CalculateRoute: React.FC = () => {
       </Helmet>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <PaperLevel1 title="Route planner">
-            <RoutePlannerForm onSubmit={handleSubmit} />
+          <PaperLevel1 title="Route planner" loading={!solarSystemsIndex}>
+            {solarSystemsIndex && (
+              <RoutePlannerForm
+                onSubmit={handleSubmit}
+                solarSystemsIndex={solarSystemsIndex}
+              />
+            )}
           </PaperLevel1>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>

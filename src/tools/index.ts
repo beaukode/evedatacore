@@ -1,5 +1,9 @@
 import Big from "big.js";
 
+export function ensureArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value];
+}
+
 export function shorten(
   text?: string,
   length: number = 16
@@ -43,10 +47,18 @@ export function filterInProps<T extends Record<string, unknown>>(
   }
 }
 
-export function formatCrypto(value: string | undefined): string {
+export function formatCrypto(
+  value: string | undefined,
+  decimals?: number
+): string {
   if (value === undefined) return "";
   try {
-    return new Big(value).div(new Big(10).pow(18)).toString();
+    const r = new Big(value).div(new Big(10).pow(18));
+    if (decimals !== undefined) {
+      return r.toFixed(decimals);
+    } else {
+      return r.toString();
+    }
   } catch (e) {
     console.error(e);
     return "Error";
@@ -85,4 +97,16 @@ export function ldapDate(value?: number) {
   if (!value) return new Date(0);
   const msSinceUnixEpoch = (value - 116444736000000000) / 10000;
   return new Date(msSinceUnixEpoch);
+}
+
+export function tsToDateTime(value?: number): string {
+  if (!value) return "";
+  const isoDate = new Date(value).toISOString();
+  return isoDate.substring(0, 10) + " " + isoDate.substring(11, 19);
+}
+
+export function formatLargeNumber(value: string) {
+  return new Intl.NumberFormat("en-GB", { useGrouping: true }).format(
+    Number(value)
+  );
 }
