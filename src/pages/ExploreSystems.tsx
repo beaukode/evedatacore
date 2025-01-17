@@ -137,7 +137,7 @@ const ExploreSystems: React.FC = () => {
   const namespaceSelect = React.useMemo(() => {
     if (!namespaces) return null;
     return (
-      <FormControl variant="standard" sx={{ width: 160, ml: 2 }}>
+      <FormControl variant="standard" sx={{ width: 160, mx: 2 }}>
         <InputLabel id="select-namespace-label">Namespace</InputLabel>
         <Select
           labelId="select-namespace-label"
@@ -240,6 +240,7 @@ const ExploreSystems: React.FC = () => {
             e.currentTarget.value.substring(0, 255).toLowerCase()
           );
         }}
+        fullWidth
       />
       {ownerSelect}
       {namespaceSelect}
