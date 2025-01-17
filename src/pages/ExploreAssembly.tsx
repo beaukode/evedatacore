@@ -9,11 +9,16 @@ import DisplaySolarsystem from "@/components/DisplaySolarsystem";
 import DisplayOwner from "@/components/DisplayOwner";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
-import { fuelFactor, smartAssembliesTypes, smartAssemblyStates } from "@/constants";
+import {
+  fuelFactor,
+  smartAssembliesTypes,
+  smartAssemblyStates,
+} from "@/constants";
 import Error404 from "./Error404";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
 import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory";
+import SmartGateConfig from "@/components/SmartGateConfig";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
@@ -36,7 +41,8 @@ const ExploreAssembly: React.FC = () => {
   const { name, type, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
     const type =
-      smartAssembliesTypes[data.typeId as keyof typeof smartAssembliesTypes] || "Unknown";
+      smartAssembliesTypes[data.typeId as keyof typeof smartAssembliesTypes] ||
+      "Unknown";
     const state =
       smartAssemblyStates[data.state as keyof typeof smartAssemblyStates] ||
       "Unknown";
@@ -125,6 +131,7 @@ const ExploreAssembly: React.FC = () => {
         )}
       </PaperLevel1>
       {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
+      {data?.typeId === 84955 && <SmartGateConfig gateId={id} />}
       {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
       {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
     </Box>

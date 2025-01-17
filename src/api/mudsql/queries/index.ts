@@ -2,6 +2,7 @@ export * from "./getAssembly";
 export * from "./getAssemblyFuel";
 export * from "./getCharacter";
 export * from "./getEveBalance";
+export * from "./getGateConfig";
 export * from "./getGateLink";
 export * from "./getNamespace";
 export * from "./getStorageInventory";
