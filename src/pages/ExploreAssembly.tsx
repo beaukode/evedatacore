@@ -19,6 +19,7 @@ import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
 import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory";
 import SmartGateConfig from "@/components/SmartGateConfig";
+import SmartTurretConfig from "@/components/SmartTurretConfig";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
@@ -132,6 +133,7 @@ const ExploreAssembly: React.FC = () => {
       </PaperLevel1>
       {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
       {data?.typeId === 84955 && <SmartGateConfig gateId={id} />}
+      {data?.typeId === 84556 && <SmartTurretConfig turretId={id} />}
       {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
       {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
     </Box>

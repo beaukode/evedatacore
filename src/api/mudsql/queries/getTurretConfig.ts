@@ -11,12 +11,12 @@ type GateConfig = {
   system?: Awaited<ReturnType<MudSqlClient["getSystem"]>>;
 };
 
-export const getGateConfig =
+export const getTurretConfig =
   (client: MudSqlClient) =>
   async (id: string): Promise<GateConfig | undefined> => {
     const configs = await client.selectFrom<DbRow>(
       "eveworld",
-      "SmartGateConfigT",
+      "SmartTurretConfi",
       {
         where: `"smartObjectId" = '${id}'`,
       }

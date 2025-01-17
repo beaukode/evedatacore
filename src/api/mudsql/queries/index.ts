@@ -10,6 +10,7 @@ export * from "./getStorageInventoryCapacity";
 export * from "./getSystem";
 export * from "./getTable";
 export * from "./getTableSchema";
+export * from "./getTurretConfig";
 export * from "./listAssemblies";
 export * from "./listCharacters";
 export * from "./listKillmails";
