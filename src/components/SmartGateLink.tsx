@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Box, List } from "@mui/material";
+import { Alert, Box, List, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import DisplayOwner from "./DisplayOwner";
@@ -39,6 +39,9 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({ sourceGateId }) => {
 
   return (
     <PaperLevel1 title="Destination" loading={query.isFetching}>
+      {!data && !query.isFetching && (
+        <Typography variant="body1">None</Typography>
+      )}
       {data && (
         <>
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
