@@ -30,8 +30,6 @@ const ExploreSystem: React.FC = () => {
     queryKey: ["System", id],
     queryFn: async () => mudSql.getSystem(id ?? "0x"),
     enabled: !!id,
-    throwOnError: true,
-    retry: false,
   });
 
   if (!id || !system || !namespaceId || (!query.isLoading && !query.data)) {
