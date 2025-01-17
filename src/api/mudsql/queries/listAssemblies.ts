@@ -78,7 +78,7 @@ export const listAssemblies =
         }
       );
       const tokenIds = tokens.map((t) => t.tokenId);
-
+      if (tokenIds.length === 0) return []; // No token to query
       whereParts.push(
         `eveworld__DeployableState."smartObjectId" IN ('${tokenIds.join("', '")}')`
       );
