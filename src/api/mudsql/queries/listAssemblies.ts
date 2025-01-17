@@ -53,6 +53,7 @@ type Assembly = {
 
 type ListAssembliesOptions = {
   owners?: string[] | string;
+  solarSystemId?: string[] | string;
   states?: string[] | string; // Not used, very slow filter
 };
 
@@ -80,6 +81,14 @@ export const listAssemblies =
 
       whereParts.push(
         `eveworld__DeployableState."smartObjectId" IN ('${tokenIds.join("', '")}')`
+      );
+    }
+    if (options?.solarSystemId) {
+      const solarSystemIds = ensureArray(options.solarSystemId);
+      if (solarSystemIds.length === 0) return []; // No solar system to query
+
+      whereParts.push(
+        `eveworld__LocationTable."solarSystemId" IN ('${solarSystemIds.join("', '")}')`
       );
     }
     if (options?.states) {

@@ -26,6 +26,7 @@ type Killmail = {
 
 type ListCharactersOptions = {
   characterId?: string[] | string;
+  solarSystemId?: string[] | string;
 };
 
 export const listKillmails =
@@ -37,6 +38,12 @@ export const listKillmails =
       if (characterIds.length === 0) return []; // No addresses to query
 
       where = `"killerCharacterId" IN ('${characterIds.join("', '")}') OR "victimCharacterId" IN ('${characterIds.join("', '")}')`;
+    }
+    if (options?.solarSystemId) {
+      const solarSystemIds = ensureArray(options.solarSystemId);
+      if (solarSystemIds.length === 0) return []; // No solar system to query
+
+      where = `"solarSystemId" IN ('${solarSystemIds.join("', '")}')`;
     }
 
     const killmails = await client.selectFrom<DbRow>(

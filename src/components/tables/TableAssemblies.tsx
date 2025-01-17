@@ -19,19 +19,32 @@ import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
 import DisplaySolarsystem from "../DisplaySolarsystem";
 
 interface TableAssembliesProps {
-  owner: string;
+  owner?: string;
+  solarSystemId?: string;
 }
 
-const TableAssemblies: React.FC<TableAssembliesProps> = ({ owner }) => {
+const TableAssemblies: React.FC<TableAssembliesProps> = ({
+  owner,
+  solarSystemId,
+}) => {
   const [showUnanchored, setShowUnanchored] = React.useState(false);
   const mudSql = useMudSql();
 
-  const query = useQuery({
-    queryKey: ["Assemblies", owner],
+  const queryByOwner = useQuery({
+    queryKey: ["AssembliesByOwner", owner],
     queryFn: async () => mudSql.listAssemblies({ owners: owner }),
     staleTime: 1000 * 60,
     retry: false,
   });
+
+  const queryBySolarSystem = useQuery({
+    queryKey: ["AssembliesBySolarSystem", solarSystemId],
+    queryFn: async () => mudSql.listAssemblies({ solarSystemId }),
+    staleTime: 1000 * 60,
+    retry: false,
+  });
+
+  const query = owner ? queryByOwner : queryBySolarSystem;
 
   const assemblies = React.useMemo(() => {
     if (!query.data) return undefined;

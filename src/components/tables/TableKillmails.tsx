@@ -16,16 +16,28 @@ import { ldapDate } from "@/tools";
 
 interface TableKillmailsProps {
   characterId?: string;
+  solarSystemId?: string;
 }
 
-const TableKillmails: React.FC<TableKillmailsProps> = ({ characterId }) => {
+const TableKillmails: React.FC<TableKillmailsProps> = ({
+  characterId,
+  solarSystemId,
+}) => {
   const mudSql = useMudSql();
 
-  const query = useQuery({
-    queryKey: ["Killmails", characterId],
+  const queryByCharacter = useQuery({
+    queryKey: ["KillmailsByCharacter", characterId],
     queryFn: async () => mudSql.listKillmails({ characterId }),
     enabled: !!characterId,
   });
+
+  const queryBySolarSystem = useQuery({
+    queryKey: ["KillmailsBySolarSystem", characterId],
+    queryFn: async () => mudSql.listKillmails({ solarSystemId }),
+    enabled: !!solarSystemId,
+  });
+
+  const query = characterId ? queryByCharacter : queryBySolarSystem;
 
   return (
     <PaperLevel1 title="Killmails" loading={query.isFetching}>
@@ -42,7 +54,7 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({ characterId }) => {
                   <TableCell>Killer</TableCell>
                   <TableCell>Victim</TableCell>
                   <TableCell>Loss Type</TableCell>
-                  <TableCell>Solar System</TableCell>
+                  {!solarSystemId && <TableCell>Solar System</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -66,9 +78,13 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({ characterId }) => {
                         />
                       </TableCell>
                       <TableCell>{km.lossType}</TableCell>
-                      <TableCell>
-                        <DisplaySolarsystem solarSystemId={km.solarSystemId} />
-                      </TableCell>
+                      {!solarSystemId && (
+                        <TableCell>
+                          <DisplaySolarsystem
+                            solarSystemId={km.solarSystemId}
+                          />
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}

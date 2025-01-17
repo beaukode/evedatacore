@@ -6,6 +6,8 @@ import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
+import TableAssemblies from "@/components/tables/TableAssemblies";
+import TableKillmails from "@/components/tables/TableKillmails";
 
 const ExploreSolarsystem: React.FC = () => {
   const { id } = useParams();
@@ -47,6 +49,8 @@ const ExploreSolarsystem: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
+      <TableAssemblies solarSystemId={id} />
+      <TableKillmails solarSystemId={id} />
     </Box>
   );
 };
