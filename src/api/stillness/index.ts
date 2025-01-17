@@ -6,6 +6,8 @@ import {
   GetConfigResponse,
   getSolarsystems as orgGetSolarsystems,
   types_SolarSystem,
+  getTypes as orgGetTypes,
+  types_AllTypesData,
 } from "./generated";
 
 client.setConfig({
@@ -20,7 +22,19 @@ type FixedGetSmartcharactersResponse = {
   image: string;
 };
 
+export async function getSmartcharacters(
+  ...args: Parameters<typeof orgGetSmartcharacters>
+) {
+  const r = await orgGetSmartcharacters(...args);
+  return { ...r, data: r.data as unknown as FixedGetSmartcharactersResponse[] };
+}
+
 type FixedGetConfigResponse = GetConfigResponse[];
+
+export async function getConfig(...args: Parameters<typeof orgGetConfig>) {
+  const r = await orgGetConfig(...args);
+  return { ...r, data: r.data as unknown as FixedGetConfigResponse };
+}
 
 export type Location = {
   x: string;
@@ -36,21 +50,28 @@ export type FixedGetSolarsystemsResponse = {
   [key: string]: SolarSystem;
 };
 
-export async function getSmartcharacters(
-  ...args: Parameters<typeof orgGetSmartcharacters>
-) {
-  const r = await orgGetSmartcharacters(...args);
-  return { ...r, data: r.data as unknown as FixedGetSmartcharactersResponse[] };
-}
-
-export async function getConfig(...args: Parameters<typeof orgGetConfig>) {
-  const r = await orgGetConfig(...args);
-  return { ...r, data: r.data as unknown as FixedGetConfigResponse };
-}
-
 export async function getSolarsystems(
   ...args: Parameters<typeof orgGetSolarsystems>
 ) {
   const r = await orgGetSolarsystems(...args);
   return { ...r, data: r.data as unknown as FixedGetSolarsystemsResponse };
+}
+
+export type TypeAttribute = {
+  trait_type: string;
+  value: string | number;
+};
+
+export type Type = Omit<Required<types_AllTypesData>, "attributes"> & {
+  image: string;
+  attributes: TypeAttribute[];
+};
+
+export type FixedGetTypesResponse = {
+  [key: string]: Type;
+};
+
+export async function getTypes(...args: Parameters<typeof orgGetTypes>) {
+  const r = await orgGetTypes(...args);
+  return { ...r, data: r.data as unknown as FixedGetTypesResponse };
 }

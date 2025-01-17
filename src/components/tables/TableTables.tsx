@@ -11,10 +11,10 @@ import {
 } from "@mui/material";
 import OffChainIcon from "@mui/icons-material/BackupTable";
 import { useQuery } from "@tanstack/react-query";
-import { listTables } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import DisplayNamespace from "@/components/DisplayNamespace";
-import DisplayTable from "@/components/DisplayTable";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import ButtonTable from "@/components/buttons/ButtonTable";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 
 interface TablesProps {
@@ -22,12 +22,16 @@ interface TablesProps {
   hideNamespaceColumn?: boolean;
 }
 
-const TableTables: React.FC<TablesProps> = ({ namespaces, hideNamespaceColumn }) => {
-  const queryKey = namespaces.join("|");
+const TableTables: React.FC<TablesProps> = ({
+  namespaces,
+  hideNamespaceColumn,
+}) => {
+  const mudSql = useMudSql();
 
+  const queryKey = namespaces.join("|");
   const query = useQuery({
     queryKey: ["Tables", queryKey],
-    queryFn: async () => listTables({ namespaceIds: namespaces }),
+    queryFn: async () => mudSql.listTables({ namespaceIds: namespaces }),
     retry: false,
     throwOnError: true,
   });
@@ -35,7 +39,7 @@ const TableTables: React.FC<TablesProps> = ({ namespaces, hideNamespaceColumn })
   const tables = query.data || [];
 
   return (
-    <PaperLevel1 title="Tables" loading={query.isFetching} mudChip>
+    <PaperLevel1 title="Tables" loading={query.isFetching}>
       {namespaces.length === 0 && <Typography variant="body1">None</Typography>}
       {namespaces.length > 0 && (
         <Table size="small" stickyHeader>
@@ -53,18 +57,18 @@ const TableTables: React.FC<TablesProps> = ({ namespaces, hideNamespaceColumn })
                   <TableCell>
                     {t.type === "offchainTable" ? (
                       <Box display="flex" alignItems="center">
-                        <DisplayTable id={t.tableId} name={t.name} />
+                        <ButtonTable id={t.tableId} name={t.name} />
                         <Tooltip title="Off-chain table">
                           <OffChainIcon color="secondary" />
                         </Tooltip>
                       </Box>
                     ) : (
-                      <DisplayTable id={t.tableId} name={t.name} />
+                      <ButtonTable id={t.tableId} name={t.name} />
                     )}
                   </TableCell>
                   {!hideNamespaceColumn && (
                     <TableCell>
-                      <DisplayNamespace id={t.namespaceId} name={t.namespace} />
+                      <ButtonNamespace id={t.namespaceId} name={t.namespace} />
                     </TableCell>
                   )}
                   <TableCell>

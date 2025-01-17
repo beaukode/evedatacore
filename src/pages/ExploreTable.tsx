@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import {
+  Alert,
   Box,
   List,
   ListItem,
@@ -11,14 +12,13 @@ import {
 import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
-import { getTable } from "@/api/mudsql/queries";
-import DisplayOwner from "@/components/DisplayOwner";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
-import DisplayNamespace from "@/components/DisplayNamespace";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
-import { client } from "@/api/mudsql";
 import DataTable from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
@@ -28,6 +28,7 @@ const ExploreTable: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+  const mudSql = useMudSql();
 
   const table = isHex(id) ? hexToResource(id) : undefined;
   const namespaceId = table
@@ -40,7 +41,7 @@ const ExploreTable: React.FC = () => {
 
   const query = useQuery({
     queryKey: ["Table", id],
-    queryFn: async () => getTable(id ?? "0x"),
+    queryFn: async () => mudSql.getTable(id ?? "0x"),
     enabled: !!id,
   });
 
@@ -50,7 +51,7 @@ const ExploreTable: React.FC = () => {
       if (!(table && query.data)) {
         return [];
       }
-      return client.selectFrom(table.namespace, table.name, {
+      return mudSql.selectFrom(table.namespace, table.name, {
         orderBy: [...query.data.key],
         tableType: query.data.type,
       });
@@ -129,7 +130,7 @@ const ExploreTable: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PaperLevel1 title={title} loading={query.isFetching} backButton mudChip>
+      <PaperLevel1 title={title} loading={query.isFetching} backButton>
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <ListItem disableGutters>
             <ListItemText>Id: {table.resourceId}</ListItemText>
@@ -137,7 +138,7 @@ const ExploreTable: React.FC = () => {
           <ListItem disableGutters>
             <ListItemText sx={{ my: 0 }}>
               Namespace:{" "}
-              <DisplayNamespace id={namespaceId} name={table.namespace} />
+              <ButtonNamespace id={namespaceId} name={table.namespace} />
             </ListItemText>
           </ListItem>
           {data && (
@@ -146,7 +147,7 @@ const ExploreTable: React.FC = () => {
                 <ListItemText sx={{ my: 0 }}>
                   Owner:{" "}
                   {data.namespaceOwnerName ? (
-                    <DisplayOwner
+                    <ButtonCharacter
                       address={data.namespaceOwner}
                       name={data.namespaceOwnerName}
                     />
@@ -167,29 +168,40 @@ const ExploreTable: React.FC = () => {
       <PaperLevel1
         title={`${queryRecords.data?.length || ""} Records`}
         loading={queryRecords.isFetching}
-        sx={{ flexGrow: 1, minHeight: "50vh" }}
-        mudChip
+        sx={{
+          flexGrow: 1,
+          minHeight: "50vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <TextField
-          label="Search"
-          value={search.text}
-          onChange={(e) => {
-            setSearch(
-              "text",
-              e.currentTarget.value.substring(0, 255).toLowerCase()
-            );
-          }}
-          sx={{ mb: 2 }}
-          fullWidth
-        />
-        {data && (
-          <DataTable
-            data={records}
-            columns={columnsLabels}
-            itemContent={itemContent}
-            dynamicWidth
-            rememberScroll
+        <Box mb={2}>
+          <TextField
+            label="Search"
+            value={search.text}
+            onChange={(e) => {
+              setSearch(
+                "text",
+                e.currentTarget.value.substring(0, 255).toLowerCase()
+              );
+            }}
+            fullWidth
           />
+          {queryRecords.isError && (
+            <Alert severity="error">{queryRecords.error.message}</Alert>
+          )}
+        </Box>
+
+        {data && (
+          <Box flexGrow={1} overflow="auto">
+            <DataTable
+              data={records}
+              columns={columnsLabels}
+              itemContent={itemContent}
+              dynamicWidth
+              rememberScroll
+            />
+          </Box>
         )}
       </PaperLevel1>
     </Box>

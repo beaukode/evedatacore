@@ -1,10 +1,12 @@
 import { Hex, isHex } from "viem";
-import { client } from "..";
+import { MudSqlClient } from "../client";
 import { toSqlHex } from "../utils";
 
 type DbRow = {
-  characterAddress: Hex;
   characterId: string;
+  characterAddress: Hex;
+  corpId: string;
+  createdAt: string;
   entity__entityId: string;
   entity__name: string;
   entity__dappURL: string;
@@ -15,35 +17,40 @@ type Character = {
   address: Hex;
   id: string;
   name: string;
+  corpId: number;
+  createdAt: number;
 };
 
-export async function getCharacter(id: string): Promise<Character | undefined> {
-  if (id.length !== 66 || !isHex(id)) return undefined;
-
-  const result = await client.selectFrom<DbRow>(
-    "eveworld",
-    "CharactersByAddr",
-    {
-      where: `"characterAddress" = '${toSqlHex(id)}'`,
-      rels: {
-        entity: {
-          ns: "eveworld",
-          table: "EntityRecordOffc",
-          field: "entityId",
-          fkNs: "eveworld",
-          fkTable: "CharactersByAddr",
-          fkField: "characterId",
+export const getCharacter =
+  (client: MudSqlClient) =>
+  async (address: string): Promise<Character | undefined> => {
+    if (address.length !== 42 || !isHex(address)) return undefined;
+    const result = await client.selectFrom<DbRow>(
+      "eveworld",
+      "CharactersTable",
+      {
+        where: `"characterAddress" = '${toSqlHex(address)}'`,
+        rels: {
+          entity: {
+            ns: "eveworld",
+            table: "EntityRecordOffc",
+            field: "entityId",
+            fkNs: "eveworld",
+            fkTable: "CharactersTable",
+            fkField: "characterId",
+          },
         },
-      },
-    }
-  );
+      }
+    );
 
-  const c = result[0];
-  if (!c) return undefined;
+    const c = result[0];
+    if (!c) return undefined;
 
-  return {
-    address: c.characterAddress,
-    id: c.characterId,
-    name: c.entity__name,
+    return {
+      address: c.characterAddress,
+      id: c.characterId,
+      name: c.entity__name,
+      corpId: Number.parseInt(c.corpId, 10),
+      createdAt: Number.parseInt(c.createdAt, 10) * 1000,
+    };
   };
-}

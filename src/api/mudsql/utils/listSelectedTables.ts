@@ -13,10 +13,15 @@ export function listSelectedTables(
 
   if (options.rels) {
     Object.values(options.rels).forEach((rel) => {
-      tablesMap[`${rel.ns}__${rel.table}`] = { ns: rel.ns, table: rel.table };
+      tablesMap[`${rel.ns}__${rel.table}`] = {
+        ns: rel.ns,
+        table: rel.table,
+        type: rel.tableType,
+      };
       tablesMap[`${rel.fkNs}__${rel.fkTable}`] = {
         ns: rel.fkNs,
         table: rel.fkTable,
+        type: rel.fkTableType,
       };
     });
   }

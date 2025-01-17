@@ -1,4 +1,4 @@
-import ListItem from "./ListItem";
+import ListItem from "./BasicListItem";
 import ExternalLink from "./ExternalLink";
 
 interface ListItemLinkProps {

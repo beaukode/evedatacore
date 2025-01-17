@@ -8,20 +8,22 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Button,
 } from "@mui/material";
 import OffChainIcon from "@mui/icons-material/BackupTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
-import { listTables } from "@/api/mudsql";
+import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import DisplayOwner from "@/components/DisplayOwner";
-import DisplayNamespace from "@/components/DisplayNamespace";
-import DisplayTable from "@/components/DisplayTable";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import ButtonTable from "@/components/buttons/ButtonTable";
 import { DataTableContext } from "@/components/DataTable";
 import { NoMaxWidthTooltip } from "@/components/ui/NoMaxWidthTooltip";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DisplayTableContent from "@/components/DisplayTableContent";
+import ExternalLink from "@/components/ui/ExternalLink";
 
 const columns = ["Name", "Namespace", "Owner", "Fields"];
 
@@ -31,10 +33,11 @@ const ExploreTables: React.FC = () => {
     owner: "0",
     namespace: "0",
   });
+  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Tables"],
-    queryFn: () => listTables(),
+    queryFn: () => mudSql.listTables(),
   });
 
   const tables = React.useMemo(() => {
@@ -155,6 +158,20 @@ const ExploreTables: React.FC = () => {
     );
   }, [namespaces, search.namespace, setSearch]);
 
+  const copySchemas = React.useCallback(() => {
+    const content = tables
+      .map((t) => {
+        const fields = Object.entries(t.schema)
+          .map(([k, v]) => {
+            return `  ${k} ${v.type}`;
+          })
+          .join("\n");
+        return `Table ${t.namespace}.${t.name} {\n` + fields + `\n}\n`;
+      })
+      .join("\n");
+    navigator.clipboard.writeText(content);
+  }, [tables]);
+
   const itemContent = React.useCallback(
     (_: number, t: (typeof tables)[number], context: DataTableContext) => {
       if (context.isScrolling) {
@@ -176,21 +193,21 @@ const ExploreTables: React.FC = () => {
           <TableCell>
             {t.type === "offchainTable" ? (
               <Box display="flex" alignItems="center">
-                <DisplayTable id={t.tableId} name={t.name} />
+                <ButtonTable id={t.tableId} name={t.name} />
                 <Tooltip title="Off-chain table">
                   <OffChainIcon color="secondary" />
                 </Tooltip>
               </Box>
             ) : (
-              <DisplayTable id={t.tableId} name={t.name} />
+              <ButtonTable id={t.tableId} name={t.name} />
             )}
           </TableCell>
           <TableCell>
-            <DisplayNamespace id={t.namespaceId} name={t.namespace} />
+            <ButtonNamespace id={t.namespaceId} name={t.namespace} />
           </TableCell>
           <TableCell>
             {t.namespaceOwnerName ? (
-              <DisplayOwner
+              <ButtonCharacter
                 address={t.namespaceOwner}
                 name={t.namespaceOwnerName}
               />
@@ -234,6 +251,29 @@ const ExploreTables: React.FC = () => {
       />
       {ownerSelect}
       {namespaceSelect}
+      <Box
+        flexGrow="1"
+        display="flex"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        marginRight={2}
+      >
+        <Tooltip
+          title={
+            <>
+              Copy schemas as DBML format.{" "}
+              <ExternalLink
+                href="https://dbml.dbdiagram.io/docs/"
+                title="DBML documentation"
+              />
+            </>
+          }
+        >
+          <Button variant="outlined" size="small" onClick={copySchemas}>
+            Copy schemas
+          </Button>
+        </Tooltip>
+      </Box>
     </DataTableLayout>
   );
 };

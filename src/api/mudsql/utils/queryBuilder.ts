@@ -19,7 +19,7 @@ export function queryBuilder(
   }
 
   const selectParts = Object.keys(schemas[mainTable] || {}).map(
-    (f) => `"${f}"`
+    (f) => `${mainTable}."${f}" AS "${f}"`
   );
   const whereParts: string[] = options.where ? [options.where] : [];
   Object.entries(options.rels || {}).forEach(([relName, rel]) => {
@@ -40,8 +40,11 @@ export function queryBuilder(
     whereParts.length > 0 ? " WHERE " + whereParts.join(" AND ") : "";
 
   const orderByParts = ensureArray(options.orderBy || []);
+  const orderDirection = options.orderDirection || "ASC";
   const orderBy =
-    orderByParts.length > 0 ? ` ORDER BY "${orderByParts.join('", "')}"` : "";
+    orderByParts.length > 0
+      ? ` ORDER BY "${orderByParts.join('", "')}" ${orderDirection}`
+      : "";
 
   return `SELECT ${select} FROM ${from}${where}${orderBy}`;
 }

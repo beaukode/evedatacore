@@ -1,6 +1,6 @@
 import React from "react";
-import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { Autocomplete, TextField } from "@mui/material";
+import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 
 interface AutoCompleteSolarSystemProps
   extends Omit<
@@ -11,6 +11,7 @@ interface AutoCompleteSolarSystemProps
   value: SolarSystemValue | null;
   error?: string;
   onChange: (value: SolarSystemValue | null) => void;
+  solarSystemsIndex: SolarSystemsIndex;
 }
 
 export type SolarSystemValue = {
@@ -21,17 +22,16 @@ export type SolarSystemValue = {
 const AutoCompleteSolarSystem = React.forwardRef<
   unknown,
   AutoCompleteSolarSystemProps
->(({ label, value, onChange, error, ...rest }, ref) => {
+>(({ label, value, onChange, error, solarSystemsIndex, ...rest }, ref) => {
   const [inputValue, setInputValue] = React.useState<string>("");
-  const ssIndex = useSolarSystemsIndex();
 
   const options: Array<SolarSystemValue | null> = React.useMemo(() => {
     if (inputValue.length < 1) return [];
-    return ssIndex
+    return solarSystemsIndex
       .searchByName(inputValue)
       .slice(0, 50)
       .map((ss) => ({ label: ss.solarSystemName, id: ss.solarSystemId }));
-  }, [ssIndex, inputValue]);
+  }, [solarSystemsIndex, inputValue]);
 
   return (
     <Autocomplete

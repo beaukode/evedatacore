@@ -26,3 +26,6 @@ dist-ssr
 # Scripts data
 output
 scripts/starmap.json
+
+# Rollup visualizer
+stats.html

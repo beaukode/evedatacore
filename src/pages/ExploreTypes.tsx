@@ -1,30 +1,25 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import {
-  Box,
-  Paper,
   TextField,
-  Typography,
-  LinearProgress,
   TableCell,
   MenuItem,
   Select,
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import DataTable from "@/components/DataTable";
-import { getTypes } from "@/api/stillness";
 import { filterInProps } from "@/tools";
-import DisplayItem from "@/components/DisplayItem";
+import ButtonItem from "@/components/buttons/ButtonItem";
 import useQuerySearch from "@/tools/useQuerySearch";
+import DataTableLayout from "@/components/layouts/DataTableLayout";
+import { useTypesIndex } from "@/contexts/AppContext";
+import { DataTableColumn } from "@/components/DataTable";
 
-const columns = ["Name", "Category", "Group"];
-
-type Category = {
-  name: string;
-  groups: Record<number, string>;
-};
+const columns: DataTableColumn[] = [
+  "Name",
+  { label: "Id", width: 100 },
+  { label: "Category", width: 200 },
+  { label: "Group", width: 300 },
+];
 
 const ExploreTypes: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -32,77 +27,27 @@ const ExploreTypes: React.FC = () => {
     categoryId: "0",
     groupId: "0",
   });
+  const typesIndex = useTypesIndex();
 
-  const query = useQuery({
-    queryKey: ["Types"],
-    queryFn: async () =>
-      await getTypes().then((r) => {
-        const categories: Record<number, Category> = {};
-        const types = Object.entries(r.data || {})
-          .map(([k, v]) => {
-            let groupId: number = 0;
-            let groupName: string = "";
-            let categoryId: number = 0;
-            let categoryName: string = "";
-            if (Array.isArray(v.attributes)) {
-              for (const o of v.attributes) {
-                if (
-                  o &&
-                  typeof o === "object" &&
-                  "trait_type" in o &&
-                  "value" in o
-                ) {
-                  if (o.trait_type === "groupID") {
-                    groupId = o.value as unknown as number;
-                  } else if (o.trait_type === "groupName") {
-                    groupName = o.value as unknown as string;
-                  } else if (o.trait_type === "categoryID") {
-                    categoryId = o.value as unknown as number;
-                  } else if (o.trait_type === "categoryName") {
-                    categoryName = o.value as unknown as string;
-                  }
-                }
-              }
-            }
-            const category = categories[categoryId];
-            if (!category) {
-              categories[categoryId] = {
-                name: categoryName,
-                groups: { [groupId]: groupName },
-              };
-            } else {
-              category.groups[groupId] = groupName;
-            }
-            return {
-              id: k,
-              name: v.name,
-              smartItemId: v.smartItemId,
-              groupId,
-              groupName,
-              categoryId,
-              categoryName,
-            };
-          })
-          .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-        return { types, categories };
-      }),
-  });
+  const [allTypes, categories] = React.useMemo(() => {
+    if (!typesIndex) return [[], null];
+    const allTypes = typesIndex.getAll();
+    const categories = typesIndex.getCatergories();
+    return [allTypes, categories];
+  }, [typesIndex]);
 
   const types = React.useMemo(() => {
-    if (!query.data) return [];
     const iCategoryId = parseInt(search.categoryId, 10);
     const iGroupId = parseInt(search.groupId, 10);
     return filterInProps(
-      query.data.types,
+      allTypes,
       debouncedSearch.text,
       ["id", "name", "smartItemId"],
       (type) =>
         (iCategoryId === 0 || type.categoryId === iCategoryId) &&
         (iGroupId === 0 || type.groupId === iGroupId)
     );
-  }, [query.data, search.categoryId, search.groupId, debouncedSearch.text]);
-
-  const categories = query.data?.categories;
+  }, [allTypes, search.categoryId, search.groupId, debouncedSearch.text]);
 
   const categorySelect = React.useMemo(() => {
     if (!categories) return null;
@@ -184,14 +129,9 @@ const ExploreTypes: React.FC = () => {
       return (
         <React.Fragment key={type.id}>
           <TableCell>
-            <DisplayItem
-              item={{
-                name: type.name || "",
-                itemId: type.smartItemId || "",
-                typeId: type.id,
-              }}
-            />
+            <ButtonItem typeId={type.id} name={type.name} />
           </TableCell>
+          <TableCell>{type.id}</TableCell>
           <TableCell>{type.categoryName}</TableCell>
           <TableCell>{type.groupName}</TableCell>
         </React.Fragment>
@@ -199,54 +139,28 @@ const ExploreTypes: React.FC = () => {
     },
     []
   );
+
   return (
-    <>
-      <Helmet>
-        <title>Types</title>
-      </Helmet>
-      <Box p={2} flexGrow={1} overflow="hidden">
-        <Paper
-          elevation={1}
-          sx={{
-            p: 2,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box display="flex" alignItems="flex-end">
-            <TextField
-              label="Search"
-              value={search.text}
-              onChange={(e) => {
-                setSearch(
-                  "text",
-                  e.currentTarget.value.substring(0, 255).toLowerCase()
-                );
-              }}
-            />
-            {categorySelect}
-            {groupSelect}
-            <Box flexGrow={1} textAlign="right">
-              <Typography variant="caption" color="textPrimary">
-                {types.length} types
-              </Typography>
-            </Box>
-          </Box>
-          <Box mt={2}>
-            <LinearProgress
-              sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-            />
-          </Box>
-          <DataTable
-            data={types}
-            columns={columns}
-            itemContent={itemContent}
-            rememberScroll
-          />
-        </Paper>
-      </Box>
-    </>
+    <DataTableLayout
+      title="Types"
+      columns={columns}
+      data={types}
+      itemContent={itemContent}
+      loading={!typesIndex}
+    >
+      <TextField
+        label="Search"
+        value={search.text}
+        onChange={(e) => {
+          setSearch(
+            "text",
+            e.currentTarget.value.substring(0, 255).toLowerCase()
+          );
+        }}
+      />
+      {categorySelect}
+      {groupSelect}
+    </DataTableLayout>
   );
 };
 

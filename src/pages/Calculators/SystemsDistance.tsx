@@ -2,11 +2,11 @@ import React from "react";
 import { Typography } from "@mui/material";
 import z from "zod";
 import Big from "big.js";
-import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import AutoCompleteSolarSystem, {
   SolarSystemValue,
 } from "@/components/AutoCompleteSolarSystem";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
+import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 
 const storageSchema = z.object({
   system1: z
@@ -25,7 +25,13 @@ const storageSchema = z.object({
     .default(null),
 });
 
-const SystemsDistance: React.FC = () => {
+interface SystemsDistanceProps {
+  solarSystemsIndex: SolarSystemsIndex;
+}
+
+const SystemsDistance: React.FC<SystemsDistanceProps> = ({
+  solarSystemsIndex,
+}) => {
   const [store, setStore] = useAppLocalStorage(
     "v1_calculator_systems_distance",
     storageSchema
@@ -38,12 +44,10 @@ const SystemsDistance: React.FC = () => {
     store.system2
   );
 
-  const ssIndex = useSolarSystemsIndex();
-
   const result = React.useMemo(() => {
     if (system1?.id && system2?.id) {
-      const s1 = ssIndex.getById(system1.id.toString());
-      const s2 = ssIndex.getById(system2.id.toString());
+      const s1 = solarSystemsIndex.getById(system1.id.toString());
+      const s2 = solarSystemsIndex.getById(system2.id.toString());
 
       // TODO: Better error handling
       if (!s1 || !s2) return undefined;
@@ -63,7 +67,7 @@ const SystemsDistance: React.FC = () => {
       const ly = meters.div(new Big(9.46073047258e15));
       return ly.toNumber();
     }
-  }, [ssIndex, system1, system2]);
+  }, [solarSystemsIndex, system1, system2]);
 
   React.useEffect(() => {
     setStore({ system1, system2 });
@@ -76,12 +80,14 @@ const SystemsDistance: React.FC = () => {
         value={system1}
         sx={{ mb: 2 }}
         onChange={setSystem1}
+        solarSystemsIndex={solarSystemsIndex}
       />
       <AutoCompleteSolarSystem
         label="System 2"
         value={system2}
         sx={{ my: 2 }}
         onChange={setSystem2}
+        solarSystemsIndex={solarSystemsIndex}
       />
       {result === undefined ? (
         <Typography variant="body1" component="p" my={2}>

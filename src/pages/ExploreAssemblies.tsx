@@ -11,52 +11,69 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Skeleton,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
-import DataTable, { DataTableContext } from "@/components/DataTable";
-import { getSmartassemblies } from "@/api/stillness";
-import DisplayOwner from "@/components/DisplayOwner";
-import DisplayAssembly from "@/components/DisplayAssembly";
-import { filterInProps, shorten } from "@/tools";
-import DisplaySolarsystem from "@/components/DisplaySolarsystem";
+import { useMudSql } from "@/contexts/AppContext";
+import DataTable, {
+  DataTableColumn,
+  DataTableContext,
+} from "@/components/DataTable";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonAssembly from "@/components/buttons/ButtonAssembly";
+import { ensureArray, filterInProps, shorten, tsToDateTime } from "@/tools";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
+import {
+  smartAssembliesTypes,
+  SmartAssemblyState,
+  smartAssemblyStates,
+} from "@/constants";
 
-const columns = ["Assembly", "Owner", "Solar system"];
+const columns: DataTableColumn[] = [
+  "Assembly",
+  { label: "Owner", width: 250 },
+  { label: "Solar system", width: 180 },
+  { label: "Anchored At", width: 250 },
+];
 
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
     typeId: "0",
-    stateId: "0",
+    stateId: "2-3",
   });
+  const mudSql = useMudSql();
+
+  const { selectedStates, iSelectedState } = React.useMemo(() => {
+    const selectedStates = search.stateId.split("-").filter((v) => v !== "");
+    const iSelectedState = selectedStates.map((v) => Number.parseInt(v, 10));
+    return { selectedStates, iSelectedState };
+  }, [search.stateId]);
 
   const query = useQuery({
     queryKey: ["Smartassemblies"],
-    queryFn: async () =>
-      await getSmartassemblies().then((r) =>
-        r.data?.filter((sa) => !!sa.typeId)
-      ),
+    queryFn: async () => mudSql.listAssemblies(),
+    staleTime: 1000 * 60,
   });
 
   const smartassemblies = React.useMemo(() => {
     if (!query.data) return [];
     const iTypeId = parseInt(search.typeId, 10);
-    const iStateId = parseInt(search.stateId, 10);
     return filterInProps(
       query.data,
       debouncedSearch.text,
-      ["name", "id", "itemId", "ownerName", "ownerId"],
+      ["name", "id", "ownerName", "ownerId"],
       (sa) => {
         return (
           (sa.typeId === iTypeId || iTypeId === 0) &&
-          (sa.stateId === iStateId || iStateId === 0)
+          iSelectedState.includes(sa.state)
         );
       }
     );
-  }, [query.data, debouncedSearch.text, search.typeId, search.stateId]);
+  }, [query.data, debouncedSearch.text, search.typeId, iSelectedState]);
 
   const itemContent = React.useCallback(
     (
@@ -69,7 +86,7 @@ const ExploreAssemblies: React.FC = () => {
           <React.Fragment key={sa.id}>
             <TableCell>
               <Box display="flex" alignItems="center">
-                <DisplayAssemblyIcon typeId={sa.typeId} stateId={sa.stateId} />
+                <DisplayAssemblyIcon typeId={sa.typeId} stateId={sa.state} />
                 <Box sx={{ px: 1, py: 0.75, lineHeight: "24.5px" }}>
                   {sa.name ? sa.name : shorten(sa.id)}
                 </Box>
@@ -80,7 +97,10 @@ const ExploreAssemblies: React.FC = () => {
             >
               {sa.ownerName}
             </TableCell>
-            <TableCell>{sa.stateId !== 1 && <Skeleton width={80} />}</TableCell>
+            <TableCell>
+              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
+            </TableCell>
+            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
           </React.Fragment>
         );
       } else {
@@ -90,22 +110,19 @@ const ExploreAssemblies: React.FC = () => {
               <Box display="flex" alignItems="center">
                 <DisplayAssemblyIcon
                   typeId={sa.typeId}
-                  stateId={sa.stateId}
+                  stateId={sa.state}
                   tooltip
                 />
-                <DisplayAssembly name={sa.name} id={sa.id} itemId={sa.itemId} />
+                <ButtonAssembly name={sa.name} id={sa.id} />
               </Box>
             </TableCell>
             <TableCell>
-              <DisplayOwner name={sa.ownerName} address={sa.ownerId} />
+              <ButtonCharacter name={sa.ownerName} address={sa.ownerId} />
             </TableCell>
             <TableCell>
-              {sa.stateId !== 1 && (
-                <DisplaySolarsystem
-                  solarSystemId={sa.solarSystem?.solarSystemId}
-                />
-              )}
+              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
+            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
           </React.Fragment>
         );
       }
@@ -157,31 +174,45 @@ const ExploreAssemblies: React.FC = () => {
                 fullWidth
               >
                 <MenuItem value="0">All</MenuItem>
-                <MenuItem value="84955">SmartGate</MenuItem>
-                <MenuItem value="84556">SmartTurret</MenuItem>
-                <MenuItem value="77917">SmartStorageUnit</MenuItem>
+                {Object.entries(smartAssembliesTypes).map(([id, name]) => (
+                  <MenuItem value={`${id}`} key={id}>
+                    {name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl
               variant="standard"
-              sx={{ width: 150, flexShrink: 0, ml: 2 }}
+              sx={{ minWidth: 150, flexShrink: 0, ml: 2 }}
             >
               <InputLabel id="select-state-label">State</InputLabel>
               <Select
                 labelId="select-state-label"
                 id="select-state"
-                value={search.stateId}
+                value={selectedStates.map((v) => `${v}`)}
                 variant="standard"
+                renderValue={(selected) =>
+                  selected
+                    .map(
+                      (v) =>
+                        smartAssemblyStates[Number(v) as SmartAssemblyState]
+                    )
+                    .join(", ")
+                }
                 onChange={(e) => {
-                  setSearch("stateId", e.target.value);
+                  const value = ensureArray(e.target.value).sort();
+                  setSearch("stateId", value.join("-"));
                 }}
                 label="State"
+                multiple
                 fullWidth
               >
-                <MenuItem value="0">Any</MenuItem>
-                <MenuItem value="3">Online</MenuItem>
-                <MenuItem value="2">Anchored</MenuItem>
-                <MenuItem value="1">Unanchored</MenuItem>
+                {Object.entries(smartAssemblyStates).map(([id, name]) => (
+                  <MenuItem value={`${id}`} key={id}>
+                    <Checkbox checked={selectedStates.includes(id)} />
+                    <ListItemText primary={name} />
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <Box sx={{ textWrap: "nowrap", ml: 2 }}>
