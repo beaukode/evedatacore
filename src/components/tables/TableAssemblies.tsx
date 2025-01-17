@@ -17,6 +17,7 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonAssembly from "../buttons/ButtonAssembly";
 import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
 import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
+import ButtonCharacter from "../buttons/ButtonCharacter";
 
 interface TableAssembliesProps {
   owner?: string;
@@ -84,7 +85,10 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
               <TableHead>
                 <TableRow>
                   <TableCell>Id</TableCell>
-                  <TableCell width={180}>Solar system</TableCell>
+                  {!owner && <TableCell width={180}>Owner</TableCell>}
+                  {!solarSystemId && (
+                    <TableCell width={250}>Solar system</TableCell>
+                  )}
                   <TableCell width={250}>Anchored At</TableCell>
                 </TableRow>
               </TableHead>
@@ -105,9 +109,19 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
                           <ButtonAssembly id={sa.id} name={sa.name} />
                         </Box>
                       </TableCell>
-                      <TableCell>
-                        <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
-                      </TableCell>
+                      {!owner && (
+                        <TableCell>
+                          <ButtonCharacter
+                            address={sa.ownerId}
+                            name={sa.ownerName}
+                          />
+                        </TableCell>
+                      )}
+                      {!solarSystemId && (
+                        <TableCell>
+                          <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
+                        </TableCell>
+                      )}
                       <TableCell>{`${date} ${time}`}</TableCell>
                     </TableRow>
                   );
