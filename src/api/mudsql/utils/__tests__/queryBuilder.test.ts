@@ -40,7 +40,7 @@ describe("queryBuilder", () => {
   it("should build a simple select query", () => {
     const options: SelectOptions = {};
     const query = queryBuilder("ns", "table", options, schemas);
-    expect(query).toBe('SELECT "id", "name" FROM ns__table');
+    expect(query).toBe('SELECT ns__table."id" AS "id", ns__table."name" AS "name" FROM ns__table');
   });
 
   it("should build a select query with where clause", () => {
@@ -48,7 +48,7 @@ describe("queryBuilder", () => {
       where: "id = 1",
     };
     const query = queryBuilder("ns", "table", options, schemas);
-    expect(query).toBe('SELECT "id", "name" FROM ns__table WHERE id = 1');
+    expect(query).toBe('SELECT ns__table."id" AS "id", ns__table."name" AS "name" FROM ns__table WHERE id = 1');
   });
 
   it("should build a select query with 2 relations", () => {
@@ -66,7 +66,7 @@ describe("queryBuilder", () => {
     };
     const query = queryBuilder("ns", "table", options, schemas);
     expect(query).toBe(
-      'SELECT "id", "name", ns__relatedTable."userAddress" AS "related__userAddress", ns__relatedTable."userName" AS "related__userName" FROM ns__table, ns__relatedTable WHERE ns__relatedTable."userAddress" = ns__table."id"'
+      'SELECT ns__table."id" AS "id", ns__table."name" AS "name", ns__relatedTable."userAddress" AS "related__userAddress", ns__relatedTable."userName" AS "related__userName" FROM ns__table, ns__relatedTable WHERE ns__relatedTable."userAddress" = ns__table."id"'
     );
   });
 
@@ -86,7 +86,7 @@ describe("queryBuilder", () => {
     };
     const query = queryBuilder("ns", "table", options, schemas);
     expect(query).toBe(
-      `SELECT "id", "name", ns__relatedTable."userAddress" AS "related__userAddress", ns__relatedTable."userName" AS "related__userName" FROM ns__table, ns__relatedTable WHERE "id" = '/xf7730eb77b66f21fea19d49ee6a4718ff9c0393e' AND ns__relatedTable."userAddress" = ns__table."id"`
+      `SELECT ns__table."id" AS "id", ns__table."name" AS "name", ns__relatedTable."userAddress" AS "related__userAddress", ns__relatedTable."userName" AS "related__userName" FROM ns__table, ns__relatedTable WHERE "id" = '/xf7730eb77b66f21fea19d49ee6a4718ff9c0393e' AND ns__relatedTable."userAddress" = ns__table."id"`
     );
   });
 
@@ -113,7 +113,7 @@ describe("queryBuilder", () => {
     };
     const query = queryBuilder("ns", "table", options, schemas);
     expect(query).toBe(
-      'SELECT "id", "name", ns__relatedTable."userAddress" AS "related__userAddress", ns__relatedTable."userName" AS "related__userName", ns2__anotherRelatedTable."userAddress" AS "anotherRelated__userAddress", ns2__anotherRelatedTable."userTokenId" AS "anotherRelated__userTokenId" FROM ns__table, ns__relatedTable, ns2__anotherRelatedTable WHERE ns__relatedTable."userAddress" = ns__table."id" AND ns2__anotherRelatedTable."userAddress" = ns__table."id"'
+      'SELECT ns__table."id" AS "id", ns__table."name" AS "name", ns__relatedTable."userAddress" AS "related__userAddress", ns__relatedTable."userName" AS "related__userName", ns2__anotherRelatedTable."userAddress" AS "anotherRelated__userAddress", ns2__anotherRelatedTable."userTokenId" AS "anotherRelated__userTokenId" FROM ns__table, ns__relatedTable, ns2__anotherRelatedTable WHERE ns__relatedTable."userAddress" = ns__table."id" AND ns2__anotherRelatedTable."userAddress" = ns__table."id"'
     );
   });
 
