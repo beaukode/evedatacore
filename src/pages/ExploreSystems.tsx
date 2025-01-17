@@ -36,7 +36,7 @@ const ExploreSystems: React.FC = () => {
     queryFn: () => mudSql.listSystems(),
   });
 
-  const tables = React.useMemo(() => {
+  const systems = React.useMemo(() => {
     if (!query.data) return [];
     return filterInProps(
       query.data,
@@ -171,7 +171,7 @@ const ExploreSystems: React.FC = () => {
   );
 
   const itemContent = React.useCallback(
-    (_: number, sys: (typeof tables)[number], context: DataTableContext) => {
+    (_: number, sys: (typeof systems)[number], context: DataTableContext) => {
       if (context.isScrolling) {
         return (
           <React.Fragment key={sys.systemId}>
@@ -228,7 +228,7 @@ const ExploreSystems: React.FC = () => {
     <DataTableLayout
       title="Systems"
       columns={columns}
-      data={tables}
+      data={systems}
       itemContent={itemContent}
     >
       <TextField
