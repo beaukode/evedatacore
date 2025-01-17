@@ -11,6 +11,7 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import TableTables from "@/components/tables/TableTables";
 import TableSystems from "@/components/tables/TableSystems";
+import TableFunctions from "@/components/tables/TableFunctions";
 
 const ExploreNamespace: React.FC = () => {
   const { id } = useParams();
@@ -56,6 +57,7 @@ const ExploreNamespace: React.FC = () => {
       </PaperLevel1>
       <TableTables namespaces={[id]} hideNamespaceColumn />
       <TableSystems namespaces={[id]} hideNamespaceColumn />
+      <TableFunctions namespaces={[id]} hideColumns={["namespace", "owner"]} />
     </Box>
   );
 };

@@ -12,6 +12,7 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import BasicListItem from "@/components/ui/BasicListItem";
 import ExternalLink from "@/components/ui/ExternalLink";
+import TableFunctions from "@/components/tables/TableFunctions";
 
 const ExploreSystem: React.FC = () => {
   const { id } = useParams();
@@ -84,6 +85,10 @@ const ExploreSystem: React.FC = () => {
           )}
         </List>
       </PaperLevel1>
+      <TableFunctions
+        systems={[id]}
+        hideColumns={["system", "namespace", "owner"]}
+      />
     </Box>
   );
 };

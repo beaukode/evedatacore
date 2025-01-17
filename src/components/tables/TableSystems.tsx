@@ -32,8 +32,6 @@ const TableSystems: React.FC<TableSystemsProps> = ({
   const query = useQuery({
     queryKey: ["Systems", queryKey],
     queryFn: async () => mudSql.listSystems({ namespaceIds: namespaces }),
-    retry: false,
-    throwOnError: true,
   });
 
   const privateIcon = React.useMemo(

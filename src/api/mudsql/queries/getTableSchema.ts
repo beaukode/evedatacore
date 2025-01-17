@@ -18,7 +18,7 @@ export const getTableSchema = (client: MudSqlClient) => {
     const r = res.pop();
 
     if (!r) {
-      throw new Error("Table schema not found");
+      throw new Error(`Table schema not found ${tableId}`);
     }
     const { keySchema, valueSchema, abiEncodedKeyNames, abiEncodedFieldNames } =
       r;
@@ -29,7 +29,7 @@ export const getTableSchema = (client: MudSqlClient) => {
       typeof abiEncodedKeyNames !== "string" ||
       typeof abiEncodedFieldNames !== "string"
     ) {
-      throw new Error("Invalid schema response");
+      throw new Error(`Invalid schema response ${tableId}`);
     }
 
     const table = {

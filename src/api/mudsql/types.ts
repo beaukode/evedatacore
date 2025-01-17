@@ -6,9 +6,11 @@ export type MudSqlClientConfig = {
 export type SelectRelation = {
   ns: string;
   table: string;
+  tableType?: TableType;
   field: string;
   fkNs: string;
   fkTable: string;
+  fkTableType?: TableType;
   fkField: string;
 };
 

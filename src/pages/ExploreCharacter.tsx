@@ -13,6 +13,7 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
+import TableFunctions from "@/components/tables/TableFunctions";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -71,6 +72,10 @@ const ExploreCharacter: React.FC = () => {
       <TableNamespaces address={address} />
       <TableTables namespaces={namespaces.map((ns) => ns.namespaceId)} />
       <TableSystems namespaces={namespaces.map((ns) => ns.namespaceId)} />
+      <TableFunctions
+        namespaces={namespaces.map((ns) => ns.namespaceId)}
+        hideColumns={["owner"]}
+      />
     </Box>
   );
 };
