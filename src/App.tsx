@@ -38,7 +38,11 @@ function App() {
               variant="h6"
               component={NavLink}
               to="/"
-              sx={{ textDecoration: "none", color: "inherit" }}
+              sx={{
+                textDecoration: "none",
+                color: "inherit",
+                fontFamily: "Major Mono Display",
+              }}
             >
               EVE Frontier tools
             </Typography>
@@ -47,7 +51,7 @@ function App() {
                 startIcon={<ExploreDataIcon />}
                 to="/explore/characters"
                 component={NavLink}
-                sx={{ m: 2 }}
+                sx={{ m: 2, fontFamily: "Major Mono Display" }}
                 size="large"
                 variant={
                   location.pathname.startsWith("/explore")
@@ -62,7 +66,7 @@ function App() {
                 to="/calculate/route-planner"
                 component={NavLink}
                 size="large"
-                sx={{ m: 2 }}
+                sx={{ m: 2, fontFamily: "Major Mono Display" }}
                 variant={
                   location.pathname.startsWith("/calculate")
                     ? "outlined"

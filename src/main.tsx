@@ -41,9 +41,15 @@ const theme = createTheme({
   },
   components: {
     MuiTextField: { defaultProps: { variant: "standard" } },
-    MuiTab: { styleOverrides: { root: { textTransform: "none" } } },
+    MuiTab: {
+      styleOverrides: {
+        root: { textTransform: "none", fontFamily: "Major Mono Display" },
+      },
+    },
     MuiTableCell: { styleOverrides: { root: { overflow: "hidden" } } },
-    MuiButton: { styleOverrides: { root: { textTransform: "none" } } },
+    MuiButton: {
+      styleOverrides: { root: { textTransform: "none" } },
+    },
     MuiTypography: {
       styleOverrides: {
         root: {
@@ -57,7 +63,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Major Mono Display",
+    fontFamily: "monospace",
   },
 });
 
