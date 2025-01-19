@@ -17,11 +17,17 @@ import { useMudSql } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
-import { DataTableContext } from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import ExternalLink from "@/components/ui/ExternalLink";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
+import { columnWidths } from "@/constants";
 
-const columns = ["Name", "Namespace", "Owner", "Contract"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Namespace", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+  { label: "Contract", width: columnWidths.address },
+];
 
 const ExploreSystems: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -172,43 +178,31 @@ const ExploreSystems: React.FC = () => {
 
   const itemContent = React.useCallback(
     (_: number, sys: (typeof systems)[number], context: DataTableContext) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={sys.systemId}>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              <Box display="flex" alignItems="center">
-                <span style={{ paddingRight: 8 }}>{sys.name}</span>
-                {!sys.publicAccess && privateIcon}
-              </Box>
-            </TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{sys.namespace}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              {sys.namespaceOwnerName || sys.namespaceOwner}
-            </TableCell>
-            <TableCell>{sys.contract}</TableCell>
-          </React.Fragment>
-        );
-      }
       return (
         <React.Fragment key={sys.systemId}>
-          <TableCell>
+          <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
-              <ButtonSystem id={sys.systemId} name={sys.name} />
+              <ButtonSystem
+                id={sys.systemId}
+                name={sys.name}
+                fastRender={context.isScrolling}
+              />
               {!sys.publicAccess && privateIcon}
             </Box>
           </TableCell>
           <TableCell>
-            <ButtonNamespace id={sys.namespaceId} name={sys.namespace} />
+            <ButtonNamespace
+              id={sys.namespaceId}
+              name={sys.namespace}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
-            {sys.namespaceOwnerName ? (
-              <ButtonCharacter
-                address={sys.namespaceOwner}
-                name={sys.namespaceOwnerName}
-              />
-            ) : (
-              <Box sx={{ px: 1 }}>{sys.namespaceOwner}</Box>
-            )}
+            <ButtonCharacter
+              address={sys.namespaceOwner}
+              name={sys.namespaceOwnerName}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
             <ExternalLink

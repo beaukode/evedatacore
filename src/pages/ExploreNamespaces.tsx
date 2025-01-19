@@ -7,8 +7,13 @@ import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import { DataTableContext, DataTableColumn } from "@/components/DataTable";
+import { columnWidths } from "@/constants";
 
-const columns = ["Name", "Owner"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+];
 
 const ExploreNamespaces: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -32,18 +37,22 @@ const ExploreNamespaces: React.FC = () => {
   }, [query.data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
-    (_: number, ns: (typeof namespaces)[number]) => {
+    (_: number, ns: (typeof namespaces)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={ns.namespaceId}>
           <TableCell>
-            <ButtonNamespace name={ns.name} id={ns.namespaceId} />
+            <ButtonNamespace
+              name={ns.name}
+              id={ns.namespaceId}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
-          <TableCell sx={{ height: 49.5 }}>
-            {ns.ownerName ? (
-              <ButtonCharacter name={ns.ownerName} address={ns.owner} />
-            ) : (
-              ns.owner
-            )}
+          <TableCell>
+            <ButtonCharacter
+              name={ns.ownerName}
+              address={ns.owner}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
         </React.Fragment>
       );
@@ -67,6 +76,7 @@ const ExploreNamespaces: React.FC = () => {
             e.currentTarget.value.substring(0, 255).toLowerCase()
           );
         }}
+        fullWidth
       />
     </DataTableLayout>
   );

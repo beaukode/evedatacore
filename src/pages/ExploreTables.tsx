@@ -19,13 +19,19 @@ import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonTable from "@/components/buttons/ButtonTable";
-import { DataTableContext } from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import { NoMaxWidthTooltip } from "@/components/ui/NoMaxWidthTooltip";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DisplayTableContent from "@/components/DisplayTableContent";
 import ExternalLink from "@/components/ui/ExternalLink";
+import { columnWidths } from "@/constants";
 
-const columns = ["Name", "Namespace", "Owner", "Fields"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Namespace", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+  { label: "Fields", width: 200 },
+];
 
 const ExploreTables: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -174,28 +180,18 @@ const ExploreTables: React.FC = () => {
 
   const itemContent = React.useCallback(
     (_: number, t: (typeof tables)[number], context: DataTableContext) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={t.tableId}>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{t.name}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{t.namespace}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              {t.namespaceOwnerName || t.namespaceOwner}
-            </TableCell>
-            <TableCell>
-              <DisplayTableContent table={t} />
-            </TableCell>
-          </React.Fragment>
-        );
-      }
       return (
         <React.Fragment key={t.tableId}>
-          <TableCell>
+          <TableCell colSpan={2}>
             {t.type === "offchainTable" ? (
               <Box display="flex" alignItems="center">
-                <ButtonTable id={t.tableId} name={t.name} />
+                <ButtonTable
+                  id={t.tableId}
+                  name={t.name}
+                  fastRender={context.isScrolling}
+                />
                 <Tooltip title="Off-chain table">
-                  <OffChainIcon color="secondary" />
+                  <OffChainIcon color="secondary" sx={{ ml: 1 }} />
                 </Tooltip>
               </Box>
             ) : (
@@ -203,28 +199,33 @@ const ExploreTables: React.FC = () => {
             )}
           </TableCell>
           <TableCell>
-            <ButtonNamespace id={t.namespaceId} name={t.namespace} />
+            <ButtonNamespace
+              id={t.namespaceId}
+              name={t.namespace}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
-            {t.namespaceOwnerName ? (
-              <ButtonCharacter
-                address={t.namespaceOwner}
-                name={t.namespaceOwnerName}
-              />
+            <ButtonCharacter
+              address={t.namespaceOwner}
+              name={t.namespaceOwnerName}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>
+            {context.isScrolling ? (
+              <DisplayTableContent table={t} />
             ) : (
-              <Box sx={{ px: 1 }}>{t.namespaceOwner}</Box>
+              <NoMaxWidthTooltip title={<DisplayTableFieldsChips table={t} />}>
+                <Box
+                  sx={{
+                    cursor: "help",
+                  }}
+                >
+                  <DisplayTableContent table={t} />
+                </Box>
+              </NoMaxWidthTooltip>
             )}
-          </TableCell>
-          <TableCell>
-            <NoMaxWidthTooltip title={<DisplayTableFieldsChips table={t} />}>
-              <Box
-                sx={{
-                  cursor: "help",
-                }}
-              >
-                <DisplayTableContent table={t} />
-              </Box>
-            </NoMaxWidthTooltip>
           </TableCell>
         </React.Fragment>
       );
@@ -248,20 +249,23 @@ const ExploreTables: React.FC = () => {
             e.currentTarget.value.substring(0, 255).toLowerCase()
           );
         }}
+        fullWidth
       />
       {ownerSelect}
       {namespaceSelect}
       <Box
         flexGrow="1"
+        flexShrink={0}
         display="flex"
         justifyContent="flex-end"
         alignItems="flex-end"
-        marginRight={2}
+        ml={1}
       >
         <Tooltip
           title={
             <>
-              Copy schemas as DBML format.{" "}
+              Copy schemas as DBML format.
+              <br />
               <ExternalLink
                 href="https://dbml.dbdiagram.io/docs/"
                 title="DBML documentation"

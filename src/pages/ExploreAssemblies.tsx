@@ -1,11 +1,7 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import {
   Box,
-  Paper,
   TextField,
-  Typography,
-  LinearProgress,
   TableCell,
   Select,
   MenuItem,
@@ -16,27 +12,26 @@ import {
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DataTable, {
-  DataTableColumn,
-  DataTableContext,
-} from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonAssembly from "@/components/buttons/ButtonAssembly";
-import { ensureArray, filterInProps, shorten, tsToDateTime } from "@/tools";
+import { ensureArray, filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import {
+  columnWidths,
   smartAssembliesTypes,
   SmartAssemblyState,
   smartAssemblyStates,
 } from "@/constants";
+import DataTableLayout from "@/components/layouts/DataTableLayout";
 
 const columns: DataTableColumn[] = [
-  "Assembly",
-  { label: "Owner", width: 250 },
-  { label: "Solar system", width: 180 },
-  { label: "Anchored At", width: 250 },
+  { label: "Assembly", width: columnWidths.common, grow: true },
+  { label: "Owner", width: columnWidths.common },
+  { label: "Solar system", width: columnWidths.common },
+  { label: "Anchored At", width: columnWidths.datetime },
 ];
 
 const ExploreAssemblies: React.FC = () => {
@@ -81,160 +76,115 @@ const ExploreAssemblies: React.FC = () => {
       sa: (typeof smartassemblies)[number],
       context: DataTableContext
     ) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={sa.id}>
-            <TableCell>
-              <Box display="flex" alignItems="center">
-                <DisplayAssemblyIcon typeId={sa.typeId} stateId={sa.state} />
-                <Box sx={{ px: 1, py: 0.75, lineHeight: "24.5px" }}>
-                  {sa.name ? sa.name : shorten(sa.id)}
-                </Box>
-              </Box>
-            </TableCell>
-            <TableCell
-              sx={{ height: 49.5, px: 3, py: 1.5, lineHeight: "24.5px" }}
-            >
-              {sa.ownerName}
-            </TableCell>
-            <TableCell>
-              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
-            </TableCell>
-            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment key={sa.id}>
-            <TableCell>
-              <Box display="flex" alignItems="center">
-                <DisplayAssemblyIcon
-                  typeId={sa.typeId}
-                  stateId={sa.state}
-                  tooltip
-                />
-                <ButtonAssembly name={sa.name} id={sa.id} />
-              </Box>
-            </TableCell>
-            <TableCell>
-              <ButtonCharacter name={sa.ownerName} address={sa.ownerId} />
-            </TableCell>
-            <TableCell>
-              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
-            </TableCell>
-            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
-          </React.Fragment>
-        );
-      }
+      return (
+        <React.Fragment key={sa.id}>
+          <TableCell colSpan={2}>
+            <Box display="flex" alignItems="center">
+              <DisplayAssemblyIcon
+                typeId={sa.typeId}
+                stateId={sa.state}
+                sx={{ mr: 1 }}
+                tooltip={!context.isScrolling}
+              />
+              <ButtonAssembly
+                name={sa.name}
+                id={sa.id}
+                fastRender={context.isScrolling}
+              />
+            </Box>
+          </TableCell>
+          <TableCell>
+            <ButtonCharacter
+              name={sa.ownerName}
+              address={sa.ownerId}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>
+            <ButtonSolarsystem
+              solarSystemId={sa.solarSystemId}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
+        </React.Fragment>
+      );
     },
     []
   );
+
   return (
-    <>
-      <Helmet>
-        <title>Assemblies</title>
-      </Helmet>
-      <Box p={2} flexGrow={1} overflow="hidden">
-        <Paper
-          elevation={1}
-          sx={{
-            p: 2,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
+    <DataTableLayout
+      title="Assemblies"
+      columns={columns}
+      data={smartassemblies}
+      itemContent={itemContent}
+    >
+      <TextField
+        sx={{ minWidth: 200 }}
+        fullWidth
+        label="Search"
+        value={search.text}
+        onChange={(e) =>
+          setSearch(
+            "text",
+            e.currentTarget.value.substring(0, 255).toLowerCase()
+          )
+        }
+      />
+      <FormControl variant="standard" sx={{ width: 220, flexShrink: 0, ml: 2 }}>
+        <InputLabel id="select-type-label">Type</InputLabel>
+        <Select
+          labelId="select-type-label"
+          id="select-type"
+          value={search.typeId}
+          variant="standard"
+          onChange={(e) => {
+            setSearch("typeId", e.target.value);
           }}
+          label="Type"
+          fullWidth
         >
-          <Box display="flex" alignItems="flex-end">
-            <TextField
-              sx={{ minWidth: 200 }}
-              fullWidth
-              label="Search"
-              value={search.text}
-              onChange={(e) =>
-                setSearch(
-                  "text",
-                  e.currentTarget.value.substring(0, 255).toLowerCase()
-                )
-              }
-            />
-            <FormControl
-              variant="standard"
-              sx={{ width: 220, flexShrink: 0, ml: 2 }}
-            >
-              <InputLabel id="select-type-label">Type</InputLabel>
-              <Select
-                labelId="select-type-label"
-                id="select-type"
-                value={search.typeId}
-                variant="standard"
-                onChange={(e) => {
-                  setSearch("typeId", e.target.value);
-                }}
-                label="Type"
-                fullWidth
-              >
-                <MenuItem value="0">All</MenuItem>
-                {Object.entries(smartAssembliesTypes).map(([id, name]) => (
-                  <MenuItem value={`${id}`} key={id}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl
-              variant="standard"
-              sx={{ minWidth: 150, flexShrink: 0, ml: 2 }}
-            >
-              <InputLabel id="select-state-label">State</InputLabel>
-              <Select
-                labelId="select-state-label"
-                id="select-state"
-                value={selectedStates.map((v) => `${v}`)}
-                variant="standard"
-                renderValue={(selected) =>
-                  selected
-                    .map(
-                      (v) =>
-                        smartAssemblyStates[Number(v) as SmartAssemblyState]
-                    )
-                    .join(", ")
-                }
-                onChange={(e) => {
-                  const value = ensureArray(e.target.value).sort();
-                  setSearch("stateId", value.join("-"));
-                }}
-                label="State"
-                multiple
-                fullWidth
-              >
-                {Object.entries(smartAssemblyStates).map(([id, name]) => (
-                  <MenuItem value={`${id}`} key={id}>
-                    <Checkbox checked={selectedStates.includes(id)} />
-                    <ListItemText primary={name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Box sx={{ textWrap: "nowrap", ml: 2 }}>
-              <Typography variant="caption" color="textPrimary">
-                {smartassemblies.length} assemblies
-              </Typography>
-            </Box>
-          </Box>
-          <Box mt={2}>
-            <LinearProgress
-              sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-            />
-          </Box>
-          <DataTable
-            data={smartassemblies}
-            columns={columns}
-            itemContent={itemContent}
-            rememberScroll
-          />
-        </Paper>
-      </Box>
-    </>
+          <MenuItem value="0">All</MenuItem>
+          {Object.entries(smartAssembliesTypes).map(([id, name]) => (
+            <MenuItem value={`${id}`} key={id}>
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl
+        variant="standard"
+        sx={{ minWidth: 150, flexShrink: 0, ml: 2 }}
+      >
+        <InputLabel id="select-state-label">State</InputLabel>
+        <Select
+          labelId="select-state-label"
+          id="select-state"
+          value={selectedStates.map((v) => `${v}`)}
+          variant="standard"
+          renderValue={(selected) =>
+            selected
+              .map((v) => smartAssemblyStates[Number(v) as SmartAssemblyState])
+              .join(", ")
+          }
+          onChange={(e) => {
+            const value = ensureArray(e.target.value).sort();
+            setSearch("stateId", value.join("-"));
+          }}
+          label="State"
+          multiple
+          fullWidth
+        >
+          {Object.entries(smartAssemblyStates).map(([id, name]) => (
+            <MenuItem value={`${id}`} key={id}>
+              <Checkbox checked={selectedStates.includes(id)} />
+              <ListItemText primary={name} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </DataTableLayout>
   );
 };
 

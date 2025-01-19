@@ -7,15 +7,14 @@ import {
   TableRow,
   Typography,
   Box,
-  Button,
 } from "@mui/material";
-import { NavLink } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonSystem from "../buttons/ButtonSystem";
 import ButtonCharacter from "../buttons/ButtonCharacter";
+import ButtonGeneric from "../buttons/ButtonGeneric";
 
 interface TableFunctionsProps {
   namespaces?: string[];
@@ -73,16 +72,11 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
               return (
                 <TableRow key={fn.worldSelector}>
                   <TableCell sx={{ fontFamily: "monospace" }}>
-                    <Button
-                      sx={{
-                        justifyContent: "flex-start",
-                        fontFamily: "monospace",
-                      }}
-                      component={NavLink}
+                    <ButtonGeneric
                       to={`/explore/functions/${fn.worldSelector}`}
                     >
                       {fn.signature}
-                    </Button>
+                    </ButtonGeneric>
                   </TableCell>
                   {!hideColumns.includes("namespace") && (
                     <TableCell>

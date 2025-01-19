@@ -23,9 +23,10 @@ export type DataTableItemContentCallback<T extends Record<string, unknown>> = (
 type ColumnAttributes = {
   label: string;
   width?: number;
+  grow?: boolean;
 };
 
-export type DataTableColumn = string | ColumnAttributes;
+export type DataTableColumn = ColumnAttributes;
 
 interface DataTableProps<T extends Record<string, unknown>> {
   data: T[];
@@ -73,6 +74,7 @@ const DataTable = <T extends Record<string, unknown>>({
     : ({
         borderCollapse: "separate",
         tableLayout: "fixed",
+        width: "100%",
       } as const);
 
   const columns: ColumnAttributes[] = React.useMemo(() => {
@@ -96,16 +98,34 @@ const DataTable = <T extends Record<string, unknown>>({
         initialTopMostItemIndex={initialScrollTo || 0}
         fixedHeaderContent={() => (
           <TableRow>
-            {columns.map(({ label, ...rest }, i) => (
-              <TableCell key={i} {...rest}>
-                {label}
-              </TableCell>
-            ))}
+            {columns.map(({ label, grow }, i) =>
+              grow ? (
+                <TableCell colSpan={2} key={i}>
+                  {label}
+                </TableCell>
+              ) : (
+                <TableCell key={i}>{label}</TableCell>
+              )
+            )}
           </TableRow>
         )}
         components={{
-          Table: (props) => (
-            <Table size="small" {...props} sx={sx} stickyHeader />
+          Table: ({ children, ...props }) => (
+            <Table size="small" {...props} sx={sx} stickyHeader>
+              <colgroup>
+                {columns.map(({ width, grow }, i) =>
+                  grow ? (
+                    <React.Fragment key={i}>
+                      <col style={{ width }} />
+                      <col />
+                    </React.Fragment>
+                  ) : (
+                    <col key={i} style={{ width }} />
+                  )
+                )}
+              </colgroup>
+              {children}
+            </Table>
           ),
           TableHead: React.forwardRef((props, ref) => (
             <TableHead {...props} ref={ref} />
