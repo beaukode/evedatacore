@@ -10,13 +10,23 @@ import {
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DataTable, { DataTableContext } from "@/components/DataTable";
+import DataTable, {
+  DataTableColumn,
+  DataTableContext,
+} from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { filterInProps, ldapToDateTime } from "@/tools";
+import { columnWidths } from "@/constants";
 
-const columns = ["Date", "Killer", "Victim", "Loss Type", "Solar System"];
+const columns: DataTableColumn[] = [
+  { label: "Date", width: columnWidths.datetime },
+  { label: "Killer", width: columnWidths.common },
+  { label: "Victim", width: columnWidths.common },
+  { label: "Loss Type", width: columnWidths.common },
+  { label: "Solar System", width: columnWidths.common },
+];
 
 const ExploreKillmails: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({

@@ -15,8 +15,8 @@ import { useTypesIndex } from "@/contexts/AppContext";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 
 const columns: DataTableColumn[] = [
-  "Name",
-  { label: "Id", width: 100 },
+  { label: "Id", width: 80 },
+  { label: "Name", width: 400, grow: true },
   { label: "Category", width: 200 },
   { label: "Group", width: 300 },
 ];
@@ -128,14 +128,14 @@ const ExploreTypes: React.FC = () => {
     (_: number, type: (typeof types)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={type.id}>
-          <TableCell>
+          <TableCell>{type.id}</TableCell>
+          <TableCell colSpan={2}>
             <ButtonItem
               typeId={type.id}
               name={type.name}
               fastRender={context.isScrolling}
             />
           </TableCell>
-          <TableCell>{type.id}</TableCell>
           <TableCell>{type.categoryName}</TableCell>
           <TableCell>{type.groupName}</TableCell>
         </React.Fragment>

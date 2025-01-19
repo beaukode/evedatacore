@@ -6,8 +6,12 @@ import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import { DataTableContext } from "@/components/DataTable";
+import { DataTableColumn } from "@/components/DataTable";
 
-const columns = ["Name", "Id"];
+const columns: DataTableColumn[] = [
+  { label: "Id", width: 120 },
+  { label: "Name", width: 400, grow: true },
+];
 
 const ExploreSolarsystems: React.FC = () => {
   const ssIndex = useSolarSystemsIndex();
@@ -33,13 +37,13 @@ const ExploreSolarsystems: React.FC = () => {
     ) => {
       return (
         <React.Fragment key={ss.solarSystemId}>
-          <TableCell>
+          <TableCell>{ss.solarSystemId}</TableCell>
+          <TableCell colSpan={2}>
             <ButtonSolarsystem
               solarSystemId={ss.solarSystemId}
               fastRender={context.isScrolling}
             />
           </TableCell>
-          <TableCell>{ss.solarSystemId}</TableCell>
         </React.Fragment>
       );
     },

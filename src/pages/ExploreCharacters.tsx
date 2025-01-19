@@ -11,12 +11,20 @@ import {
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DataTable, { DataTableContext } from "@/components/DataTable";
+import DataTable, {
+  DataTableColumn,
+  DataTableContext,
+} from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import { columnWidths } from "@/constants";
 
-const columns = ["Name", "Address", "Created At"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Address", width: columnWidths.address },
+  { label: "Created At", width: columnWidths.datetime },
+];
 
 const ExploreCharacters: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -47,7 +55,7 @@ const ExploreCharacters: React.FC = () => {
     ) => {
       return (
         <React.Fragment key={sm.address}>
-          <TableCell>
+          <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <Avatar
                 alt={sm.name}

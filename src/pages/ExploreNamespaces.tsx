@@ -7,9 +7,13 @@ import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
-import { DataTableContext } from "@/components/DataTable";
+import { DataTableContext, DataTableColumn } from "@/components/DataTable";
+import { columnWidths } from "@/constants";
 
-const columns = ["Name", "Owner"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+];
 
 const ExploreNamespaces: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({

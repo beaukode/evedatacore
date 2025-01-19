@@ -19,13 +19,19 @@ import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonTable from "@/components/buttons/ButtonTable";
-import { DataTableContext } from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import { NoMaxWidthTooltip } from "@/components/ui/NoMaxWidthTooltip";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DisplayTableContent from "@/components/DisplayTableContent";
 import ExternalLink from "@/components/ui/ExternalLink";
+import { columnWidths } from "@/constants";
 
-const columns = ["Name", "Namespace", "Owner", "Fields"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Namespace", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+  { label: "Fields", width: 200 },
+];
 
 const ExploreTables: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -176,7 +182,7 @@ const ExploreTables: React.FC = () => {
     (_: number, t: (typeof tables)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={t.tableId}>
-          <TableCell>
+          <TableCell colSpan={2}>
             {t.type === "offchainTable" ? (
               <Box display="flex" alignItems="center">
                 <ButtonTable

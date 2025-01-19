@@ -17,12 +17,13 @@ import ButtonSystem from "@/components/buttons/ButtonSystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { DataTableContext, DataTableColumn } from "@/components/DataTable";
 import ButtonGeneric from "@/components/buttons/ButtonGeneric";
+import { columnWidths } from "@/constants";
 
 const columns: DataTableColumn[] = [
-  "Signature",
-  { label: "Namespace", width: 180 },
-  { label: "Owner", width: 250 },
-  { label: "System", width: 250 },
+  { label: "Signature", width: 600, grow: true },
+  { label: "Namespace", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+  { label: "System", width: columnWidths.common },
 ];
 
 const ExploreFunctions: React.FC = () => {
@@ -169,7 +170,7 @@ const ExploreFunctions: React.FC = () => {
     (_: number, fn: (typeof functions)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={fn.worldSelector}>
-          <TableCell>
+          <TableCell colSpan={2}>
             <ButtonGeneric
               to={`/explore/functions/${fn.worldSelector}`}
               fastRender={context.isScrolling}

@@ -62,9 +62,9 @@ const ExploreTable: React.FC = () => {
 
   const columnsLabels = React.useMemo(() => {
     if (!query.data) return [];
-    return Object.entries(query.data.schema).map(
-      ([key, { type }]) => `${key} (${type})`
-    );
+    return Object.entries(query.data.schema).map(([key, { type }]) => ({
+      label: `${key} (${type})`,
+    }));
   }, [query.data]);
 
   const columnsKeys = React.useMemo(() => {

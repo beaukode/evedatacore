@@ -79,3 +79,9 @@ export const ships: Record<string, Ship> = {
 } as const;
 
 export type ShipType = keyof typeof ships;
+
+export const columnWidths = {
+  common: 300,
+  address: 400,
+  datetime: 210,
+};

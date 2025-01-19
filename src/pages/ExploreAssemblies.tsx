@@ -27,16 +27,17 @@ import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import {
+  columnWidths,
   smartAssembliesTypes,
   SmartAssemblyState,
   smartAssemblyStates,
 } from "@/constants";
 
 const columns: DataTableColumn[] = [
-  "Assembly",
-  { label: "Owner", width: 250 },
-  { label: "Solar system", width: 180 },
-  { label: "Anchored At", width: 250 },
+  { label: "Assembly", width: columnWidths.common, grow: true },
+  { label: "Owner", width: columnWidths.common },
+  { label: "Solar system", width: columnWidths.common },
+  { label: "Anchored At", width: columnWidths.datetime },
 ];
 
 const ExploreAssemblies: React.FC = () => {
@@ -83,7 +84,7 @@ const ExploreAssemblies: React.FC = () => {
     ) => {
       return (
         <React.Fragment key={sa.id}>
-          <TableCell>
+          <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <DisplayAssemblyIcon
                 typeId={sa.typeId}
