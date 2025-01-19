@@ -1,24 +1,14 @@
 import React from "react";
-import { Helmet } from "react-helmet";
-import {
-  Box,
-  Paper,
-  TextField,
-  Typography,
-  LinearProgress,
-  TableCell,
-} from "@mui/material";
+import { TextField, TableCell } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DataTable, {
-  DataTableColumn,
-  DataTableContext,
-} from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { filterInProps, ldapToDateTime } from "@/tools";
 import { columnWidths } from "@/constants";
+import DataTableLayout from "@/components/layouts/DataTableLayout";
 
 const columns: DataTableColumn[] = [
   { label: "Date", width: columnWidths.datetime },
@@ -84,53 +74,24 @@ const ExploreKillmails: React.FC = () => {
   );
   return (
     <>
-      <Helmet>
-        <title>Killmails</title>
-      </Helmet>
-      <Box p={2} flexGrow={1} overflow="hidden">
-        <Paper
-          elevation={1}
-          sx={{
-            p: 2,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="flex-end"
-          >
-            <TextField
-              label="Search"
-              value={search.text}
-              onChange={(e) =>
-                setSearch(
-                  "text",
-                  e.currentTarget.value.substring(0, 255).toLowerCase()
-                )
-              }
-            />
-            <Box>
-              <Typography variant="caption" color="textPrimary">
-                {killmails.length} Killmails
-              </Typography>
-            </Box>
-          </Box>
-          <Box mt={2}>
-            <LinearProgress
-              sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-            />
-          </Box>
-          <DataTable
-            data={killmails}
-            columns={columns}
-            itemContent={itemContent}
-            rememberScroll
-          />
-        </Paper>
-      </Box>
+      <DataTableLayout
+        title="Killmails"
+        columns={columns}
+        data={killmails}
+        itemContent={itemContent}
+      >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) =>
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            )
+          }
+          fullWidth
+        />
+      </DataTableLayout>
     </>
   );
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
@@ -51,9 +50,6 @@ const ExploreSolarsystems: React.FC = () => {
   );
   return (
     <>
-      <Helmet>
-        <title>Solar systems</title>
-      </Helmet>
       <DataTableLayout
         title="Solar systems"
         columns={columns}
@@ -70,6 +66,7 @@ const ExploreSolarsystems: React.FC = () => {
               e.currentTarget.value.substring(0, 255).toLowerCase()
             );
           }}
+          fullWidth
         />
       </DataTableLayout>
     </>

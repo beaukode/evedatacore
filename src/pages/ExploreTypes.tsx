@@ -161,6 +161,7 @@ const ExploreTypes: React.FC = () => {
             e.currentTarget.value.substring(0, 255).toLowerCase()
           );
         }}
+        fullWidth
       />
       {categorySelect}
       {groupSelect}

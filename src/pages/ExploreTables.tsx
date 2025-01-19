@@ -249,20 +249,23 @@ const ExploreTables: React.FC = () => {
             e.currentTarget.value.substring(0, 255).toLowerCase()
           );
         }}
+        fullWidth
       />
       {ownerSelect}
       {namespaceSelect}
       <Box
         flexGrow="1"
+        flexShrink={0}
         display="flex"
         justifyContent="flex-end"
         alignItems="flex-end"
-        marginRight={2}
+        ml={1}
       >
         <Tooltip
           title={
             <>
-              Copy schemas as DBML format.{" "}
+              Copy schemas as DBML format.
+              <br />
               <ExternalLink
                 href="https://dbml.dbdiagram.io/docs/"
                 title="DBML documentation"
