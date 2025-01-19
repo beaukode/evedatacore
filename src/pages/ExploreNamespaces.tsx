@@ -7,6 +7,7 @@ import { filterInProps } from "@/tools";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import { DataTableContext } from "@/components/DataTable";
 
 const columns = ["Name", "Owner"];
 
@@ -32,18 +33,22 @@ const ExploreNamespaces: React.FC = () => {
   }, [query.data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
-    (_: number, ns: (typeof namespaces)[number]) => {
+    (_: number, ns: (typeof namespaces)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={ns.namespaceId}>
           <TableCell>
-            <ButtonNamespace name={ns.name} id={ns.namespaceId} />
+            <ButtonNamespace
+              name={ns.name}
+              id={ns.namespaceId}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
-          <TableCell sx={{ height: 49.5 }}>
-            {ns.ownerName ? (
-              <ButtonCharacter name={ns.ownerName} address={ns.owner} />
-            ) : (
-              ns.owner
-            )}
+          <TableCell>
+            <ButtonCharacter
+              name={ns.ownerName}
+              address={ns.owner}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
         </React.Fragment>
       );

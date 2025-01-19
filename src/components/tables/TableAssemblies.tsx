@@ -18,6 +18,7 @@ import ButtonAssembly from "../buttons/ButtonAssembly";
 import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
 import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
 import ButtonCharacter from "../buttons/ButtonCharacter";
+import { tsToDateTime } from "@/tools";
 
 interface TableAssembliesProps {
   owner?: string;
@@ -94,9 +95,6 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
               </TableHead>
               <TableBody>
                 {assemblies.map((sa) => {
-                  const isoDate = new Date(sa.anchoredAt).toISOString();
-                  const date = isoDate.substring(0, 10);
-                  const time = isoDate.substring(11, 19);
                   return (
                     <TableRow key={sa.id}>
                       <TableCell>
@@ -104,6 +102,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
                           <DisplayAssemblyIcon
                             typeId={sa.typeId}
                             stateId={sa.state}
+                            sx={{ mr: 1 }}
                             tooltip
                           />
                           <ButtonAssembly id={sa.id} name={sa.name} />
@@ -122,7 +121,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
                           <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
                         </TableCell>
                       )}
-                      <TableCell>{`${date} ${time}`}</TableCell>
+                      <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
                     </TableRow>
                   );
                 })}

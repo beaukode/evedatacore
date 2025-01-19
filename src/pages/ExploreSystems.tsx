@@ -172,43 +172,31 @@ const ExploreSystems: React.FC = () => {
 
   const itemContent = React.useCallback(
     (_: number, sys: (typeof systems)[number], context: DataTableContext) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={sys.systemId}>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              <Box display="flex" alignItems="center">
-                <span style={{ paddingRight: 8 }}>{sys.name}</span>
-                {!sys.publicAccess && privateIcon}
-              </Box>
-            </TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{sys.namespace}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              {sys.namespaceOwnerName || sys.namespaceOwner}
-            </TableCell>
-            <TableCell>{sys.contract}</TableCell>
-          </React.Fragment>
-        );
-      }
       return (
         <React.Fragment key={sys.systemId}>
           <TableCell>
             <Box display="flex" alignItems="center">
-              <ButtonSystem id={sys.systemId} name={sys.name} />
+              <ButtonSystem
+                id={sys.systemId}
+                name={sys.name}
+                fastRender={context.isScrolling}
+              />
               {!sys.publicAccess && privateIcon}
             </Box>
           </TableCell>
           <TableCell>
-            <ButtonNamespace id={sys.namespaceId} name={sys.namespace} />
+            <ButtonNamespace
+              id={sys.namespaceId}
+              name={sys.namespace}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
-            {sys.namespaceOwnerName ? (
-              <ButtonCharacter
-                address={sys.namespaceOwner}
-                name={sys.namespaceOwnerName}
-              />
-            ) : (
-              <Box sx={{ px: 1 }}>{sys.namespaceOwner}</Box>
-            )}
+            <ButtonCharacter
+              address={sys.namespaceOwner}
+              name={sys.namespaceOwnerName}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
             <ExternalLink

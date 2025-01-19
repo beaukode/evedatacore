@@ -1,10 +1,11 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { TextField, TableCell, Button } from "@mui/material";
-import { NavLink } from "react-router";
+import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
+import { DataTableContext } from "@/components/DataTable";
 
 const columns = ["Name", "Id"];
 
@@ -25,16 +26,18 @@ const ExploreSolarsystems: React.FC = () => {
   }, [debouncedSearch.text, ssIndex]);
 
   const itemContent = React.useCallback(
-    (_: number, ss: (typeof solarsystems)[number]) => {
+    (
+      _: number,
+      ss: (typeof solarsystems)[number],
+      context: DataTableContext
+    ) => {
       return (
         <React.Fragment key={ss.solarSystemId}>
           <TableCell>
-            <Button
-              component={NavLink}
-              to={`/explore/solarsystems/${ss.solarSystemId}`}
-            >
-              {ss.solarSystemName}
-            </Button>
+            <ButtonSolarsystem
+              solarSystemId={ss.solarSystemId}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>{ss.solarSystemId}</TableCell>
         </React.Fragment>

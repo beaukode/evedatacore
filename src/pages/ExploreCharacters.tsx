@@ -8,14 +8,13 @@ import {
   LinearProgress,
   Avatar,
   TableCell,
-  Button,
 } from "@mui/material";
-import { NavLink } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import DataTable, { DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps, tsToDateTime } from "@/tools";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 
 const columns = ["Name", "Address", "Created At"];
 
@@ -52,20 +51,15 @@ const ExploreCharacters: React.FC = () => {
             <Box display="flex" alignItems="center">
               <Avatar
                 alt={sm.name}
-                sx={{ bgcolor: "black", color: "silver" }}
-                src={
-                  context.isScrolling
-                    ? undefined
-                    : "https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
-                }
+                sx={{ bgcolor: "black", color: "silver", mr: 1 }}
+                src="https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
                 variant="rounded"
               />
-              <Button
-                component={NavLink}
-                to={`/explore/characters/${sm.address}`}
-              >
-                {sm.name}
-              </Button>
+              <ButtonCharacter
+                name={sm.name}
+                address={sm.address}
+                fastRender={context.isScrolling}
+              />
             </Box>
           </TableCell>
           <TableCell>{sm.address}</TableCell>

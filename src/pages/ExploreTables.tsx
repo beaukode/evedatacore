@@ -174,28 +174,18 @@ const ExploreTables: React.FC = () => {
 
   const itemContent = React.useCallback(
     (_: number, t: (typeof tables)[number], context: DataTableContext) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={t.tableId}>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{t.name}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{t.namespace}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              {t.namespaceOwnerName || t.namespaceOwner}
-            </TableCell>
-            <TableCell>
-              <DisplayTableContent table={t} />
-            </TableCell>
-          </React.Fragment>
-        );
-      }
       return (
         <React.Fragment key={t.tableId}>
           <TableCell>
             {t.type === "offchainTable" ? (
               <Box display="flex" alignItems="center">
-                <ButtonTable id={t.tableId} name={t.name} />
+                <ButtonTable
+                  id={t.tableId}
+                  name={t.name}
+                  fastRender={context.isScrolling}
+                />
                 <Tooltip title="Off-chain table">
-                  <OffChainIcon color="secondary" />
+                  <OffChainIcon color="secondary" sx={{ ml: 1 }} />
                 </Tooltip>
               </Box>
             ) : (
@@ -203,28 +193,33 @@ const ExploreTables: React.FC = () => {
             )}
           </TableCell>
           <TableCell>
-            <ButtonNamespace id={t.namespaceId} name={t.namespace} />
+            <ButtonNamespace
+              id={t.namespaceId}
+              name={t.namespace}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
-            {t.namespaceOwnerName ? (
-              <ButtonCharacter
-                address={t.namespaceOwner}
-                name={t.namespaceOwnerName}
-              />
+            <ButtonCharacter
+              address={t.namespaceOwner}
+              name={t.namespaceOwnerName}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>
+            {context.isScrolling ? (
+              <DisplayTableContent table={t} />
             ) : (
-              <Box sx={{ px: 1 }}>{t.namespaceOwner}</Box>
+              <NoMaxWidthTooltip title={<DisplayTableFieldsChips table={t} />}>
+                <Box
+                  sx={{
+                    cursor: "help",
+                  }}
+                >
+                  <DisplayTableContent table={t} />
+                </Box>
+              </NoMaxWidthTooltip>
             )}
-          </TableCell>
-          <TableCell>
-            <NoMaxWidthTooltip title={<DisplayTableFieldsChips table={t} />}>
-              <Box
-                sx={{
-                  cursor: "help",
-                }}
-              >
-                <DisplayTableContent table={t} />
-              </Box>
-            </NoMaxWidthTooltip>
           </TableCell>
         </React.Fragment>
       );

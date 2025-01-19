@@ -12,7 +12,7 @@ import ButtonItem from "@/components/buttons/ButtonItem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import { useTypesIndex } from "@/contexts/AppContext";
-import { DataTableColumn } from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 
 const columns: DataTableColumn[] = [
   "Name",
@@ -125,11 +125,15 @@ const ExploreTypes: React.FC = () => {
   }, [categories, search.categoryId, search.groupId, setSearch]);
 
   const itemContent = React.useCallback(
-    (_: number, type: (typeof types)[number]) => {
+    (_: number, type: (typeof types)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={type.id}>
           <TableCell>
-            <ButtonItem typeId={type.id} name={type.name} />
+            <ButtonItem
+              typeId={type.id}
+              name={type.name}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>{type.id}</TableCell>
           <TableCell>{type.categoryName}</TableCell>

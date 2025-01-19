@@ -7,7 +7,6 @@ import {
   Typography,
   LinearProgress,
   TableCell,
-  Skeleton,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
@@ -15,7 +14,7 @@ import DataTable, { DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
-import { filterInProps, ldapDate } from "@/tools";
+import { filterInProps, ldapToDateTime } from "@/tools";
 
 const columns = ["Date", "Killer", "Victim", "Loss Type", "Solar System"];
 
@@ -44,46 +43,32 @@ const ExploreKillmails: React.FC = () => {
 
   const itemContent = React.useCallback(
     (_: number, km: (typeof killmails)[number], context: DataTableContext) => {
-      const isoDate = ldapDate(km.timestamp).toISOString();
-      const date = isoDate.substring(0, 10);
-      const time = isoDate.substring(11, 19);
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={km.id}>
-            <TableCell>{`${date} ${time}`}</TableCell>
-            <TableCell
-              sx={{ height: 49.5, px: 3, py: 1.5, lineHeight: "24.5px" }}
-            >
-              {km.killerName}
-            </TableCell>
-            <TableCell
-              sx={{ height: 49.5, px: 3, py: 1.5, lineHeight: "24.5px" }}
-            >
-              {km.victimName}
-            </TableCell>
-            <TableCell>{km.lossType}</TableCell>
-            <TableCell>
-              <Skeleton width={80} />
-            </TableCell>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment key={km.id}>
-            <TableCell>{`${date} ${time}`}</TableCell>
-            <TableCell>
-              <ButtonCharacter name={km.killerName} address={km.killerAddress} />
-            </TableCell>
-            <TableCell>
-              <ButtonCharacter name={km.victimName} address={km.victimAddress} />
-            </TableCell>
-            <TableCell>{km.lossType}</TableCell>
-            <TableCell>
-              <ButtonSolarsystem solarSystemId={km.solarSystemId} />
-            </TableCell>
-          </React.Fragment>
-        );
-      }
+      return (
+        <React.Fragment key={km.id}>
+          <TableCell>{ldapToDateTime(km.timestamp)}</TableCell>
+          <TableCell>
+            <ButtonCharacter
+              name={km.killerName}
+              address={km.killerAddress}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>
+            <ButtonCharacter
+              name={km.victimName}
+              address={km.victimAddress}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>{km.lossType}</TableCell>
+          <TableCell>
+            <ButtonSolarsystem
+              solarSystemId={km.solarSystemId}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+        </React.Fragment>
+      );
     },
     []
   );

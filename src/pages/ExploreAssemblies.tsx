@@ -22,7 +22,7 @@ import DataTable, {
 } from "@/components/DataTable";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonAssembly from "@/components/buttons/ButtonAssembly";
-import { ensureArray, filterInProps, shorten, tsToDateTime } from "@/tools";
+import { ensureArray, filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
@@ -81,51 +81,39 @@ const ExploreAssemblies: React.FC = () => {
       sa: (typeof smartassemblies)[number],
       context: DataTableContext
     ) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={sa.id}>
-            <TableCell>
-              <Box display="flex" alignItems="center">
-                <DisplayAssemblyIcon typeId={sa.typeId} stateId={sa.state} />
-                <Box sx={{ px: 1, py: 0.75, lineHeight: "24.5px" }}>
-                  {sa.name ? sa.name : shorten(sa.id)}
-                </Box>
-              </Box>
-            </TableCell>
-            <TableCell
-              sx={{ height: 49.5, px: 3, py: 1.5, lineHeight: "24.5px" }}
-            >
-              {sa.ownerName}
-            </TableCell>
-            <TableCell>
-              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
-            </TableCell>
-            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment key={sa.id}>
-            <TableCell>
-              <Box display="flex" alignItems="center">
-                <DisplayAssemblyIcon
-                  typeId={sa.typeId}
-                  stateId={sa.state}
-                  tooltip
-                />
-                <ButtonAssembly name={sa.name} id={sa.id} />
-              </Box>
-            </TableCell>
-            <TableCell>
-              <ButtonCharacter name={sa.ownerName} address={sa.ownerId} />
-            </TableCell>
-            <TableCell>
-              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
-            </TableCell>
-            <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
-          </React.Fragment>
-        );
-      }
+      return (
+        <React.Fragment key={sa.id}>
+          <TableCell>
+            <Box display="flex" alignItems="center">
+              <DisplayAssemblyIcon
+                typeId={sa.typeId}
+                stateId={sa.state}
+                sx={{ mr: 1 }}
+                tooltip={!context.isScrolling}
+              />
+              <ButtonAssembly
+                name={sa.name}
+                id={sa.id}
+                fastRender={context.isScrolling}
+              />
+            </Box>
+          </TableCell>
+          <TableCell>
+            <ButtonCharacter
+              name={sa.ownerName}
+              address={sa.ownerId}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>
+            <ButtonSolarsystem
+              solarSystemId={sa.solarSystemId}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
+        </React.Fragment>
+      );
     },
     []
   );
