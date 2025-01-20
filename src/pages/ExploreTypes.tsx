@@ -12,11 +12,11 @@ import ButtonItem from "@/components/buttons/ButtonItem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import { useTypesIndex } from "@/contexts/AppContext";
-import { DataTableColumn } from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 
 const columns: DataTableColumn[] = [
-  "Name",
-  { label: "Id", width: 100 },
+  { label: "Id", width: 80 },
+  { label: "Name", width: 400, grow: true },
   { label: "Category", width: 200 },
   { label: "Group", width: 300 },
 ];
@@ -125,13 +125,17 @@ const ExploreTypes: React.FC = () => {
   }, [categories, search.categoryId, search.groupId, setSearch]);
 
   const itemContent = React.useCallback(
-    (_: number, type: (typeof types)[number]) => {
+    (_: number, type: (typeof types)[number], context: DataTableContext) => {
       return (
         <React.Fragment key={type.id}>
-          <TableCell>
-            <ButtonItem typeId={type.id} name={type.name} />
-          </TableCell>
           <TableCell>{type.id}</TableCell>
+          <TableCell colSpan={2}>
+            <ButtonItem
+              typeId={type.id}
+              name={type.name}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
           <TableCell>{type.categoryName}</TableCell>
           <TableCell>{type.groupName}</TableCell>
         </React.Fragment>
@@ -157,6 +161,7 @@ const ExploreTypes: React.FC = () => {
             e.currentTarget.value.substring(0, 255).toLowerCase()
           );
         }}
+        fullWidth
       />
       {categorySelect}
       {groupSelect}

@@ -42,7 +42,7 @@ const DataTableLayout = <T extends Record<string, unknown>>({
             <Box display="flex" flexGrow="1">
               {children}
             </Box>
-            <Box textAlign="right">
+            <Box textAlign="right" ml={2}>
               <Typography variant="caption" color="textPrimary">
                 {data.length} {title}
               </Typography>

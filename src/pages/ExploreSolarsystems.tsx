@@ -1,12 +1,16 @@
 import React from "react";
-import { Helmet } from "react-helmet";
-import { TextField, TableCell, Button } from "@mui/material";
-import { NavLink } from "react-router";
+import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
+import { DataTableContext } from "@/components/DataTable";
+import { DataTableColumn } from "@/components/DataTable";
 
-const columns = ["Name", "Id"];
+const columns: DataTableColumn[] = [
+  { label: "Id", width: 120 },
+  { label: "Name", width: 400, grow: true },
+];
 
 const ExploreSolarsystems: React.FC = () => {
   const ssIndex = useSolarSystemsIndex();
@@ -25,18 +29,20 @@ const ExploreSolarsystems: React.FC = () => {
   }, [debouncedSearch.text, ssIndex]);
 
   const itemContent = React.useCallback(
-    (_: number, ss: (typeof solarsystems)[number]) => {
+    (
+      _: number,
+      ss: (typeof solarsystems)[number],
+      context: DataTableContext
+    ) => {
       return (
         <React.Fragment key={ss.solarSystemId}>
-          <TableCell>
-            <Button
-              component={NavLink}
-              to={`/explore/solarsystems/${ss.solarSystemId}`}
-            >
-              {ss.solarSystemName}
-            </Button>
-          </TableCell>
           <TableCell>{ss.solarSystemId}</TableCell>
+          <TableCell colSpan={2}>
+            <ButtonSolarsystem
+              solarSystemId={ss.solarSystemId}
+              fastRender={context.isScrolling}
+            />
+          </TableCell>
         </React.Fragment>
       );
     },
@@ -44,9 +50,6 @@ const ExploreSolarsystems: React.FC = () => {
   );
   return (
     <>
-      <Helmet>
-        <title>Solar systems</title>
-      </Helmet>
       <DataTableLayout
         title="Solar systems"
         columns={columns}
@@ -63,6 +66,7 @@ const ExploreSolarsystems: React.FC = () => {
               e.currentTarget.value.substring(0, 255).toLowerCase()
             );
           }}
+          fullWidth
         />
       </DataTableLayout>
     </>

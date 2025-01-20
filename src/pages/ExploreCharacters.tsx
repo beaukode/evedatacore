@@ -1,23 +1,19 @@
 import React from "react";
-import { Helmet } from "react-helmet";
-import {
-  Box,
-  Paper,
-  TextField,
-  Typography,
-  LinearProgress,
-  Avatar,
-  TableCell,
-  Button,
-} from "@mui/material";
-import { NavLink } from "react-router";
+import { Box, TextField, Avatar, TableCell } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
-import DataTable, { DataTableContext } from "@/components/DataTable";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps, tsToDateTime } from "@/tools";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import { columnWidths } from "@/constants";
+import DataTableLayout from "@/components/layouts/DataTableLayout";
 
-const columns = ["Name", "Address", "Created At"];
+const columns: DataTableColumn[] = [
+  { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Address", width: columnWidths.address },
+  { label: "Created At", width: columnWidths.datetime },
+];
 
 const ExploreCharacters: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
@@ -48,24 +44,19 @@ const ExploreCharacters: React.FC = () => {
     ) => {
       return (
         <React.Fragment key={sm.address}>
-          <TableCell>
+          <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <Avatar
                 alt={sm.name}
-                sx={{ bgcolor: "black", color: "silver" }}
-                src={
-                  context.isScrolling
-                    ? undefined
-                    : "https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
-                }
+                sx={{ bgcolor: "black", color: "silver", mr: 1 }}
+                src="https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
                 variant="rounded"
               />
-              <Button
-                component={NavLink}
-                to={`/explore/characters/${sm.address}`}
-              >
-                {sm.name}
-              </Button>
+              <ButtonCharacter
+                name={sm.name}
+                address={sm.address}
+                fastRender={context.isScrolling}
+              />
             </Box>
           </TableCell>
           <TableCell>{sm.address}</TableCell>
@@ -76,55 +67,24 @@ const ExploreCharacters: React.FC = () => {
     []
   );
   return (
-    <>
-      <Helmet>
-        <title>Characters</title>
-      </Helmet>
-      <Box p={2} flexGrow={1} overflow="hidden">
-        <Paper
-          elevation={1}
-          sx={{
-            p: 2,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="flex-end"
-          >
-            <TextField
-              label="Search"
-              value={search.text}
-              onChange={(e) =>
-                setSearch(
-                  "text",
-                  e.currentTarget.value.substring(0, 255).toLowerCase()
-                )
-              }
-            />
-            <Box>
-              <Typography variant="caption" color="textPrimary">
-                {smartcharacters.length} characters
-              </Typography>
-            </Box>
-          </Box>
-          <Box mt={2}>
-            <LinearProgress
-              sx={{ visibility: query.isFetching ? "visible" : "hidden" }}
-            />
-          </Box>
-          <DataTable
-            data={smartcharacters}
-            columns={columns}
-            itemContent={itemContent}
-            rememberScroll
-          />
-        </Paper>
-      </Box>
-    </>
+    <DataTableLayout
+      title="Characters"
+      columns={columns}
+      data={smartcharacters}
+      itemContent={itemContent}
+    >
+      <TextField
+        label="Search"
+        value={search.text}
+        onChange={(e) =>
+          setSearch(
+            "text",
+            e.currentTarget.value.substring(0, 255).toLowerCase()
+          )
+        }
+        fullWidth
+      />
+    </DataTableLayout>
   );
 };
 

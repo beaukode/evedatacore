@@ -1,14 +1,32 @@
 import React from "react";
 import { Avatar, Box, Button } from "@mui/material";
 import { NavLink } from "react-router";
+import LooksOutlinedButton from "../ui/LooksOutlinedButton";
 
 interface ButtonItemProps {
   name: string;
   typeId: number | string;
   image?: string;
+  fastRender?: boolean;
 }
 
-const ButtonItem: React.FC<ButtonItemProps> = ({ name, typeId, image }) => {
+const ButtonItem: React.FC<ButtonItemProps> = ({
+  name,
+  typeId,
+  image,
+  fastRender,
+}) => {
+  const button = fastRender ? (
+    <LooksOutlinedButton>{name}</LooksOutlinedButton>
+  ) : (
+    <Button
+      component={NavLink}
+      to={`/explore/types/${typeId}`}
+      variant="outlined"
+    >
+      {name}
+    </Button>
+  );
   return (
     <Box display="flex" alignItems="center">
       {image && (
@@ -19,9 +37,7 @@ const ButtonItem: React.FC<ButtonItemProps> = ({ name, typeId, image }) => {
           variant="rounded"
         />
       )}
-      <Button component={NavLink} to={`/explore/types/${typeId}`}>
-        {name}
-      </Button>
+      {button}
     </Box>
   );
 };

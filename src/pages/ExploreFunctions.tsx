@@ -2,16 +2,13 @@ import React from "react";
 import {
   TextField,
   TableCell,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Box,
 } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
-import { NavLink } from "react-router";
 import { filterInProps } from "@/tools";
 import { useMudSql } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
@@ -19,12 +16,14 @@ import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { DataTableContext, DataTableColumn } from "@/components/DataTable";
+import ButtonGeneric from "@/components/buttons/ButtonGeneric";
+import { columnWidths } from "@/constants";
 
 const columns: DataTableColumn[] = [
-  "Signature",
-  { label: "Namespace", width: 180 },
-  { label: "Owner", width: 250 },
-  { label: "System", width: 250 },
+  { label: "Signature", width: 600, grow: true },
+  { label: "Namespace", width: columnWidths.common },
+  { label: "Owner", width: columnWidths.address },
+  { label: "System", width: columnWidths.common },
 ];
 
 const ExploreFunctions: React.FC = () => {
@@ -169,67 +168,45 @@ const ExploreFunctions: React.FC = () => {
 
   const itemContent = React.useCallback(
     (_: number, fn: (typeof functions)[number], context: DataTableContext) => {
-      if (context.isScrolling) {
-        return (
-          <React.Fragment key={fn.worldSelector}>
-            <TableCell sx={{ fontFamily: "monospace" }}>
-              <Button
-                sx={{ justifyContent: "flex-start", fontFamily: "monospace" }}
-                component={NavLink}
-                to={`/explore/functions/${fn.worldSelector}`}
-              >
-                {fn.signature}
-              </Button>
-            </TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{fn.namespace}</TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>
-              {fn.namespaceOwnerName || fn.namespaceOwner}
-            </TableCell>
-            <TableCell sx={{ height: 49.5, px: 3 }}>{fn.systemName}</TableCell>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment key={fn.worldSelector}>
-            <TableCell sx={{ fontFamily: "monospace" }}>
-              <Button
-                sx={{ justifyContent: "flex-start", fontFamily: "monospace" }}
-                component={NavLink}
-                to={`/explore/functions/${fn.worldSelector}`}
-              >
-                {fn.signature}
-              </Button>
-            </TableCell>
-            <TableCell>
-              {fn.namespaceId && fn.namespace && (
-                <ButtonNamespace id={fn.namespaceId} name={fn.namespace} />
-              )}
-            </TableCell>
-            <TableCell>
-              {fn.namespaceOwner && (
-                <>
-                  {fn.namespaceOwnerName && (
-                    <ButtonCharacter
-                      address={fn.namespaceOwner}
-                      name={fn.namespaceOwnerName}
-                    />
-                  )}
-                  {!fn.namespaceOwnerName && (
-                    <Box component="span" sx={{ px: 1 }}>
-                      {fn.namespaceOwner}
-                    </Box>
-                  )}
-                </>
-              )}
-            </TableCell>
-            <TableCell>
-              {fn.systemId && fn.systemName && (
-                <ButtonSystem id={fn.systemId} name={fn.systemName} />
-              )}
-            </TableCell>
-          </React.Fragment>
-        );
-      }
+      return (
+        <React.Fragment key={fn.worldSelector}>
+          <TableCell colSpan={2}>
+            <ButtonGeneric
+              to={`/explore/functions/${fn.worldSelector}`}
+              fastRender={context.isScrolling}
+            >
+              {fn.signature}
+            </ButtonGeneric>
+          </TableCell>
+          <TableCell>
+            {fn.namespaceId && fn.namespace && (
+              <ButtonNamespace
+                id={fn.namespaceId}
+                name={fn.namespace}
+                fastRender={context.isScrolling}
+              />
+            )}
+          </TableCell>
+          <TableCell>
+            {fn.namespaceOwner && (
+              <ButtonCharacter
+                address={fn.namespaceOwner}
+                name={fn.namespaceOwnerName}
+                fastRender={context.isScrolling}
+              />
+            )}
+          </TableCell>
+          <TableCell>
+            {fn.systemId && fn.systemName && (
+              <ButtonSystem
+                id={fn.systemId}
+                name={fn.systemName}
+                fastRender={context.isScrolling}
+              />
+            )}
+          </TableCell>
+        </React.Fragment>
+      );
     },
     []
   );

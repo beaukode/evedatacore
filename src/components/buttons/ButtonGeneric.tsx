@@ -3,21 +3,21 @@ import { Button } from "@mui/material";
 import { NavLink } from "react-router";
 import LooksOutlinedButton from "../ui/LooksOutlinedButton";
 
-interface ButtonNamespaceProps {
-  name: string;
-  id: string;
+interface ButtonGenericProps {
+  to: string;
+  children: React.ReactNode;
   fastRender?: boolean;
 }
 
-const ButtonNamespace: React.FC<ButtonNamespaceProps> = ({
-  name,
-  id,
+const ButtonGeneric: React.FC<ButtonGenericProps> = ({
+  to,
+  children,
   fastRender,
 }) => {
   if (fastRender) {
     return (
       <LooksOutlinedButton sx={{ justifyContent: "flex-start" }}>
-        {name.trim() ? <>{name}</> : <>(unamed)</>}
+        {children}
       </LooksOutlinedButton>
     );
   }
@@ -25,12 +25,12 @@ const ButtonNamespace: React.FC<ButtonNamespaceProps> = ({
     <Button
       sx={{ justifyContent: "flex-start" }}
       component={NavLink}
-      to={`/explore/namespaces/${id}`}
+      to={to}
       variant="outlined"
     >
-      {name.trim() ? <>{name}</> : <>(unamed)</>}
+      {children}
     </Button>
   );
 };
 
-export default ButtonNamespace;
+export default ButtonGeneric;

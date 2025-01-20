@@ -99,6 +99,12 @@ export function ldapDate(value?: number) {
   return new Date(msSinceUnixEpoch);
 }
 
+export function ldapToDateTime(value?: number) {
+  if (!value) return "";
+  const isoDate = ldapDate(value).toISOString();
+  return isoDate.substring(0, 10) + " " + isoDate.substring(11, 19);
+}
+
 export function tsToDateTime(value?: number): string {
   if (!value) return "";
   const isoDate = new Date(value).toISOString();
