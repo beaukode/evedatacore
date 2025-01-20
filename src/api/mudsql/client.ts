@@ -11,7 +11,7 @@ export type MudSqlClient = {
 
 type QueryKey = keyof typeof queries;
 
-export function createClient(config: MudSqlClientConfig): MudSqlClient {
+export function createMudSqlClient(config: MudSqlClientConfig): MudSqlClient {
   const restClient = createApiClient(
     createConfig({ baseUrl: config.indexerBaseUrl })
   );

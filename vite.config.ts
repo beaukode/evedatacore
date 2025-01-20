@@ -39,6 +39,7 @@ export default defineConfig({
             "@emotion/styled",
             "react-virtuoso",
           ],
+          web3: ["viem", "wagmi"],
         },
       },
     },
