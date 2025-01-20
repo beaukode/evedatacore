@@ -28,6 +28,7 @@ export default defineConfig({
     },
   },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -39,7 +40,7 @@ export default defineConfig({
             "@emotion/styled",
             "react-virtuoso",
           ],
-          web3: ["viem", "wagmi"],
+          web3: ["@rainbow-me/rainbowkit", "viem", "wagmi"],
         },
       },
     },

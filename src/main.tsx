@@ -7,7 +7,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router";
 import App from "./App.tsx";
 import { AppContextProvider } from "./contexts/AppContextProvider.tsx";
-import { wagmiConfig } from "./wagmiConfig.ts";
+import { wagmiConfig } from "./web3/wagmiConfig.ts";
+import "@rainbow-me/rainbowkit/styles.css";
+import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -74,13 +76,23 @@ createRoot(document.getElementById("root")!).render(
     <CssBaseline />
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <AppContextProvider>
-          <ThemeProvider theme={theme}>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </ThemeProvider>
-        </AppContextProvider>
+        <RainbowKitProvider
+          theme={darkTheme({
+            accentColor: theme.palette.primary.main,
+            accentColorForeground: "rgba(0, 0, 0, 0.87)",
+            borderRadius: "small",
+            fontStack: "system",
+            overlayBlur: "small",
+          })}
+        >
+          <AppContextProvider>
+            <ThemeProvider theme={theme}>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </ThemeProvider>
+          </AppContextProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   </StrictMode>

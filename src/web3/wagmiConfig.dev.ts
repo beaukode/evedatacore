@@ -1,15 +1,30 @@
 import { http } from "viem";
 import { anvil } from "viem/chains";
 import { garnet, redstone } from "@latticexyz/common/chains";
-import { createConfig } from "wagmi";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import {
+  coinbaseWallet,
+  metaMaskWallet,
+  safeWallet,
+} from "@rainbow-me/rainbowkit/wallets";
+import { EVEVault } from "./EVEVault";
 
 const transports = {
   [anvil.id]: http(),
   [garnet.id]: http(),
   [redstone.id]: http(),
-} as const;
+};
 
-export const wagmiConfig = createConfig({
+export const devWagmiConfig = getDefaultConfig({
+  projectId: "BEAUKODE_EVEF",
+  appName: "EVE Frontier tools",
+  wallets: [
+    {
+      groupName: "Recommended",
+      wallets: [metaMaskWallet, EVEVault, safeWallet, coinbaseWallet],
+    },
+  ],
+  multiInjectedProviderDiscovery: false,
   chains: [
     {
       ...redstone,

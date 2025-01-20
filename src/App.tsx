@@ -11,14 +11,15 @@ import { NavLink, Route, Routes, useLocation } from "react-router";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
-import Explore from "./pages/Explore";
-import Home from "./pages/Home";
-import Error404 from "./pages/Error404";
-import About from "./pages/About";
-import Calculate from "./pages/Calculate";
-import Dev from "./pages/Dev";
 import DiscordIcon from "./components/icons/Discord";
-import DevWeb3 from "./pages/DevWeb3";
+import Explore from "@/pages/Explore";
+import Home from "@/pages/Home";
+import Error404 from "@/pages/Error404";
+import About from "@/pages/About";
+import Calculate from "@/pages/Calculate";
+import Dev from "@/pages/Dev";
+import DevWeb3 from "@/pages/DevWeb3";
+import { ConnectButton } from "@/components/ConnectButton";
 
 function App() {
   const location = useLocation();
@@ -54,7 +55,6 @@ function App() {
                 to="/explore/characters"
                 component={NavLink}
                 sx={{ m: 2, fontFamily: "Major Mono Display" }}
-                size="large"
                 variant={
                   location.pathname.startsWith("/explore")
                     ? "outlined"
@@ -67,7 +67,6 @@ function App() {
                 startIcon={<CalculateIcon />}
                 to="/calculate/route-planner"
                 component={NavLink}
-                size="large"
                 sx={{ m: 2, fontFamily: "Major Mono Display" }}
                 variant={
                   location.pathname.startsWith("/calculate")
@@ -79,6 +78,7 @@ function App() {
               </Button>
             </Box>
             <Box>
+              <ConnectButton />
               <IconButton
                 color="primary"
                 title="Discord"
@@ -95,6 +95,7 @@ function App() {
                 title="About"
                 aria-label="About"
                 to="/about"
+                sx={{ ml: 1 }}
               >
                 <AboutIcon fontSize="large" />
               </IconButton>
