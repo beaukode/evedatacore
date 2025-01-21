@@ -17,9 +17,8 @@ import Home from "@/pages/Home";
 import Error404 from "@/pages/Error404";
 import About from "@/pages/About";
 import Calculate from "@/pages/Calculate";
-import Dev from "@/pages/Dev";
-import DevWeb3 from "@/pages/DevWeb3";
 import { ConnectButton } from "@/components/ConnectButton";
+import Dev from "./pages/Dev";
 
 function App() {
   const location = useLocation();
@@ -49,12 +48,12 @@ function App() {
             >
               EVE|Datacore
             </Typography>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 1, ml: 2 }}>
               <Button
                 startIcon={<ExploreDataIcon />}
                 to="/explore/characters"
                 component={NavLink}
-                sx={{ m: 2, fontFamily: "Major Mono Display" }}
+                sx={{ m: 1, fontFamily: "Major Mono Display" }}
                 variant={
                   location.pathname.startsWith("/explore")
                     ? "outlined"
@@ -67,7 +66,7 @@ function App() {
                 startIcon={<CalculateIcon />}
                 to="/calculate/route-planner"
                 component={NavLink}
-                sx={{ m: 2, fontFamily: "Major Mono Display" }}
+                sx={{ m: 1, fontFamily: "Major Mono Display" }}
                 variant={
                   location.pathname.startsWith("/calculate")
                     ? "outlined"
@@ -75,6 +74,19 @@ function App() {
                 }
               >
                 Calculate
+              </Button>
+              <Button
+                startIcon={<CalculateIcon />}
+                to="/dev/web3"
+                component={NavLink}
+                sx={{ m: 1, fontFamily: "Major Mono Display" }}
+                variant={
+                  location.pathname.startsWith("/dev")
+                    ? "outlined"
+                    : "contained"
+                }
+              >
+                Dev
               </Button>
             </Box>
             <Box>
@@ -107,8 +119,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/explore/*" element={<Explore />} />
         <Route path="/calculate/*" element={<Calculate />} />
-        <Route path="/dev" element={<Dev />} />
-        <Route path="/devweb3" element={<DevWeb3 />} />
+        <Route path="/dev/*" element={<Dev />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
