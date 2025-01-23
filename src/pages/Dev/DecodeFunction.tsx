@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, TextField, Button, Alert, List } from "@mui/material";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import { parseAbiItem, toFunctionSelector } from "viem";
 import { toJson } from "@/tools";
 import BasicListItem from "@/components/ui/BasicListItem";
+import { decodeFunctionSignature } from "@/api/mudweb3";
 
 interface DecodeFunctionProps {
   signature: string;
@@ -22,22 +22,7 @@ const DecodeFunction: React.FC<DecodeFunctionProps> = ({
   };
 
   const { abi, selector, decodeError } = React.useMemo(() => {
-    try {
-      let s = signature.trim();
-      if (!s) return {};
-      if (!s.startsWith("function")) {
-        s = "function " + s;
-      }
-      const abi = parseAbiItem(s);
-      const selector = toFunctionSelector(s);
-      return { abi, selector };
-    } catch (e) {
-      if (e instanceof Error) {
-        return { decodeError: e.message };
-      } else {
-        return { decodeError: "Error" };
-      }
-    }
+    return decodeFunctionSignature(signature);
   }, [signature]);
 
   return (

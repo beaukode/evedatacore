@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Box, List } from "@mui/material";
+import { Alert, Box, List, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
@@ -10,6 +10,8 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
+import { decodeFunctionSignature } from "@/api/mudweb3";
+import { toJson } from "@/tools";
 
 const ExploreFunction: React.FC = () => {
   const { id } = useParams();
@@ -26,11 +28,16 @@ const ExploreFunction: React.FC = () => {
     return query.data.signature.split("(")[0] || "function";
   }, [query.data]);
 
+  const data = query.data;
+
+  const { abi, decodeError } = React.useMemo(() => {
+    if (!data?.signature) return {};
+    return decodeFunctionSignature(data?.signature);
+  }, [data?.signature]);
+
   if (!id || (!query.isLoading && !query.data)) {
     return <Error404 />;
   }
-
-  const data = query.data;
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
@@ -84,6 +91,23 @@ const ExploreFunction: React.FC = () => {
               {data.systemSelector}
             </BasicListItem>
           </List>
+        )}
+        {abi && (
+          <TextField
+            label="ABI"
+            value={toJson(abi)}
+            variant="outlined"
+            maxRows={20}
+            multiline
+            fullWidth
+          />
+        )}
+        {decodeError && (
+          <Alert severity="error">
+            Unable to decode function signature
+            <br />
+            {decodeError}
+          </Alert>
         )}
       </PaperLevel1>
     </Box>
