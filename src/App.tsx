@@ -88,9 +88,6 @@ function App() {
               >
                 Dev
               </Button>
-            </Box>
-            <Box>
-              <ConnectButton />
               <IconButton
                 color="primary"
                 title="Discord"
@@ -111,6 +108,9 @@ function App() {
               >
                 <AboutIcon fontSize="large" />
               </IconButton>
+            </Box>
+            <Box>
+              <ConnectButton />
             </Box>
           </Toolbar>
         </AppBar>
