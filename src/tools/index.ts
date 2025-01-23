@@ -116,3 +116,11 @@ export function formatLargeNumber(value: string) {
     Number(value)
   );
 }
+
+export function toJson(value: unknown): string {
+  return JSON.stringify(
+    value,
+    (_, value) => (typeof value === "bigint" ? value.toString() : value),
+    2
+  );
+}
