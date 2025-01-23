@@ -54,6 +54,13 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: { root: { textTransform: "none" } },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          fontFamily: "monospace",
+        },
+      },
+    },
     MuiTypography: {
       styleOverrides: {
         root: {

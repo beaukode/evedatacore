@@ -1,17 +1,18 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Alert, Box, List, TextField } from "@mui/material";
+import { Alert, Box, Grid2, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import BasicListItem from "@/components/ui/BasicListItem";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { decodeFunctionSignature } from "@/api/mudweb3";
 import { toJson } from "@/tools";
+
+const grid3perRow = { sm: 12, md: 4 };
 
 const ExploreFunction: React.FC = () => {
   const { id } = useParams();
@@ -46,19 +47,9 @@ const ExploreFunction: React.FC = () => {
       </Helmet>
       <PaperLevel1 title={title} loading={query.isFetching} backButton>
         {data && (
-          <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-            <BasicListItem title="World selector">
-              {data.worldSelector}
-            </BasicListItem>
-            <BasicListItem title="Signature">
-              <span style={{ fontFamily: "monospace" }}>{data.signature}</span>
-            </BasicListItem>
-            <BasicListItem
-              title="Owner"
-              disableGutters={Boolean(
-                data.namespaceOwner && data.namespaceOwnerName
-              )}
-            >
+          <Grid2 container spacing={2} sx={{ mb: 2 }}>
+            <Grid2 size={grid3perRow}>
+              Owner:{" "}
               {data.namespaceOwner && (
                 <>
                   {data.namespaceOwnerName && (
@@ -70,28 +61,29 @@ const ExploreFunction: React.FC = () => {
                   {!data.namespaceOwnerName && data.namespaceOwner}
                 </>
               )}
-            </BasicListItem>
-            <BasicListItem
-              title="Namespace"
-              disableGutters={Boolean(data.namespaceId && data.namespace)}
-            >
+            </Grid2>
+            <Grid2 size={grid3perRow}>
+              Namespace:{" "}
               {data.namespaceId && data.namespace && (
                 <ButtonNamespace id={data.namespaceId} name={data.namespace} />
               )}
-            </BasicListItem>
-            <BasicListItem
-              title="System"
-              disableGutters={Boolean(data.systemId && data.systemName)}
-            >
+            </Grid2>
+            <Grid2 size={grid3perRow}>
+              System:{" "}
               {data.systemId && data.systemName && (
                 <ButtonSystem id={data.systemId} name={data.systemName} />
               )}
-            </BasicListItem>
-            <BasicListItem title="System selector">
-              {data.systemSelector}
-            </BasicListItem>
-          </List>
+            </Grid2>
+            <Grid2 size={grid3perRow}>
+              World selector: {data.worldSelector}
+            </Grid2>
+            <Grid2 size={grid3perRow}>
+              System selector: {data.systemSelector}
+            </Grid2>
+            <Grid2 size={12}>Signature: {data.signature}</Grid2>
+          </Grid2>
         )}
+
         {abi && (
           <TextField
             label="ABI"
