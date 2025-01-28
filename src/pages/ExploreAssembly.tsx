@@ -20,6 +20,7 @@ import SmartStorageInventory from "@/components/SmartStorageInventory";
 import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory";
 import SmartGateConfig from "@/components/SmartGateConfig";
 import SmartTurretConfig from "@/components/SmartTurretConfig";
+import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
@@ -38,6 +39,11 @@ const ExploreAssembly: React.FC = () => {
   });
 
   const data = query.data;
+
+  const refetch = React.useCallback(() => {
+    query.refetch();
+    queryFuel.refetch();
+  }, [query, queryFuel]);
 
   const { name, type, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
@@ -86,7 +92,15 @@ const ExploreAssembly: React.FC = () => {
               <ButtonCharacter address={data.ownerId} name={data.ownerName} />
             </BasicListItem>
             <BasicListItem title="State">
-              {state} [{data.state}]
+              {state} [{data.state}]{" "}
+              {[2, 3].includes(data.state) && (
+                <DialogOnOffAssembly
+                  assemblyId={data.id}
+                  owner={data.ownerId}
+                  title={`Edit ${name}`}
+                  onClose={refetch}
+                />
+              )}
             </BasicListItem>
             <BasicListItem title="Anchored at">
               {tsToDateTime(data.anchoredAt)}

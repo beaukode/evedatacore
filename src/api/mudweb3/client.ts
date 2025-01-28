@@ -1,23 +1,31 @@
 import { Table, GetRecordOptions, getRecord } from "@latticexyz/store/internal";
 import { Client, Hex, isAddress, WalletClient as ViemWalletClient } from "viem";
-import { eveworld } from "./eveworld";
 import { erc721actions, erc721walletActions } from "./erc721actions";
+import { eveworldActions, eveworlWalletActions } from "./eveworldActions";
 
 export type MudWeb3ClientConfig = {
   publicClient: Client;
   walletClient?: ViemWalletClient;
-  worldAddress: string;
+  worldAddress: Hex;
+  smartDeployableSystem: Hex;
 };
 
 export type MudWeb3Client = ReturnType<typeof createMudWeb3Client>;
 type WalletClient = ReturnType<typeof createWalletClient>;
 type PublicClient = ReturnType<typeof createPublicClient>;
 
+type WalletClientConfig = {
+  worldAddress: Hex;
+  smartDeployableSystem: Hex;
+};
+
 function createWalletClient(
-  _worldAddress: Hex,
-  walletClient: ViemWalletClient
+  walletClient: ViemWalletClient,
+  config: WalletClientConfig
 ) {
-  return walletClient.extend(erc721walletActions);
+  return walletClient
+    .extend(erc721walletActions)
+    .extend(eveworlWalletActions(config));
 }
 
 function createPublicClient(worldAddress: Hex, publicClient: Client) {
@@ -28,19 +36,12 @@ function createPublicClient(worldAddress: Hex, publicClient: Client) {
         return getRecord<table>(client, options);
       },
     }))
-    .extend((client) => ({
-      async getDeployableState(id: bigint) {
-        return client.getRecord({
-          address: worldAddress,
-          table: eveworld.tables.eveworld__DeployableState,
-          key: { smartObjectId: id },
-        });
-      },
-    }));
+    .extend(eveworldActions(worldAddress));
 }
 
 export function createMudWeb3Client(config: MudWeb3ClientConfig) {
-  const { worldAddress, publicClient, walletClient } = config;
+  const { worldAddress, smartDeployableSystem, publicClient, walletClient } =
+    config;
   if (!isAddress(worldAddress)) {
     throw new Error(`Invalid world address: ${worldAddress}`);
   }
@@ -49,7 +50,10 @@ export function createMudWeb3Client(config: MudWeb3ClientConfig) {
     createPublicClient(worldAddress, publicClient);
 
   if (walletClient) {
-    extendedClient.wallet = createWalletClient(worldAddress, walletClient);
+    extendedClient.wallet = createWalletClient(walletClient, {
+      worldAddress,
+      smartDeployableSystem,
+    });
   }
   return extendedClient;
 }

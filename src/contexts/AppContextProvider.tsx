@@ -2,7 +2,12 @@ import React from "react";
 import { usePublicClient, useWalletClient } from "wagmi";
 import { AppContext } from "./AppContext";
 import { createMudSqlClient } from "@/api/mudsql";
-import { chainId, indexerBaseUrl, worldAddress } from "@/constants";
+import {
+  chainId,
+  indexerBaseUrl,
+  worldAddress,
+  smartDeployableSystem,
+} from "@/constants";
 import { createMudWeb3Client } from "@/api/mudweb3";
 
 interface AppContextProviderProps {
@@ -24,7 +29,12 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     if (!publicClient) {
       throw new Error(`Unable to retrieve Viem client for chain ${chainId}.`);
     }
-    return createMudWeb3Client({ worldAddress, publicClient, walletClient });
+    return createMudWeb3Client({
+      worldAddress,
+      smartDeployableSystem,
+      publicClient,
+      walletClient,
+    });
   }, [publicClient, walletClient]);
 
   return (

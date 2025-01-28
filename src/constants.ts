@@ -1,5 +1,7 @@
 export const fuelFactor = 0.01;
 export const worldAddress = "0x7fe660995b0c59b6975d5d59973e2668af6bb9c5";
+export const smartDeployableSystem =
+  "0x7379657665776f726c64000000000000536d6172744465706c6f7961626c6553";
 export const worldBlockNumber = 10572312n;
 export const indexerBaseUrl = "https://indexer.mud.garnetchain.com";
 export const rpcUrl = "https://garnet-rpc.dev.evefrontier.tech";

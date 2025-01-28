@@ -19,6 +19,8 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@eveworld/contexts": "^0.1.0",
+    "@eveworld/contracts": "^0.1.0",
+    "@eveworld/world": "^0.0.17",
     "@hey-api/client-fetch": "^0.5.4",
     "@hookform/resolvers": "^3.9.1",
     "@latticexyz/common": "^2.2.16",
