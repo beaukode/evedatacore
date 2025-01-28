@@ -4,6 +4,7 @@ import z from "zod";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
+import { Helmet } from "react-helmet";
 
 const schema = z
   .object({
@@ -38,6 +39,9 @@ const DevMudSql: React.FC = () => {
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
+      <Helmet>
+        <title>MUD SQL</title>
+      </Helmet>
       <PaperLevel1 title="Raw MUD SQL Query">
         <TextField
           value={sql}

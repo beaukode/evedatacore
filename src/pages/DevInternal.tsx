@@ -3,6 +3,7 @@ import { Alert, Box, Button, Grid2, TextField } from "@mui/material";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { useMudWeb3 } from "@/contexts/AppContext";
 import { toJson } from "@/tools";
+import { Helmet } from "react-helmet";
 
 const DevInternal: React.FC = () => {
   const [smartObjectId, setSmartObjectId] = React.useState<string>("");
@@ -24,6 +25,9 @@ const DevInternal: React.FC = () => {
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
+      <Helmet>
+        <title>Internal Dev</title>
+      </Helmet>
       <PaperLevel1 title="Internal">
         <Grid2 container spacing={2} sx={{ mb: 2 }}>
           <Grid2 size={12}>

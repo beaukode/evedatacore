@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import DecodeFunction from "./Dev/DecodeFunction";
+import { Helmet } from "react-helmet";
 
 const schema = z
   .object({
@@ -18,6 +19,9 @@ const DevWeb3: React.FC = () => {
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
+      <Helmet>
+        <title>Web3</title>
+      </Helmet>
       <DecodeFunction
         signature={store.functionSignature}
         onDecode={(s) => setStore({ functionSignature: s })}
