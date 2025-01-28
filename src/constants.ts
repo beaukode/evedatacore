@@ -76,6 +76,34 @@ export const ships: Record<string, Ship> = {
     image:
       "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmcsyZM3V81b59R3PKm8o93vMTYyh3BSXLr9iUvPM62ufY",
   },
+  Dremar: {
+    mass: 70250000,
+    fuel: 1100,
+    fuelType: "SOF-40",
+    image:
+      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmRaHLUTUPhbzweyZU4qvMoFqtKNyU57rB3htPt3tWLSo6",
+  },
+  Axte: {
+    mass: 807000000,
+    fuel: 22500,
+    fuelType: "SOF-40",
+    image:
+      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmazawrffP8SVcUdDvMoZAAaZ14kXQ4fGmjmkXDpzxt4wn",
+  },
+  Caruda: {
+    mass: 1400000000,
+    fuel: 38900,
+    fuelType: "SOF-40",
+    image:
+      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmWbPLQhTtkx3MfevyKWCTKbBZiR6hEEPg7yuga8ENW1dg",
+  },
+  Grus: {
+    mass: 2425000000,
+    fuel: 66200,
+    fuelType: "SOF-40",
+    image:
+      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmR1UMFyikEv2MGVxgntMEZS8qFbTY78c4U3EaNdW5xs6f",
+  },
 } as const;
 
 export type ShipType = keyof typeof ships;
