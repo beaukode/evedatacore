@@ -24,6 +24,7 @@ import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import DialogMetadataAssembly from "@/components/dialogs/DialogMetadataAssembly";
 import ConditionalMount from "@/components/ui/ConditionalMount";
+import SmartGateOther from "@/components/SmartGateOther";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
@@ -218,8 +219,15 @@ const ExploreAssembly: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
-      {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
       {data?.typeId === 84955 && <SmartGateConfig gateId={id} />}
+      {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
+      {data?.typeId === 84955 && (
+        <SmartGateOther
+          owner={data.ownerId}
+          currentGateId={id}
+          currentGateLocation={data.location}
+        />
+      )}
       {data?.typeId === 84556 && <SmartTurretConfig turretId={id} />}
       {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
       {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
