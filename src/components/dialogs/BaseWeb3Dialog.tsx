@@ -11,7 +11,7 @@ import {
 import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { TransactionReceipt } from "viem";
-import { Web3TransactionError } from "@/api/mudweb3";
+import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 
@@ -21,7 +21,7 @@ interface DialogOnOffAssemblyProps {
   title: string;
   children: React.ReactNode;
   txReceipt?: TransactionReceipt | null;
-  txError?: Web3TransactionError | null;
+  txError?: Web3TransactionError | Error | null;
   actions?: React.ReactNode;
   onClose: () => void;
 }
@@ -122,7 +122,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
           <Alert severity="error">
             <div>
               {txError.message}{" "}
-              {txError.tx && (
+              {isWeb3TransactionError(txError) && txError.tx && (
                 <ExternalLink
                   href={`https://explorer.garnetchain.com/tx/${txError.tx}`}
                   title="View transaction"
@@ -131,7 +131,9 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 </ExternalLink>
               )}
             </div>
-            {txError.details && <pre>{txError.details.join("\n")}</pre>}
+            {isWeb3TransactionError(txError) && txError.details && (
+              <pre>{txError.details.join("\n")}</pre>
+            )}
           </Alert>
         )}
         {txReceipt && (
