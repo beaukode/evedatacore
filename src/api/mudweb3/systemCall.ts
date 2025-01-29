@@ -1,4 +1,4 @@
-import { BaseError, Hex, WalletClient } from "viem";
+import { BaseError, Client, Hex, WalletClient } from "viem";
 import {
   waitForTransactionReceipt,
   writeContract,
@@ -21,12 +21,13 @@ export class Web3TransactionError extends Error {
 }
 
 export async function worldSystemCall(
-  client: WalletClient,
+  publicClient: Client,
+  walletClient: WalletClient,
   worldAddress: Hex,
   systemAddress: Hex,
   data: Hex
 ) {
-  const { chain, account } = client;
+  const { chain, account } = walletClient;
   if (!account) {
     throw new Web3TransactionError("Wallet client must have an account");
   }
@@ -36,7 +37,7 @@ export async function worldSystemCall(
 
   let tx: Hex | undefined = undefined;
   try {
-    await simulateContract(client, {
+    await simulateContract(publicClient, {
       chain: chain,
       account: account,
       address: worldAddress,
@@ -49,7 +50,7 @@ export async function worldSystemCall(
       args: [systemAddress, data],
     });
 
-    tx = await writeContract(client, {
+    tx = await writeContract(walletClient, {
       chain: chain,
       account: account,
       address: worldAddress,
@@ -57,14 +58,14 @@ export async function worldSystemCall(
       functionName: "call",
       args: [systemAddress, data],
     });
-    const receipt = await waitForTransactionReceipt(client, {
+    const receipt = await waitForTransactionReceipt(publicClient, {
       hash: tx,
       timeout: 60 * 1000,
     });
 
     if (receipt.status === "reverted") {
       // In case of revert, we simulate the transaction to get the revert reason
-      await simulateContract(client, {
+      await simulateContract(publicClient, {
         chain: chain,
         account: account,
         address: worldAddress,

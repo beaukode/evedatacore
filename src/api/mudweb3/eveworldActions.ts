@@ -44,15 +44,16 @@ export function eveworldActions<
   };
 }
 
-type WalletActionsConfig = {
-  worldAddress: Hex;
-  smartDeployableSystem: Hex;
-};
-
-export function eveworlWalletActions(config: WalletActionsConfig) {
-  return function (client: WalletClient) {
+export function eveworlWalletActions(worldAddress: Hex, publicClient: Client) {
+  return function (walletClient: WalletClient) {
     function systemCall(systemAddress: Hex, data: Hex) {
-      return worldSystemCall(client, config.worldAddress, systemAddress, data);
+      return worldSystemCall(
+        publicClient,
+        walletClient,
+        worldAddress,
+        systemAddress,
+        data
+      );
     }
 
     return {
@@ -63,7 +64,10 @@ export function eveworlWalletActions(config: WalletActionsConfig) {
           functionName: "bringOnline",
           args: [smartOjectId],
         });
-        return systemCall(config.smartDeployableSystem, data);
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.SmartDeployableSystem.systemId,
+          data
+        );
       },
       bringOffline: async (smartOjectId: bigint) => {
         const data = encodeFunctionData({
@@ -71,7 +75,10 @@ export function eveworlWalletActions(config: WalletActionsConfig) {
           functionName: "bringOffline",
           args: [smartOjectId],
         });
-        return systemCall(config.smartDeployableSystem, data);
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.SmartDeployableSystem.systemId,
+          data
+        );
       },
       setDeployableMetadata: async (
         smartOjectId: bigint,

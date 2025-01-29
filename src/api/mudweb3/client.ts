@@ -7,25 +7,20 @@ export type MudWeb3ClientConfig = {
   publicClient: Client;
   walletClient?: ViemWalletClient;
   worldAddress: Hex;
-  smartDeployableSystem: Hex;
 };
 
 export type MudWeb3Client = ReturnType<typeof createMudWeb3Client>;
 type WalletClient = ReturnType<typeof createWalletClient>;
 type PublicClient = ReturnType<typeof createPublicClient>;
 
-type WalletClientConfig = {
-  worldAddress: Hex;
-  smartDeployableSystem: Hex;
-};
-
 function createWalletClient(
-  walletClient: ViemWalletClient,
-  config: WalletClientConfig
+  worldAddress: Hex,
+  publicClient: Client,
+  walletClient: ViemWalletClient
 ) {
   return walletClient
     .extend(erc721walletActions)
-    .extend(eveworlWalletActions(config));
+    .extend(eveworlWalletActions(worldAddress, publicClient));
 }
 
 function createPublicClient(worldAddress: Hex, publicClient: Client) {
@@ -40,8 +35,7 @@ function createPublicClient(worldAddress: Hex, publicClient: Client) {
 }
 
 export function createMudWeb3Client(config: MudWeb3ClientConfig) {
-  const { worldAddress, smartDeployableSystem, publicClient, walletClient } =
-    config;
+  const { worldAddress, publicClient, walletClient } = config;
   if (!isAddress(worldAddress)) {
     throw new Error(`Invalid world address: ${worldAddress}`);
   }
@@ -50,10 +44,11 @@ export function createMudWeb3Client(config: MudWeb3ClientConfig) {
     createPublicClient(worldAddress, publicClient);
 
   if (walletClient) {
-    extendedClient.wallet = createWalletClient(walletClient, {
+    extendedClient.wallet = createWalletClient(
       worldAddress,
-      smartDeployableSystem,
-    });
+      publicClient,
+      walletClient
+    );
   }
   return extendedClient;
 }

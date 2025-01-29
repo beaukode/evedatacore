@@ -21,6 +21,30 @@ export const eveworld = defineWorld({
           name: eveConstants.systemName.ENTITY_RECORD,
           openAccess: true,
         },
+        SmartDeployableSystem: {
+          name: eveConstants.systemName.SMART_DEPLOYABLE,
+          openAccess: true,
+        },
+        InventorySystem: {
+          name: eveConstants.systemName.INVENTORY,
+          openAccess: true,
+        },
+        EphemeralInventorySystem: {
+          name: eveConstants.systemName.EPHEMERAL_INVENTORY,
+          openAccess: true,
+        },
+        InventoryInteractSystem: {
+          name: eveConstants.systemName.INVENTORY_INTERACT,
+          openAccess: true,
+        },
+        SmartTurretSystem: {
+          name: eveConstants.systemName.SMART_TURRET,
+          openAccess: true,
+        },
+        SmartGateSystem: {
+          name: eveConstants.systemName.SMART_GATE,
+          openAccess: true,
+        },
       },
       tables: {
         DeployableState: {
