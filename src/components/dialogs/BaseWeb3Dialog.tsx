@@ -61,7 +61,12 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
   ]);
 
   return (
-    <Dialog open={open} aria-labelledby="alert-dialog-title">
+    <Dialog
+      open={open}
+      aria-labelledby="alert-dialog-title"
+      maxWidth="sm"
+      fullWidth
+    >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
         {state !== "ready" && (

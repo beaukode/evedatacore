@@ -8,6 +8,7 @@ import {
   WalletClient,
 } from "viem";
 import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
+import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
 import { getRecord, GetRecordOptions, Table } from "@latticexyz/store/internal";
 import { eveworld } from "./eveworld";
 import { worldSystemCall } from "./systemCall";
@@ -30,6 +31,13 @@ export function eveworldActions<
           address: worldAddress,
           table: eveworld.tables.eveworld__DeployableState,
           key: { smartObjectId: id },
+        });
+      },
+      async getDeployableMetadata(id: bigint) {
+        return getMudTableRecord({
+          address: worldAddress,
+          table: eveworld.tables.eveworld__EntityRecordOffchainTable,
+          key: { entityId: id },
         });
       },
     };
@@ -64,6 +72,22 @@ export function eveworlWalletActions(config: WalletActionsConfig) {
           args: [smartOjectId],
         });
         return systemCall(config.smartDeployableSystem, data);
+      },
+      setDeployableMetadata: async (
+        smartOjectId: bigint,
+        name: string,
+        dappURL: string,
+        description: string
+      ) => {
+        const data = encodeFunctionData({
+          abi: EntityRecordSystemAbi,
+          functionName: "setEntityMetadata",
+          args: [smartOjectId, name, dappURL, description],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.EntityRecordSystem.systemId,
+          data
+        );
       },
     };
   };

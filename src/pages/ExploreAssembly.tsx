@@ -21,9 +21,14 @@ import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory"
 import SmartGateConfig from "@/components/SmartGateConfig";
 import SmartTurretConfig from "@/components/SmartTurretConfig";
 import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
+import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
+import DialogMetadataAssembly from "@/components/dialogs/DialogMetadataAssembly";
+import ConditionalMount from "@/components/ui/ConditionalMount";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
+  const [metadataOpen, setMetadataOpen] = React.useState(false);
+
   const mudSql = useMudSql();
 
   const query = useQuery({
@@ -77,9 +82,23 @@ const ExploreAssembly: React.FC = () => {
   return (
     <Box p={2} flexGrow={1} overflow="auto">
       {data && (
-        <Helmet>
-          <title>{name}</title>
-        </Helmet>
+        <>
+          <Helmet>
+            <title>{name}</title>
+          </Helmet>
+          <ConditionalMount mount={metadataOpen} keepMounted>
+            <DialogMetadataAssembly
+              open={metadataOpen}
+              assemblyId={data.id}
+              owner={data.ownerId}
+              title={`Edit ${name}`}
+              onClose={() => {
+                setMetadataOpen(false);
+                refetch();
+              }}
+            />
+          </ConditionalMount>
+        </>
       )}
       <PaperLevel1 title={name} loading={query.isFetching} backButton>
         {data && (
@@ -121,10 +140,47 @@ const ExploreAssembly: React.FC = () => {
                 </span>
               </Box>
             </BasicListItem>
-            <BasicListItem title="Description">
-              {data.description}
+            <BasicListItem
+              title={
+                <>
+                  Name
+                  <ButtonWeb3Interaction
+                    title="Edit assembly metadata"
+                    onClick={() => setMetadataOpen(true)}
+                  />
+                </>
+              }
+            >
+              {data.name}
             </BasicListItem>
-            <BasicListItem title="Dapp Url">
+            <BasicListItem
+              title={
+                <>
+                  Description
+                  <ButtonWeb3Interaction
+                    title="Edit assembly metadata"
+                    onClick={() => setMetadataOpen(true)}
+                  />
+                </>
+              }
+            >
+              {data.description?.trim() && (
+                <Box sx={{ ml: 4, mt: 2, whiteSpace: "pre" }}>
+                  {data.description}
+                </Box>
+              )}
+            </BasicListItem>
+            <BasicListItem
+              title={
+                <>
+                  Dapp Url
+                  <ButtonWeb3Interaction
+                    title="Edit assembly metadata"
+                    onClick={() => setMetadataOpen(true)}
+                  />
+                </>
+              }
+            >
               {data.dappUrl ? (
                 <Link
                   href={data.dappUrl}

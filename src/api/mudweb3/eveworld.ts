@@ -1,4 +1,5 @@
 import { defineWorld } from "@latticexyz/world";
+import eveConstants from "@eveworld/common-constants/src/constants.json";
 
 export const eveworld = defineWorld({
   enums: {
@@ -12,8 +13,15 @@ export const eveworld = defineWorld({
       filePath: "@latticexyz/store/src/ResourceId.sol",
     },
   },
+
   namespaces: {
     eveworld: {
+      systems: {
+        EntityRecordSystem: {
+          name: eveConstants.systemName.ENTITY_RECORD,
+          openAccess: true,
+        },
+      },
       tables: {
         DeployableState: {
           schema: {
@@ -27,6 +35,15 @@ export const eveworld = defineWorld({
             updatedBlockTime: "uint256",
           },
           key: ["smartObjectId"],
+        },
+        EntityRecordOffchainTable: {
+          schema: {
+            entityId: "uint256",
+            name: "string",
+            dappURL: "string",
+            description: "string",
+          },
+          key: ["entityId"],
         },
       },
     },

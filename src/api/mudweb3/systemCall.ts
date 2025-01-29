@@ -6,6 +6,7 @@ import {
 } from "viem/actions";
 import { IWorldAbi } from "@eveworld/contracts";
 import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
+import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
 import { isError } from "lodash-es";
 
 export class Web3TransactionError extends Error {
@@ -39,7 +40,11 @@ export async function worldSystemCall(
       chain: chain,
       account: account,
       address: worldAddress,
-      abi: [...IWorldAbi.abi, ...SmartDeployableSystemAbi],
+      abi: [
+        ...IWorldAbi.abi,
+        ...SmartDeployableSystemAbi,
+        ...EntityRecordSystemAbi,
+      ], // Merge all ABIs for error decoding
       functionName: "call",
       args: [systemAddress, data],
     });
