@@ -1,27 +1,26 @@
 import React from "react";
 import { Button, DialogContentText, Skeleton, Typography } from "@mui/material";
-import EditIcon from "@mui/icons-material/Settings";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import { useMudWeb3 } from "@/contexts/AppContext";
 import { smartAssemblyStates } from "@/constants";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import useValueChanged from "@/tools/useValueChanged";
 
 interface DialogOnOffAssemblyProps {
   assemblyId: string;
   owner: string;
   title: string;
-  onClose?: () => void;
+  open: boolean;
+  onClose: () => void;
 }
 
 const DialogOnOffAssembly: React.FC<DialogOnOffAssemblyProps> = ({
   assemblyId,
   owner,
   title,
+  open,
   onClose,
 }) => {
-  const openRef = React.useRef(false);
-  const [open, setOpen] = React.useState(false);
-  const [mount, setMount] = React.useState(false);
   const mudWeb3 = useMudWeb3();
 
   const queryState = useQuery({
@@ -50,15 +49,12 @@ const DialogOnOffAssembly: React.FC<DialogOnOffAssemblyProps> = ({
     retry: false,
   });
 
-  React.useEffect(() => {
-    if (openRef.current !== open) {
-      openRef.current = open;
-      if (open) {
-        setMount(true);
-        mutateState.reset();
-      }
+  useValueChanged((v) => {
+    if (v) {
+      queryState.refetch();
+      mutateState.reset();
     }
-  }, [open, mutateState]);
+  }, open);
 
   const stateText = React.useMemo(() => {
     if (queryState.isFetching || queryState.data === undefined) return "";
@@ -109,45 +105,30 @@ const DialogOnOffAssembly: React.FC<DialogOnOffAssemblyProps> = ({
 
   return (
     <>
-      <Button
-        color="warning"
-        variant="contained"
-        size="small"
-        title="Edit assembly state"
-        onClick={() => {
-          setOpen(true);
+      <BaseWeb3Dialog
+        title={title}
+        open={open}
+        owner={owner}
+        onClose={() => {
+          if (onClose) {
+            onClose();
+          }
         }}
-        sx={{ minWidth: 0 }}
+        actions={actionButton}
+        txError={mutateState.error}
+        txReceipt={mutateState.data}
       >
-        <EditIcon fontSize="small" style={{ marginRight: 0 }} />
-      </Button>
-      {mount && (
-        <BaseWeb3Dialog
-          title={title}
-          open={open}
-          owner={owner}
-          onClose={() => {
-            setOpen(false);
-            if (onClose) {
-              onClose();
-            }
-          }}
-          actions={actionButton}
-          txError={mutateState.error}
-          txReceipt={mutateState.data}
-        >
-          <DialogContentText gutterBottom>
-            Current state is:{" "}
-            {stateText ? (
-              <Typography color="primary" component="span">
-                {stateText}
-              </Typography>
-            ) : (
-              <Skeleton width={60} sx={{ display: "inline-block" }} />
-            )}
-          </DialogContentText>
-        </BaseWeb3Dialog>
-      )}
+        <DialogContentText gutterBottom>
+          Current state is:{" "}
+          {queryState.isFetching ? (
+            <Skeleton width={60} sx={{ display: "inline-block" }} />
+          ) : (
+            <Typography color="primary" component="span">
+              {stateText}
+            </Typography>
+          )}
+        </DialogContentText>
+      </BaseWeb3Dialog>
     </>
   );
 };

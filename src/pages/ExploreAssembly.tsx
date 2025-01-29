@@ -28,6 +28,7 @@ import ConditionalMount from "@/components/ui/ConditionalMount";
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
   const [metadataOpen, setMetadataOpen] = React.useState(false);
+  const [onOffOpen, setOnOffOpen] = React.useState(false);
 
   const mudSql = useMudSql();
 
@@ -98,6 +99,18 @@ const ExploreAssembly: React.FC = () => {
               }}
             />
           </ConditionalMount>
+          <ConditionalMount mount={onOffOpen} keepMounted>
+            <DialogOnOffAssembly
+              open={onOffOpen}
+              assemblyId={data.id}
+              owner={data.ownerId}
+              title={`Edit ${name}`}
+              onClose={() => {
+                setOnOffOpen(false);
+                refetch();
+              }}
+            />
+          </ConditionalMount>
         </>
       )}
       <PaperLevel1 title={name} loading={query.isFetching} backButton>
@@ -110,16 +123,20 @@ const ExploreAssembly: React.FC = () => {
             <BasicListItem title="Owner" disableGutters>
               <ButtonCharacter address={data.ownerId} name={data.ownerName} />
             </BasicListItem>
-            <BasicListItem title="State">
+            <BasicListItem
+              title={
+                <>
+                  State
+                  {[2, 3].includes(data.state) && (
+                    <ButtonWeb3Interaction
+                      title="Edit assembly state"
+                      onClick={() => setOnOffOpen(true)}
+                    />
+                  )}
+                </>
+              }
+            >
               {state} [{data.state}]{" "}
-              {[2, 3].includes(data.state) && (
-                <DialogOnOffAssembly
-                  assemblyId={data.id}
-                  owner={data.ownerId}
-                  title={`Edit ${name}`}
-                  onClose={refetch}
-                />
-              )}
             </BasicListItem>
             <BasicListItem title="Anchored at">
               {tsToDateTime(data.anchoredAt)}
