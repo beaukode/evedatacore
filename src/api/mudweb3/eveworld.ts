@@ -13,7 +13,6 @@ export const eveworld = defineWorld({
       filePath: "@latticexyz/store/src/ResourceId.sol",
     },
   },
-
   namespaces: {
     eveworld: {
       systems: {
@@ -68,6 +67,13 @@ export const eveworld = defineWorld({
             description: "string",
           },
           key: ["entityId"],
+        },
+        CharactersByAddressTable: {
+          schema: {
+            characterAddress: "address",
+            characterId: "uint256",
+          },
+          key: ["characterAddress"],
         },
       },
     },

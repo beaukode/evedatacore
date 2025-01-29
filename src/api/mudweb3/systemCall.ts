@@ -8,17 +8,7 @@ import { IWorldAbi } from "@eveworld/contracts";
 import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
 import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
 import { isError } from "lodash-es";
-
-export class Web3TransactionError extends Error {
-  public readonly tx?: string;
-  public readonly details?: string[];
-
-  constructor(message: string, tx?: string, details?: string[]) {
-    super(message);
-    this.tx = tx;
-    this.details = details;
-  }
-}
+import { Web3TransactionError } from "./Web3TransactionError";
 
 export async function worldSystemCall(
   publicClient: Client,

@@ -220,7 +220,9 @@ const ExploreAssembly: React.FC = () => {
         )}
       </PaperLevel1>
       {data?.typeId === 84955 && <SmartGateConfig gateId={id} />}
-      {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
+      {data?.typeId === 84955 && (
+        <SmartGateLink sourceGateId={id} sourceGateState={data.state} />
+      )}
       {data?.typeId === 84955 && (
         <SmartGateOther
           owner={data.ownerId}
