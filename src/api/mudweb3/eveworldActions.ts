@@ -4,7 +4,7 @@ import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/En
 import SmartGateSystemAbi from "@eveworld/world/out/SmartGateSystem.sol/SmartGateSystem.abi.json";
 import { getRecord, GetRecordOptions, Table } from "@latticexyz/store/internal";
 import { eveworld } from "./eveworld";
-import { worldSystemCall } from "./systemCall";
+import { worldSystemCall } from "./worldSystemCall";
 import { worldSystemSimulate } from "./worldSystemSimulate";
 
 export function eveworldActions(worldAddress: Hex) {
@@ -66,11 +66,7 @@ export function eveworldActions(worldAddress: Hex) {
           }
           characterId = BigInt(accountOrCharacterId);
         }
-        console.log("jj", [
-          characterId,
-          BigInt(sourceGateId),
-          BigInt(destinationGateId),
-        ]);
+
         const data = encodeFunctionData({
           abi: SmartGateSystemAbi,
           functionName: "canJump",
