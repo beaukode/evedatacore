@@ -75,6 +75,13 @@ export const eveworld = defineWorld({
           },
           key: ["characterAddress"],
         },
+        SmartTurretConfigTable: {
+          schema: {
+            smartObjectId: "uint256",
+            systemId: "ResourceId",
+          },
+          key: ["smartObjectId"],
+        },
       },
     },
   },

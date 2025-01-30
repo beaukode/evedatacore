@@ -2,6 +2,7 @@ import { Client, encodeFunctionData, Hex, isHex, WalletClient } from "viem";
 import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
 import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
 import SmartGateSystemAbi from "@eveworld/world/out/SmartGateSystem.sol/SmartGateSystem.abi.json";
+import SmartTurretSystemAbi from "@eveworld/world/out/SmartTurretSystem.sol/SmartTurretSystem.abi.json";
 import { getRecord, GetRecordOptions, Table } from "@latticexyz/store/internal";
 import { eveworld } from "./eveworld";
 import { worldSystemCall } from "./worldSystemCall";
@@ -45,6 +46,17 @@ export function eveworldActions(worldAddress: Hex) {
           table: eveworld.tables.eveworld__EntityRecordOffchainTable,
           key: { entityId: id },
         });
+      },
+      async getTurretSystemId(turretId: bigint) {
+        return getMudTableRecord({
+          address: worldAddress,
+          table: eveworld.tables.eveworld__SmartTurretConfigTable,
+          key: { smartObjectId: turretId },
+        }).then(
+          (r) =>
+            r?.systemId ||
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+        );
       },
       async canJump(
         accountOrCharacterId: string,
@@ -131,6 +143,17 @@ export function eveworlWalletActions(worldAddress: Hex, publicClient: Client) {
         });
         return systemCall(
           eveworld.namespaces.eveworld.systems.EntityRecordSystem.systemId,
+          data
+        );
+      },
+      configureSmartTurret: async (turretId: bigint, systemId: Hex) => {
+        const data = encodeFunctionData({
+          abi: SmartTurretSystemAbi,
+          functionName: "configureSmartTurret",
+          args: [turretId, systemId],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.SmartTurretSystem.systemId,
           data
         );
       },
