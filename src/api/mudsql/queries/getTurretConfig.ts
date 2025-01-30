@@ -35,7 +35,10 @@ export const getTurretConfig =
       "0x0000000000000000000000000000000000000000000000000000000000000000";
     const system = defaultSystem
       ? undefined
-      : await client.getSystem(config.systemId);
+      : await client.getSystem(config.systemId).catch(() => {
+          console.error("Failed to get system", config.systemId);
+          return undefined;
+        });
 
     return {
       systemId: config.systemId,
