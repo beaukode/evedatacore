@@ -19,7 +19,7 @@ export function queryBuilder(
   }
 
   const selectParts = Object.keys(schemas[mainTable] || {}).map(
-    (f) => `${mainTable}."${f}" AS "${f}"`
+    (f) => `"${mainTable}"."${f}" AS "${f}"`
   );
   const whereParts: string[] = options.where ? [options.where] : [];
   Object.entries(options.rels || {}).forEach(([relName, rel]) => {
@@ -28,14 +28,14 @@ export function queryBuilder(
     const schema = schemas[table];
     selectParts.push(
       ...Object.keys(schema || {}).map(
-        (key) => `${table}."${key}" AS "${relName}__${key}"`
+        (key) => `"${table}"."${key}" AS "${relName}__${key}"`
       )
     );
-    whereParts.push(`${table}."${rel.field}" = ${fkTable}."${rel.fkField}"`);
+    whereParts.push(`"${table}"."${rel.field}" = "${fkTable}"."${rel.fkField}"`);
   });
 
   const select = selectParts.join(", ");
-  const from = Object.keys(tables).join(", ");
+  const from = Object.keys(tables).join('", "');
   const where =
     whereParts.length > 0 ? " WHERE " + whereParts.join(" AND ") : "";
 
@@ -46,5 +46,5 @@ export function queryBuilder(
       ? ` ORDER BY "${orderByParts.join('", "')}" ${orderDirection}`
       : "";
 
-  return `SELECT ${select} FROM ${from}${where}${orderBy}`;
+  return `SELECT ${select} FROM "${from}"${where}${orderBy}`;
 }
