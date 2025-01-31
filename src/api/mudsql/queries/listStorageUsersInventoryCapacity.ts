@@ -26,7 +26,7 @@ export const listStorageUsersInventoryCapacity =
       "eveworld",
       "EphemeralInvCapa",
       {
-        where: `eveworld__EphemeralInvCapa."smartObjectId" = '${ssuId}'`,
+        where: `"eveworld__EphemeralInvCapa"."smartObjectId" = '${ssuId}'`,
         rels: {
           usage: {
             ns: "eveworld",
