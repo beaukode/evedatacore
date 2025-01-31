@@ -26,7 +26,7 @@ export const getStorageInventory =
     const [capacity, items] = await Promise.all([
       client.getStorageInventoryCapacity(id),
       client.selectFrom<DbRow>("eveworld", "InventoryItemTab", {
-        where: `eveworld__InventoryItemTab."smartObjectId" = '${id}'`,
+        where: `"eveworld__InventoryItemTab"."smartObjectId" = '${id}'`,
         orderBy: "index",
       }),
     ]);
