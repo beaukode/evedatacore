@@ -80,7 +80,7 @@ export const listAssemblies =
       const tokenIds = tokens.map((t) => t.tokenId);
       if (tokenIds.length === 0) return []; // No token to query
       whereParts.push(
-        `eveworld__DeployableState."smartObjectId" IN ('${tokenIds.join("', '")}')`
+        `"eveworld__DeployableState"."smartObjectId" IN ('${tokenIds.join("', '")}')`
       );
     }
     if (options?.solarSystemId) {
@@ -88,7 +88,7 @@ export const listAssemblies =
       if (solarSystemIds.length === 0) return []; // No solar system to query
 
       whereParts.push(
-        `eveworld__LocationTable."solarSystemId" IN ('${solarSystemIds.join("', '")}')`
+        `"eveworld__LocationTable"."solarSystemId" IN ('${solarSystemIds.join("', '")}')`
       );
     }
     if (options?.states) {
@@ -96,11 +96,11 @@ export const listAssemblies =
       if (states.length === 0) return []; // No state to query
       if (states.length === 1) {
         whereParts.push(
-          `eveworld__DeployableState."currentState" = '${states[0]}'`
+          `"eveworld__DeployableState"."currentState" = '${states[0]}'`
         );
       } else {
         whereParts.push(
-          `eveworld__DeployableState."currentState" IN ('${states.join("', '")}')`
+          `"eveworld__DeployableState"."currentState" IN ('${states.join("', '")}')`
         );
       }
     }

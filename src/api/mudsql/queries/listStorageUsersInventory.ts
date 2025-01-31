@@ -31,7 +31,7 @@ export const listStorageUsersInventory =
     const [capacities, items] = await Promise.all([
       client.listStorageUsersInventoryCapacity(ssuId),
       client.selectFrom<DbRow>("eveworld", "EphemeralInvItem", {
-        where: `eveworld__EphemeralInvItem."smartObjectId" = '${ssuId}'`,
+        where: `"eveworld__EphemeralInvItem"."smartObjectId" = '${ssuId}'`,
         orderBy: ["ephemeralInvOwner", "index"],
       }),
     ]);
