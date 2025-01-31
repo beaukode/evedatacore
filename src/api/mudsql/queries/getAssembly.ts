@@ -57,7 +57,7 @@ export const getAssembly =
   async (id: string): Promise<Assembly | undefined> => {
     const [assemblies, entities] = await Promise.all([
       client.selectFrom<DbRow>("eveworld", "DeployableState", {
-        where: `eveworld__DeployableState."smartObjectId" = '${id}'`,
+        where: `"eveworld__DeployableState"."smartObjectId" = '${id}'`,
         orderBy: "createdAt",
         orderDirection: "DESC",
         rels: {

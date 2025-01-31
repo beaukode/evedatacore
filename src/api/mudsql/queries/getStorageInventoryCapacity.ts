@@ -15,7 +15,7 @@ export const getStorageInventoryCapacity =
       "eveworld",
       "InventoryTable",
       {
-        where: `eveworld__InventoryTable."smartObjectId" = '${id}'`,
+        where: `"eveworld__InventoryTable"."smartObjectId" = '${id}'`,
       }
     );
 
