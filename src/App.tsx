@@ -44,7 +44,7 @@ function App() {
                 fontFamily: "Major Mono Display",
               }}
             >
-              EVE Frontier tools
+              EVE|Datacore
             </Typography>
             <Box sx={{ flexGrow: 1 }}>
               <Button

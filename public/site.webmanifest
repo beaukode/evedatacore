@@ -1,6 +1,6 @@
 {
-  "name": "EVE Frontier tools",
-  "short_name": "EVEF:T",
+  "name": "EVE Datacore",
+  "short_name": "EVE|DC",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
