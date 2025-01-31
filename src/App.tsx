@@ -17,7 +17,6 @@ import Error404 from "./pages/Error404";
 import About from "./pages/About";
 import Calculate from "./pages/Calculate";
 import Dev from "./pages/Dev";
-import ExternalLink from "./components/ui/ExternalLink";
 import DiscordIcon from "./components/icons/Discord";
 
 function App() {
