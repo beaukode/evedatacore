@@ -17,6 +17,8 @@ import Error404 from "./pages/Error404";
 import About from "./pages/About";
 import Calculate from "./pages/Calculate";
 import Dev from "./pages/Dev";
+import ExternalLink from "./components/ui/ExternalLink";
+import DiscordIcon from "./components/icons/Discord";
 
 function App() {
   const location = useLocation();
@@ -77,6 +79,16 @@ function App() {
               </Button>
             </Box>
             <Box>
+              <IconButton
+                color="primary"
+                title="Discord"
+                aria-label="Discord"
+                href="https://discord.gg/cu2n3wjqgb"
+                rel="noopener"
+                target="_blank"
+              >
+                <DiscordIcon fontSize="large" />
+              </IconButton>
               <IconButton
                 color="primary"
                 component={NavLink}
