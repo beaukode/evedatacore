@@ -82,6 +82,22 @@ export const eveworld = defineWorld({
           },
           key: ["smartObjectId"],
         },
+        SmartGateConfigTable: {
+          schema: {
+            smartObjectId: "uint256",
+            systemId: "ResourceId",
+            maxDistance: "uint256",
+          },
+          key: ["smartObjectId"],
+        },
+        SmartGateLinkTable: {
+          schema: {
+            sourceGateId: "uint256",
+            destinationGateId: "uint256",
+            isLinked: "bool",
+          },
+          key: ["sourceGateId"],
+        },
       },
     },
   },

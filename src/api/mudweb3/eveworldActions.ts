@@ -58,6 +58,17 @@ export function eveworldActions(worldAddress: Hex) {
             "0x0000000000000000000000000000000000000000000000000000000000000000"
         );
       },
+      async getGateSystemId(gateId: bigint) {
+        return getMudTableRecord({
+          address: worldAddress,
+          table: eveworld.tables.eveworld__SmartGateConfigTable,
+          key: { smartObjectId: gateId },
+        }).then(
+          (r) =>
+            r?.systemId ||
+            "0x0000000000000000000000000000000000000000000000000000000000000000"
+        );
+      },
       async canJump(
         accountOrCharacterId: string,
         sourceGateId: string,
@@ -154,6 +165,45 @@ export function eveworlWalletActions(worldAddress: Hex, publicClient: Client) {
         });
         return systemCall(
           eveworld.namespaces.eveworld.systems.SmartTurretSystem.systemId,
+          data
+        );
+      },
+      configureSmartGate: async (gateId: bigint, systemId: Hex) => {
+        const data = encodeFunctionData({
+          abi: SmartGateSystemAbi,
+          functionName: "configureSmartGate",
+          args: [gateId, systemId],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
+          data
+        );
+      },
+      linkSmartGate: async (
+        sourceGateId: bigint,
+        destinationGateId: bigint
+      ) => {
+        const data = encodeFunctionData({
+          abi: SmartGateSystemAbi,
+          functionName: "linkSmartGates",
+          args: [sourceGateId, destinationGateId],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
+          data
+        );
+      },
+      unlinkSmartGate: async (
+        sourceGateId: bigint,
+        destinationGateId: bigint
+      ) => {
+        const data = encodeFunctionData({
+          abi: SmartGateSystemAbi,
+          functionName: "unlinkSmartGates",
+          args: [sourceGateId, destinationGateId],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
           data
         );
       },
