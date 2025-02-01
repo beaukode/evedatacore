@@ -25,6 +25,7 @@ interface DialogOnOffAssemblyProps {
   txError?: Web3TransactionError | Error | null;
   actions?: React.ReactNode;
   size?: Breakpoint;
+  disabledOwnerCheck?: boolean;
   onClose: () => void;
 }
 
@@ -37,6 +38,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
   txReceipt,
   actions,
   size,
+  disabledOwnerCheck,
   onClose,
 }) => {
   const { openConnectModal } = useConnectModal();
@@ -46,7 +48,9 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
   const state = React.useMemo(() => {
     if (!account.isConnected) return "connect";
     if (account.chainId !== 17069) return "chain";
+    if (disabledOwnerCheck) return "ready";
     if (
+      !disabledOwnerCheck &&
       !(account.addresses || [])
         .map((a) => a.toLowerCase())
         .includes(owner.toLowerCase())
@@ -61,6 +65,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
     account.chainId,
     account.address,
     account.addresses,
+    disabledOwnerCheck,
   ]);
 
   return (
