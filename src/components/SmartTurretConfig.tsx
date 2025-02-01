@@ -40,6 +40,7 @@ const SmartTurretConfig: React.FC<SmartTurretConfigProps> = ({
               open={editSystemOpen}
               assemblyId={turretId}
               owner={owner}
+              type="turret"
               title="Edit linked system"
               onClose={() => {
                 setEditSystemOpen(false);

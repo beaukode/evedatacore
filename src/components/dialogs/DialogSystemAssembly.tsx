@@ -24,6 +24,7 @@ interface DialogSystemAssemblyProps {
   title: string;
   owner: string;
   open: boolean;
+  type: "gate" | "turret";
   onClose: () => void;
 }
 
@@ -40,6 +41,7 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
   owner,
   title,
   open,
+  type,
   onClose,
 }) => {
   const [selectedValue, setSelectedValue] = React.useState("default");
@@ -78,7 +80,15 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
 
   const querySystemId = useQuery({
     queryKey: ["SmartAssemblySystemId", assemblyId],
-    queryFn: async () => mudWeb3.getTurretSystemId(BigInt(assemblyId)),
+    queryFn: async () => {
+      if (type === "gate") {
+        return mudWeb3.getGateSystemId(BigInt(assemblyId));
+      } else if (type === "turret") {
+        mudWeb3.getTurretSystemId(BigInt(assemblyId));
+      } else {
+        throw new Error(`Invalid type ${type}`);
+      }
+    },
     enabled: open,
   });
 
@@ -144,8 +154,14 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
       } else {
         throw new Error("Select a valid option");
       }
-      console.log("systemId", systemId);
-      return mudWeb3.wallet.configureSmartTurret(BigInt(assemblyId), systemId);
+      if (type === "gate") {
+        return mudWeb3.wallet.configureSmartGate(BigInt(assemblyId), systemId);
+      } else if (type === "turret") {
+        return mudWeb3.wallet.configureSmartTurret(BigInt(assemblyId), systemId);
+      } else {
+        throw new Error(`Invalid type ${type}`);
+      }
+     
     },
     onSettled() {
       querySystemId.refetch();
@@ -192,6 +208,7 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
         }
         txError={mutateState.error}
         txReceipt={mutateState.data}
+        disabledOwnerCheck
       >
         <FormControl fullWidth>
           <FormLabel id={radioGroupId}>Link this assembly to:</FormLabel>
