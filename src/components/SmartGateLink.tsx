@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Box, List, Typography } from "@mui/material";
+import { Alert, Box, List, Skeleton, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import ButtonCharacter from "./buttons/ButtonCharacter";
@@ -9,21 +9,35 @@ import PaperLevel1 from "./ui/PaperLevel1";
 import BasicListItem from "./ui/BasicListItem";
 import { shorten, tsToDateTime } from "@/tools";
 import { smartAssemblyStates } from "@/constants";
+import useCanJump from "@/tools/useCanJump";
 
 interface SmartGateLinkProps {
   sourceGateId: string;
+  sourceGateState: number;
 }
 
-const SmartGateLink: React.FC<SmartGateLinkProps> = ({ sourceGateId }) => {
+const SmartGateLink: React.FC<SmartGateLinkProps> = ({
+  sourceGateId,
+  sourceGateState,
+}) => {
   const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["SmartGateLink", sourceGateId],
-    queryFn: async () => mudSql.getGateLink(sourceGateId),
-    enabled: !!sourceGateId,
+    queryFn: async () =>
+      mudSql.getGateLink(sourceGateId).then((r) => r || null), // useQuery complains if we return undefined
   });
 
   const data = query.data;
+  const destinationGateId = data?.id || "";
+  const destinationGateState = data?.state || -1;
+
+  const canJump = useCanJump(
+    sourceGateId,
+    sourceGateState,
+    destinationGateId,
+    destinationGateState
+  );
 
   const { name, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
@@ -76,6 +90,23 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({ sourceGateId }) => {
             </BasicListItem>
             <BasicListItem title="Is link active" disableGutters>
               {data.isLinked ? "Yes" : "No"}
+            </BasicListItem>
+            <BasicListItem title="Can you jump">
+              {!canJump && (
+                <Skeleton width={60} sx={{ display: "inline-block" }} />
+              )}
+              {canJump && (
+                <>
+                  {canJump.canJump === undefined &&
+                    "Unknown (Connect your wallet)"}
+                  {canJump.canJump === false && (
+                    <Box component="span" sx={{ color: "warning.main" }}>
+                      No ({canJump.message})
+                    </Box>
+                  )}
+                  {canJump.canJump === true && "Yes"}
+                </>
+              )}
             </BasicListItem>
           </List>
           {!data.isLinked && (

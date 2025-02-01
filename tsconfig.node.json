@@ -19,7 +19,10 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+
+    /* For ABI */
+    "resolveJsonModule": true
   },
   "include": ["vite.config.ts"]
 }

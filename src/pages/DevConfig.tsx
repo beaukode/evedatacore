@@ -9,7 +9,7 @@ import ListItemLink from "@/components/ui/ListItemLink";
 import BasicListItem from "@/components/ui/BasicListItem";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 
-const ExploreConfig: React.FC = () => {
+const DevConfig: React.FC = () => {
   const query = useQuery({
     queryKey: ["Config"],
     queryFn: async () => await getConfig().then((r) => r.data.pop()),
@@ -67,7 +67,7 @@ const ExploreConfig: React.FC = () => {
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           {data &&
             Object.entries(data.rpcUrls || {}).map(([key, value]) => (
-              <>
+              <React.Fragment key={key}>
                 <ListItemLink
                   title={startCase(`${key} Http`)}
                   href={value.http}
@@ -76,7 +76,7 @@ const ExploreConfig: React.FC = () => {
                   title={startCase(`${key} WebSocket`)}
                   href={value.webSocket}
                 />
-              </>
+              </React.Fragment>
             ))}
         </List>
       </PaperLevel1>
@@ -85,9 +85,11 @@ const ExploreConfig: React.FC = () => {
           {data &&
             Object.entries(data.contracts || {}).map(([key, value]) => {
               return typeof value === "string" ? (
-                <BasicListItem title={startCase(key)}>{value}</BasicListItem>
+                <BasicListItem title={startCase(key)} key={key}>
+                  {value}
+                </BasicListItem>
               ) : (
-                <BasicListItem title={startCase(key)}>
+                <BasicListItem title={startCase(key)} key={key}>
                   {value.address}
                 </BasicListItem>
               );
@@ -98,7 +100,9 @@ const ExploreConfig: React.FC = () => {
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           {data &&
             Object.entries(data.systems || {}).map(([key, value]) => (
-              <BasicListItem title={startCase(key)}>{value}</BasicListItem>
+              <BasicListItem title={startCase(key)} key={key}>
+                {value}
+              </BasicListItem>
             ))}
         </List>
       </PaperLevel1>
@@ -106,4 +110,4 @@ const ExploreConfig: React.FC = () => {
   );
 };
 
-export default ExploreConfig;
+export default DevConfig;

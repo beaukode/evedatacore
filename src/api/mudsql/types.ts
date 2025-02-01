@@ -1,3 +1,5 @@
+import { Hex } from "viem";
+
 export type MudSqlClientConfig = {
   worldAddress: string;
   indexerBaseUrl: string;
@@ -23,3 +25,14 @@ export type SelectOptions = {
 };
 
 export type TableType = "table" | "offchainTable";
+
+export type System = {
+  systemId: Hex;
+  contract: Hex;
+  publicAccess: boolean;
+  name: string;
+  namespace: string;
+  namespaceId: Hex;
+  namespaceOwner?: Hex;
+  namespaceOwnerName?: string;
+};

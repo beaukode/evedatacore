@@ -7,12 +7,20 @@ import BasicListItem from "./ui/BasicListItem";
 import ButtonSystem from "./buttons/ButtonSystem";
 import ButtonCharacter from "./buttons/ButtonCharacter";
 import ButtonNamespace from "./buttons/ButtonNamespace";
+import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
+import DialogSystemAssembly from "./dialogs/DialogSystemAssembly";
+import ConditionalMount from "./ui/ConditionalMount";
 
 interface SmartTurretConfigProps {
   turretId: string;
+  owner: string;
 }
 
-const SmartTurretConfig: React.FC<SmartTurretConfigProps> = ({ turretId }) => {
+const SmartTurretConfig: React.FC<SmartTurretConfigProps> = ({
+  turretId,
+  owner,
+}) => {
+  const [editSystemOpen, setEditSystemOpen] = React.useState(false);
   const mudSql = useMudSql();
 
   const query = useQuery({
@@ -27,8 +35,33 @@ const SmartTurretConfig: React.FC<SmartTurretConfigProps> = ({ turretId }) => {
     <PaperLevel1 title="Behavior" loading={query.isFetching}>
       {data && (
         <>
+          <ConditionalMount mount={editSystemOpen} keepMounted>
+            <DialogSystemAssembly
+              open={editSystemOpen}
+              assemblyId={turretId}
+              owner={owner}
+              type="turret"
+              title="Edit linked system"
+              onClose={() => {
+                setEditSystemOpen(false);
+                query.refetch();
+              }}
+            />
+          </ConditionalMount>
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-            <BasicListItem title="System Id">{data.systemId}</BasicListItem>
+            <BasicListItem
+              title={
+                <>
+                  System Id
+                  <ButtonWeb3Interaction
+                    title="Edit assembly system"
+                    onClick={() => setEditSystemOpen(true)}
+                  />
+                </>
+              }
+            >
+              {data.systemId}
+            </BasicListItem>
             {!data.defaultSystem && system && (
               <>
                 <BasicListItem title="System name" disableGutters>

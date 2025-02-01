@@ -8,7 +8,6 @@ import ExploreAssembly from "./ExploreAssembly";
 import Error404 from "./Error404";
 import ExploreTypes from "./ExploreTypes";
 import ExploreType from "./ExploreType";
-import ExploreConfig from "./ExploreConfig";
 import ExploreKillmails from "./ExploreKillmails";
 import ExploreSolarsystems from "./ExploreSolarsystems";
 import ExploreSolarsystem from "./ExploreSolarsystem";
@@ -33,7 +32,6 @@ const routesMap: Record<string, number> = {
   "/explore/tables": 6,
   "/explore/systems": 7,
   "/explore/functions": 8,
-  "/explore/config": 9,
 };
 
 const Explore: React.FC = () => {
@@ -72,7 +70,6 @@ const Explore: React.FC = () => {
           <Tab label="Tables" component={NavLink} to="/explore/tables" />
           <Tab label="Systems" component={NavLink} to="/explore/systems" />
           <Tab label="Functions" component={NavLink} to="/explore/functions" />
-          <Tab label="Config" component={NavLink} to="/explore/config" />
         </Tabs>
       </Paper>
       <Routes>
@@ -94,7 +91,6 @@ const Explore: React.FC = () => {
         <Route path="/systems/:id" element={<ExploreSystem />} />
         <Route path="/functions" element={<ExploreFunctions />} />
         <Route path="/functions/:id" element={<ExploreFunction />} />
-        <Route path="/config" element={<ExploreConfig />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </>

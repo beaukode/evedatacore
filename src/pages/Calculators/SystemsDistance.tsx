@@ -1,12 +1,12 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import z from "zod";
-import Big from "big.js";
 import AutoCompleteSolarSystem, {
   SolarSystemValue,
 } from "@/components/AutoCompleteSolarSystem";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
+import { lyDistance } from "@/tools";
 
 const storageSchema = z.object({
   system1: z
@@ -52,20 +52,7 @@ const SystemsDistance: React.FC<SystemsDistanceProps> = ({
       // TODO: Better error handling
       if (!s1 || !s2) return undefined;
 
-      const s1x = new Big(s1.location.x);
-      const s1y = new Big(s1.location.y);
-      const s1z = new Big(s1.location.z);
-      const s2x = new Big(s2.location.x);
-      const s2y = new Big(s2.location.y);
-      const s2z = new Big(s2.location.z);
-      const meters = s1x
-        .minus(s2x)
-        .pow(2)
-        .plus(s1y.minus(s2y).pow(2))
-        .plus(s1z.minus(s2z).pow(2))
-        .sqrt();
-      const ly = meters.div(new Big(9.46073047258e15));
-      return ly.toNumber();
+      return lyDistance(s1.location, s2.location);
     }
   }, [solarSystemsIndex, system1, system2]);
 
