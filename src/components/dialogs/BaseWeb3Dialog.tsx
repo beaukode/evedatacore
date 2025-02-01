@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Alert,
+  Breakpoint,
   Button,
   Dialog,
   DialogActions,
@@ -23,6 +24,7 @@ interface DialogOnOffAssemblyProps {
   txReceipt?: TransactionReceipt | null;
   txError?: Web3TransactionError | Error | null;
   actions?: React.ReactNode;
+  size?: Breakpoint;
   onClose: () => void;
 }
 
@@ -34,6 +36,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
   txError,
   txReceipt,
   actions,
+  size,
   onClose,
 }) => {
   const { openConnectModal } = useConnectModal();
@@ -64,7 +67,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
     <Dialog
       open={open}
       aria-labelledby="alert-dialog-title"
-      maxWidth="sm"
+      maxWidth={size || "sm"}
       fullWidth
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>

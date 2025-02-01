@@ -225,12 +225,14 @@ const ExploreAssembly: React.FC = () => {
       )}
       {data?.typeId === 84955 && (
         <SmartGateOther
-          owner={data.ownerId}
           currentGateId={id}
+          owner={data.ownerId}
           currentGateLocation={data.location}
         />
       )}
-      {data?.typeId === 84556 && <SmartTurretConfig turretId={id} />}
+      {data?.typeId === 84556 && (
+        <SmartTurretConfig turretId={id} owner={data.ownerId} />
+      )}
       {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
       {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
     </Box>
