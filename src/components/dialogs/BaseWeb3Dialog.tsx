@@ -84,15 +84,14 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 "This action require you to connect your wallet."}
               {state === "chain" &&
                 "Your wallet is connected to the wrong network, please switch to garnet."}
-              {state === "owner" &&
-                "You do not seems to be the owner of this assembly."}
+              {state === "owner" && "You do not seems to be the owner."}
               {state === "address" &&
-                "Your current address do not match this assembly owner, please switch the matching account."}
+                "Your current address do not match the owner, please switch the matching account."}
             </DialogContentText>
             {state === "owner" && (
               <>
                 <DialogContentText gutterBottom>
-                  This assembly is owned by:
+                  You try to interact with something owned by:
                 </DialogContentText>
                 <ul>
                   <li>{owner}</li>
@@ -100,7 +99,11 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 <DialogContentText gutterBottom>
                   Your wallet is connected with the following:
                 </DialogContentText>
-                <ul>{account.addresses?.map((m) => <li key={m}>{m}</li>)}</ul>
+                <ul>
+                  {account.addresses?.map((m) => (
+                    <li key={m}>{m.toLowerCase()}</li>
+                  ))}
+                </ul>
                 <DialogContentText gutterBottom>
                   Please check your connected accounts in your wallet app.
                 </DialogContentText>
@@ -109,7 +112,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
             {state === "address" && (
               <>
                 <DialogContentText gutterBottom>
-                  This assembly is owned by:
+                  You try to interact with something owned by:
                 </DialogContentText>
                 <ul>
                   <li>{owner}</li>
@@ -117,7 +120,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 <DialogContentText gutterBottom>
                   Your current wallet address is:
                 </DialogContentText>
-                <ul>{account.address}</ul>
+                <ul>{account.address?.toLowerCase()}</ul>
                 <DialogContentText gutterBottom>
                   Please switch account in your wallet app.
                 </DialogContentText>
