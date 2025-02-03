@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Hex } from "viem";
 import { useMudSql, useTypesIndex } from "@/contexts/AppContext";
@@ -86,19 +86,23 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
         )}
         {inventories &&
           inventories.map((inv) => (
-            <ItemInventory
-              key={inv.ownerId}
-              inventory={inv}
-              header={
-                <>
-                  <ButtonCharacter address={inv.ownerId} name={inv.ownerName} />
-                  <ButtonWeb3Interaction
-                    title="Item transfer"
-                    onClick={() => setTransfertItemsOpen(true)}
-                  />
-                </>
-              }
-            />
+            <Box key={inv.ownerId} sx={{ mb: 2 }}>
+              <ItemInventory
+                inventory={inv}
+                header={
+                  <>
+                    <ButtonCharacter
+                      address={inv.ownerId}
+                      name={inv.ownerName}
+                    />
+                    <ButtonWeb3Interaction
+                      title="Item transfer"
+                      onClick={() => setTransfertItemsOpen(true)}
+                    />
+                  </>
+                }
+              />
+            </Box>
           ))}
       </PaperLevel1>
     </>
