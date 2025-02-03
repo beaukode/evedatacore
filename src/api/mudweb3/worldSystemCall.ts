@@ -7,6 +7,7 @@ import {
 import { IWorldAbi } from "@eveworld/contracts";
 import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
 import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
+import InventoryInteractSystemAbi from "@eveworld/world/out/InventoryInteractSystem.sol/InventoryInteractSystem.abi.json";
 import { isError } from "lodash-es";
 import { Web3TransactionError } from "./Web3TransactionError";
 
@@ -35,6 +36,7 @@ export async function worldSystemCall(
         ...IWorldAbi.abi,
         ...SmartDeployableSystemAbi,
         ...EntityRecordSystemAbi,
+        ...InventoryInteractSystemAbi,
       ], // Merge all ABIs for error decoding
       functionName: "call",
       args: [systemAddress, data],
