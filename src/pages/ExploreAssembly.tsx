@@ -17,7 +17,6 @@ import {
 import Error404 from "./Error404";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
-import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory";
 import SmartGateConfig from "@/components/SmartGateConfig";
 import SmartTurretConfig from "@/components/SmartTurretConfig";
 import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
@@ -235,8 +234,9 @@ const ExploreAssembly: React.FC = () => {
       {data?.typeId === 84556 && (
         <SmartTurretConfig turretId={id} owner={data.ownerId} />
       )}
-      {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
-      {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
+      {data?.typeId === 77917 && (
+        <SmartStorageInventory id={id} owner={data.ownerId} />
+      )}
     </Box>
   );
 };
