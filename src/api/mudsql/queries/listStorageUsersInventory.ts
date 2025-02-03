@@ -1,6 +1,7 @@
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { groupBy, keyBy } from "lodash-es";
+import { UsersInventory } from "../types";
 
 type DbRow = {
   smartObjectId: string;
@@ -9,20 +10,6 @@ type DbRow = {
   quantity: string;
   index: string;
   stateUpdate: string;
-};
-
-type InventoryItem = {
-  itemId: string;
-  quantity: string;
-  stateUpdate: number;
-};
-
-type UsersInventory = {
-  ownerId: string;
-  ownerName?: string;
-  used: string;
-  total: string;
-  items: InventoryItem[];
 };
 
 export const listStorageUsersInventory =

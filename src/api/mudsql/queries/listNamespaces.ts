@@ -3,17 +3,11 @@ import { keyBy } from "lodash-es";
 import { ensureArray, toSqlHex } from "../utils";
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
+import { Namespace } from "../types";
 
 type DbRow = {
   namespaceId: Hex;
   owner: Hex;
-};
-
-export type Namespace = {
-  namespaceId: Hex;
-  name: string;
-  owner: Hex;
-  ownerName?: string;
 };
 
 type ListNamespacesOptions = {

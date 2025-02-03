@@ -1,19 +1,14 @@
 import { MudSqlClient } from "../client";
+import { AssemblySystemConfig } from "../types";
 
 type DbRow = {
   smartObjectId: string;
   systemId: string;
 };
 
-type GateConfig = {
-  systemId: string;
-  defaultSystem: boolean;
-  system?: Awaited<ReturnType<MudSqlClient["getSystem"]>>;
-};
-
 export const getTurretConfig =
   (client: MudSqlClient) =>
-  async (id: string): Promise<GateConfig | undefined> => {
+  async (id: string): Promise<AssemblySystemConfig | undefined> => {
     const configs = await client.selectFrom<DbRow>(
       "eveworld",
       "SmartTurretConfi",

@@ -1,4 +1,5 @@
 import { MudSqlClient } from "../client";
+import { Assembly } from "../types";
 
 const assemblyTypeMap = {
   0: 77917,
@@ -35,21 +36,6 @@ type EntityDbRow = {
   name: string;
   dappURL: string;
   description: string;
-};
-
-type Assembly = {
-  id: string;
-  state: number;
-  typeId: number;
-  isValid: boolean;
-  anchoredAt: number;
-  ownerId: string;
-  ownerName: string;
-  solarSystemId?: number;
-  location?: { x: string; y: string; z: string };
-  name?: string;
-  dappUrl?: string;
-  description?: string;
 };
 
 export const getAssembly =

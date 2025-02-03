@@ -1,14 +1,10 @@
 import { Hex, isHex } from "viem";
 import { MudSqlClient } from "../client";
 import { toSqlHex } from "../utils";
+import { Balance } from "../types";
 
 type DbRow = {
   account: Hex;
-  value: string;
-};
-
-type Balance = {
-  address: Hex;
   value: string;
 };
 

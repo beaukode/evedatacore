@@ -1,4 +1,5 @@
 import { MudSqlClient } from "../client";
+import { AssemblyFuel } from "../types";
 
 type DbRow = {
   smartObjectId: string;
@@ -9,18 +10,9 @@ type DbRow = {
   lastUpdatedAt: string;
 };
 
-type Assembly = {
-  id: string;
-  fuelUnitVolume: string;
-  fuelConsumptionPerMinute: string;
-  fuelMaxCapacity: string;
-  fuelAmount: string;
-  lastUpdatedAt: number;
-};
-
 export const getAssemblyFuel =
   (client: MudSqlClient) =>
-  async (id: string): Promise<Assembly | undefined> => {
+  async (id: string): Promise<AssemblyFuel | undefined> => {
     const assemblies = await client.selectFrom<DbRow>(
       "eveworld",
       "DeployableFuelBa",

@@ -1,6 +1,7 @@
 import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { ensureArray } from "../utils";
+import { Killmail } from "../types";
 
 type DbRow = {
   killMailId: string;
@@ -9,19 +10,6 @@ type DbRow = {
   lossType: string;
   solarSystemId: string;
   killTimestamp: string;
-};
-
-type Killmail = {
-  id: string;
-  killerId: string;
-  killerName?: string;
-  killerAddress?: string;
-  victimId: string;
-  victimName?: string;
-  victimAddress?: string;
-  lossType: string;
-  solarSystemId: number;
-  timestamp: number;
 };
 
 type ListCharactersOptions = {

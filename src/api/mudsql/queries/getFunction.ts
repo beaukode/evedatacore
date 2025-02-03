@@ -2,6 +2,7 @@ import { hexToResource } from "@latticexyz/common";
 import { Hex, isHex, sliceHex } from "viem";
 import { toSqlHex } from "../utils";
 import { MudSqlClient } from "../client";
+import { Function } from "../types";
 
 type SelectorRow = {
   worldFunctionSelector: Hex;
@@ -12,18 +13,6 @@ type SelectorRow = {
 type SignatureRow = {
   functionSelector: Hex;
   functionSignature: string;
-};
-
-type Function = {
-  worldSelector: Hex;
-  signature: string;
-  systemId?: Hex;
-  systemName?: string;
-  systemSelector?: Hex;
-  namespace?: string;
-  namespaceId?: Hex;
-  namespaceOwner?: Hex;
-  namespaceOwnerName?: string;
 };
 
 export const getFunction =

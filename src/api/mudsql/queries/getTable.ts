@@ -1,13 +1,7 @@
-import { Hex, isHex } from "viem";
+import { isHex } from "viem";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
-import { Table as MudTable } from "@latticexyz/config";
 import { MudSqlClient } from "../client";
-
-type Table = MudTable & {
-  namespaceId: Hex;
-  namespaceOwner?: Hex;
-  namespaceOwnerName?: string;
-};
+import { Table } from "../types";
 
 export const getTable =
   (client: MudSqlClient) =>
