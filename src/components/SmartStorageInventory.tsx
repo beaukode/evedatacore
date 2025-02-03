@@ -15,11 +15,18 @@ interface SmartStorageInventoryProps {
   owner: Hex;
 }
 
+type SelectedInventory = {
+  owner: Hex;
+  type: "inventory" | "ephemeral";
+};
+
 const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
   id,
   owner,
 }) => {
   const [transfertItemsOpen, setTransfertItemsOpen] = React.useState(false);
+  const [selectedInventory, setSelectedInventory] =
+    React.useState<SelectedInventory>();
   const mudSql = useMudSql();
   const typesIndex = useTypesIndex(); // Only used for loading
 
@@ -38,6 +45,13 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
     return [owner, ...queryUsers.data.map((inv) => inv.ownerId)];
   }, [owner, queryUsers.data]);
 
+  const dialogTitle = React.useMemo(() => {
+    if (!selectedInventory) return "";
+    if (selectedInventory.type === "inventory")
+      return "Transfer items to user storage";
+    return "Transfer items to assembly storage";
+  }, [selectedInventory]);
+
   const data = query.data;
   const inventories = queryUsers.data;
 
@@ -54,9 +68,10 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
               <DialogTransfertItems
                 storageId={id}
                 open={transfertItemsOpen}
-                owner={owner}
+                owner={selectedInventory?.owner || "0x"}
+                transfertFrom={selectedInventory?.type || "inventory"}
                 storageUsers={storageUsers}
-                title="Transfer items to user storage"
+                title={dialogTitle}
                 onClose={() => {
                   setTransfertItemsOpen(false);
                   query.refetch();
@@ -69,7 +84,10 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
               header={
                 <ButtonWeb3Interaction
                   title="Item transfer"
-                  onClick={() => setTransfertItemsOpen(true)}
+                  onClick={() => {
+                    setSelectedInventory({ owner, type: "inventory" });
+                    setTransfertItemsOpen(true);
+                  }}
                 />
               }
             />
@@ -97,7 +115,13 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
                     />
                     <ButtonWeb3Interaction
                       title="Item transfer"
-                      onClick={() => setTransfertItemsOpen(true)}
+                      onClick={() => {
+                        setSelectedInventory({
+                          owner: inv.ownerId,
+                          type: "ephemeral",
+                        });
+                        setTransfertItemsOpen(true);
+                      }}
                     />
                   </>
                 }

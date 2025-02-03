@@ -22,6 +22,7 @@ interface DialogTransfertItemsProps {
   storageId: string;
   owner: Hex;
   storageUsers: Hex[];
+  transfertFrom: "inventory" | "ephemeral";
   title: string;
   open: boolean;
   onClose: () => void;
@@ -59,6 +60,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   storageId,
   owner,
   storageUsers,
+  transfertFrom,
   title,
   open,
   onClose,
@@ -72,14 +74,26 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   const mudSql = useMudSql();
   const mudWeb3 = useMudWeb3();
 
+  const queryKey =
+    transfertFrom === "inventory"
+      ? ["SmartStorageInventory", storageId]
+      : ["SmartStorageUserInventory", storageId, owner];
+
   const query = useQuery({
-    queryKey: ["SmartStorageInventory", storageId],
-    queryFn: async () => mudSql.getStorageInventory(storageId),
+    queryKey,
+    queryFn: async () => {
+      if (transfertFrom === "inventory") {
+        return mudSql.getStorageInventory(storageId);
+      } else {
+        return mudSql.getUserInventory(storageId, owner);
+      }
+    },
   });
 
   const queryCharacters = useQuery({
     queryKey: ["Smartcharacters"],
     queryFn: async () => mudSql.listCharacters(),
+    enabled: transfertFrom === "inventory",
   });
 
   const characters = React.useMemo(() => {
@@ -103,9 +117,6 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
       if (!mudWeb3.wallet) {
         throw new Error("Wallet error, please refresh the page and try again");
       }
-      if (!character) {
-        throw new Error("Please select a character");
-      }
 
       const transferts = Object.entries(quantities).reduce(
         (acc, [inventoryItemId, quantity]) => {
@@ -124,12 +135,24 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
         throw new Error("Please select at least one item to transfer");
       }
 
-      return mudWeb3.wallet.inventoryToEphemeral(
-        BigInt(storageId),
-        owner,
-        character.address,
-        transferts
-      );
+      if (transfertFrom === "inventory") {
+        if (!character) {
+          throw new Error("Please select a character");
+        }
+
+        return mudWeb3.wallet.inventoryToEphemeral(
+          BigInt(storageId),
+          owner,
+          character.address,
+          transferts
+        );
+      } else {
+        return mudWeb3.wallet.ephemeralToInventory(
+          BigInt(storageId),
+          owner,
+          transferts
+        );
+      }
     },
     onSuccess() {
       query.refetch();
@@ -189,44 +212,56 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
             />
           </Box>
         )}
-        <Autocomplete
-          options={characters}
-          value={character}
-          getOptionLabel={(c) =>
-            `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`
-          }
-          groupBy={(option) => option.group}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          onChange={(_, newValue) => setCharacter(newValue)}
-          renderInput={(params) => (
-            <TextField {...params} label="To character" />
-          )}
-          getOptionDisabled={(c) => c.id === ""}
-          renderOption={(props, c) => (
-            <li
-              {...props}
-              key={c.id}
-              style={{
-                fontStyle: c.id === "" ? "italic" : "normal",
-              }}
-            >
-              {c.id === ""
-                ? `${c.name}`
-                : `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`}
-            </li>
-          )}
-          disabled={isLoading || mutate.isPending}
-          filterOptions={filterOptions}
-          openOnFocus
-          fullWidth
-        />
-        <Alert severity="warning" sx={{ mt: 2 }}>
-          Double check the receiver before transferring items, this action is
-          irreversible.
-          <br />
-          To get the item back the receiver will have to transfer it back to
-          you.
-        </Alert>
+        {transfertFrom === "inventory" && (
+          <>
+            <Autocomplete
+              options={characters}
+              value={character}
+              getOptionLabel={(c) =>
+                `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`
+              }
+              groupBy={(option) => option.group}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(_, newValue) => setCharacter(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} label="To character" />
+              )}
+              getOptionDisabled={(c) => c.id === ""}
+              renderOption={(props, c) => (
+                <li
+                  {...props}
+                  key={c.id}
+                  style={{
+                    fontStyle: c.id === "" ? "italic" : "normal",
+                  }}
+                >
+                  {c.id === ""
+                    ? `${c.name}`
+                    : `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`}
+                </li>
+              )}
+              disabled={isLoading || mutate.isPending}
+              filterOptions={filterOptions}
+              openOnFocus
+              fullWidth
+            />
+            <Alert severity="warning" sx={{ mt: 2 }}>
+              Double check the receiver before transferring items, this action
+              is irreversible.
+              <br />
+              To get the item back the receiver will have to transfer it back to
+              you.
+            </Alert>
+          </>
+        )}
+        {transfertFrom === "ephemeral" && (
+          <Alert severity="warning" sx={{ mt: 2 }}>
+            Double check before transferring items, this action is irreversible.
+            <br />
+            To get the item back the storage owner will have to transfer it back
+            to you.
+          </Alert>
+        )}
       </BaseWeb3Dialog>
     </>
   );
