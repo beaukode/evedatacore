@@ -1,3 +1,4 @@
+import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { Assembly } from "../types";
 
@@ -19,7 +20,7 @@ type DbRow = {
   type__smartObjectId: string;
   type__smartAssemblyType: keyof typeof assemblyTypeMap;
   owner__tokenId: string;
-  owner__owner: string;
+  owner__owner: Hex;
   character__characterAddress: string;
   character__characterId: string;
   entity__entityId: string;

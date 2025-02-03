@@ -29,7 +29,7 @@ export const listStorageUsersInventory =
     return Object.entries(itemsByOwner).map(([owner, items]) => {
       const capacity = capacitiesByOwner[owner];
       return {
-        ownerId: owner,
+        ownerId: owner as Hex,
         ownerName: capacity?.ownerName,
         used: capacity?.used || "0",
         total: capacity?.total || "0",

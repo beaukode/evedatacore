@@ -1,4 +1,5 @@
 import { keyBy } from "lodash-es";
+import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
 import { Assembly } from "../types";
@@ -21,7 +22,7 @@ type DbRow = {
   type__smartObjectId: string;
   type__smartAssemblyType: keyof typeof assemblyTypeMap;
   owner__tokenId: string;
-  owner__owner: string;
+  owner__owner: Hex;
   location__smartObjectId: string;
   location__solarSystemId: string;
   location__x: string;

@@ -33,7 +33,7 @@ export type Assembly = {
   typeId: number;
   isValid: boolean;
   anchoredAt: number;
-  ownerId: string;
+  ownerId: Hex;
   ownerName: string;
   solarSystemId?: number;
   location?: { x: string; y: string; z: string };
@@ -123,7 +123,7 @@ export type Inventory = {
 };
 
 export type UsersInventory = Inventory & {
-  ownerId: string;
+  ownerId: Hex;
   ownerName?: string;
 };
 
