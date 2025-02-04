@@ -17,7 +17,7 @@ import Home from "@/pages/Home";
 import Error404 from "@/pages/Error404";
 import About from "@/pages/About";
 import Calculate from "@/pages/Calculate";
-import { ConnectButton } from "@/components/ConnectButton";
+import { ConnectButton } from "@/components/web3/ConnectButton";
 import Dev from "./pages/Dev";
 
 function App() {

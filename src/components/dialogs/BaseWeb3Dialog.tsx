@@ -9,12 +9,12 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { TransactionReceipt } from "viem";
 import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
+import { useShowConnectDialog } from "@/contexts/AppContext";
 
 interface DialogOnOffAssemblyProps {
   open: boolean;
@@ -41,8 +41,8 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
   disabledOwnerCheck,
   onClose,
 }) => {
-  const { openConnectModal } = useConnectModal();
-  const { openChainModal } = useChainModal();
+  const showConnectDialog = useShowConnectDialog();
+  const { switchChain } = useSwitchChain();
   const account = useAccount();
 
   const state = React.useMemo(() => {
@@ -162,12 +162,15 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
       <DialogActions>
         {state !== "ready" && <Button onClick={() => onClose()}>Cancel</Button>}
         {state === "connect" && (
-          <Button onClick={openConnectModal} variant="contained">
+          <Button onClick={showConnectDialog} variant="contained">
             Connect
           </Button>
         )}
         {state === "chain" && (
-          <Button onClick={openChainModal} variant="contained">
+          <Button
+            onClick={() => switchChain({ chainId: 17069 })}
+            variant="contained"
+          >
             Switch
           </Button>
         )}
