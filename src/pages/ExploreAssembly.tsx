@@ -222,7 +222,11 @@ const ExploreAssembly: React.FC = () => {
         <SmartGateConfig gateId={id} owner={data.ownerId} />
       )}
       {data?.typeId === 84955 && (
-        <SmartGateLink sourceGateId={id} sourceGateState={data.state} />
+        <SmartGateLink
+          sourceGateId={id}
+          owner={data.ownerId}
+          sourceGateState={data.state}
+        />
       )}
       {data?.typeId === 84955 && (
         <SmartGateOther

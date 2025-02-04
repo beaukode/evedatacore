@@ -53,6 +53,13 @@ export function eveworldActions(worldAddress: Hex) {
           key: { entityId: id },
         });
       },
+      async getDeployableLocation(id: bigint) {
+        return getMudTableRecord({
+          address: worldAddress,
+          table: eveworld.tables.eveworld__LocationTable,
+          key: { smartObjectId: id },
+        });
+      },
       async getTurretSystemId(turretId: bigint) {
         return getMudTableRecord({
           address: worldAddress,
