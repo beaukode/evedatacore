@@ -8,13 +8,16 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import ButtonSolarsystem from "./buttons/ButtonSolarsystem";
 import PaperLevel1 from "./ui/PaperLevel1";
 import { lyDistance, Location, tsToDateTime } from "@/tools";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
+import DialogGateLink from "./dialogs/DialogGateLink";
+import ConditionalMount from "./ui/ConditionalMount";
+import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
 
 interface SmartGateOtherProps {
   owner: string;
@@ -27,6 +30,9 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
   currentGateId,
   currentGateLocation,
 }) => {
+  const [linkOpen, setLinkOpen] = React.useState(false);
+  const [linkDestinationId, setLinkDestinationId] = React.useState("");
+  const queryClient = useQueryClient();
   const mudSql = useMudSql();
 
   const query = useQuery({
@@ -60,6 +66,21 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
 
   return (
     <PaperLevel1 title="User’s Other Gates" loading={query.isFetching}>
+      <ConditionalMount mount={linkOpen} keepMounted>
+        <DialogGateLink
+          open={linkOpen}
+          sourceGateId={currentGateId}
+          destinationGateId={linkDestinationId}
+          owner={owner}
+          action="link"
+          onClose={() => {
+            setLinkOpen(false);
+            queryClient.invalidateQueries({
+              queryKey: ["SmartGateLink", currentGateId],
+            });
+          }}
+        />
+      </ConditionalMount>
       {gates?.length === 0 && !query.isFetching && (
         <Typography variant="body1">None</Typography>
       )}
@@ -85,7 +106,14 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
                         sx={{ mr: 1 }}
                         tooltip
                       />
-                      <ButtonAssembly id={gate.id} name={gate.name} />
+                      <ButtonAssembly id={gate.id} name={gate.name} />{" "}
+                      <ButtonWeb3Interaction
+                        title="Unlink gates"
+                        onClick={() => {
+                          setLinkOpen(true);
+                          setLinkDestinationId(gate.id);
+                        }}
+                      />
                     </Box>
                   </TableCell>
                   <TableCell>

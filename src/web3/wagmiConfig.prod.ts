@@ -1,25 +1,26 @@
 import { http } from "viem";
 import { garnet } from "@latticexyz/common/chains";
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import {
-  coinbaseWallet,
-  metaMaskWallet,
-  safeWallet,
-} from "@rainbow-me/rainbowkit/wallets";
-import { EVEVault } from "./EVEVault";
+import { createConfig } from "wagmi";
+import { coinbaseWallet, metaMask, safe, injected } from "wagmi/connectors";
 
 const transports = {
   [garnet.id]: http(),
 };
 
-export const prodWagmiConfig = getDefaultConfig({
-  projectId: "BEAUKODE_EVEF",
-  appName: "EVE Frontier tools",
-  wallets: [
-    {
-      groupName: "Recommended",
-      wallets: [metaMaskWallet, EVEVault, safeWallet, coinbaseWallet],
-    },
+export const prodWagmiConfig = createConfig({
+  connectors: [
+    injected({
+      target: {
+        provider: window?.ethereum,
+        id: "eveVault",
+        name: "EVE Vault",
+        icon: "https://vault.evefrontier.com/favicon-16.png",
+      },
+    }),
+    metaMask({ dappMetadata: { name: "EVE Datacore" } }),
+    coinbaseWallet({ appName: "EVE Datacore" }),
+    safe(),
+    injected(),
   ],
   multiInjectedProviderDiscovery: false,
   chains: [

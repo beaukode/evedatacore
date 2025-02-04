@@ -157,11 +157,13 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
       if (type === "gate") {
         return mudWeb3.wallet.configureSmartGate(BigInt(assemblyId), systemId);
       } else if (type === "turret") {
-        return mudWeb3.wallet.configureSmartTurret(BigInt(assemblyId), systemId);
+        return mudWeb3.wallet.configureSmartTurret(
+          BigInt(assemblyId),
+          systemId
+        );
       } else {
         throw new Error(`Invalid type ${type}`);
       }
-     
     },
     onSettled() {
       querySystemId.refetch();
@@ -208,7 +210,6 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
         }
         txError={mutateState.error}
         txReceipt={mutateState.data}
-        disabledOwnerCheck
       >
         <FormControl fullWidth>
           <FormLabel id={radioGroupId}>Link this assembly to:</FormLabel>

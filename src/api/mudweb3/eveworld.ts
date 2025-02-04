@@ -68,6 +68,16 @@ export const eveworld = defineWorld({
           },
           key: ["entityId"],
         },
+        LocationTable: {
+          schema: {
+            smartObjectId: "uint256",
+            solarSystemId: "uint256",
+            x: "uint256",
+            y: "uint256",
+            z: "uint256",
+          },
+          key: ["smartObjectId"],
+        },
         CharactersByAddressTable: {
           schema: {
             characterAddress: "address",

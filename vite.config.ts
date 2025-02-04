@@ -40,7 +40,7 @@ export default defineConfig({
             "@emotion/styled",
             "react-virtuoso",
           ],
-          web3: ["@rainbow-me/rainbowkit", "viem", "wagmi"],
+          web3: ["viem", "wagmi"],
         },
       },
     },

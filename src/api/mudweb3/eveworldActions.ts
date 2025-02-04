@@ -3,10 +3,16 @@ import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.
 import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
 import SmartGateSystemAbi from "@eveworld/world/out/SmartGateSystem.sol/SmartGateSystem.abi.json";
 import SmartTurretSystemAbi from "@eveworld/world/out/SmartTurretSystem.sol/SmartTurretSystem.abi.json";
+import InventoryInteractSystemAbi from "@eveworld/world/out/InventoryInteractSystem.sol/InventoryInteractSystem.abi.json";
 import { getRecord, GetRecordOptions, Table } from "@latticexyz/store/internal";
 import { eveworld } from "./eveworld";
 import { worldSystemCall } from "./worldSystemCall";
 import { worldSystemSimulate } from "./worldSystemSimulate";
+
+export type InventoryItemTransfert = {
+  inventoryItemId: bigint;
+  quantity: bigint;
+};
 
 export function eveworldActions(worldAddress: Hex) {
   return function (client: Client) {
@@ -45,6 +51,13 @@ export function eveworldActions(worldAddress: Hex) {
           address: worldAddress,
           table: eveworld.tables.eveworld__EntityRecordOffchainTable,
           key: { entityId: id },
+        });
+      },
+      async getDeployableLocation(id: bigint) {
+        return getMudTableRecord({
+          address: worldAddress,
+          table: eveworld.tables.eveworld__LocationTable,
+          key: { smartObjectId: id },
         });
       },
       async getTurretSystemId(turretId: bigint) {
@@ -204,6 +217,52 @@ export function eveworlWalletActions(worldAddress: Hex, publicClient: Client) {
         });
         return systemCall(
           eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
+          data
+        );
+      },
+      inventoryToEphemeral: async (
+        ssuId: bigint,
+        from: Hex,
+        to: Hex,
+        transferts: InventoryItemTransfert[]
+      ) => {
+        const data = encodeFunctionData({
+          abi: InventoryInteractSystemAbi,
+          functionName: "inventoryToEphemeralTransfer",
+          args: [
+            ssuId,
+            to,
+            transferts.map(({ inventoryItemId, quantity }) => ({
+              inventoryItemId,
+              owner: from,
+              quantity,
+            })),
+          ],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.InventoryInteractSystem.systemId,
+          data
+        );
+      },
+      ephemeralToInventory: async (
+        ssuId: bigint,
+        from: Hex,
+        transferts: InventoryItemTransfert[]
+      ) => {
+        const data = encodeFunctionData({
+          abi: InventoryInteractSystemAbi,
+          functionName: "ephemeralToInventoryTransfer",
+          args: [
+            ssuId,
+            transferts.map(({ inventoryItemId, quantity }) => ({
+              inventoryItemId,
+              owner: from,
+              quantity,
+            })),
+          ],
+        });
+        return systemCall(
+          eveworld.namespaces.eveworld.systems.InventoryInteractSystem.systemId,
           data
         );
       },

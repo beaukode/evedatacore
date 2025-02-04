@@ -1,4 +1,13 @@
-import { BaseError, Client, Hex, WalletClient } from "viem";
+import {
+  BaseError,
+  Client,
+  ContractFunctionArgs,
+  ContractFunctionName,
+  Hex,
+  SimulateContractParameters,
+  WalletClient,
+  WriteContractParameters,
+} from "viem";
 import {
   waitForTransactionReceipt,
   writeContract,
@@ -7,16 +16,33 @@ import {
 import { IWorldAbi } from "@eveworld/contracts";
 import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
 import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
-import InventoryInteractSystemAbi from "@eveworld/world/out/InventoryInteractSystem.sol/InventoryInteractSystem.abi.json";
+import SmartGateSystemAbi from "@eveworld/world/out/SmartGateSystem.sol/SmartGateSystem.abi.json";
 import { isError } from "lodash-es";
 import { Web3TransactionError } from "./Web3TransactionError";
 
-export async function worldSystemCall(
+const myabi = [
+  ...IWorldAbi.abi,
+  ...SmartDeployableSystemAbi,
+  ...EntityRecordSystemAbi,
+  ...SmartGateSystemAbi,
+]; // Merge all ABIs for error decoding;
+
+export async function worldWrite<
+  FunctionName extends ContractFunctionName<
+    typeof myabi,
+    "nonpayable" | "payable"
+  >,
+  Args extends ContractFunctionArgs<
+    typeof myabi,
+    "nonpayable" | "payable",
+    FunctionName
+  >,
+>(
   publicClient: Client,
   walletClient: WalletClient,
   worldAddress: Hex,
-  systemAddress: Hex,
-  data: Hex
+  functionName: FunctionName,
+  args: Args
 ) {
   const { chain, account } = walletClient;
   if (!account) {
@@ -29,27 +55,20 @@ export async function worldSystemCall(
   let tx: Hex | undefined = undefined;
   try {
     await simulateContract(publicClient, {
-      chain: chain,
-      account: account,
       address: worldAddress,
-      abi: [
-        ...IWorldAbi.abi,
-        ...SmartDeployableSystemAbi,
-        ...EntityRecordSystemAbi,
-        ...InventoryInteractSystemAbi,
-      ], // Merge all ABIs for error decoding
-      functionName: "call",
-      args: [systemAddress, data],
-    });
+      abi: myabi,
+      functionName,
+      args,
+    } as SimulateContractParameters);
 
     tx = await writeContract(walletClient, {
       chain: chain,
       account: account,
       address: worldAddress,
       abi: IWorldAbi.abi,
-      functionName: "call",
-      args: [systemAddress, data],
-    });
+      functionName,
+      args,
+    } as WriteContractParameters);
     const receipt = await waitForTransactionReceipt(publicClient, {
       hash: tx,
       timeout: 60 * 1000,
@@ -58,14 +77,12 @@ export async function worldSystemCall(
     if (receipt.status === "reverted") {
       // In case of revert, we simulate the transaction to get the revert reason
       await simulateContract(publicClient, {
-        chain: chain,
-        account: account,
         address: worldAddress,
         abi: IWorldAbi.abi,
-        functionName: "call",
-        args: [systemAddress, data],
+        functionName,
+        args,
         blockNumber: receipt.blockNumber,
-      });
+      } as SimulateContractParameters);
     }
     return receipt;
   } catch (e) {

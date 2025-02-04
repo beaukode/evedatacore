@@ -1,4 +1,5 @@
 import { MudSqlClient } from "../client";
+import { Character } from "../types";
 import { ensureArray, toSqlHex } from "../utils";
 import { Hex } from "viem";
 
@@ -11,14 +12,6 @@ type DbRow = {
   entity__name: string;
   entity__dappURL?: string;
   entity__description?: string;
-};
-
-type Character = {
-  address: Hex;
-  id: string;
-  name: string;
-  corpId: number;
-  createdAt: number;
 };
 
 type ListCharactersOptions = {

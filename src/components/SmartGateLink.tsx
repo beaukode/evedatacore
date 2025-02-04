@@ -10,16 +10,22 @@ import BasicListItem from "./ui/BasicListItem";
 import { shorten, tsToDateTime } from "@/tools";
 import { smartAssemblyStates } from "@/constants";
 import useCanJump from "@/tools/useCanJump";
+import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
+import ConditionalMount from "./ui/ConditionalMount";
+import DialogGateLink from "./dialogs/DialogGateLink";
 
 interface SmartGateLinkProps {
   sourceGateId: string;
   sourceGateState: number;
+  owner: string;
 }
 
 const SmartGateLink: React.FC<SmartGateLinkProps> = ({
   sourceGateId,
   sourceGateState,
+  owner,
 }) => {
+  const [unlinkOpen, setUnlinkOpen] = React.useState(false);
   const mudSql = useMudSql();
 
   const query = useQuery({
@@ -58,8 +64,32 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({
       )}
       {data && (
         <>
+          <ConditionalMount mount={unlinkOpen} keepMounted>
+            <DialogGateLink
+              open={unlinkOpen}
+              sourceGateId={sourceGateId}
+              destinationGateId={destinationGateId}
+              owner={owner}
+              action="unlink"
+              onClose={() => {
+                setUnlinkOpen(false);
+                query.refetch();
+              }}
+            />
+          </ConditionalMount>
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-            <BasicListItem title="Gate" disableGutters>
+            <BasicListItem
+              title={
+                <>
+                  Gate
+                  <ButtonWeb3Interaction
+                    title="Unlink gates"
+                    onClick={() => setUnlinkOpen(true)}
+                  />
+                </>
+              }
+              disableGutters
+            >
               <ButtonAssembly id={data.id} name={name} />
             </BasicListItem>
             <BasicListItem title="Id">{data.id}</BasicListItem>

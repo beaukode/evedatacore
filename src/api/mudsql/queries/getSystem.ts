@@ -2,22 +2,12 @@ import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { Hex, isHex } from "viem";
 import { toSqlHex } from "../utils";
 import { MudSqlClient } from "../client";
+import { System } from "../types";
 
 type DbRow = {
   systemId: Hex;
   system: Hex;
   publicAccess: boolean;
-};
-
-type System = {
-  systemId: Hex;
-  contract: Hex;
-  publicAccess: boolean;
-  name: string;
-  namespace: string;
-  namespaceId: Hex;
-  namespaceOwner?: Hex;
-  namespaceOwnerName?: string;
 };
 
 export const getSystem =

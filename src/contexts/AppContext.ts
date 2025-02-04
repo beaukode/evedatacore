@@ -9,6 +9,7 @@ import { MudWeb3Client } from "@/api/mudweb3";
 interface AppContextProps {
   mudSql: MudSqlClient;
   mudWeb3: MudWeb3Client;
+  showConnectDialog: () => void;
 }
 
 export const AppContext = React.createContext<AppContextProps | undefined>(
@@ -31,6 +32,11 @@ export function useMudSql() {
 export function useMudWeb3() {
   const { mudWeb3 } = useAppContext();
   return mudWeb3;
+}
+
+export function useShowConnectDialog() {
+  const { showConnectDialog } = useAppContext();
+  return showConnectDialog;
 }
 
 export function useSolarSystemsIndex() {

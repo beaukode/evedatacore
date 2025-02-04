@@ -9,12 +9,12 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { TransactionReceipt } from "viem";
 import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
+import { useShowConnectDialog } from "@/contexts/AppContext";
 
 interface DialogOnOffAssemblyProps {
   open: boolean;
@@ -41,8 +41,8 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
   disabledOwnerCheck,
   onClose,
 }) => {
-  const { openConnectModal } = useConnectModal();
-  const { openChainModal } = useChainModal();
+  const showConnectDialog = useShowConnectDialog();
+  const { switchChain } = useSwitchChain();
   const account = useAccount();
 
   const state = React.useMemo(() => {
@@ -84,15 +84,14 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 "This action require you to connect your wallet."}
               {state === "chain" &&
                 "Your wallet is connected to the wrong network, please switch to garnet."}
-              {state === "owner" &&
-                "You do not seems to be the owner of this assembly."}
+              {state === "owner" && "You do not seems to be the owner."}
               {state === "address" &&
-                "Your current address do not match this assembly owner, please switch the matching account."}
+                "Your current address do not match the owner, please switch the matching account."}
             </DialogContentText>
             {state === "owner" && (
               <>
                 <DialogContentText gutterBottom>
-                  This assembly is owned by:
+                  You try to interact with something owned by:
                 </DialogContentText>
                 <ul>
                   <li>{owner}</li>
@@ -100,7 +99,11 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 <DialogContentText gutterBottom>
                   Your wallet is connected with the following:
                 </DialogContentText>
-                <ul>{account.addresses?.map((m) => <li key={m}>{m}</li>)}</ul>
+                <ul>
+                  {account.addresses?.map((m) => (
+                    <li key={m}>{m.toLowerCase()}</li>
+                  ))}
+                </ul>
                 <DialogContentText gutterBottom>
                   Please check your connected accounts in your wallet app.
                 </DialogContentText>
@@ -109,7 +112,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
             {state === "address" && (
               <>
                 <DialogContentText gutterBottom>
-                  This assembly is owned by:
+                  You try to interact with something owned by:
                 </DialogContentText>
                 <ul>
                   <li>{owner}</li>
@@ -117,7 +120,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
                 <DialogContentText gutterBottom>
                   Your current wallet address is:
                 </DialogContentText>
-                <ul>{account.address}</ul>
+                <ul>{account.address?.toLowerCase()}</ul>
                 <DialogContentText gutterBottom>
                   Please switch account in your wallet app.
                 </DialogContentText>
@@ -159,12 +162,15 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
       <DialogActions>
         {state !== "ready" && <Button onClick={() => onClose()}>Cancel</Button>}
         {state === "connect" && (
-          <Button onClick={openConnectModal} variant="contained">
+          <Button onClick={showConnectDialog} variant="contained">
             Connect
           </Button>
         )}
         {state === "chain" && (
-          <Button onClick={openChainModal} variant="contained">
+          <Button
+            onClick={() => switchChain({ chainId: 17069 })}
+            variant="contained"
+          >
             Switch
           </Button>
         )}
