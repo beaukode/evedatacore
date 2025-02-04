@@ -1,3 +1,4 @@
+import { InventoryItem } from "@/api/mudsql";
 import { FixedGetTypesResponse, Type } from "@/api/stillness";
 
 export type IndexedType = Type & {
@@ -8,11 +9,18 @@ export type IndexedType = Type & {
   categoryName: string;
 };
 
+export type SmartItemWithType = InventoryItem & {
+  id: string;
+  name: string;
+  image?: string;
+};
+
 export interface TypesIndex {
   getAll: () => IndexedType[];
   getCatergories: () => Record<number, TypeCategory>;
   getById: (id: string) => IndexedType | undefined;
   getBySmartItemId: (smartItemId: string) => IndexedType | undefined;
+  mergeSmartItemAndType: (smartItems: InventoryItem[]) => SmartItemWithType[];
 }
 
 export type TypeCategory = {
@@ -84,10 +92,25 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
     return indexBySmartItemId[smartItemId];
   }
 
+  function mergeSmartItemAndType(
+    smartItems: InventoryItem[]
+  ): SmartItemWithType[] {
+    return smartItems.map((i) => {
+      const type = indexBySmartItemId[i.itemId];
+      return {
+        ...i,
+        id: type?.id || "0",
+        name: type?.name || "Unknown item",
+        image: type?.image,
+      };
+    });
+  }
+
   return {
     getAll,
     getCatergories,
     getById,
     getBySmartItemId,
+    mergeSmartItemAndType,
   };
 }

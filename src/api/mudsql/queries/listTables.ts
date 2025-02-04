@@ -1,10 +1,10 @@
 import { Hex, isHex, sliceHex } from "viem";
-import { Table as MudTable } from "@latticexyz/config";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { decodeTable } from "../externals";
 import { ensureArray, incrementHex, toSqlHex } from "../utils";
+import { Table } from "../types";
 
 type DbRow = {
   tableId: Hex;
@@ -13,12 +13,6 @@ type DbRow = {
   valueSchema: string;
   abiEncodedKeyNames: string;
   abiEncodedFieldNames: string;
-};
-
-type Table = MudTable & {
-  namespaceId: Hex;
-  namespaceOwner?: Hex;
-  namespaceOwnerName?: string;
 };
 
 type ListTablesOptions = {

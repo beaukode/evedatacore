@@ -4,9 +4,12 @@ import { createSolarSystemsIndex } from "@/tools/solarSystemsIndex";
 import { MudSqlClient } from "@/api/mudsql";
 import { useQuery } from "@tanstack/react-query";
 import { createTypesIndex } from "@/tools/typesIndex";
+import { MudWeb3Client } from "@/api/mudweb3";
 
 interface AppContextProps {
   mudSql: MudSqlClient;
+  mudWeb3: MudWeb3Client;
+  showConnectDialog: () => void;
 }
 
 export const AppContext = React.createContext<AppContextProps | undefined>(
@@ -24,6 +27,16 @@ export function useAppContext() {
 export function useMudSql() {
   const { mudSql } = useAppContext();
   return mudSql;
+}
+
+export function useMudWeb3() {
+  const { mudWeb3 } = useAppContext();
+  return mudWeb3;
+}
+
+export function useShowConnectDialog() {
+  const { showConnectDialog } = useAppContext();
+  return showConnectDialog;
 }
 
 export function useSolarSystemsIndex() {

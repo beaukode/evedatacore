@@ -1,4 +1,6 @@
+import { Hex } from "viem";
 import { MudSqlClient } from "../client";
+import { Assembly } from "../types";
 
 const assemblyTypeMap = {
   0: 77917,
@@ -18,7 +20,7 @@ type DbRow = {
   type__smartObjectId: string;
   type__smartAssemblyType: keyof typeof assemblyTypeMap;
   owner__tokenId: string;
-  owner__owner: string;
+  owner__owner: Hex;
   character__characterAddress: string;
   character__characterId: string;
   entity__entityId: string;
@@ -35,21 +37,6 @@ type EntityDbRow = {
   name: string;
   dappURL: string;
   description: string;
-};
-
-type Assembly = {
-  id: string;
-  state: number;
-  typeId: number;
-  isValid: boolean;
-  anchoredAt: number;
-  ownerId: string;
-  ownerName: string;
-  solarSystemId?: number;
-  location?: { x: string; y: string; z: string };
-  name?: string;
-  dappUrl?: string;
-  description?: string;
 };
 
 export const getAssembly =

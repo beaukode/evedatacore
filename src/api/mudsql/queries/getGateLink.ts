@@ -1,13 +1,8 @@
 import { MudSqlClient } from "../client";
-import { getAssembly } from "./getAssembly";
-
+import { TargetGate } from "../types";
 type DbRow = {
   sourceGateId: string;
   destinationGateId: string;
-  isLinked: boolean;
-};
-
-type TargetGate = Awaited<ReturnType<ReturnType<typeof getAssembly>>> & {
   isLinked: boolean;
 };
 

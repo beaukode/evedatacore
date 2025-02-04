@@ -3,6 +3,7 @@ import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { ensureArray, incrementHex, toSqlHex } from "../utils";
+import { Function } from "../types";
 
 type SelectorRow = {
   worldFunctionSelector: Hex;
@@ -13,18 +14,6 @@ type SelectorRow = {
 type SignatureRow = {
   functionSelector: Hex;
   functionSignature: string;
-};
-
-type Function = {
-  worldSelector: Hex;
-  signature: string;
-  systemId?: Hex;
-  systemName?: string;
-  systemSelector?: Hex;
-  namespace?: string;
-  namespaceId?: Hex;
-  namespaceOwner?: Hex;
-  namespaceOwnerName?: string;
 };
 
 type ListSystemsOptions = {

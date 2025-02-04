@@ -17,12 +17,19 @@ import {
 import Error404 from "./Error404";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
-import SmartStorageUsersInventory from "@/components/SmartStorageUsersInventory";
 import SmartGateConfig from "@/components/SmartGateConfig";
 import SmartTurretConfig from "@/components/SmartTurretConfig";
+import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
+import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
+import DialogMetadataAssembly from "@/components/dialogs/DialogMetadataAssembly";
+import ConditionalMount from "@/components/ui/ConditionalMount";
+import SmartGateOther from "@/components/SmartGateOther";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
+  const [metadataOpen, setMetadataOpen] = React.useState(false);
+  const [onOffOpen, setOnOffOpen] = React.useState(false);
+
   const mudSql = useMudSql();
 
   const query = useQuery({
@@ -38,6 +45,11 @@ const ExploreAssembly: React.FC = () => {
   });
 
   const data = query.data;
+
+  const refetch = React.useCallback(() => {
+    query.refetch();
+    queryFuel.refetch();
+  }, [query, queryFuel]);
 
   const { name, type, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
@@ -71,9 +83,35 @@ const ExploreAssembly: React.FC = () => {
   return (
     <Box p={2} flexGrow={1} overflow="auto">
       {data && (
-        <Helmet>
-          <title>{name}</title>
-        </Helmet>
+        <>
+          <Helmet>
+            <title>{name}</title>
+          </Helmet>
+          <ConditionalMount mount={metadataOpen} keepMounted>
+            <DialogMetadataAssembly
+              open={metadataOpen}
+              assemblyId={data.id}
+              owner={data.ownerId}
+              title={`Edit ${name}`}
+              onClose={() => {
+                setMetadataOpen(false);
+                refetch();
+              }}
+            />
+          </ConditionalMount>
+          <ConditionalMount mount={onOffOpen} keepMounted>
+            <DialogOnOffAssembly
+              open={onOffOpen}
+              assemblyId={data.id}
+              owner={data.ownerId}
+              title={`Edit ${name}`}
+              onClose={() => {
+                setOnOffOpen(false);
+                refetch();
+              }}
+            />
+          </ConditionalMount>
+        </>
       )}
       <PaperLevel1 title={name} loading={query.isFetching} backButton>
         {data && (
@@ -85,8 +123,20 @@ const ExploreAssembly: React.FC = () => {
             <BasicListItem title="Owner" disableGutters>
               <ButtonCharacter address={data.ownerId} name={data.ownerName} />
             </BasicListItem>
-            <BasicListItem title="State">
-              {state} [{data.state}]
+            <BasicListItem
+              title={
+                <>
+                  State
+                  {[2, 3].includes(data.state) && (
+                    <ButtonWeb3Interaction
+                      title="Edit assembly state"
+                      onClick={() => setOnOffOpen(true)}
+                    />
+                  )}
+                </>
+              }
+            >
+              {state} [{data.state}]{" "}
             </BasicListItem>
             <BasicListItem title="Anchored at">
               {tsToDateTime(data.anchoredAt)}
@@ -107,10 +157,47 @@ const ExploreAssembly: React.FC = () => {
                 </span>
               </Box>
             </BasicListItem>
-            <BasicListItem title="Description">
-              {data.description}
+            <BasicListItem
+              title={
+                <>
+                  Name
+                  <ButtonWeb3Interaction
+                    title="Edit assembly metadata"
+                    onClick={() => setMetadataOpen(true)}
+                  />
+                </>
+              }
+            >
+              {data.name}
             </BasicListItem>
-            <BasicListItem title="Dapp Url">
+            <BasicListItem
+              title={
+                <>
+                  Description
+                  <ButtonWeb3Interaction
+                    title="Edit assembly metadata"
+                    onClick={() => setMetadataOpen(true)}
+                  />
+                </>
+              }
+            >
+              {data.description?.trim() && (
+                <Box sx={{ ml: 4, mt: 2, whiteSpace: "pre" }}>
+                  {data.description}
+                </Box>
+              )}
+            </BasicListItem>
+            <BasicListItem
+              title={
+                <>
+                  Dapp Url
+                  <ButtonWeb3Interaction
+                    title="Edit assembly metadata"
+                    onClick={() => setMetadataOpen(true)}
+                  />
+                </>
+              }
+            >
               {data.dappUrl ? (
                 <Link
                   href={data.dappUrl}
@@ -131,11 +218,29 @@ const ExploreAssembly: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
-      {data?.typeId === 84955 && <SmartGateLink sourceGateId={id} />}
-      {data?.typeId === 84955 && <SmartGateConfig gateId={id} />}
-      {data?.typeId === 84556 && <SmartTurretConfig turretId={id} />}
-      {data?.typeId === 77917 && <SmartStorageInventory id={id} />}
-      {data?.typeId === 77917 && <SmartStorageUsersInventory id={id} />}
+      {data?.typeId === 84955 && (
+        <SmartGateConfig gateId={id} owner={data.ownerId} />
+      )}
+      {data?.typeId === 84955 && (
+        <SmartGateLink
+          sourceGateId={id}
+          owner={data.ownerId}
+          sourceGateState={data.state}
+        />
+      )}
+      {data?.typeId === 84955 && (
+        <SmartGateOther
+          currentGateId={id}
+          owner={data.ownerId}
+          currentGateLocation={data.location}
+        />
+      )}
+      {data?.typeId === 84556 && (
+        <SmartTurretConfig turretId={id} owner={data.ownerId} />
+      )}
+      {data?.typeId === 77917 && (
+        <SmartStorageInventory id={id} owner={data.ownerId} />
+      )}
     </Box>
   );
 };

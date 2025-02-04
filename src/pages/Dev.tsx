@@ -1,69 +1,51 @@
 import React from "react";
-import { Alert, Box, Button, TextField, Typography } from "@mui/material";
-import z from "zod";
-import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
-import { useMudSql } from "@/contexts/AppContext";
-import PaperLevel1 from "@/components/ui/PaperLevel1";
+import { Paper, Tabs, Tab } from "@mui/material";
+import { NavLink, Route, Routes, useLocation } from "react-router";
+import Error404 from "./Error404";
+import DevMudSql from "./DevMudSql";
+import DevWeb3 from "./DevWeb3";
+import DevInternal from "./DevInternal";
+import DevConfig from "./DevConfig";
 
-const schema = z
-  .object({
-    sql: z
-      .string()
-      .default('SELECT "namespaceId", "owner" FROM world__NamespaceOwner'),
-  })
-  .required();
+const routesMap: Record<string, number> = {
+  "/dev": 0,
+  "/dev/": 0,
+  "/dev/web3": 0,
+  "/dev/mudsql": 1,
+  "/dev/config": 2,
+  "/dev/internal": 3,
+};
 
 const Dev: React.FC = () => {
-  const [store, setStore] = useAppLocalStorage("v1_dev", schema);
+  const location = useLocation();
 
-  const [sql, setSql] = React.useState<string>(store.sql);
-  const [result, setResult] = React.useState<Record<string, string>[]>();
-  const [error, setError] = React.useState<string>();
+  const path = location.pathname.split("/").slice(0, 3).join("/");
 
-  const mudSql = useMudSql();
-
-  const handleExecuteClick = () => {
-    setStore({ sql });
-    setError(undefined);
-    setResult(undefined);
-    mudSql
-      .selectRaw(sql)
-      .then((result) => {
-        setResult(result);
-      })
-      .catch((e) => {
-        setError(e.message);
-      });
-  };
+  const currentTab = routesMap[path];
 
   return (
-    <Box p={2} flexGrow={1} overflow="auto">
-      <PaperLevel1 title="Raw MUD sql">
-        <TextField
-          value={sql}
-          onChange={(e) => setSql(e.target.value)}
-          minRows={5}
-          maxRows={10}
-          variant="outlined"
-          slotProps={{ input: { style: { fontFamily: "monospace" } } }}
-          multiline
-          fullWidth
-        />
-        <Box display="flex" justifyContent="right" my={2}>
-          <Button onClick={handleExecuteClick} variant="contained">
-            Execute
-          </Button>
-        </Box>
-        {error && <Alert severity="error">{error}</Alert>}
-
-        {result && (
-          <>
-            <Typography variant="caption">{result?.length} records</Typography>
-            <pre>{JSON.stringify(result, null, 2)}</pre>
-          </>
+    <>
+      <Paper elevation={1} sx={{ flexGrow: 0 }}>
+        <Tabs value={currentTab} variant="scrollable" scrollButtons>
+          <Tab label="Web3" component={NavLink} to="/dev/web3" />
+          <Tab label="MUD Sql" component={NavLink} to="/dev/mudsql" />
+          <Tab label="Config" component={NavLink} to="/dev/config" />
+          {import.meta.env.DEV && (
+            <Tab label="Internal" component={NavLink} to="/dev/internal" />
+          )}
+        </Tabs>
+      </Paper>
+      <Routes>
+        <Route path="" element={<DevMudSql />} />
+        <Route path="/web3" element={<DevWeb3 />} />
+        <Route path="/mudsql" element={<DevMudSql />} />
+        <Route path="/config" element={<DevConfig />} />
+        {import.meta.env.DEV && (
+          <Route path="/internal" element={<DevInternal />} />
         )}
-      </PaperLevel1>
-    </Box>
+        <Route path="*" element={<Error404 />} />
+      </Routes>
+    </>
   );
 };
 

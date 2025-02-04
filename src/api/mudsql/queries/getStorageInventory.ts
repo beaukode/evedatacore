@@ -1,4 +1,5 @@
 import { MudSqlClient } from "../client";
+import { Inventory } from "../types";
 
 type DbRow = {
   smartObjectId: string;
@@ -6,18 +7,6 @@ type DbRow = {
   quantity: string;
   index: string;
   stateUpdate: string;
-};
-
-type InventoryItem = {
-  itemId: string;
-  quantity: string;
-  stateUpdate: number;
-};
-
-type Inventory = {
-  used: string;
-  total: string;
-  items: InventoryItem[];
 };
 
 export const getStorageInventory =

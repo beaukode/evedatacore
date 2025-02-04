@@ -2,17 +2,11 @@ import { hexToResource } from "@latticexyz/common";
 import { Hex } from "viem";
 import { toSqlHex } from "../utils";
 import { MudSqlClient } from "../client";
+import { Namespace } from "../types";
 
 type DbRow = {
   namespaceId: Hex;
   owner: Hex;
-};
-
-type Namespace = {
-  namespaceId: Hex;
-  name: string;
-  owner: Hex;
-  ownerName?: string;
 };
 
 export const getNamespace =

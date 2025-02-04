@@ -7,12 +7,17 @@ import BasicListItem from "./ui/BasicListItem";
 import ButtonSystem from "./buttons/ButtonSystem";
 import ButtonCharacter from "./buttons/ButtonCharacter";
 import ButtonNamespace from "./buttons/ButtonNamespace";
+import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
+import DialogSystemAssembly from "./dialogs/DialogSystemAssembly";
+import ConditionalMount from "./ui/ConditionalMount";
 
 interface SmartGateConfigProps {
   gateId: string;
+  owner: string;
 }
 
-const SmartGateConfig: React.FC<SmartGateConfigProps> = ({ gateId }) => {
+const SmartGateConfig: React.FC<SmartGateConfigProps> = ({ gateId, owner }) => {
+  const [editSystemOpen, setEditSystemOpen] = React.useState(false);
   const mudSql = useMudSql();
 
   const query = useQuery({
@@ -25,10 +30,35 @@ const SmartGateConfig: React.FC<SmartGateConfigProps> = ({ gateId }) => {
 
   return (
     <PaperLevel1 title="Behavior" loading={query.isFetching}>
+      <ConditionalMount mount={editSystemOpen} keepMounted>
+        <DialogSystemAssembly
+          open={editSystemOpen}
+          assemblyId={gateId}
+          owner={owner}
+          type="gate"
+          title="Edit linked system"
+          onClose={() => {
+            setEditSystemOpen(false);
+            query.refetch();
+          }}
+        />
+      </ConditionalMount>
       {data && (
         <>
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-            <BasicListItem title="System Id">{data.systemId}</BasicListItem>
+            <BasicListItem
+              title={
+                <>
+                  System Id
+                  <ButtonWeb3Interaction
+                    title="Edit assembly system"
+                    onClick={() => setEditSystemOpen(true)}
+                  />
+                </>
+              }
+            >
+              {data.systemId}
+            </BasicListItem>
             {!data.defaultSystem && system && (
               <>
                 <BasicListItem title="System name" disableGutters>

@@ -19,7 +19,7 @@ const About: React.FC = () => {
   return (
     <Box p={2} flexGrow={1} overflow="auto">
       <Helmet>
-        <title>EVE:F tools - About</title>
+        <title>EVE Datacore - About</title>
       </Helmet>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>

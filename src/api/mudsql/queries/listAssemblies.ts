@@ -1,6 +1,8 @@
 import { keyBy } from "lodash-es";
+import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
+import { Assembly } from "../types";
 
 const assemblyTypeMap = {
   0: 77917,
@@ -20,7 +22,7 @@ type DbRow = {
   type__smartObjectId: string;
   type__smartAssemblyType: keyof typeof assemblyTypeMap;
   owner__tokenId: string;
-  owner__owner: string;
+  owner__owner: Hex;
   location__smartObjectId: string;
   location__solarSystemId: string;
   location__x: string;
@@ -33,22 +35,6 @@ type EntityDbRow = {
   name: string;
   dappURL: string;
   description: string;
-};
-
-type Assembly = {
-  id: string;
-  state: number;
-  typeId: number;
-  isValid: boolean;
-  anchoredAt: number;
-  updatedAt: number;
-  ownerId: string;
-  ownerName: string;
-  solarSystemId?: number;
-  location?: { x: string; y: string; z: string };
-  name?: string;
-  dappUrl?: string;
-  description?: string;
 };
 
 type ListAssembliesOptions = {
@@ -159,7 +145,6 @@ export const listAssemblies =
       id: a.smartObjectId,
       state: Number.parseInt(a.currentState, 10),
       anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
-      updatedAt: Number.parseInt(a.updatedBlockTime, 10) * 1000,
       isValid: a.isValid || false,
       typeId: assemblyTypeMap[a.type__smartAssemblyType],
       ownerId: a.owner__owner,

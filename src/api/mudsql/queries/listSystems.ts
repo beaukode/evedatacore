@@ -3,22 +3,12 @@ import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { ensureArray, incrementHex, toSqlHex } from "../utils";
+import { System } from "../types";
 
 type DbRow = {
   systemId: Hex;
   system: Hex;
   publicAccess: boolean;
-};
-
-type System = {
-  systemId: Hex;
-  contract: Hex;
-  publicAccess: boolean;
-  name: string;
-  namespace: string;
-  namespaceId: Hex;
-  namespaceOwner?: Hex;
-  namespaceOwnerName?: string;
 };
 
 type ListSystemsOptions = {

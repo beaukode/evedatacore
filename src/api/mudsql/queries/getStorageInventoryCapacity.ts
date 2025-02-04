@@ -1,4 +1,5 @@
 import { MudSqlClient } from "../client";
+import { InventoryCapacity } from "../types";
 
 type DbRow = {
   smartObjectId: string;
@@ -6,11 +7,9 @@ type DbRow = {
   usedCapacity: string;
 };
 
-type Capacity = { used: string; total: string };
-
 export const getStorageInventoryCapacity =
   (client: MudSqlClient) =>
-  async (id: string): Promise<Capacity> => {
+  async (id: string): Promise<InventoryCapacity> => {
     const records = await client.selectFrom<DbRow>(
       "eveworld",
       "InventoryTable",
