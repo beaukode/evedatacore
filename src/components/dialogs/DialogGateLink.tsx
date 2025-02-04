@@ -143,7 +143,6 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
         }
         txError={mutate.error}
         txReceipt={mutate.data}
-        disabledOwnerCheck
       >
         <DialogContentText gutterBottom>
           You are about to {action} gates:
