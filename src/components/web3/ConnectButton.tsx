@@ -1,14 +1,12 @@
 import { Button } from "@mui/material";
 import ConnectIcon from "@mui/icons-material/Power";
-import { useAccount, useDisconnect } from "wagmi";
-import { shorten } from "@/tools";
+import { useAccount } from "wagmi";
 import { useShowConnectDialog } from "@/contexts/AppContext";
+import UserButton from "./UserButton";
 
 export const ConnectButton = () => {
   const account = useAccount();
   const showConnectDialog = useShowConnectDialog();
-
-  const { disconnect } = useDisconnect();
 
   return (
     <>
@@ -22,18 +20,8 @@ export const ConnectButton = () => {
           Connect
         </Button>
       )}
-      {account.isConnected && (
-        <Button
-          onClick={() => {
-            console.log("disconnecting");
-            disconnect();
-          }}
-          variant="outlined"
-          startIcon={<ConnectIcon />}
-          sx={{ minWidth: 150 }}
-        >
-          {shorten(account.address, 8)}
-        </Button>
+      {account.isConnected && account.address && (
+        <UserButton address={account.address} />
       )}
     </>
   );
