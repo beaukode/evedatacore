@@ -82,9 +82,9 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
     queryKey: ["SmartAssemblySystemId", assemblyId],
     queryFn: async () => {
       if (type === "gate") {
-        return mudWeb3.getGateSystemId(BigInt(assemblyId));
+        return mudWeb3.gateGetSystem({ gateId: BigInt(assemblyId) });
       } else if (type === "turret") {
-        mudWeb3.getTurretSystemId(BigInt(assemblyId));
+        mudWeb3.turretGetSystem({ turretId: BigInt(assemblyId) });
       } else {
         throw new Error(`Invalid type ${type}`);
       }
@@ -124,9 +124,6 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
 
   const mutateState = useMutation({
     mutationFn: () => {
-      if (!mudWeb3.wallet) {
-        throw new Error("Wallet error, please refresh the page and try again");
-      }
       let systemId: Hex =
         "0x0000000000000000000000000000000000000000000000000000000000000000";
       if (selectedValue === "custom") {
@@ -155,12 +152,12 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
         throw new Error("Select a valid option");
       }
       if (type === "gate") {
-        return mudWeb3.wallet.configureSmartGate(BigInt(assemblyId), systemId);
+        return mudWeb3.gateSetSystem({ gateId: BigInt(assemblyId), systemId });
       } else if (type === "turret") {
-        return mudWeb3.wallet.configureSmartTurret(
-          BigInt(assemblyId),
-          systemId
-        );
+        return mudWeb3.turretSetSystem({
+          turretId: BigInt(assemblyId),
+          systemId,
+        });
       } else {
         throw new Error(`Invalid type ${type}`);
       }
