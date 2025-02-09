@@ -27,10 +27,13 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     if (!publicClient) {
       throw new Error(`Unable to retrieve Viem client for chain ${chainId}.`);
     }
+
     return createMudWeb3Client({
-      worldAddress,
       publicClient,
       walletClient,
+      mudAddresses: {
+        world: worldAddress,
+      },
     });
   }, [publicClient, walletClient]);
 
