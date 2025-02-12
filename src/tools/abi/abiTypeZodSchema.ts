@@ -40,7 +40,10 @@ export function abiTypeZodSchema(abiType: AbiTypeDetails): z.ZodSchema {
     case "bool":
       return z.boolean();
     case "address":
-      return z.string().length(40);
+      return z
+        .string()
+        .length(40)
+        .transform((value) => `0x${value}`);
     case "bytes": {
       if (abiType.length) {
         return z

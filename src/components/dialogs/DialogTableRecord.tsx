@@ -55,12 +55,14 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         },
         {} as Record<string, true>
       );
+      const key = validationSchema
+        .pick(keysToPick)
+        .parse(recordValuesToFormValues(keyValues));
       return mudWeb3.storeGetRecord({
         table,
-        key: validationSchema.pick(keysToPick).parse(keyValues),
+        key,
       });
     },
-
     enabled: open,
   });
 
