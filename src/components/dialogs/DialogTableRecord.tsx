@@ -8,6 +8,7 @@ import { useMudWeb3 } from "@/contexts/AppContext";
 import useAbiFields from "@/tools/useAbiFields";
 import useValueChanged from "@/tools/useValueChanged";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
+import { z } from "zod";
 
 interface DialogTableRecordProps {
   table: Table;
@@ -64,7 +65,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
   });
 
   const mutateRecord = useMutation({
-    mutationFn: () => {
+    mutationFn: (values: z.infer<typeof validationSchema>) => {
       return new Promise<null>((resolve) =>
         setTimeout(() => resolve(null), 1000)
       );
@@ -128,7 +129,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
       >
         <form
           ref={formRef}
-          onSubmit={handleSubmit((v) => console.log("handleSubmit", v))}
+          onSubmit={handleSubmit((v) => mutateRecord.mutate(v))}
         >
           {fields.map(({ key, label, abiType, FormComponent }) => {
             if (abiType.isArray) {
@@ -160,7 +161,9 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
                     error={!!errors[key]}
                     helperText={helperText}
                     margin="dense"
-                    disabled={isKey}
+                    disabled={
+                      isKey || mutateRecord.isPending || mutateRecord.isSuccess
+                    }
                   />
                 )}
               </React.Fragment>

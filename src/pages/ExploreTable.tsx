@@ -3,12 +3,14 @@ import { Helmet } from "react-helmet";
 import {
   Alert,
   Box,
+  IconButton,
   List,
   ListItem,
   ListItemText,
   TableCell,
   TextField,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
@@ -22,9 +24,14 @@ import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DataTable from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
+import { pick } from "lodash-es";
+import ConditionalMount from "@/components/ui/ConditionalMount";
+import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [editKey, setEditKey] = React.useState<Record<string, string>>();
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
@@ -62,9 +69,12 @@ const ExploreTable: React.FC = () => {
 
   const columnsLabels = React.useMemo(() => {
     if (!query.data) return [];
-    return Object.entries(query.data.schema).map(([key, { type }]) => ({
-      label: `${key} (${type})`,
-    }));
+    const columnsLabels = Object.entries(query.data.schema).map(
+      ([key, { type }]) => ({
+        label: `${key} (${type})`,
+      })
+    );
+    return [{ label: " " }, ...columnsLabels];
   }, [query.data]);
 
   const columnsKeys = React.useMemo(() => {
@@ -92,11 +102,25 @@ const ExploreTable: React.FC = () => {
     return filterInProps(queryRecords.data, debouncedSearch.text, columnsKeys);
   }, [queryRecords.data, columnsKeys, debouncedSearch.text]);
 
+  const handleEditClick = React.useCallback((keys: Record<string, string>) => {
+    setEditOpen(true);
+    setEditKey(keys);
+  }, []);
+
   const itemContent = React.useCallback(
     (idx: number, item: Record<string, string>) => {
       const key = tableKeys.map((k) => item[k]).join("|") || idx.toString();
       return (
         <React.Fragment key={key}>
+          <TableCell sx={{ p: 0 }}>
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() => handleEditClick(pick(item, tableKeys))}
+            >
+              <EditIcon />
+            </IconButton>
+          </TableCell>
           {columnsKeys.map((k, i) => (
             <TableCell key={i} sx={{ fontFamily: "monospace" }}>
               {columnsTypes[k] === "bool"
@@ -109,7 +133,7 @@ const ExploreTable: React.FC = () => {
         </React.Fragment>
       );
     },
-    [tableKeys, columnsKeys, columnsTypes]
+    [tableKeys, columnsKeys, columnsTypes, handleEditClick]
   );
 
   if (!id || !table || !namespaceId || (!query.isLoading && !query.data)) {
@@ -193,15 +217,29 @@ const ExploreTable: React.FC = () => {
         </Box>
 
         {data && (
-          <Box flexGrow={1} overflow="auto">
-            <DataTable
-              data={records}
-              columns={columnsLabels}
-              itemContent={itemContent}
-              dynamicWidth
-              rememberScroll
-            />
-          </Box>
+          <>
+            <ConditionalMount mount={editOpen} keepMounted>
+              <DialogTableRecord
+                open={editOpen}
+                table={data}
+                keyValues={editKey || {}}
+                owner={data?.namespaceOwner || "0x"}
+                onClose={() => {
+                  setEditOpen(false);
+                  queryRecords.refetch();
+                }}
+              />
+            </ConditionalMount>
+            <Box flexGrow={1} overflow="auto">
+              <DataTable
+                data={records}
+                columns={columnsLabels}
+                itemContent={itemContent}
+                dynamicWidth
+                rememberScroll
+              />
+            </Box>
+          </>
         )}
       </PaperLevel1>
     </Box>
