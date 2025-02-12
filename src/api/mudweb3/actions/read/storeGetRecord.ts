@@ -1,5 +1,6 @@
-import { Table, GetRecordOptions, getRecord } from "@latticexyz/store/internal";
+import { GetRecordOptions, getRecord } from "@latticexyz/store/internal";
 import { getSchemaPrimitives } from "@latticexyz/protocol-parser/internal";
+import { Table } from "@latticexyz/config";
 import { MudWeb3ClientBase } from "../../types";
 
 export type StoreGetRecordParameters<table extends Table> = Pick<
