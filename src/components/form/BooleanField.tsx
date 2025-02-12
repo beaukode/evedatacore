@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import { Control } from "react-hook-form";
 import { CheckboxElement } from "react-hook-form-mui";
-import { AbiTypeDetails } from "@/tools";
+import { AbiTypeDetails } from "@/tools/abi";
 
 interface BooleanFieldProps
   extends React.ComponentProps<typeof CheckboxElement> {

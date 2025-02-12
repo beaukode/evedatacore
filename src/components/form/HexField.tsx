@@ -1,7 +1,7 @@
 import React from "react";
-import { AbiTypeDetails } from "@/tools";
 import { InputAdornment, TextField } from "@mui/material";
 import { Controller, Control } from "react-hook-form";
+import { AbiTypeDetails } from "@/tools/abi";
 
 interface HexFieldProps extends React.ComponentProps<typeof TextField> {
   abiType: AbiTypeDetails;
@@ -19,7 +19,13 @@ function transformValue(value: string): string | null {
   return r;
 }
 
-const HexField: React.FC<HexFieldProps> = ({ control, name, ...rest }) => {
+const HexField: React.FC<HexFieldProps> = ({
+  control,
+  name,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  abiType,
+  ...rest
+}) => {
   return (
     <Controller
       control={control}
@@ -28,6 +34,9 @@ const HexField: React.FC<HexFieldProps> = ({ control, name, ...rest }) => {
         return (
           <TextField
             slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
               input: {
                 startAdornment: (
                   <InputAdornment position="start" sx={{ mr: 0 }}>

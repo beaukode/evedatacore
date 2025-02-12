@@ -1,7 +1,7 @@
-import { AbiTypeDetails } from "@/tools";
-import { TextField } from "@mui/material";
 import React from "react";
+import { TextField } from "@mui/material";
 import { Controller, Control } from "react-hook-form";
+import { AbiTypeDetails } from "@/tools/abi";
 
 interface IntegerFieldProps extends React.ComponentProps<typeof TextField> {
   abiType: AbiTypeDetails;
@@ -36,6 +36,11 @@ const IntegerField: React.FC<IntegerFieldProps> = ({
         return (
           <TextField
             {...field}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
             fullWidth
             onChange={(e) =>
               field.onChange(
