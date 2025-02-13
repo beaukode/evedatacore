@@ -35,6 +35,11 @@ import {
   storeGetRecord,
 } from "./read/storeGetRecord";
 import {
+  StoreGetTableParameters,
+  StoreGetTableReturnType,
+  storeGetTable,
+} from "./read/storeGetTable";
+import {
   SystemSimulateParameters,
   SystemSimulateReturnType,
   systemSimulate,
@@ -73,6 +78,9 @@ export type MudWeb3ReadActions = {
   storeGetRecord: <table extends Table>(
     args: StoreGetRecordParameters<table>
   ) => Promise<StoreGetRecordReturnType<table>>;
+  storeGetTable: (
+    args: StoreGetTableParameters
+  ) => Promise<StoreGetTableReturnType>;
   systemSimulate: (
     args: SystemSimulateParameters
   ) => Promise<SystemSimulateReturnType>;
@@ -122,6 +130,11 @@ export function mudWeb3ReadActions(
       args: StoreGetRecordParameters<table>
     ): Promise<StoreGetRecordReturnType<table>> => {
       return storeGetRecord(client, args);
+    },
+    storeGetTable: async (
+      args: StoreGetTableParameters
+    ): Promise<StoreGetTableReturnType> => {
+      return storeGetTable(client, args);
     },
     systemSimulate: async (
       args: SystemSimulateParameters
