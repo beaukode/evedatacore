@@ -5,26 +5,31 @@ import BooleanField from "@/components/form/BooleanField";
 import HexField from "@/components/form/HexField";
 import IntegerField from "@/components/form/IntegerField";
 import { abiTypeZodSchema } from "./abi/abiTypeZodSchema";
-import { AbiTypeDetails, BaseAbiType, parseAbiType } from "./abi";
-import { Hex } from "viem";
+import {
+  AbiTypeDetails,
+  BaseAbiType,
+  parseAbiType,
+  TableRecordValues,
+  TableValue,
+} from "./abi";
 
 type Schema = Record<string, { type: AbiType }>;
 
 function recordValueToFormValue(
   abiType: AbiTypeDetails,
-  value: string | undefined
+  value: TableValue | undefined
 ): string | boolean {
   if (abiType.isArray) {
-    return value || "";
+    return value?.toString() || "";
   } else if (abiType.baseType === "bool") {
     return value === "true";
   } else if (["address", "bytes"].includes(abiType.baseType)) {
-    if (value && value.startsWith("0x")) {
-      return value.substring(2);
+    if (value && value.toString().startsWith("0x")) {
+      return value.toString().substring(2);
     }
-    return value || "";
+    return value?.toString() || "";
   } else {
-    return value || "";
+    return value?.toString() || "";
   }
 }
 
@@ -53,29 +58,18 @@ export type AbiField = {
 
 type UseAbiFieldsResult<
   schema extends Schema,
-  values extends Record<string, string>,
+  values extends TableRecordValues<keyof schema>,
 > = {
   fields: AbiField[];
   validationSchema: z.ZodObject<Record<keyof schema, z.ZodSchema>>;
   defaultValues: Record<keyof schema, string | boolean>;
   initialValues: Record<keyof values, string | boolean>;
   recordValuesToFormValues: (
-    values: Record<
-      keyof schema,
-      | string
-      | bigint
-      | number
-      | boolean
-      | Hex
-      | readonly number[]
-      | readonly bigint[]
-      | readonly Hex[]
-      | readonly boolean[]
-    >
+    values: TableRecordValues<keyof schema>
   ) => Record<keyof schema, string | boolean>;
 };
 
-const useAbiFields = <T extends Schema, V extends Record<string, string>>(
+const useAbiFields = <T extends Schema, V extends TableRecordValues<keyof T>>(
   schema: T,
   values: V
 ): UseAbiFieldsResult<T, V> => {
