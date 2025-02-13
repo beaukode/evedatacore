@@ -15,6 +15,7 @@ import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
+import { chainId } from "@/constants";
 
 interface DialogOnOffAssemblyProps {
   open: boolean;
@@ -47,7 +48,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
 
   const state = React.useMemo(() => {
     if (!account.isConnected) return "connect";
-    if (account.chainId !== 17069) return "chain";
+    if (account.chainId !== chainId) return "chain";
     if (disabledOwnerCheck) return "ready";
     if (
       !disabledOwnerCheck &&
