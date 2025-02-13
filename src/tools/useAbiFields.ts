@@ -12,6 +12,7 @@ import {
   TableRecordValues,
   TableValue,
 } from "./abi";
+import StringField from "@/components/form/StringField";
 
 type Schema = Record<string, { type: AbiType }>;
 
@@ -35,14 +36,17 @@ function recordValueToFormValue(
 
 const formComponentsMap: Record<
   BaseAbiType,
-  typeof IntegerField | typeof HexField | typeof BooleanField
+  | typeof IntegerField
+  | typeof HexField
+  | typeof BooleanField
+  | typeof StringField
 > = {
   uint: IntegerField,
   int: IntegerField,
   bool: BooleanField,
   address: HexField,
   bytes: HexField,
-  string: IntegerField,
+  string: StringField,
 };
 
 export type AbiField = {
@@ -53,7 +57,11 @@ export type AbiField = {
   validationSchema: z.ZodSchema;
   defaultValue: string | boolean;
   initialValue: string | boolean;
-  FormComponent: typeof IntegerField | typeof HexField | typeof BooleanField;
+  FormComponent:
+    | typeof IntegerField
+    | typeof HexField
+    | typeof BooleanField
+    | typeof StringField;
 };
 
 type UseAbiFieldsResult<
