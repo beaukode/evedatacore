@@ -66,6 +66,11 @@ const ExploreTable: React.FC = () => {
     retry: false,
   });
 
+  const handleEditClick = React.useCallback((keys?: Record<string, string>) => {
+    setEditOpen(true);
+    setEditKey(keys);
+  }, []);
+
   const columnsLabels = React.useMemo(() => {
     if (!query.data) return [];
     const columnsLabels = Object.entries(query.data.schema).map(
@@ -73,8 +78,20 @@ const ExploreTable: React.FC = () => {
         label: `${key} (${type})`,
       })
     );
-    return [{ label: " " }, ...columnsLabels];
-  }, [query.data]);
+    return [
+      {
+        sx: { p: 0 },
+        label: (
+          <ButtonWeb3Interaction
+            icon="add"
+            title="Create table record"
+            onClick={() => handleEditClick()}
+          />
+        ),
+      },
+      ...columnsLabels,
+    ];
+  }, [handleEditClick, query.data]);
 
   const columnsKeys = React.useMemo(() => {
     if (!query.data) return [];
@@ -101,11 +118,6 @@ const ExploreTable: React.FC = () => {
     return filterInProps(queryRecords.data, debouncedSearch.text, columnsKeys);
   }, [queryRecords.data, columnsKeys, debouncedSearch.text]);
 
-  const handleEditClick = React.useCallback((keys: Record<string, string>) => {
-    setEditOpen(true);
-    setEditKey(keys);
-  }, []);
-
   const itemContent = React.useCallback(
     (idx: number, item: Record<string, string>) => {
       const key = tableKeys.map((k) => item[k]).join("|") || idx.toString();
@@ -114,6 +126,7 @@ const ExploreTable: React.FC = () => {
           <TableCell sx={{ p: 0 }}>
             <ButtonWeb3Interaction
               icon="edit"
+              title="Edit table record"
               onClick={() => handleEditClick(pick(item, tableKeys))}
             />
           </TableCell>
@@ -211,14 +224,14 @@ const ExploreTable: React.FC = () => {
             <Alert severity="error">{queryRecords.error.message}</Alert>
           )}
         </Box>
-
         {data && (
           <>
             <ConditionalMount mount={editOpen} keepMounted>
               <DialogTableRecord
                 open={editOpen}
+                title={editKey ? "Edit table record" : "Create table record"}
                 table={data}
-                keyValues={editKey || {}}
+                keyValues={editKey}
                 owner={data?.namespaceOwner || "0x"}
                 onClose={() => {
                   setEditOpen(false);

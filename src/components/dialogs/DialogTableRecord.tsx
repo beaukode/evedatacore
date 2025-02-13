@@ -12,14 +12,16 @@ import { TableRecordValues } from "@/tools/abi";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 
 interface DialogTableRecordProps {
+  title: string;
   table: Table;
-  keyValues: TableRecordValues<string>;
+  keyValues?: TableRecordValues<string>;
   owner: string;
   open: boolean;
   onClose: () => void;
 }
 
 const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
+  title,
   table,
   keyValues,
   owner,
@@ -29,6 +31,8 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
   const formRef = React.useRef<HTMLFormElement>(null);
   const queryClient = useQueryClient();
   const mudWeb3 = useMudWeb3();
+
+  const createRecord = keyValues === undefined;
 
   const {
     fields,
@@ -41,7 +45,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
   const queryKey = [
     "TableRecord",
     table.tableId,
-    Object.entries(keyValues)
+    Object.entries(keyValues || {})
       .map((kv) => kv.join(":"))
       .join("|"),
   ];
@@ -58,17 +62,34 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
       );
       const key = validationSchema
         .pick(keysToPick)
-        .parse(recordValuesToFormValues(keyValues));
+        .parse(recordValuesToFormValues(keyValues || {}));
       return mudWeb3.storeGetRecord({
         table,
         key,
       });
     },
-    enabled: open,
+    enabled: open && Boolean(keyValues),
   });
 
   const mutateRecord = useMutation({
-    mutationFn: (values: z.infer<typeof validationSchema>) => {
+    mutationFn: async (values: z.infer<typeof validationSchema>) => {
+      if (createRecord) {
+        const keysToPick = table.key.reduce(
+          (acc, key) => {
+            acc[key] = true;
+            return acc;
+          },
+          {} as Record<string, true>
+        );
+        const key = validationSchema
+          .pick(keysToPick)
+          .parse(recordValuesToFormValues(values || {}));
+        const existing = await mudWeb3.storeGetRecord({
+          table,
+          key,
+        });
+        console.log("existing", existing);
+      }
       return mudWeb3.storeSetRecord({
         table,
         values: values,
@@ -105,7 +126,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
   return (
     <>
       <BaseWeb3Dialog
-        title="Edit table record"
+        title={title}
         open={open}
         owner={owner}
         size="lg"
@@ -141,7 +162,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
             }
             const isKey = table.key.includes(key);
             let helperText = "";
-            if (isKey) {
+            if (!createRecord && isKey) {
               helperText = "Key fields cannot be modified";
             }
             if (errors[key]?.message?.toString()) {
@@ -166,7 +187,9 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
                     helperText={helperText}
                     margin="dense"
                     disabled={
-                      isKey || mutateRecord.isPending || mutateRecord.isSuccess
+                      (isKey && !createRecord) ||
+                      mutateRecord.isPending ||
+                      mutateRecord.isSuccess
                     }
                   />
                 )}

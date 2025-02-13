@@ -79,7 +79,7 @@ type UseAbiFieldsResult<
 
 const useAbiFields = <T extends Schema, V extends TableRecordValues<keyof T>>(
   schema: T,
-  values: V
+  values?: V
 ): UseAbiFieldsResult<T, V> => {
   const {
     fields,
@@ -102,7 +102,7 @@ const useAbiFields = <T extends Schema, V extends TableRecordValues<keyof T>>(
         abiType: typeDetails,
         validationSchema: abiTypeZodSchema(typeDetails),
         defaultValue: typeDetails.baseType === "bool" ? false : "",
-        initialValue: recordValueToFormValue(typeDetails, values[key]),
+        initialValue: recordValueToFormValue(typeDetails, values?.[key]),
         FormComponent: formComponentsMap[typeDetails.baseType],
       };
 
