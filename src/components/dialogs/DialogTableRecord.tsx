@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Skeleton } from "@mui/material";
+import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,12 +8,12 @@ import { Table } from "@latticexyz/config";
 import { useMudWeb3 } from "@/contexts/AppContext";
 import useAbiFields from "@/tools/useAbiFields";
 import useValueChanged from "@/tools/useValueChanged";
+import { TableRecordValues } from "@/tools/abi";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import { z } from "zod";
 
 interface DialogTableRecordProps {
   table: Table;
-  keyValues: Record<string, string>;
+  keyValues: TableRecordValues<string>;
   owner: string;
   open: boolean;
   onClose: () => void;
@@ -68,9 +69,10 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
 
   const mutateRecord = useMutation({
     mutationFn: (values: z.infer<typeof validationSchema>) => {
-      return new Promise<null>((resolve) =>
-        setTimeout(() => resolve(null), 1000)
-      );
+      return mudWeb3.storeSetRecord({
+        table,
+        values: values,
+      });
     },
     retry: false,
   });
