@@ -3,14 +3,12 @@ import { Helmet } from "react-helmet";
 import {
   Alert,
   Box,
-  IconButton,
   List,
   ListItem,
   ListItemText,
   TableCell,
   TextField,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
@@ -27,6 +25,7 @@ import { filterInProps } from "@/tools";
 import { pick } from "lodash-es";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
+import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
@@ -113,13 +112,10 @@ const ExploreTable: React.FC = () => {
       return (
         <React.Fragment key={key}>
           <TableCell sx={{ p: 0 }}>
-            <IconButton
-              color="primary"
-              size="small"
+            <ButtonWeb3Interaction
+              icon="edit"
               onClick={() => handleEditClick(pick(item, tableKeys))}
-            >
-              <EditIcon />
-            </IconButton>
+            />
           </TableCell>
           {columnsKeys.map((k, i) => (
             <TableCell key={i} sx={{ fontFamily: "monospace" }}>
