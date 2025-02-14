@@ -33,11 +33,9 @@ export async function storeGetRecord<table extends Table>(
   });
 
   if (
-    staticData ===
-      "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" &&
-    encodedLengths ===
-      "0x0000000000000000000000000000000000000000000000000000000000000000" &&
-    dynamicData === "0x"
+    /^0x0*$/.test(staticData) &&
+    /^0x0*$/.test(encodedLengths) &&
+    /^0x0*$/.test(dynamicData)
   ) {
     // Record not found
     return undefined;
