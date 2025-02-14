@@ -50,6 +50,11 @@ import {
   turretGetSystem,
 } from "./read/turretGetSystem";
 import {
+  WorldReadParameters,
+  WorldReadReturnType,
+  worldRead,
+} from "./read/worldRead";
+import {
   WorldSimulateParameters,
   WorldSimulateReturnType,
   worldSimulate,
@@ -87,6 +92,9 @@ export type MudWeb3ReadActions = {
   turretGetSystem: (
     args: TurretGetSystemParameters
   ) => Promise<TurretGetSystemReturnType>;
+  worldRead: <abi extends Abi = WorldAbi>(
+    args: WorldReadParameters<abi>
+  ) => Promise<WorldReadReturnType<abi>>;
   worldSimulate: <abi extends Abi = WorldAbi>(
     args: WorldSimulateParameters<abi>
   ) => Promise<WorldSimulateReturnType>;
@@ -145,6 +153,11 @@ export function mudWeb3ReadActions(
       args: TurretGetSystemParameters
     ): Promise<TurretGetSystemReturnType> => {
       return turretGetSystem(client, args);
+    },
+    worldRead: async <abi extends Abi = WorldAbi>(
+      args: WorldReadParameters<abi>
+    ): Promise<WorldReadReturnType<abi>> => {
+      return worldRead(client, args);
     },
     worldSimulate: async <abi extends Abi = WorldAbi>(
       args: WorldSimulateParameters<abi>
