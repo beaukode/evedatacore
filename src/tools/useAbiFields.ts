@@ -18,7 +18,7 @@ import IntegerArrayField from "@/components/form/IntegerArrayField";
 type Schema = Record<string, { type: AbiType }>;
 
 type FormValue<T extends AbiTypeDetails> = T["isArray"] extends true
-  ? Array<T["baseType"] extends "bool" ? boolean : string>
+  ? Array<{ value: T["baseType"] extends "bool" ? boolean : string }>
   : T["baseType"] extends "bool"
     ? boolean
     : string;
@@ -28,12 +28,13 @@ function recordValueToFormValue<T extends AbiTypeDetails>(
   value: TableValue | undefined
 ): FormValue<T> {
   if (abiType.isArray) {
+    console.log("recordValueToFormValue", abiType, value);
     if (Array.isArray(value)) {
-      return value.map((v: TableValue) =>
-        recordValueToFormValue({ ...abiType, isArray: false }, v)
-      ) as unknown as FormValue<T>;
+      return value.map((v: TableValue) => ({
+        value: recordValueToFormValue({ ...abiType, isArray: false }, v),
+      })) as unknown as FormValue<T>;
     } else {
-      return [] as string[] as FormValue<T>;
+      return [] as unknown[] as FormValue<T>;
     }
   } else if (abiType.baseType === "bool") {
     if (typeof value === "boolean") {
@@ -148,7 +149,7 @@ const useAbiFields = <T extends Schema, V extends TableRecordValues<keyof T>>(
             [key]:
               values[key] === undefined
                 ? defaultValue
-                : recordValueToFormValue(abiType, values[key].toString()),
+                : recordValueToFormValue(abiType, values[key]),
           };
         },
         {} as Record<keyof T, string | boolean>
