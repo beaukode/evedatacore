@@ -18,6 +18,14 @@ export function parseAbiType(type: AbiType): AbiTypeDetails {
   if (!(baseType && isBaseApiType(baseType))) {
     throw new Error(`Invalid base ABI type: ${baseType}`);
   }
+
+  if (length) {
+    const parsedLength = Number.parseInt(length, 10);
+    if (isNaN(parsedLength) || parsedLength <= 0) {
+      throw new Error(`Invalid length in ABI type: ${type}`);
+    }
+  }
+
   return {
     baseType: baseType,
     isArray: type.endsWith("[]"),
