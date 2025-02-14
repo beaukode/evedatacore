@@ -165,7 +165,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
             const isKey = table.key.includes(key);
             let helperText = "";
             if (!createRecord && isKey) {
-              helperText = "Key fields cannot be modified";
+              helperText = "Key fields cannot be edited";
             }
             if (errors[key]?.message?.toString()) {
               helperText = errors[key]?.message?.toString();
