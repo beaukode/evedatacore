@@ -88,7 +88,10 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
           table,
           key,
         });
-        console.log("existing", existing);
+
+        if (existing) {
+          throw new Error("A record with those keys already exists.");
+        }
       }
       return mudWeb3.storeSetRecord({
         table,
