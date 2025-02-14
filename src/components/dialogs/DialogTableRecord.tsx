@@ -10,6 +10,7 @@ import useAbiFields from "@/tools/useAbiFields";
 import useValueChanged from "@/tools/useValueChanged";
 import { TableRecordValues } from "@/tools/abi";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
+import ArrayOfFields from "../form/ArrayOfFields";
 
 interface DialogTableRecordProps {
   title: string;
@@ -103,9 +104,10 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
 
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     control,
     reset,
+    trigger,
   } = useForm({
     defaultValues,
     resolver: zodResolver(validationSchema),
@@ -154,51 +156,87 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         txReceipt={mutateRecord.data}
         disabledOwnerCheck
       >
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit((v) => mutateRecord.mutate(v))}
-        >
-          {fields.map(({ key, label, abiType, FormComponent }) => {
-            if (abiType.isArray) {
-              return <div>Array type not supported</div>;
-            }
-            const isKey = table.key.includes(key);
-            let helperText = "";
-            if (!createRecord && isKey) {
-              helperText = "Key fields cannot be edited";
-            }
-            if (errors[key]?.message?.toString()) {
-              helperText = errors[key]?.message?.toString();
-            }
-            return (
-              <React.Fragment key={key}>
-                {!isKey && queryRecord.isLoading && (
-                  <Skeleton
-                    variant="rounded"
-                    sx={{ mt: 1, mb: 0.5 }}
-                    height={48}
-                  />
-                )}
-                {(isKey || !queryRecord.isLoading) && (
-                  <FormComponent
-                    control={control}
-                    name={key}
-                    label={label}
-                    abiType={abiType}
-                    error={!!errors[key]}
-                    helperText={helperText}
-                    margin="dense"
-                    disabled={
-                      (isKey && !createRecord) ||
-                      mutateRecord.isPending ||
-                      mutateRecord.isSuccess
-                    }
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </form>
+        <div style={{ overflow: "auto" }}>
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit((v) => mutateRecord.mutate(v))}
+          >
+            {fields.map(({ key, label, abiType, FormComponent }) => {
+              const isKey = table.key.includes(key);
+              let helperText = "";
+              if (!createRecord && isKey) {
+                helperText = "Key fields cannot be edited";
+              }
+              if (abiType.isArray) {
+                return (
+                  <React.Fragment key={key}>
+                    {!isKey && queryRecord.isLoading && (
+                      <Skeleton
+                        variant="rounded"
+                        sx={{ mt: 1, mb: 0.5 }}
+                        height={48}
+                      />
+                    )}
+                    {(isKey || !queryRecord.isLoading) && (
+                      <>
+                        {
+                          <ArrayOfFields
+                            control={control}
+                            name={key}
+                            label={label}
+                            abiType={abiType}
+                            formComponent={FormComponent}
+                            disabled={
+                              (isKey && !createRecord) ||
+                              mutateRecord.isPending ||
+                              mutateRecord.isSuccess
+                            }
+                            onChange={() => {
+                              if (isSubmitted) {
+                                trigger(key);
+                              }
+                            }}
+                          />
+                        }
+                      </>
+                    )}
+                  </React.Fragment>
+                );
+              }
+
+              if (errors[key]?.message?.toString()) {
+                helperText = errors[key]?.message?.toString();
+              }
+              return (
+                <React.Fragment key={key}>
+                  {!isKey && queryRecord.isLoading && (
+                    <Skeleton
+                      variant="rounded"
+                      sx={{ mt: 1, mb: 0.5 }}
+                      height={48}
+                    />
+                  )}
+                  {(isKey || !queryRecord.isLoading) && (
+                    <FormComponent
+                      control={control}
+                      name={key}
+                      label={label}
+                      abiType={abiType}
+                      error={!!errors[key]}
+                      helperText={helperText}
+                      margin="dense"
+                      disabled={
+                        (isKey && !createRecord) ||
+                        mutateRecord.isPending ||
+                        mutateRecord.isSuccess
+                      }
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </form>
+        </div>
       </BaseWeb3Dialog>
     </>
   );

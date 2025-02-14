@@ -14,9 +14,22 @@ function bigintValidator(value: z.ZodString, min: bigint, max: bigint) {
     });
 }
 
+function wrapIntoArrayValuePreprocess(value: z.ZodTypeAny) {
+  return z.preprocess(
+    (v: unknown) => (typeof v === "object" && v && "value" in v ? v.value : v),
+    value
+  );
+}
+
 export function abiTypeZodSchema(abiType: AbiTypeDetails): z.ZodSchema {
   if (abiType.isArray) {
-    return z.array(abiTypeZodSchema({ ...abiType, isArray: false }));
+    return z.array(
+      // There is a limitation when using react-hook-form useFieldArray
+      // that the value must be an object
+      wrapIntoArrayValuePreprocess(
+        abiTypeZodSchema({ ...abiType, isArray: false })
+      )
+    );
   }
 
   switch (abiType.baseType) {
@@ -38,7 +51,7 @@ export function abiTypeZodSchema(abiType: AbiTypeDetails): z.ZodSchema {
       );
     }
     case "bool":
-      return z.boolean();
+      return z.coerce.boolean();
     case "address":
       return z
         .string()

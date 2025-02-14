@@ -26,6 +26,7 @@ const IntegerField: React.FC<IntegerFieldProps> = ({
   control,
   name,
   abiType,
+  onChange,
   ...rest
 }) => {
   return (
@@ -42,11 +43,12 @@ const IntegerField: React.FC<IntegerFieldProps> = ({
               },
             }}
             fullWidth
-            onChange={(e) =>
+            onChange={(e) => {
               field.onChange(
                 transformValue(e.target.value, abiType.baseType === "int")
-              )
-            }
+              );
+              onChange?.(e);
+            }}
             {...rest}
           />
         );

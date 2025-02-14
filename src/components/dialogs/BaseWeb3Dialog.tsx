@@ -77,7 +77,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
       fullWidth
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
         {state !== "ready" && (
           <>
             <DialogContentText id="alert-dialog-description" gutterBottom>

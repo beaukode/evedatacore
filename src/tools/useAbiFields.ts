@@ -1,37 +1,60 @@
 import React from "react";
 import { z } from "zod";
 import { AbiType } from "@latticexyz/config";
-import BooleanField from "@/components/form/BooleanField";
-import HexField from "@/components/form/HexField";
-import IntegerField from "@/components/form/IntegerField";
-import { abiTypeZodSchema } from "./abi/abiTypeZodSchema";
 import {
   AbiTypeDetails,
   BaseAbiType,
   parseAbiType,
   TableRecordValues,
   TableValue,
+  abiTypeZodSchema,
 } from "./abi";
+import BooleanField from "@/components/form/BooleanField";
+import HexField from "@/components/form/HexField";
+import IntegerField from "@/components/form/IntegerField";
 import StringField from "@/components/form/StringField";
+import IntegerArrayField from "@/components/form/IntegerArrayField";
 
 type Schema = Record<string, { type: AbiType }>;
 
-function recordValueToFormValue(
-  abiType: AbiTypeDetails,
+type FormValue<T extends AbiTypeDetails> = T["isArray"] extends true
+  ? Array<T["baseType"] extends "bool" ? boolean : string>
+  : T["baseType"] extends "bool"
+    ? boolean
+    : string;
+
+function recordValueToFormValue<T extends AbiTypeDetails>(
+  abiType: T,
   value: TableValue | undefined
-): string | boolean {
+): FormValue<T> {
   if (abiType.isArray) {
-    return value?.toString() || "";
+    if (Array.isArray(value)) {
+      return value.map((v: TableValue) =>
+        recordValueToFormValue({ ...abiType, isArray: false }, v)
+      ) as unknown as FormValue<T>;
+    } else {
+      return [] as string[] as FormValue<T>;
+    }
   } else if (abiType.baseType === "bool") {
-    return value === "true";
+    if (typeof value === "boolean") {
+      return value as FormValue<T>;
+    }
+    return (value === "true") as FormValue<T>;
   } else if (["address", "bytes"].includes(abiType.baseType)) {
     if (value && value.toString().startsWith("0x")) {
-      return value.toString().substring(2);
+      return value.toString().substring(2) as FormValue<T>;
     }
-    return value?.toString() || "";
+    return (value?.toString() || "") as FormValue<T>;
   } else {
-    return value?.toString() || "";
+    return (value?.toString() || "") as FormValue<T>;
   }
+}
+
+function getDefaultValue<T extends AbiTypeDetails>(
+  typeDetails: T
+): FormValue<T> {
+  if (typeDetails.isArray) return [] as unknown as FormValue<T>;
+  return (typeDetails.baseType === "bool" ? false : "") as FormValue<T>;
 }
 
 const formComponentsMap: Record<
@@ -40,6 +63,7 @@ const formComponentsMap: Record<
   | typeof HexField
   | typeof BooleanField
   | typeof StringField
+  | typeof IntegerArrayField
 > = {
   uint: IntegerField,
   int: IntegerField,
@@ -61,7 +85,8 @@ export type AbiField = {
     | typeof IntegerField
     | typeof HexField
     | typeof BooleanField
-    | typeof StringField;
+    | typeof StringField
+    | typeof IntegerArrayField;
 };
 
 type UseAbiFieldsResult<
@@ -101,7 +126,7 @@ const useAbiFields = <T extends Schema, V extends TableRecordValues<keyof T>>(
         label: `${key} (${type})`,
         abiType: typeDetails,
         validationSchema: abiTypeZodSchema(typeDetails),
-        defaultValue: typeDetails.baseType === "bool" ? false : "",
+        defaultValue: getDefaultValue(typeDetails),
         initialValue: recordValueToFormValue(typeDetails, values?.[key]),
         FormComponent: formComponentsMap[typeDetails.baseType],
       };
