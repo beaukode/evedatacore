@@ -107,7 +107,6 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
     control,
     reset,
   } = useForm({
-    // <typeof defaultValues, any, z.infer<typeof validationSchema>>
     defaultValues,
     resolver: zodResolver(validationSchema),
     values: initialValues,
