@@ -15,8 +15,14 @@ export async function assemblyGetState(
   client: MudWeb3ClientBase,
   args: AssemblyGetStateParameters
 ): Promise<AssemblyGetStateReturnType> {
-  return storeGetRecord(client, {
+  const r = await storeGetRecord(client, {
     table: eveworld.tables.eveworld__DeployableState,
     key: { smartObjectId: args.assemblyId },
   });
+
+  if (!r) {
+    throw new Error(`Assembly ${args.assemblyId} not found`);
+  }
+
+  return r;
 }

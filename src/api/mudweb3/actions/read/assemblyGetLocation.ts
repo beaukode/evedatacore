@@ -15,8 +15,14 @@ export async function assemblyGetLocation(
   client: MudWeb3ClientBase,
   args: AssemblyGetLocationParameters
 ): Promise<AssemblyGetLocationReturnType> {
-  return storeGetRecord(client, {
+  const r = await storeGetRecord(client, {
     table: eveworld.tables.eveworld__LocationTable,
     key: { smartObjectId: args.assemblyId },
   });
+
+  if (!r) {
+    throw new Error(`Assembly ${args.assemblyId} not found`);
+  }
+
+  return r;
 }

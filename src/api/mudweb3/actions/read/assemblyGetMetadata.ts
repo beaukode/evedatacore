@@ -16,8 +16,14 @@ export async function assemblyGetMetadata(
   client: MudWeb3ClientBase,
   args: AssemblyGetMetadataParameters
 ): Promise<AssemblyGetMetadataReturnType> {
-  return storeGetRecord(client, {
+  const r = await storeGetRecord(client, {
     table: eveworld.tables.eveworld__EntityRecordOffchainTable,
     key: { entityId: args.assemblyId },
   });
+
+  if (!r) {
+    throw new Error(`Assembly ${args.assemblyId} not found`);
+  }
+
+  return r;
 }

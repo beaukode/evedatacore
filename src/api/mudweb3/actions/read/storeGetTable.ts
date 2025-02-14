@@ -20,5 +20,9 @@ export async function storeGetTable(
     key: { tableId: args.tableId },
   });
 
+  if (!r) {
+    throw new Error(`Table with ${args.tableId} not found`);
+  }
+
   return decodeTable(r);
 }
