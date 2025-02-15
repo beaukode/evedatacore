@@ -154,7 +154,6 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         }
         txError={mutateRecord.error}
         txReceipt={mutateRecord.data}
-        disabledOwnerCheck
       >
         <div style={{ overflow: "auto", marginRight: -24, paddingRight: 12 }}>
           <form
