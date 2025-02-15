@@ -13,7 +13,6 @@ import BooleanField from "@/components/form/BooleanField";
 import HexField from "@/components/form/HexField";
 import IntegerField from "@/components/form/IntegerField";
 import StringField from "@/components/form/StringField";
-import IntegerArrayField from "@/components/form/IntegerArrayField";
 
 type Schema = Record<string, { type: AbiType }>;
 
@@ -64,7 +63,6 @@ const formComponentsMap: Record<
   | typeof HexField
   | typeof BooleanField
   | typeof StringField
-  | typeof IntegerArrayField
 > = {
   uint: IntegerField,
   int: IntegerField,
@@ -86,8 +84,7 @@ export type AbiField = {
     | typeof IntegerField
     | typeof HexField
     | typeof BooleanField
-    | typeof StringField
-    | typeof IntegerArrayField;
+    | typeof StringField;
 };
 
 type UseAbiFieldsResult<
