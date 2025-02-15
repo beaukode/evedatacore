@@ -5,7 +5,7 @@ import { MudSqlClient } from "../client";
 
 export const selectFrom =
   (client: MudSqlClient) =>
-  async <T extends object = Record<string, string>>(
+  async <T extends object = Record<string, string | string[]>>(
     ns: string,
     table: string,
     options?: SelectOptions
