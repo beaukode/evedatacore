@@ -27,7 +27,6 @@ function recordValueToFormValue<T extends AbiTypeDetails>(
   value: TableValue | undefined
 ): FormValue<T> {
   if (abiType.isArray) {
-    console.log("recordValueToFormValue", abiType, value);
     if (Array.isArray(value)) {
       return value.map((v: TableValue) => ({
         value: recordValueToFormValue({ ...abiType, isArray: false }, v),

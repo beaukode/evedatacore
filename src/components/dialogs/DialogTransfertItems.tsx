@@ -157,7 +157,6 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
 
   useValueChanged((v) => {
     if (v) {
-      console.log("refetch", v);
       query.refetch().then(() => {
         setQuantities({});
       });

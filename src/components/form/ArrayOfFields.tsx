@@ -46,7 +46,6 @@ const ArrayOfFields: React.FC<ArrayOfFieldsProps> = ({
       <legend>{label}</legend>
       {fields.map((field, index) => {
         const { error } = control.getFieldState(`${name}.${index}`);
-        console.log("ArrayOfFields", `${name} #${index + 1}`, error);
         return (
           <Box key={field.id} display="flex" alignItems="center" gap={1}>
             <FormComponent
