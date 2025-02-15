@@ -15,7 +15,7 @@ import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
-import { chainId } from "@/constants";
+import { chainId } from "@/config";
 
 interface DialogOnOffAssemblyProps {
   open: boolean;

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:anvil": "VITE_APP_USE_ANVIL=true vite",
     "build": "tsc -b && vite build",
     "test": "vitest",
     "lint": "eslint .",
