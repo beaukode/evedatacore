@@ -21,7 +21,8 @@ export type DataTableItemContentCallback<T extends Record<string, unknown>> = (
 ) => React.ReactNode;
 
 type ColumnAttributes = {
-  label: string;
+  label: React.ReactNode;
+  sx?: React.ComponentProps<typeof TableCell>["sx"];
   width?: number;
   grow?: boolean;
 };
@@ -98,13 +99,15 @@ const DataTable = <T extends Record<string, unknown>>({
         initialTopMostItemIndex={initialScrollTo || 0}
         fixedHeaderContent={() => (
           <TableRow>
-            {columns.map(({ label, grow }, i) =>
+            {columns.map(({ label, grow, sx }, i) =>
               grow ? (
-                <TableCell colSpan={2} key={i}>
+                <TableCell colSpan={2} key={i} sx={sx}>
                   {label}
                 </TableCell>
               ) : (
-                <TableCell key={i}>{label}</TableCell>
+                <TableCell key={i} sx={sx}>
+                  {label}
+                </TableCell>
               )
             )}
           </TableRow>

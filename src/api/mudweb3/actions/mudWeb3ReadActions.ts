@@ -1,4 +1,4 @@
-import { Table } from "@latticexyz/store/internal";
+import { Table } from "@latticexyz/config";
 import {
   AssemblyGetLocationParameters,
   AssemblyGetLocationReturnType,
@@ -35,6 +35,11 @@ import {
   storeGetRecord,
 } from "./read/storeGetRecord";
 import {
+  StoreGetTableParameters,
+  StoreGetTableReturnType,
+  storeGetTable,
+} from "./read/storeGetTable";
+import {
   SystemSimulateParameters,
   SystemSimulateReturnType,
   systemSimulate,
@@ -44,6 +49,11 @@ import {
   TurretGetSystemReturnType,
   turretGetSystem,
 } from "./read/turretGetSystem";
+import {
+  WorldReadParameters,
+  WorldReadReturnType,
+  worldRead,
+} from "./read/worldRead";
 import {
   WorldSimulateParameters,
   WorldSimulateReturnType,
@@ -73,12 +83,18 @@ export type MudWeb3ReadActions = {
   storeGetRecord: <table extends Table>(
     args: StoreGetRecordParameters<table>
   ) => Promise<StoreGetRecordReturnType<table>>;
+  storeGetTable: (
+    args: StoreGetTableParameters
+  ) => Promise<StoreGetTableReturnType>;
   systemSimulate: (
     args: SystemSimulateParameters
   ) => Promise<SystemSimulateReturnType>;
   turretGetSystem: (
     args: TurretGetSystemParameters
   ) => Promise<TurretGetSystemReturnType>;
+  worldRead: <abi extends Abi = WorldAbi>(
+    args: WorldReadParameters<abi>
+  ) => Promise<WorldReadReturnType<abi>>;
   worldSimulate: <abi extends Abi = WorldAbi>(
     args: WorldSimulateParameters<abi>
   ) => Promise<WorldSimulateReturnType>;
@@ -123,6 +139,11 @@ export function mudWeb3ReadActions(
     ): Promise<StoreGetRecordReturnType<table>> => {
       return storeGetRecord(client, args);
     },
+    storeGetTable: async (
+      args: StoreGetTableParameters
+    ): Promise<StoreGetTableReturnType> => {
+      return storeGetTable(client, args);
+    },
     systemSimulate: async (
       args: SystemSimulateParameters
     ): Promise<SystemSimulateReturnType> => {
@@ -132,6 +153,11 @@ export function mudWeb3ReadActions(
       args: TurretGetSystemParameters
     ): Promise<TurretGetSystemReturnType> => {
       return turretGetSystem(client, args);
+    },
+    worldRead: async <abi extends Abi = WorldAbi>(
+      args: WorldReadParameters<abi>
+    ): Promise<WorldReadReturnType<abi>> => {
+      return worldRead(client, args);
     },
     worldSimulate: async <abi extends Abi = WorldAbi>(
       args: WorldSimulateParameters<abi>

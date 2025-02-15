@@ -1,6 +1,8 @@
 import {
   Abi,
   BaseError,
+  ContractFunctionArgs,
+  ContractFunctionName,
   TransactionReceipt,
   WriteContractParameters,
 } from "viem";
@@ -10,16 +12,38 @@ import { WorldAbi, worldAbi } from "../../abi";
 import { Web3TransactionError } from "../../Web3TransactionError";
 import { WorldSimulateParameters } from "../read/worldSimulate";
 
-export type WorldWriteParameters<abi extends Abi = WorldAbi> = Pick<
-  WriteContractParameters<abi>,
-  "functionName" | "args"
->;
+export type WorldWriteParameters<
+  abi extends Abi = WorldAbi,
+  functionName extends ContractFunctionName<
+    abi,
+    "nonpayable" | "payable"
+  > = ContractFunctionName<abi, "nonpayable" | "payable">,
+  args extends ContractFunctionArgs<
+    abi,
+    "nonpayable" | "payable",
+    functionName
+  > = ContractFunctionArgs<abi, "nonpayable" | "payable", functionName>,
+> = {
+  functionName: functionName;
+  args: args;
+};
 
 export type WorldWriteReturnType = TransactionReceipt;
 
-export async function worldWrite<abi extends Abi = WorldAbi>(
+export async function worldWrite<
+  abi extends Abi = WorldAbi,
+  functionName extends ContractFunctionName<
+    abi,
+    "nonpayable" | "payable"
+  > = ContractFunctionName<abi, "nonpayable" | "payable">,
+  args extends ContractFunctionArgs<
+    abi,
+    "nonpayable" | "payable",
+    functionName
+  > = ContractFunctionArgs<abi, "nonpayable" | "payable", functionName>,
+>(
   client: WorldWriteClient,
-  args: WorldWriteParameters<abi>
+  args: WorldWriteParameters<abi, functionName, args>
 ): Promise<WorldWriteReturnType> {
   try {
     const params = {

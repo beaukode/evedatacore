@@ -22,9 +22,15 @@ import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DataTable from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
+import { pick } from "lodash-es";
+import ConditionalMount from "@/components/ui/ConditionalMount";
+import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
+import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [editKey, setEditKey] = React.useState<Record<string, string>>();
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
@@ -60,12 +66,32 @@ const ExploreTable: React.FC = () => {
     retry: false,
   });
 
+  const handleEditClick = React.useCallback((keys?: Record<string, string>) => {
+    setEditOpen(true);
+    setEditKey(keys);
+  }, []);
+
   const columnsLabels = React.useMemo(() => {
     if (!query.data) return [];
-    return Object.entries(query.data.schema).map(([key, { type }]) => ({
-      label: `${key} (${type})`,
-    }));
-  }, [query.data]);
+    const columnsLabels = Object.entries(query.data.schema).map(
+      ([key, { type }]) => ({
+        label: `${key} (${type})`,
+      })
+    );
+    return [
+      {
+        sx: { p: 0 },
+        label: (
+          <ButtonWeb3Interaction
+            icon="add"
+            title="Create table record"
+            onClick={() => handleEditClick()}
+          />
+        ),
+      },
+      ...columnsLabels,
+    ];
+  }, [handleEditClick, query.data]);
 
   const columnsKeys = React.useMemo(() => {
     if (!query.data) return [];
@@ -97,6 +123,13 @@ const ExploreTable: React.FC = () => {
       const key = tableKeys.map((k) => item[k]).join("|") || idx.toString();
       return (
         <React.Fragment key={key}>
+          <TableCell sx={{ p: 0 }}>
+            <ButtonWeb3Interaction
+              icon="edit"
+              title="Edit table record"
+              onClick={() => handleEditClick(pick(item, tableKeys))}
+            />
+          </TableCell>
           {columnsKeys.map((k, i) => (
             <TableCell key={i} sx={{ fontFamily: "monospace" }}>
               {columnsTypes[k] === "bool"
@@ -109,7 +142,7 @@ const ExploreTable: React.FC = () => {
         </React.Fragment>
       );
     },
-    [tableKeys, columnsKeys, columnsTypes]
+    [tableKeys, columnsKeys, columnsTypes, handleEditClick]
   );
 
   if (!id || !table || !namespaceId || (!query.isLoading && !query.data)) {
@@ -191,17 +224,31 @@ const ExploreTable: React.FC = () => {
             <Alert severity="error">{queryRecords.error.message}</Alert>
           )}
         </Box>
-
         {data && (
-          <Box flexGrow={1} overflow="auto">
-            <DataTable
-              data={records}
-              columns={columnsLabels}
-              itemContent={itemContent}
-              dynamicWidth
-              rememberScroll
-            />
-          </Box>
+          <>
+            <ConditionalMount mount={editOpen} keepMounted>
+              <DialogTableRecord
+                open={editOpen}
+                title={editKey ? "Edit table record" : "Create table record"}
+                table={data}
+                keyValues={editKey}
+                owner={data?.namespaceOwner || "0x"}
+                onClose={() => {
+                  setEditOpen(false);
+                  queryRecords.refetch();
+                }}
+              />
+            </ConditionalMount>
+            <Box flexGrow={1} overflow="auto">
+              <DataTable
+                data={records}
+                columns={columnsLabels}
+                itemContent={itemContent}
+                dynamicWidth
+                rememberScroll
+              />
+            </Box>
+          </>
         )}
       </PaperLevel1>
     </Box>

@@ -39,6 +39,11 @@ import {
   storageInventoryToEphemeral,
 } from "./write/storageInventoryToEphemeral";
 import {
+  StoreSetRecordParameters,
+  StoreSetRecordReturnType,
+  storeSetRecord,
+} from "./write/storeSetRecord";
+import {
   SytemWriteParameters,
   SystemWriteReturnType,
   systemWrite,
@@ -80,6 +85,9 @@ export type MudWeb3WriteActions = {
   storageInventoryToEphemeral: (
     args: StorageInventoryToEphemeralParameters
   ) => Promise<StorageInventoryToEphemeralReturnType>;
+  storeSetRecord: (
+    args: StoreSetRecordParameters
+  ) => Promise<StoreSetRecordReturnType>;
   systemWrite: (args: SytemWriteParameters) => Promise<SystemWriteReturnType>;
   turretSetSystem: (
     args: TurretSetSystemParameters
@@ -133,6 +141,11 @@ export function mudWeb3WriteActions(
       ): Promise<StorageInventoryToEphemeralReturnType> => {
         return storageInventoryToEphemeral(client, args);
       },
+      storeSetRecord: (
+        args: StoreSetRecordParameters
+      ): Promise<StoreSetRecordReturnType> => {
+        return storeSetRecord(client, args);
+      },
       systemWrite: (
         args: SytemWriteParameters
       ): Promise<SystemWriteReturnType> => {
@@ -174,6 +187,9 @@ export function mudWeb3WriteActions(
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       storageInventoryToEphemeral: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      storeSetRecord: async () => {
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       systemWrite: async () => {
