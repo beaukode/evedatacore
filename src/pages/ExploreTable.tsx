@@ -19,13 +19,14 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
-import DataTable from "@/components/DataTable";
+import DataTable, { DataTableColumn } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
 import { pick } from "lodash-es";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
+import { AbiTypeDetails, parseAbiType } from "@/tools/abi";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
@@ -57,10 +58,12 @@ const ExploreTable: React.FC = () => {
       if (!(table && query.data)) {
         return [];
       }
-      return mudSql.selectFrom(table.namespace, table.name, {
+      const records = await mudSql.selectFrom(table.namespace, table.name, {
         orderBy: [...query.data.key],
         tableType: query.data.type,
       });
+
+      return records;
     },
     enabled: !!query.data,
     retry: false,
@@ -71,15 +74,21 @@ const ExploreTable: React.FC = () => {
     setEditKey(keys);
   }, []);
 
-  const columnsLabels = React.useMemo(() => {
-    if (!query.data) return [];
-    const columnsLabels = Object.entries(query.data.schema).map(
-      ([key, { type }]) => ({
-        label: `${key} (${type})`,
-      })
-    );
-    return [
-      {
+  const { columnsLabels, columnsKeys, tableKeys, columnsTypes } =
+    React.useMemo(() => {
+      if (!query.data)
+        return {
+          columnsLabels: [],
+          columnsKeys: [],
+          tableKeys: [],
+          columnsTypes: undefined,
+        };
+      const columnsLabels: DataTableColumn[] = [];
+      const columnsKeys: string[] = [];
+      const tableKeys: string[] = [];
+      const columnsTypes: Record<string, AbiTypeDetails> = {};
+
+      columnsLabels.push({
         sx: { p: 0 },
         label: (
           <ButtonWeb3Interaction
@@ -88,35 +97,55 @@ const ExploreTable: React.FC = () => {
             onClick={() => handleEditClick()}
           />
         ),
-      },
-      ...columnsLabels,
-    ];
-  }, [handleEditClick, query.data]);
+      });
 
-  const columnsKeys = React.useMemo(() => {
-    if (!query.data) return [];
-    return Object.keys(query.data.schema);
-  }, [query.data]);
+      for (const [key, { type }] of Object.entries(query.data.schema)) {
+        columnsLabels.push({
+          label: `${key} (${type})`,
+        });
+        columnsKeys.push(key);
+        columnsTypes[key] = parseAbiType(type);
+      }
+      tableKeys.push(...query.data.key);
 
-  const tableKeys = React.useMemo(() => {
-    if (!query.data) return [];
-    return query.data.key;
-  }, [query.data]);
-
-  const columnsTypes = React.useMemo(() => {
-    if (!query.data) return {};
-    return Object.entries(query.data.schema).reduce(
-      (acc, [k, { type }]) => {
-        return { ...acc, [k]: type };
-      },
-      {} as Record<string, string>
-    );
-  }, [query.data]);
+      return { columnsLabels, columnsKeys, tableKeys, columnsTypes };
+    }, [query.data, handleEditClick]);
 
   const records = React.useMemo(() => {
-    if (!queryRecords.data) return [];
-    return filterInProps(queryRecords.data, debouncedSearch.text, columnsKeys);
-  }, [queryRecords.data, columnsKeys, debouncedSearch.text]);
+    if (!queryRecords.data || !columnsTypes) return;
+    return queryRecords.data.map((record) => {
+      return Object.entries(record).reduce(
+        (acc, [key, value]) => {
+          if (columnsTypes[key]?.baseType === "bool") {
+            if (Array.isArray(value)) {
+              acc[key] = value.map((v) => (v ? "true" : "false")).join(";");
+            } else {
+              acc[key] = value ? "true" : "false";
+            }
+          } else if (columnsTypes[key]?.baseType === "string") {
+            if (Array.isArray(value)) {
+              acc[key] = value.map((v) => v.replace(/\r\n|\r|\n/g, "\\n")).join(";");
+            } else {
+              acc[key] = value.replace(/\r\n|\r|\n/g, "\\n");
+            }
+          } else {
+            if (Array.isArray(value)) {
+              acc[key] = value.join(";");
+            } else {
+              acc[key] = value;
+            }
+          }
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+    });
+  }, [queryRecords.data, columnsTypes]);
+
+  const filteredRecords = React.useMemo(() => {
+    if (!records) return [];
+    return filterInProps(records, debouncedSearch.text, columnsKeys);
+  }, [records, columnsKeys, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (idx: number, item: Record<string, string>) => {
@@ -132,17 +161,13 @@ const ExploreTable: React.FC = () => {
           </TableCell>
           {columnsKeys.map((k, i) => (
             <TableCell key={i} sx={{ fontFamily: "monospace" }}>
-              {columnsTypes[k] === "bool"
-                ? item[k]
-                  ? "true"
-                  : "false"
-                : item[k]}
+              {item[k]}
             </TableCell>
           ))}
         </React.Fragment>
       );
     },
-    [tableKeys, columnsKeys, columnsTypes, handleEditClick]
+    [tableKeys, columnsKeys, handleEditClick]
   );
 
   if (!id || !table || !namespaceId || (!query.isLoading && !query.data)) {
@@ -241,7 +266,7 @@ const ExploreTable: React.FC = () => {
             </ConditionalMount>
             <Box flexGrow={1} overflow="auto">
               <DataTable
-                data={records}
+                data={filteredRecords}
                 columns={columnsLabels}
                 itemContent={itemContent}
                 dynamicWidth
