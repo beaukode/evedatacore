@@ -8,6 +8,7 @@ import IntegerField from "./IntegerField";
 import HexField from "./HexField";
 import BooleanField from "./BooleanField";
 import StringField from "./StringField";
+import Fieldset from "../ui/Fieldset";
 
 type FormComponent =
   | typeof IntegerField
@@ -42,8 +43,7 @@ const ArrayOfFields: React.FC<ArrayOfFieldsProps> = ({
   });
 
   return (
-    <fieldset style={{ marginBottom: 8, marginTop: 8 }}>
-      <legend>{label}</legend>
+    <Fieldset title={label}>
       {fields.map((field, index) => {
         const { error } = control.getFieldState(`${name}.${index}`);
         return (
@@ -81,7 +81,7 @@ const ArrayOfFields: React.FC<ArrayOfFieldsProps> = ({
           <AddIcon />
         </IconButton>
       </Box>
-    </fieldset>
+    </Fieldset>
   );
 };
 
