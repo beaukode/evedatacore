@@ -156,7 +156,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         txReceipt={mutateRecord.data}
         disabledOwnerCheck
       >
-        <div style={{ overflow: "auto" }}>
+        <div style={{ overflow: "auto", marginRight: -24, paddingRight: 12 }}>
           <form
             ref={formRef}
             onSubmit={handleSubmit((v) => mutateRecord.mutate(v))}
