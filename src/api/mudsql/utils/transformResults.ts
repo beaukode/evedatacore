@@ -11,7 +11,7 @@ export function transformResult(
   return results.map((row) => {
     const obj: Record<string, string> = {};
     header.forEach((key, index) => {
-      if (row[index]) {
+      if (row[index] !== undefined) {
         obj[key] = row[index];
       }
     });
