@@ -20,6 +20,7 @@ import ExploreSystem from "./ExploreSystem";
 import ExploreFunctions from "./ExploreFunctions";
 import ExploreFunction from "./ExploreFunction";
 import ExploreCorporations from "./ExploreCorporations";
+import ExploreCorporation from "./ExploreCorporation";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
@@ -84,7 +85,7 @@ const Explore: React.FC = () => {
         <Route path="/characters" element={<ExploreCharacters />} />
         <Route path="/characters/:address" element={<ExploreCharacter />} />
         <Route path="/corporations" element={<ExploreCorporations />} />
-        {/* <Route path="/corporations/:address" element={<ExploreCorporation />} /> */}
+        <Route path="/corporations/:id" element={<ExploreCorporation />} />
         <Route path="/assemblies" element={<ExploreAssemblies />} />
         <Route path="/assemblies/:id" element={<ExploreAssembly />} />
         <Route path="/killmails" element={<ExploreKillmails />} />
