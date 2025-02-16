@@ -36,14 +36,14 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
     queryKey: ["AssembliesByOwner", owner],
     queryFn: async () => mudSql.listAssemblies({ owners: owner }),
     staleTime: 1000 * 60,
-    retry: false,
+    enabled: !!owner,
   });
 
   const queryBySolarSystem = useQuery({
     queryKey: ["AssembliesBySolarSystem", solarSystemId],
     queryFn: async () => mudSql.listAssemblies({ solarSystemId }),
     staleTime: 1000 * 60,
-    retry: false,
+    enabled: !!solarSystemId,
   });
 
   const query = owner ? queryByOwner : queryBySolarSystem;
