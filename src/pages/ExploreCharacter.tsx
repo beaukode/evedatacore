@@ -14,6 +14,7 @@ import BasicListItem from "@/components/ui/BasicListItem";
 import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import TableFunctions from "@/components/tables/TableFunctions";
+import ButtonCorporation from "@/components/buttons/ButtonCorporation";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -56,7 +57,13 @@ const ExploreCharacter: React.FC = () => {
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{data?.id}</BasicListItem>
           <BasicListItem title="Address">{data?.address}</BasicListItem>
-          <BasicListItem title="Corporation Id">{data?.corpId}</BasicListItem>
+          <BasicListItem title="Corporation Id" disableGutters>
+            <ButtonCorporation
+              name={data?.corpId?.toString()}
+              id={data?.corpId?.toString()}
+              fastRender={false}
+            />
+          </BasicListItem>
           <BasicListItem title="Created At">
             {tsToDateTime(data?.createdAt)}
           </BasicListItem>

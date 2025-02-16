@@ -1,21 +1,19 @@
 import React from "react";
-import { Box, TextField, Avatar, TableCell } from "@mui/material";
+import { Box, TextField, TableCell } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { filterInProps, tsToDateTime } from "@/tools";
-import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import { filterInProps } from "@/tools";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
+import ButtonCorporation from "@/components/buttons/ButtonCorporation";
 
 const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common, grow: true },
-  { label: "Address", width: columnWidths.address },
-  { label: "Created At", width: columnWidths.datetime },
+  { label: "Id", width: columnWidths.common, grow: true },
 ];
 
-const ExploreCharacters: React.FC = () => {
+const ExploreCorporations: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
@@ -27,41 +25,37 @@ const ExploreCharacters: React.FC = () => {
     staleTime: 1000 * 60 * 15,
   });
 
-  const smartcharacters = React.useMemo(() => {
+  const corporations = React.useMemo(() => {
     if (!query.data) return [];
-    return filterInProps(
-      query.data,
-      debouncedSearch.text,
-      ["address", "name", "id"],
-      (sm) => sm.address !== "0x0000000000000000000000000000000000000000"
-    );
+    const corps: Record<number, { id: string }> = {};
+    for (const character of query.data) {
+      if (!corps[character.corpId]) {
+        corps[character.corpId] = {
+          id: character.corpId.toString(),
+        };
+      }
+    }
+    const corpsArray = Object.values(corps);
+    return filterInProps(corpsArray, debouncedSearch.text, ["id"]);
   }, [query.data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
       _: number,
-      sm: (typeof smartcharacters)[number],
+      corp: (typeof corporations)[number],
       context: DataTableContext
     ) => {
       return (
-        <React.Fragment key={sm.address}>
+        <React.Fragment key={corp.id}>
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
-              <Avatar
-                alt={sm.name}
-                sx={{ bgcolor: "black", color: "silver", mr: 1 }}
-                src="https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
-                variant="rounded"
-              />
-              <ButtonCharacter
-                name={sm.name}
-                address={sm.address}
+              <ButtonCorporation
+                name={corp.id}
+                id={corp.id}
                 fastRender={context.isScrolling}
               />
             </Box>
           </TableCell>
-          <TableCell>{sm.address}</TableCell>
-          <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
         </React.Fragment>
       );
     },
@@ -69,9 +63,9 @@ const ExploreCharacters: React.FC = () => {
   );
   return (
     <DataTableLayout
-      title="Characters"
+      title="Corporations"
       columns={columns}
-      data={smartcharacters}
+      data={corporations}
       itemContent={itemContent}
     >
       <TextField
@@ -89,4 +83,4 @@ const ExploreCharacters: React.FC = () => {
   );
 };
 
-export default ExploreCharacters;
+export default ExploreCorporations;
