@@ -19,19 +19,21 @@ import ExploreSystems from "./ExploreSystems";
 import ExploreSystem from "./ExploreSystem";
 import ExploreFunctions from "./ExploreFunctions";
 import ExploreFunction from "./ExploreFunction";
+import ExploreCorporations from "./ExploreCorporations";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
   "/explore/": 0,
   "/explore/characters": 0,
-  "/explore/assemblies": 1,
-  "/explore/killmails": 2,
-  "/explore/types": 3,
-  "/explore/solarsystems": 4,
-  "/explore/namespaces": 5,
-  "/explore/tables": 6,
-  "/explore/systems": 7,
-  "/explore/functions": 8,
+  "/explore/corporations": 1,
+  "/explore/assemblies": 2,
+  "/explore/killmails": 3,
+  "/explore/types": 4,
+  "/explore/solarsystems": 5,
+  "/explore/namespaces": 6,
+  "/explore/tables": 7,
+  "/explore/systems": 8,
+  "/explore/functions": 9,
 };
 
 const Explore: React.FC = () => {
@@ -49,6 +51,11 @@ const Explore: React.FC = () => {
             label="Characters"
             component={NavLink}
             to="/explore/characters"
+          />
+          <Tab
+            label="Corporations"
+            component={NavLink}
+            to="/explore/corporations"
           />
           <Tab
             label="Assemblies"
@@ -76,6 +83,8 @@ const Explore: React.FC = () => {
         <Route path="" element={<ExploreCharacters />} />
         <Route path="/characters" element={<ExploreCharacters />} />
         <Route path="/characters/:address" element={<ExploreCharacter />} />
+        <Route path="/corporations" element={<ExploreCorporations />} />
+        {/* <Route path="/corporations/:address" element={<ExploreCorporation />} /> */}
         <Route path="/assemblies" element={<ExploreAssemblies />} />
         <Route path="/assemblies/:id" element={<ExploreAssembly />} />
         <Route path="/killmails" element={<ExploreKillmails />} />
