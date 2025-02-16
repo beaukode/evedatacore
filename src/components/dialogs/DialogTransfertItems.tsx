@@ -93,6 +93,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   const queryCharacters = useQuery({
     queryKey: ["Smartcharacters"],
     queryFn: async () => mudSql.listCharacters(),
+    staleTime: 1000 * 60 * 15,
     enabled: transfertFrom === "inventory",
   });
 

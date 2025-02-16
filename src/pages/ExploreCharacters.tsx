@@ -24,6 +24,7 @@ const ExploreCharacters: React.FC = () => {
   const query = useQuery({
     queryKey: ["Smartcharacters"],
     queryFn: async () => mudSql.listCharacters(),
+    staleTime: 1000 * 60 * 15,
   });
 
   const smartcharacters = React.useMemo(() => {
