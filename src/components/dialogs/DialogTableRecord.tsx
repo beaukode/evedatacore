@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Skeleton } from "@mui/material";
+import { Box, Button, Skeleton } from "@mui/material";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,6 @@ import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import ArrayOfFields from "../form/ArrayOfFields";
 
 interface DialogTableRecordProps {
-  title: string;
   table: Table;
   keyValues?: TableRecordValues<string>;
   owner: string;
@@ -22,7 +21,6 @@ interface DialogTableRecordProps {
 }
 
 const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
-  title,
   table,
   keyValues,
   owner,
@@ -102,6 +100,27 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
     retry: false,
   });
 
+  const deleteRecord = useMutation({
+    mutationFn: async () => {
+      const keysToPick = table.key.reduce(
+        (acc, key) => {
+          acc[key] = true;
+          return acc;
+        },
+        {} as Record<string, true>
+      );
+      const key = validationSchema
+        .pick(keysToPick)
+        .parse(recordValuesToFormValues(keyValues || {}));
+
+      return mudWeb3.storeDeleteRecord({
+        table,
+        key,
+      });
+    },
+    retry: false,
+  });
+
   const {
     handleSubmit,
     formState: { errors, isSubmitted },
@@ -124,8 +143,40 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
     if (v) {
       queryClient.resetQueries({ queryKey: ["TableRecord"] });
       mutateRecord.reset();
+      deleteRecord.reset();
     }
   }, open);
+
+  const isLoading =
+    queryRecord.isLoading || mutateRecord.isPending || deleteRecord.isPending;
+  const mutationSuccess = mutateRecord.isSuccess || deleteRecord.isSuccess;
+  const disableForm = isLoading || mutationSuccess;
+
+  const title = React.useMemo(() => {
+    if (keyValues) {
+      return (
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box>Edit table record</Box>
+          {!mutationSuccess && (
+            <Box>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => {
+                  deleteRecord.mutate();
+                }}
+                loading={deleteRecord.isPending}
+                disabled={disableForm && !deleteRecord.isPending}
+              >
+                Delete record
+              </Button>
+            </Box>
+          )}
+        </Box>
+      );
+    }
+    return "Create table record";
+  }, [deleteRecord, keyValues, mutationSuccess, disableForm]);
 
   return (
     <>
@@ -141,19 +192,20 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         }}
         actions={
           <>
-            {!mutateRecord.isSuccess && (
+            {!mutationSuccess && (
               <Button
                 variant="contained"
                 onClick={() => formRef.current?.requestSubmit()}
-                loading={queryRecord.isLoading || mutateRecord.isPending}
+                loading={mutateRecord.isPending}
+                disabled={disableForm && !mutateRecord.isPending}
               >
                 Save
               </Button>
             )}
           </>
         }
-        txError={mutateRecord.error}
-        txReceipt={mutateRecord.data}
+        txError={mutateRecord.error || deleteRecord.error}
+        txReceipt={mutateRecord.data || deleteRecord.data}
       >
         <div style={{ overflow: "auto", marginRight: -24, paddingRight: 12 }}>
           <form
@@ -185,11 +237,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
                             label={label}
                             abiType={abiType}
                             formComponent={FormComponent}
-                            disabled={
-                              (isKey && !createRecord) ||
-                              mutateRecord.isPending ||
-                              mutateRecord.isSuccess
-                            }
+                            disabled={(isKey && !createRecord) || disableForm}
                             onChange={() => {
                               if (isSubmitted) {
                                 trigger(key);
@@ -224,11 +272,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
                       error={!!errors[key]}
                       helperText={helperText}
                       margin="dense"
-                      disabled={
-                        (isKey && !createRecord) ||
-                        mutateRecord.isPending ||
-                        mutateRecord.isSuccess
-                      }
+                      disabled={(isKey && !createRecord) || disableForm}
                     />
                   )}
                 </React.Fragment>

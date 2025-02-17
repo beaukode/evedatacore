@@ -39,6 +39,11 @@ import {
   storageInventoryToEphemeral,
 } from "./write/storageInventoryToEphemeral";
 import {
+  StoreDeleteRecordParameters,
+  StoreDeleteRecordReturnType,
+  storeDeleteRecord,
+} from "./write/storeDeleteRecord";
+import {
   StoreSetRecordParameters,
   StoreSetRecordReturnType,
   storeSetRecord,
@@ -85,6 +90,9 @@ export type MudWeb3WriteActions = {
   storageInventoryToEphemeral: (
     args: StorageInventoryToEphemeralParameters
   ) => Promise<StorageInventoryToEphemeralReturnType>;
+  storeDeleteRecord: (
+    args: StoreDeleteRecordParameters
+  ) => Promise<StoreDeleteRecordReturnType>;
   storeSetRecord: (
     args: StoreSetRecordParameters
   ) => Promise<StoreSetRecordReturnType>;
@@ -141,6 +149,11 @@ export function mudWeb3WriteActions(
       ): Promise<StorageInventoryToEphemeralReturnType> => {
         return storageInventoryToEphemeral(client, args);
       },
+      storeDeleteRecord: (
+        args: StoreDeleteRecordParameters
+      ): Promise<StoreDeleteRecordReturnType> => {
+        return storeDeleteRecord(client, args);
+      },
       storeSetRecord: (
         args: StoreSetRecordParameters
       ): Promise<StoreSetRecordReturnType> => {
@@ -187,6 +200,9 @@ export function mudWeb3WriteActions(
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       storageInventoryToEphemeral: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      storeDeleteRecord: async () => {
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       storeSetRecord: async () => {

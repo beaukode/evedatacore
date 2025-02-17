@@ -124,7 +124,9 @@ const ExploreTable: React.FC = () => {
             }
           } else if (columnsTypes[key]?.baseType === "string") {
             if (Array.isArray(value)) {
-              acc[key] = value.map((v) => v.replace(/\r\n|\r|\n/g, "\\n")).join(";");
+              acc[key] = value
+                .map((v) => v.replace(/\r\n|\r|\n/g, "\\n"))
+                .join(";");
             } else {
               acc[key] = value.replace(/\r\n|\r|\n/g, "\\n");
             }
@@ -254,7 +256,6 @@ const ExploreTable: React.FC = () => {
             <ConditionalMount mount={editOpen} keepMounted>
               <DialogTableRecord
                 open={editOpen}
-                title={editKey ? "Edit table record" : "Create table record"}
                 table={data}
                 keyValues={editKey}
                 owner={data?.namespaceOwner || "0x"}

@@ -17,10 +17,10 @@ import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
 import { chainId } from "@/config";
 
-interface DialogOnOffAssemblyProps {
+interface BaseWeb3DialogProps {
   open: boolean;
   owner: string;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   txReceipt?: TransactionReceipt | null;
   txError?: Web3TransactionError | Error | null;
@@ -30,7 +30,7 @@ interface DialogOnOffAssemblyProps {
   onClose: () => void;
 }
 
-const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
+const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
   open,
   owner,
   title,
