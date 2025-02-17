@@ -66,6 +66,7 @@ const ArrayOfFields: React.FC<ArrayOfFieldsProps> = ({
               title="Delete item"
               color="secondary"
               onClick={() => remove(index)}
+              disabled={disabled}
             >
               <DeleteIcon />
             </IconButton>
@@ -77,6 +78,7 @@ const ArrayOfFields: React.FC<ArrayOfFieldsProps> = ({
           title="Add item"
           color="secondary"
           onClick={() => append({ value: "" })}
+          disabled={disabled}
         >
           <AddIcon />
         </IconButton>
