@@ -6,6 +6,7 @@ import AboutIcon from "@mui/icons-material/HelpCenter";
 import DiscordIcon from "@/components/icons/Discord";
 import Menu from "@/components/layout/Menu";
 import HeaderLogo from "@/components/layout/HeaderLogo";
+import DevIcon from "@mui/icons-material/Code";
 import Explore from "@/pages/Explore";
 import Home from "@/pages/Home";
 import Error404 from "@/pages/Error404";
@@ -73,7 +74,7 @@ function App() {
                 Calculate
               </Button>
               <Button
-                startIcon={<CalculateIcon />}
+                startIcon={<DevIcon />}
                 to="/dev/web3"
                 component={NavLink}
                 sx={{ m: 1, fontFamily: "Major Mono Display" }}

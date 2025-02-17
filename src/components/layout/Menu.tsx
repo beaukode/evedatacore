@@ -3,6 +3,7 @@ import { Drawer, IconButton, List } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
+import DevIcon from "@mui/icons-material/Code";
 import AboutIcon from "@mui/icons-material/HelpCenter";
 import DiscordIcon from "@/components/icons/Discord";
 import MenuItem from "./MenuItem";
@@ -49,7 +50,7 @@ const Menu: React.FC = () => {
             text="Calculate"
             icon={<CalculateIcon />}
           />
-          <MenuItem to="/dev/web3" text="Dev" icon={<CalculateIcon />} />
+          <MenuItem to="/dev/web3" text="Dev" icon={<DevIcon />} />
           <MenuItem
             to="https://discord.gg/cu2n3wjqgb"
             text="Discord"
