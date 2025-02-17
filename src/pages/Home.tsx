@@ -13,13 +13,12 @@ const Home: React.FC = () => {
           the universe of EVE Frontier
         </title>
       </Helmet>
-      <Typography sx={{ m: 2 }}>Hello Awaken,</Typography>
+      <Typography sx={{ m: 2 }}>Hello Rider,</Typography>
       <Typography sx={{ m: 2 }}>
-        Welcome to <s>EVE Frontier tools</s> EVE Datacore website, a collection
-        of tools and data for the game EVE Frontier. The game is actually in
-        alpha test and take place in a large space universe like EVE Online, but
-        with a different gameplay. The game empowers players to shape the world
-        using the{" "}
+        Welcome to EVE Datacore website, a collection of tools and data for the
+        game EVE Frontier. The game is actually in alpha test and take place in
+        a large space universe like EVE Online, but with a different gameplay.
+        The game empowers players to shape the world using the{" "}
         <ExternalLink title="Redstone blockchain" href="https://redstone.xyz/">
           Redstone blockchain
         </ExternalLink>{" "}
@@ -38,6 +37,10 @@ const Home: React.FC = () => {
         Here you can explore world users data like{" "}
         <InternalLink to="/explore/characters" title="Explore characters">
           characters
+        </InternalLink>
+        ,{" "}
+        <InternalLink to="/explore/corporations" title="Explore corporations">
+          corporations
         </InternalLink>
         ,{" "}
         <InternalLink to="/explore/assemblies" title="Explore assemblies">
@@ -96,6 +99,7 @@ const Home: React.FC = () => {
         <br />
         <br />
         Fly safe <span style={{ fontSize: "80%" }}>o</span>7
+        <br />
       </Typography>
     </Box>
   );
