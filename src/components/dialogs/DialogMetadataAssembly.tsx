@@ -35,21 +35,19 @@ const DialogMetadataAssembly: React.FC<DialogMetadataAssemblyProps> = ({
 
   const queryMetadata = useQuery({
     queryKey: ["SmartAssemblyMetadata", assemblyId],
-    queryFn: async () => mudWeb3.getDeployableMetadata(BigInt(assemblyId)),
+    queryFn: async () =>
+      mudWeb3.assemblyGetMetadata({ assemblyId: BigInt(assemblyId) }),
     enabled: open,
   });
 
   const mutateState = useMutation({
     mutationFn: () => {
-      if (!mudWeb3.wallet) {
-        throw new Error("Wallet error, please refresh the page and try again");
-      }
-      return mudWeb3.wallet.setDeployableMetadata(
-        BigInt(assemblyId),
+      return mudWeb3.assemblySetMetadata({
+        assemblyId: BigInt(assemblyId),
         name,
         dappURL,
-        description
-      );
+        description,
+      });
     },
     retry: false,
   });

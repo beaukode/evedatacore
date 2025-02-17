@@ -6,7 +6,7 @@ import { toJson } from "@/tools";
 import { Helmet } from "react-helmet";
 
 const DevInternal: React.FC = () => {
-  const [smartObjectId, setSmartObjectId] = React.useState<string>("");
+  const [data, setData] = React.useState<string>("");
   const [result, setResult] = React.useState<unknown>();
   const [error, setError] = React.useState<unknown>();
 
@@ -23,6 +23,8 @@ const DevInternal: React.FC = () => {
     };
   }
 
+  console.log("error", error);
+
   return (
     <Box p={2} flexGrow={1} overflow="auto">
       <Helmet>
@@ -31,74 +33,46 @@ const DevInternal: React.FC = () => {
       <PaperLevel1 title="Internal">
         <Grid2 container spacing={2} sx={{ mb: 2 }}>
           <Grid2 size={12}>
-            <Button
-              onClick={createHandler(() =>
-                mudWeb3.erc721balanceOf(
-                  "0xD3A030509548652922bcd736f359Ab8a052F6980",
-                  "0xF7730eB77b66F21FEa19D49Ee6A4718FF9c0393E"
-                )
-              )}
-              variant="contained"
-              sx={{ mr: 1 }}
-            >
-              ERC 721: Balance Of
-            </Button>
-            <Button
-              onClick={createHandler(() => {
-                return mudWeb3.wallet?.erc721transferFrom(
-                  "0xD3A030509548652922bcd736f359Ab8a052F6980",
-                  "0xaeba6aa155974b5807CBf77c430A74073d69ED1b",
-                  "0xF7730eB77b66F21FEa19D49Ee6A4718FF9c0393E",
-                  11861973571520147656545735842437132677489931026054966953186802655176544322796n
-                );
-              })}
-              variant="contained"
-              disabled={!mudWeb3.wallet}
-              sx={{ mr: 1 }}
-            >
-              ERC 721: Transfert To
-            </Button>
-          </Grid2>
-          <Grid2 size={12}>
             <TextField
-              label="Smart Object ID"
-              value={smartObjectId}
-              onChange={(e) => setSmartObjectId(e.target.value)}
+              label="Data"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
               fullWidth
             />
           </Grid2>
           <Grid2 size={12}>
             <Button
               onClick={createHandler(() =>
-                mudWeb3.getDeployableState(BigInt(smartObjectId))
+                mudWeb3.assemblyGetState({ assemblyId: BigInt(data) })
               )}
               variant="contained"
               sx={{ mr: 1 }}
             >
-              Deployable State
+              Test 1
             </Button>
             <Button
               onClick={createHandler(() =>
-                mudWeb3.wallet?.bringOnline(BigInt(smartObjectId))
+                mudWeb3.assemblyBringOnline({ assemblyId: BigInt(data) })
               )}
               variant="contained"
-              disabled={!mudWeb3.wallet}
+              disabled={!mudWeb3.isWriteClient}
               sx={{ mr: 1 }}
             >
-              Online
+              Test 2
             </Button>
             <Button
               onClick={createHandler(() =>
-                mudWeb3.wallet?.bringOffline(BigInt(smartObjectId))
+                mudWeb3.assemblyBringOffline({ assemblyId: BigInt(data) })
               )}
               variant="contained"
-              disabled={!mudWeb3.wallet}
+              disabled={!mudWeb3.isWriteClient}
               sx={{ mr: 1 }}
             >
-              Offline
+              Test 3
             </Button>
             {!!error && (
               <Alert severity="error">
+                <pre>{`${error}`}</pre>
                 <pre>{toJson(error)}</pre>
               </Alert>
             )}

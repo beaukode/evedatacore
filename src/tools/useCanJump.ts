@@ -16,7 +16,7 @@ function useCanJump(
 ) {
   const mudWeb3 = useMudWeb3();
 
-  const accountAddress = mudWeb3.wallet?.account?.address;
+  const accountAddress = mudWeb3.writeClient?.account;
 
   const queryCanJump = useQuery({
     queryKey: [
@@ -27,7 +27,10 @@ function useCanJump(
     ],
     queryFn: async () => {
       if (!accountAddress || !destinationGateId) return false;
-      return mudWeb3.canJump(accountAddress, sourceGateId, destinationGateId);
+      return mudWeb3.gateCanJump({
+        sourceGateId,
+        destinationGateId,
+      });
     },
     enabled: Boolean(
       accountAddress &&

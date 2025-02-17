@@ -61,7 +61,6 @@ const ConnectDialog: React.FC<ConnectDialogProps> = ({ open, onClose }) => {
 
   React.useEffect(() => {
     if (!open) return;
-    console.log("connectors");
     Promise.all(
       connectors.map((connector) =>
         connector.getProvider().then((provider) => ({ connector, provider }))

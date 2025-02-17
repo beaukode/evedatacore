@@ -15,11 +15,12 @@ import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
+import { chainId } from "@/config";
 
-interface DialogOnOffAssemblyProps {
+interface BaseWeb3DialogProps {
   open: boolean;
   owner: string;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   txReceipt?: TransactionReceipt | null;
   txError?: Web3TransactionError | Error | null;
@@ -29,7 +30,7 @@ interface DialogOnOffAssemblyProps {
   onClose: () => void;
 }
 
-const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
+const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
   open,
   owner,
   title,
@@ -47,7 +48,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
 
   const state = React.useMemo(() => {
     if (!account.isConnected) return "connect";
-    if (account.chainId !== 17069) return "chain";
+    if (account.chainId !== chainId) return "chain";
     if (disabledOwnerCheck) return "ready";
     if (
       !disabledOwnerCheck &&
@@ -76,7 +77,7 @@ const BaseWeb3Dialog: React.FC<DialogOnOffAssemblyProps> = ({
       fullWidth
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
         {state !== "ready" && (
           <>
             <DialogContentText id="alert-dialog-description" gutterBottom>

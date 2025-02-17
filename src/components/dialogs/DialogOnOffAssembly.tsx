@@ -27,20 +27,17 @@ const DialogOnOffAssembly: React.FC<DialogOnOffAssemblyProps> = ({
     queryKey: ["SmartAssemblyState", assemblyId],
     queryFn: async () =>
       mudWeb3
-        .getDeployableState(BigInt(assemblyId))
+        .assemblyGetState({ assemblyId: BigInt(assemblyId) })
         .then(({ currentState }) => currentState),
     enabled: open,
   });
 
   const mutateState = useMutation({
     mutationFn: (online: boolean) => {
-      if (!mudWeb3.wallet) {
-        throw new Error("Wallet error, please refresh the page and try again");
-      }
       if (online) {
-        return mudWeb3.wallet.bringOnline(BigInt(assemblyId));
+        return mudWeb3.assemblyBringOnline({ assemblyId: BigInt(assemblyId) });
       } else {
-        return mudWeb3.wallet.bringOffline(BigInt(assemblyId));
+        return mudWeb3.assemblyBringOffline({ assemblyId: BigInt(assemblyId) });
       }
     },
     onSettled() {

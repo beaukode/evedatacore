@@ -17,6 +17,7 @@ type DbRow = {
 type ListCharactersOptions = {
   addresses?: string[] | string;
   ids?: string[] | string;
+  corporationsId?: number[] | number;
 };
 
 export const listCharacters =
@@ -31,6 +32,10 @@ export const listCharacters =
       const ids = ensureArray(options.ids);
       if (ids.length === 0) return []; // No ids to query
       where = `"characterId" IN ('${ids.join("', '")}')`;
+    } else if (options?.corporationsId) {
+      const corporationsId = ensureArray(options.corporationsId);
+      if (corporationsId.length === 0) return []; // No corporations ids to query
+      where = `"corpId" IN ('${corporationsId.join("', '")}')`;
     }
 
     return client

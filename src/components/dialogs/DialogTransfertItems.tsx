@@ -9,14 +9,14 @@ import {
   TextField,
 } from "@mui/material";
 import { Hex } from "viem";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import { useMudSql, useMudWeb3 } from "@/contexts/AppContext";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import useValueChanged from "@/tools/useValueChanged";
-import ItemInventoryForm from "../ui/ItemInventoryForm";
 import { Character } from "@/api/mudsql";
 import { filterInProps, shorten } from "@/tools";
-import { InventoryItemTransfert } from "@/api/mudweb3/eveworldActions";
+import { InventoryItemTransfert } from "@/api/mudweb3";
+import ItemInventoryForm from "../ui/ItemInventoryForm";
 
 interface DialogTransfertItemsProps {
   storageId: string;
@@ -93,6 +93,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   const queryCharacters = useQuery({
     queryKey: ["Smartcharacters"],
     queryFn: async () => mudSql.listCharacters(),
+    staleTime: 1000 * 60 * 15,
     enabled: transfertFrom === "inventory",
   });
 
@@ -114,10 +115,6 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
 
   const mutate = useMutation({
     mutationFn: () => {
-      if (!mudWeb3.wallet) {
-        throw new Error("Wallet error, please refresh the page and try again");
-      }
-
       const transferts = Object.entries(quantities).reduce(
         (acc, [inventoryItemId, quantity]) => {
           if (quantity > 0) {
@@ -140,18 +137,16 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
           throw new Error("Please select a character");
         }
 
-        return mudWeb3.wallet.inventoryToEphemeral(
-          BigInt(storageId),
-          owner,
-          character.address,
-          transferts
-        );
+        return mudWeb3.storageInventoryToEphemeral({
+          storageId: BigInt(storageId),
+          to: character.address,
+          transferts,
+        });
       } else {
-        return mudWeb3.wallet.ephemeralToInventory(
-          BigInt(storageId),
-          owner,
-          transferts
-        );
+        return mudWeb3.storageEphemeralToInventory({
+          storageId: BigInt(storageId),
+          transferts,
+        });
       }
     },
     onSuccess() {
@@ -163,7 +158,6 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
 
   useValueChanged((v) => {
     if (v) {
-      console.log("refetch", v);
       query.refetch().then(() => {
         setQuantities({});
       });

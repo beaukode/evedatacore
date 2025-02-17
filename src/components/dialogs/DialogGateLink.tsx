@@ -60,10 +60,10 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
     queryKey: ["SmartGateLink", sourceGateId, destinationGateId],
     queryFn: async () =>
       Promise.all([
-        mudWeb3.getDeployableMetadata(BigInt(sourceGateId)),
-        mudWeb3.getDeployableMetadata(BigInt(destinationGateId)),
-        mudWeb3.getDeployableLocation(BigInt(sourceGateId)),
-        mudWeb3.getDeployableLocation(BigInt(destinationGateId)),
+        mudWeb3.assemblyGetMetadata({ assemblyId: BigInt(sourceGateId) }),
+        mudWeb3.assemblyGetMetadata({ assemblyId: BigInt(destinationGateId) }),
+        mudWeb3.assemblyGetLocation({ assemblyId: BigInt(sourceGateId) }),
+        mudWeb3.assemblyGetLocation({ assemblyId: BigInt(destinationGateId) }),
       ]),
     enabled: open,
   });
@@ -89,20 +89,16 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
 
   const mutate = useMutation({
     mutationFn: () => {
-      if (!mudWeb3.wallet) {
-        throw new Error("Wallet error, please refresh the page and try again");
-      }
-
       if (action === "link") {
-        return mudWeb3.wallet.linkSmartGate(
-          BigInt(sourceGateId),
-          BigInt(destinationGateId)
-        );
+        return mudWeb3.gateLink({
+          gateId: BigInt(sourceGateId),
+          destinationGateId: BigInt(destinationGateId),
+        });
       } else {
-        return mudWeb3.wallet.unlinkSmartGate(
-          BigInt(sourceGateId),
-          BigInt(destinationGateId)
-        );
+        return mudWeb3.gateUnlink({
+          gateId: BigInt(sourceGateId),
+          destinationGateId: BigInt(destinationGateId),
+        });
       }
     },
     onSuccess() {

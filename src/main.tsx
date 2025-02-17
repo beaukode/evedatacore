@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router";
 import App from "./App.tsx";
 import { AppContextProvider } from "./contexts/AppContextProvider.tsx";
-import { wagmiConfig } from "./web3/wagmiConfig.ts";
+import { wagmiConfig } from "./config";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
