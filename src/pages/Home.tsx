@@ -1,13 +1,12 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Typography, Button } from "@mui/material";
-import { NavLink } from "react-router";
+import { Typography, Box } from "@mui/material";
 import ExternalLink from "@/components/ui/ExternalLink";
 import InternalLink from "@/components/ui/InternalLink";
 
 const Home: React.FC = () => {
   return (
-    <>
+    <Box flexGrow={1} overflow="auto">
       <Helmet>
         <title>
           EVE Datacore - Your ultimate resource for navigating and understanding
@@ -98,10 +97,7 @@ const Home: React.FC = () => {
         <br />
         Fly safe <span style={{ fontSize: "80%" }}>o</span>7
       </Typography>
-      <Button component={NavLink} to="/about" size="small" variant="text">
-        About
-      </Button>
-    </>
+    </Box>
   );
 };
 
