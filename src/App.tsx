@@ -1,24 +1,18 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Box, Button, IconButton, Paper, Toolbar } from "@mui/material";
 import { NavLink, Route, Routes, useLocation } from "react-router";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
-import DiscordIcon from "./components/icons/Discord";
+import DiscordIcon from "@/components/icons/Discord";
+import Menu from "@/components/layout/Menu";
+import HeaderLogo from "@/components/layout/HeaderLogo";
 import Explore from "@/pages/Explore";
 import Home from "@/pages/Home";
 import Error404 from "@/pages/Error404";
 import About from "@/pages/About";
 import Calculate from "@/pages/Calculate";
 import { ConnectButton } from "@/components/web3/ConnectButton";
-import Dev from "./pages/Dev";
+import Dev from "@/pages/Dev";
 
 function App() {
   const location = useLocation();
@@ -35,20 +29,23 @@ function App() {
     >
       <Box sx={{ flexGrow: 0 }}>
         <AppBar position="static">
-          <Toolbar color="secondary">
-            <Typography
-              variant="h6"
-              component={NavLink}
-              to="/"
+          <Toolbar
+            color="secondary"
+            sx={{ flexDirection: { xs: "row-reverse", md: "row" } }}
+          >
+            <Menu />
+            <Box
               sx={{
-                textDecoration: "none",
-                color: "inherit",
-                fontFamily: "Major Mono Display",
+                flexGrow: { xs: 1, md: 0 },
+                display: "flex",
+                justifyContent: "center",
               }}
             >
-              EVE|Datacore
-            </Typography>
-            <Box sx={{ flexGrow: 1, ml: 2 }}>
+              <HeaderLogo />
+            </Box>
+            <Box
+              sx={{ flexGrow: 1, ml: 2, display: { xs: "none", md: "flex" } }}
+            >
               <Button
                 startIcon={<ExploreDataIcon />}
                 to="/explore/characters"
