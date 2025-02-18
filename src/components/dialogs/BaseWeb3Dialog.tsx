@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Alert,
+  Box,
   Breakpoint,
   Button,
   Dialog,
@@ -25,6 +26,7 @@ interface BaseWeb3DialogProps {
   txReceipt?: TransactionReceipt | null;
   txError?: Web3TransactionError | Error | null;
   actions?: React.ReactNode;
+  headerActions?: React.ReactNode;
   size?: Breakpoint;
   disabledOwnerCheck?: boolean;
   onClose: () => void;
@@ -38,6 +40,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
   txError,
   txReceipt,
   actions,
+  headerActions,
   size,
   disabledOwnerCheck,
   onClose,
@@ -76,7 +79,12 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
       maxWidth={size || "sm"}
       fullWidth
     >
-      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box>{title}</Box>
+          {state === "ready" && headerActions && <Box>{headerActions}</Box>}
+        </Box>
+      </DialogTitle>
       <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
         {state !== "ready" && (
           <>
