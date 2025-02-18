@@ -152,31 +152,29 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
   const mutationSuccess = mutateRecord.isSuccess || deleteRecord.isSuccess;
   const disableForm = isLoading || mutationSuccess;
 
-  const title = React.useMemo(() => {
+  const headerActions = React.useMemo(() => {
     if (keyValues) {
       return (
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Box>Edit table record</Box>
-          {!mutationSuccess && (
-            <Box>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => {
-                  deleteRecord.mutate();
-                }}
-                loading={deleteRecord.isPending}
-                disabled={disableForm && !deleteRecord.isPending}
-              >
-                Delete record
-              </Button>
-            </Box>
-          )}
+        <Box>
+          <Button
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={() => {
+              deleteRecord.mutate();
+            }}
+            loading={deleteRecord.isPending}
+            disabled={disableForm && !deleteRecord.isPending}
+          >
+            Delete record
+          </Button>
         </Box>
       );
     }
-    return "Create table record";
-  }, [deleteRecord, keyValues, mutationSuccess, disableForm]);
+    return;
+  }, [deleteRecord, keyValues, disableForm]);
+
+  const title = createRecord ? "Create table record" : "Edit table record";
 
   return (
     <>
@@ -204,6 +202,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
             )}
           </>
         }
+        headerActions={headerActions}
         txError={mutateRecord.error || deleteRecord.error}
         txReceipt={mutateRecord.data || deleteRecord.data}
       >
