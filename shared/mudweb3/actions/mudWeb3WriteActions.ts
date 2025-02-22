@@ -14,6 +14,21 @@ import {
   assemblySetMetadata,
 } from "./write/assemblySetMetadata";
 import {
+  CorporationClaimParameters,
+  CorporationClaimReturnType,
+  corporationClaim,
+} from "./write/corporationClaim";
+import {
+  CorporationSetMetadataParameters,
+  CorporationSetMetadataReturnType,
+  corporationSetMetadata,
+} from "./write/corporationSetMetadata";
+import {
+  CorporationTransfertParameters,
+  CorporationTransfertReturnType,
+  corporationTransfert,
+} from "./write/corporationTransfert";
+import {
   GateLinkParameters,
   GateLinkReturnType,
   gateLink,
@@ -79,6 +94,15 @@ export type MudWeb3WriteActions = {
   assemblySetMetadata: (
     args: AssemblySetMetadataParameters
   ) => Promise<AssemblySetMetadataReturnType>;
+  corporationClaim: (
+    args: CorporationClaimParameters
+  ) => Promise<CorporationClaimReturnType>;
+  corporationSetMetadata: (
+    args: CorporationSetMetadataParameters
+  ) => Promise<CorporationSetMetadataReturnType>;
+  corporationTransfert: (
+    args: CorporationTransfertParameters
+  ) => Promise<CorporationTransfertReturnType>;
   gateLink: (args: GateLinkParameters) => Promise<GateLinkReturnType>;
   gateSetSystem: (
     args: GateSetSystemParameters
@@ -134,6 +158,21 @@ export function mudWeb3WriteActions(
       ): Promise<GateSetSystemReturnType> => {
         return gateSetSystem(client, args);
       },
+      corporationClaim: (
+        args: CorporationClaimParameters
+      ): Promise<CorporationClaimReturnType> => {
+        return corporationClaim(client, args);
+      },
+      corporationSetMetadata: (
+        args: CorporationSetMetadataParameters
+      ): Promise<CorporationSetMetadataReturnType> => {
+        return corporationSetMetadata(client, args);
+      },
+      corporationTransfert: (
+        args: CorporationTransfertParameters
+      ): Promise<CorporationTransfertReturnType> => {
+        return corporationTransfert(client, args);
+      },
       gateUnlink: (
         args: GateUnlinkParameters
       ): Promise<GateUnlinkReturnType> => {
@@ -185,6 +224,15 @@ export function mudWeb3WriteActions(
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       assemblySetMetadata: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      corporationClaim: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      corporationSetMetadata: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      corporationTransfert: async () => {
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       gateLink: async () => {
