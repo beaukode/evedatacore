@@ -63,6 +63,57 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "getMetadata",
+    "inputs": [
+      {
+        "name": "corpId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "data",
+        "type": "tuple",
+        "internalType": "struct CorporationsTableData",
+        "components": [
+          {
+            "name": "CEO",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "ticker",
+            "type": "bytes8",
+            "internalType": "bytes8"
+          },
+          {
+            "name": "claimedAt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "homepage",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "isClaimValid",
     "inputs": [
       {

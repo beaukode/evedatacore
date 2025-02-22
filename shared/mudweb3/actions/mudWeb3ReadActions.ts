@@ -20,6 +20,16 @@ import {
   characterGetId,
 } from "./read/characterGetId";
 import {
+  CorporationGetMetadataParameters,
+  CorporationGetMetadataReturnType,
+  corporationGetMetadata,
+} from "./read/corporationGetMetadata";
+import {
+  CorporationIsClaimValidParameters,
+  CorporationIsClaimValidReturnType,
+  corporationIsClaimValid,
+} from "./read/corporationIsClaimValid";
+import {
   GateCanJumpParameters,
   GateCanJumpReturnType,
   gateCanJump,
@@ -76,6 +86,12 @@ export type MudWeb3ReadActions = {
   characterGetId: (
     args: GetSmartCharacterIdParameters
   ) => Promise<GetSmartCharacterIdReturnType>;
+  corporationGetMetadata: (
+    args: CorporationGetMetadataParameters
+  ) => Promise<CorporationGetMetadataReturnType>;
+  corporationIsClaimValid: (
+    args: CorporationIsClaimValidParameters
+  ) => Promise<CorporationIsClaimValidReturnType>;
   gateCanJump: (args: GateCanJumpParameters) => Promise<GateCanJumpReturnType>;
   gateGetSystem: (
     args: GateGetSystemParameters
@@ -128,6 +144,16 @@ export function mudWeb3ReadActions(
       args: GetSmartCharacterIdParameters
     ): Promise<GetSmartCharacterIdReturnType> => {
       return characterGetId(client, args);
+    },
+    corporationGetMetadata: async (
+      args: CorporationGetMetadataParameters
+    ): Promise<CorporationGetMetadataReturnType> => {
+      return corporationGetMetadata(client, args);
+    },
+    corporationIsClaimValid: async (
+      args: CorporationIsClaimValidParameters
+    ): Promise<CorporationIsClaimValidReturnType> => {
+      return corporationIsClaimValid(client, args);
     },
     gateGetSystem: async (
       args: GateGetSystemParameters
