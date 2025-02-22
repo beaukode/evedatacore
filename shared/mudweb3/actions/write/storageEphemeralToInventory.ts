@@ -1,8 +1,7 @@
-import { encodeFunctionData, TransactionReceipt } from "viem";
+import { TransactionReceipt } from "viem";
 import { InventoryItemTransfert, WorldWriteClient } from "../../types";
 import { eveworld } from "../../eveworld";
 import { systemWrite } from "./systemWrite";
-import { worldAbi } from "../../abi";
 
 export type StorageEphemeralToInventoryParameters = {
   storageId: bigint;
@@ -15,8 +14,9 @@ export async function storageEphemeralToInventory(
   client: WorldWriteClient,
   args: StorageEphemeralToInventoryParameters
 ): Promise<StorageEphemeralToInventoryReturnType> {
-  const data = encodeFunctionData({
-    abi: worldAbi,
+  return systemWrite(client, {
+    systemAddress:
+      eveworld.namespaces.eveworld.systems.InventoryInteractSystem.systemId,
     functionName: "ephemeralToInventoryTransfer",
     args: [
       args.storageId,
@@ -26,10 +26,5 @@ export async function storageEphemeralToInventory(
         quantity,
       })),
     ],
-  });
-  return systemWrite(client, {
-    systemAddress:
-      eveworld.namespaces.eveworld.systems.InventoryInteractSystem.systemId,
-    data,
   });
 }

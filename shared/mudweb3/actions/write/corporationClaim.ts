@@ -1,7 +1,6 @@
-import { encodeFunctionData, TransactionReceipt, stringToHex } from "viem";
+import { TransactionReceipt, stringToHex } from "viem";
 import { WorldWriteClient } from "../../types";
 import { systemWrite } from "./systemWrite";
-import { worldAbi } from "../../abi";
 
 export type CorporationClaimParameters = {
   corpId: bigint;
@@ -17,14 +16,10 @@ export async function corporationClaim(
 ): Promise<CorporationClaimReturnType> {
   const tickerBytes = stringToHex(args.ticker, { size: 8 });
 
-  const data = encodeFunctionData({
-    abi: worldAbi,
-    functionName: "claim",
-    args: [args.corpId, tickerBytes, args.name],
-  });
   return systemWrite(client, {
     systemAddress:
       "0x737973746167696e6700000000000000436f72706f726174696f6e7353797374",
-    data,
+    functionName: "claim",
+    args: [args.corpId, tickerBytes, args.name],
   });
 }

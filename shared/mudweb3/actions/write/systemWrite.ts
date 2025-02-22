@@ -1,25 +1,66 @@
-import { BaseError, Hex, TransactionReceipt } from "viem";
+import {
+  Abi,
+  BaseError,
+  ContractFunctionArgs,
+  ContractFunctionName,
+  encodeFunctionData,
+  EncodeFunctionDataParameters,
+  Hex,
+  TransactionReceipt,
+} from "viem";
 import { isError } from "lodash-es";
 import { WorldWriteClient } from "../../types";
-import { worldAbi } from "../../abi";
+import { WorldAbi, worldAbi } from "../../abi";
 import { Web3TransactionError } from "../../Web3TransactionError";
 
-export type SytemWriteParameters = {
+type mutability = "nonpayable" | "payable";
+
+export type SytemWriteParameters<
+  abi extends Abi = WorldAbi,
+  functionName extends ContractFunctionName<
+    abi,
+    mutability
+  > = ContractFunctionName<abi, mutability>,
+  args extends ContractFunctionArgs<
+    abi,
+    mutability,
+    functionName
+  > = ContractFunctionArgs<abi, mutability, functionName>,
+> = {
   systemAddress: Hex;
-  data: Hex;
+  functionName: functionName;
+  args: args;
 };
 
 export type SystemWriteReturnType = TransactionReceipt;
 
-export async function systemWrite(
+export async function systemWrite<
+  abi extends Abi = WorldAbi,
+  functionName extends ContractFunctionName<
+    abi,
+    mutability
+  > = ContractFunctionName<abi, mutability>,
+  args extends ContractFunctionArgs<
+    abi,
+    mutability,
+    functionName
+  > = ContractFunctionArgs<abi, mutability, functionName>,
+>(
   client: WorldWriteClient,
-  args: SytemWriteParameters
+  args: SytemWriteParameters<abi, functionName, args>
 ): Promise<SystemWriteReturnType> {
   try {
-    await client.systemSimulate({
+    await client.systemSimulate<abi>({
       systemAddress: args.systemAddress,
-      data: args.data,
+      functionName: args.functionName,
+      args: args.args,
     });
+
+    const data = encodeFunctionData({
+      abi: worldAbi,
+      functionName: args.functionName,
+      args: args.args,
+    } as EncodeFunctionDataParameters);
 
     const tx = await client.writeClient.writeContract({
       chain: client.writeClient.chain,
@@ -27,7 +68,7 @@ export async function systemWrite(
       address: client.mudAddresses.world,
       abi: worldAbi,
       functionName: "call",
-      args: [args.systemAddress, args.data],
+      args: [args.systemAddress, data],
     });
     const receipt = await client.waitForTransactionReceipt({
       hash: tx,
@@ -36,9 +77,10 @@ export async function systemWrite(
 
     if (receipt.status === "reverted") {
       // In case of revert, we simulate the transaction on the same block to get the revert reason
-      await client.systemSimulate({
+      await client.systemSimulate<abi>({
         systemAddress: args.systemAddress,
-        data: args.data,
+        functionName: args.functionName,
+        args: args.args,
         blockNumber: receipt.blockNumber,
       });
     }

@@ -86,9 +86,9 @@ export type MudWeb3ReadActions = {
   storeGetTable: (
     args: StoreGetTableParameters
   ) => Promise<StoreGetTableReturnType>;
-  systemSimulate: (
-    args: SystemSimulateParameters
-  ) => Promise<SystemSimulateReturnType>;
+  systemSimulate: <abi extends Abi = WorldAbi>(
+    args: SystemSimulateParameters<abi>
+  ) => Promise<SystemSimulateReturnType<abi>>;
   turretGetSystem: (
     args: TurretGetSystemParameters
   ) => Promise<TurretGetSystemReturnType>;
@@ -144,9 +144,9 @@ export function mudWeb3ReadActions(
     ): Promise<StoreGetTableReturnType> => {
       return storeGetTable(client, args);
     },
-    systemSimulate: async (
-      args: SystemSimulateParameters
-    ): Promise<SystemSimulateReturnType> => {
+    systemSimulate: async <abi extends Abi = WorldAbi>(
+      args: SystemSimulateParameters<abi>
+    ): Promise<SystemSimulateReturnType<abi>> => {
       return systemSimulate(client, args);
     },
     turretGetSystem: async (

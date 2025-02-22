@@ -1,7 +1,6 @@
-import { encodeFunctionData, stringToHex, TransactionReceipt } from "viem";
+import { stringToHex, TransactionReceipt } from "viem";
 import { WorldWriteClient } from "../../types";
 import { systemWrite } from "./systemWrite";
-import { worldAbi } from "../../abi";
 
 export type CorporationSetMetadataParameters = {
   corpId: bigint;
@@ -19,8 +18,9 @@ export async function corporationSetMetadata(
 ): Promise<CorporationSetMetadataReturnType> {
   const tickerBytes = stringToHex(args.ticker, { size: 8 });
 
-  const data = encodeFunctionData({
-    abi: worldAbi,
+  return systemWrite(client, {
+    systemAddress:
+      "0x737973746167696e6700000000000000436f72706f726174696f6e7353797374",
     functionName: "setMetadata",
     args: [
       args.corpId,
@@ -29,10 +29,5 @@ export async function corporationSetMetadata(
       args.description,
       args.homepage,
     ],
-  });
-  return systemWrite(client, {
-    systemAddress:
-      "0x737973746167696e6700000000000000436f72706f726174696f6e7353797374",
-    data,
   });
 }
