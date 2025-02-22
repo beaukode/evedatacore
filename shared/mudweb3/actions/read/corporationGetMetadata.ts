@@ -32,5 +32,5 @@ export async function corporationGetMetadata(
     return undefined;
   }
 
-  return { ...r, ticker: hexToString(r.ticker) };
+  return { ...r, ticker: hexToString(r.ticker, { size: 8 }) };
 }
