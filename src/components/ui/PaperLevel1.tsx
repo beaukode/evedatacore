@@ -58,7 +58,11 @@ const PaperLevel1: React.FC<RootPaperProps> = ({
           />
         </Box>
       )}
-      <Paper elevation={1} sx={{ p: 2, mb: 2, ...sx }} {...rest}>
+      <Paper
+        elevation={1}
+        sx={{ p: 2, mb: 2, overflowX: "auto", ...sx }}
+        {...rest}
+      >
         {children}
       </Paper>
     </>
