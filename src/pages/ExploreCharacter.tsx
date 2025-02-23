@@ -47,7 +47,7 @@ const ExploreCharacter: React.FC = () => {
   const data = query.data;
   const name = data?.name || "...";
   return (
-    <Box p={2} flexGrow={1} overflow="auto">
+    <Box p={2}>
       {!query.isLoading && data && (
         <Helmet>
           <title>{data.name}</title>

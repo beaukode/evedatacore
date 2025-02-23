@@ -132,7 +132,7 @@ const ExploreCorporation: React.FC = () => {
             </Typography>
           </Box>
         </Box>
-        <Box flexGrow={1} overflow="auto">
+        <Box flexGrow={1}>
           <DataTable
             data={members}
             columns={columns}
