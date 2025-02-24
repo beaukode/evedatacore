@@ -16,7 +16,7 @@ const DappHeader: React.FC<DappHeaderProps> = ({ title, tabs }) => {
     const path = pathname.split("/").slice(0, 4).join("/");
     const routes = Object.keys(tabs);
     const currentTab = routes.findIndex((route) => path === route);
-    console.log(currentTab, path);
+
     return (
       <Tabs
         value={currentTab}
@@ -33,7 +33,16 @@ const DappHeader: React.FC<DappHeaderProps> = ({ title, tabs }) => {
   return (
     <Box sx={{ flexGrow: 0 }}>
       <AppBar position="fixed">
-        <Toolbar variant="dense" sx={{ px: 1 }}>
+        <Toolbar
+          variant="dense"
+          sx={{
+            pt: { xs: 1, md: 0 },
+            px: 1,
+            justifyContent: "space-between",
+            gap: 1,
+            flexWrap: "wrap",
+          }}
+        >
           <Box>
             <Typography
               variant="h6"
@@ -50,11 +59,26 @@ const DappHeader: React.FC<DappHeaderProps> = ({ title, tabs }) => {
               </Box>
             </Typography>
           </Box>
-          <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+          <Box
+            sx={{
+              justifyContent: "center",
+              display: { xs: "none", md: "flex" },
+            }}
+          >
             {renderTabs}
           </Box>
           <Box>
             <ConnectButton disableMenu={true} />
+          </Box>
+          <Box
+            sx={{
+              flexGrow: 1,
+              justifyContent: "center",
+              display: { xs: "flex", md: "none" },
+              width: "100%",
+            }}
+          >
+            {renderTabs}
           </Box>
         </Toolbar>
       </AppBar>

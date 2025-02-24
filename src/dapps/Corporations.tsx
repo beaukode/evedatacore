@@ -1,5 +1,4 @@
 import React from "react";
-import { Box } from "@mui/material";
 import { Route, Routes } from "react-router";
 import DappLayout from "@/components/layouts/DappLayout";
 import Error404 from "@/pages/Error404";
@@ -15,13 +14,11 @@ const Corporations: React.FC = () => {
         "/dapps/corporations/directory": "Directory",
       }}
     >
-      <Box sx={{ mt: 7, mb: 4 }}>
-        <Routes>
-          <Route path="" element={<Index />} />
-          <Route path="/directory" element={<Directory />} />
-          <Route path="*" element={<Error404 />} />
-        </Routes>
-      </Box>
+      <Routes>
+        <Route path="" element={<Index />} />
+        <Route path="/directory" element={<Directory />} />
+        <Route path="*" element={<Error404 />} />
+      </Routes>
     </DappLayout>
   );
 };
