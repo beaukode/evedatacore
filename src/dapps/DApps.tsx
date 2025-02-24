@@ -8,7 +8,7 @@ const DApps: React.FC = () => {
     <>
       <Routes>
         <Route path="" element={<Error404 hideBackButton />} />
-        <Route path="/corporations" element={<Corporations />} />
+        <Route path="/corporations/*" element={<Corporations />} />
         <Route path="*" element={<Error404 hideBackButton />} />
       </Routes>
     </>
