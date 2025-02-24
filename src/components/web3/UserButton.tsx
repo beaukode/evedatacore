@@ -7,7 +7,6 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { Hex } from "viem";
 import { useDisconnect } from "wagmi";
 import { NavLink } from "react-router";
 import UnknwonUserIcon from "@mui/icons-material/QuestionMark";
@@ -15,27 +14,27 @@ import DisconnectIcon from "@mui/icons-material/PowerOff";
 import CharacterPageIcon from "@mui/icons-material/Person";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { shorten } from "@/tools";
-import useCharacter from "@/tools/useCharacter";
+import { useSmartCharacter } from "@/contexts/AppContext";
 
 interface UserButtonProps {
-  address: Hex;
   disableMenu?: boolean;
 }
 
-const UserButton: React.FC<UserButtonProps> = ({ address, disableMenu }) => {
+const UserButton: React.FC<UserButtonProps> = ({ disableMenu }) => {
   const menuAnchor = React.useRef<HTMLButtonElement | null>(null);
   const [showMenu, setShowMenu] = React.useState(false);
+  const smartCharacter = useSmartCharacter();
   const { disconnect } = useDisconnect();
 
   const copyAddress = React.useCallback(() => {
-    navigator.clipboard.writeText(address).catch((e) => {
-      console.error("Fail to copying content", e);
-    });
-  }, [address]);
+    if (smartCharacter.isConnected) {
+      navigator.clipboard.writeText(smartCharacter.address).catch((e) => {
+        console.error("Fail to copying content", e);
+      });
+    }
+  }, [smartCharacter]);
 
-  const { character } = useCharacter();
-
-  if (userNameQuery.isFetching) {
+  if (!smartCharacter.isConnected) {
     return null;
   }
 
@@ -56,7 +55,7 @@ const UserButton: React.FC<UserButtonProps> = ({ address, disableMenu }) => {
         }}
         variant="outlined"
         endIcon={
-          character ? (
+          smartCharacter.characterId ? (
             <Avatar
               sx={{ my: "-5px", mr: "-4px" }}
               variant="rounded"
@@ -72,7 +71,9 @@ const UserButton: React.FC<UserButtonProps> = ({ address, disableMenu }) => {
           )
         }
       >
-        <>{character?.name || shorten(address, 8)}</>
+        <>
+          {smartCharacter.characterName || shorten(smartCharacter.address, 8)}
+        </>
       </Button>
       {!disableMenu && (
         <Menu
@@ -89,7 +90,7 @@ const UserButton: React.FC<UserButtonProps> = ({ address, disableMenu }) => {
         >
           <MenuItem
             component={NavLink}
-            to={`/explore/characters/${address}`}
+            to={`/explore/characters/${smartCharacter.address}`}
             onClick={() => {
               setShowMenu(false);
             }}
@@ -108,7 +109,7 @@ const UserButton: React.FC<UserButtonProps> = ({ address, disableMenu }) => {
             <ListItemIcon>
               <CopyIcon color="primary" fontSize="small" />
             </ListItemIcon>
-            <ListItemText>{shorten(address, 10)}</ListItemText>
+            <ListItemText>{shorten(smartCharacter.address, 10)}</ListItemText>
           </MenuItem>
           <MenuItem
             onClick={() => {

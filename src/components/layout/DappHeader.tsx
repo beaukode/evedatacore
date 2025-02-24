@@ -46,6 +46,7 @@ const DappHeader: React.FC<DappHeaderProps> = ({ title, tabs }) => {
           <Box>
             <Typography
               variant="h6"
+              component="h1"
               sx={{
                 textDecoration: "none",
                 color: "inherit",
@@ -67,7 +68,7 @@ const DappHeader: React.FC<DappHeaderProps> = ({ title, tabs }) => {
           >
             {renderTabs}
           </Box>
-          <Box>
+          <Box minWidth={140}>
             <ConnectButton disableMenu={true} />
           </Box>
           <Box
