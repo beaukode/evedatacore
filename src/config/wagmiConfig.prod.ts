@@ -1,10 +1,10 @@
 import { http } from "viem";
-import { garnet } from "@latticexyz/common/chains";
+import { pyrope } from "@latticexyz/common/chains";
 import { createConfig } from "wagmi";
 import { coinbaseWallet, metaMask, safe, injected } from "wagmi/connectors";
 
 const transports = {
-  [garnet.id]: http(),
+  [pyrope.id]: http(),
 };
 
 export const prodWagmiConfig = createConfig({
@@ -25,20 +25,11 @@ export const prodWagmiConfig = createConfig({
   multiInjectedProviderDiscovery: false,
   chains: [
     {
-      ...garnet,
-      blockExplorers: {
-        ...garnet.blockExplorers,
-        worldsExplorer: {
-          name: "MUD Worlds Explorer",
-          url: "https://explorer.mud.dev/garnet/worlds",
-        },
-      },
-      iconUrl:
-        "https://explorer.garnetchain.com/assets/configs/network_icon.svg",
+      ...pyrope,
     },
   ],
   transports,
   pollingInterval: {
-    [garnet.id]: 2000,
+    [pyrope.id]: 2000,
   },
 });
