@@ -1,6 +1,6 @@
 import { http } from "viem";
 import { anvil } from "viem/chains";
-import { garnet, redstone } from "@latticexyz/common/chains";
+import { garnet, redstone, pyrope } from "@latticexyz/common/chains";
 import { createConfig } from "wagmi";
 import { metaMask, coinbaseWallet, safe, injected } from "wagmi/connectors";
 
@@ -8,6 +8,7 @@ const transports = {
   [anvil.id]: http(),
   [garnet.id]: http(),
   [redstone.id]: http(),
+  [pyrope.id]: http(),
 };
 
 export const devWagmiConfig = createConfig({
@@ -50,6 +51,9 @@ export const devWagmiConfig = createConfig({
       },
       iconUrl:
         "https://explorer.garnetchain.com/assets/configs/network_icon.svg",
+    },
+    {
+      ...pyrope,
     },
     {
       ...anvil,

@@ -177,7 +177,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
         )}
         {state === "chain" && (
           <Button
-            onClick={() => switchChain({ chainId: 17069 })}
+            onClick={() => switchChain({ chainId })}
             variant="contained"
           >
             Switch
