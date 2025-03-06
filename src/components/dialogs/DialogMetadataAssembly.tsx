@@ -93,6 +93,7 @@ const DialogMetadataAssembly: React.FC<DialogMetadataAssemblyProps> = ({
         }
         txError={mutateState.error}
         txReceipt={mutateState.data}
+        disabledOwnerCheck
       >
         <DialogContentText component="div" gutterBottom>
           <Grid2 container spacing={2}>
