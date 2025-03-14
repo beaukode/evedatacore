@@ -29,3 +29,11 @@ scripts/starmap.json
 
 # Rollup visualizer
 stats.html
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
