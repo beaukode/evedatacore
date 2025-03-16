@@ -5,15 +5,15 @@
     "version": "0.0.0"
   },
   "paths": {
-    "/api/calc/path/{from}/{to}/{jumpDistance}": {
+    "/calc/path/{from}/{to}": {
       "get": {
-        "operationId": "GetApiCalcPathFromToJumpDistance",
+        "operationId": "GetCalcPathFromTo",
         "parameters": [
           {
             "name": "from",
             "in": "path",
             "required": true,
-            "description": "GET /api/calc/path/:from/:to/:jumpDistance Parameter",
+            "description": "GET /calc/path/:from/:to Parameter",
             "schema": {
               "type": "number",
               "format": "double",
@@ -25,7 +25,7 @@
             "name": "to",
             "in": "path",
             "required": true,
-            "description": "GET /api/calc/path/:from/:to/:jumpDistance Parameter",
+            "description": "GET /calc/path/:from/:to Parameter",
             "schema": {
               "type": "number",
               "format": "double",
@@ -35,9 +35,9 @@
           },
           {
             "name": "jumpDistance",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "description": "GET /api/calc/path/:from/:to/:jumpDistance Parameter",
+            "description": "GET /calc/path/:from/:to Parameter",
             "schema": {
               "type": "number",
               "format": "double",
@@ -49,110 +49,74 @@
         ],
         "responses": {
           "200": {
-            "description": "GET /api/calc/path/:from/:to/:jumpDistance Positive response",
+            "description": "GET /calc/path/:from/:to Positive response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "const": "success"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "path": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "from": {
-                                "type": "number",
-                                "format": "double",
-                                "minimum": -1.7976931348623157e+308,
-                                "maximum": 1.7976931348623157e+308
-                              },
-                              "to": {
-                                "type": "number",
-                                "format": "double",
-                                "minimum": -1.7976931348623157e+308,
-                                "maximum": 1.7976931348623157e+308
-                              },
-                              "distance": {
-                                "type": "number",
-                                "format": "double",
-                                "minimum": -1.7976931348623157e+308,
-                                "maximum": 1.7976931348623157e+308
-                              },
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "jump",
-                                  "gate",
-                                  "smartgate"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "from",
-                              "to",
-                              "distance",
-                              "type"
+                    "path": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "from": {
+                            "type": "number",
+                            "format": "double",
+                            "minimum": -1.7976931348623157e+308,
+                            "maximum": 1.7976931348623157e+308
+                          },
+                          "to": {
+                            "type": "number",
+                            "format": "double",
+                            "minimum": -1.7976931348623157e+308,
+                            "maximum": 1.7976931348623157e+308
+                          },
+                          "distance": {
+                            "type": "number",
+                            "format": "double",
+                            "minimum": -1.7976931348623157e+308,
+                            "maximum": 1.7976931348623157e+308
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "jump",
+                              "gate",
+                              "smartgate"
                             ]
                           }
-                        }
-                      },
-                      "required": [
-                        "path"
-                      ]
+                        },
+                        "required": [
+                          "from",
+                          "to",
+                          "distance",
+                          "type"
+                        ]
+                      }
                     }
                   },
                   "required": [
-                    "status",
-                    "data"
+                    "path"
                   ]
                 }
               }
             }
           },
           "400": {
-            "description": "GET /api/calc/path/:from/:to/:jumpDistance Negative response",
+            "description": "GET /calc/path/:from/:to Negative response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "const": "error"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "message"
-                      ]
+                    "message": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "status",
-                    "error"
+                    "message"
                   ]
-                },
-                "examples": {
-                  "example1": {
-                    "value": {
-                      "status": "error",
-                      "error": {
-                        "message": "Sample error message"
-                      }
-                    }
-                  }
                 }
               }
             }
