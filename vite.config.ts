@@ -18,11 +18,17 @@ export default defineConfig({
   server: {
     proxy: {
       "/api-stillness": {
-        target: "https://eve.beaukode.net/",
+        target: "https://evedataco.re/",
         changeOrigin: true,
       },
       "/api-shish": {
-        target: "https://eve.beaukode.net/",
+        target: "https://evedataco.re/",
+        changeOrigin: true,
+      },
+      "/api": {
+        target: process.env.USE_LOCAL_API
+          ? "http://localhost:3000/"
+          : "https://main.eve.beaukode.net/",
         changeOrigin: true,
       },
     },
