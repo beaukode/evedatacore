@@ -4,7 +4,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc && cp package*.json dist/ && cd dist/ && npm ci --omit=dev",
-    "start": "jiti src/index.ts",
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "package": "npm run build && mkdir -p ./dist_package && rm -f ./dist_package/backend.zip && cd dist/ && zip -r ../dist_package/backend.zip . -x \"*node_modules/aws-sdk/*\"",
     "lambda": "ts-node src/lambda.ts"
   },
@@ -21,7 +22,8 @@
     "@types/aws-lambda": "^8.10.147",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.10",
-    "jiti": "^2.4.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.2"
   }
 }
