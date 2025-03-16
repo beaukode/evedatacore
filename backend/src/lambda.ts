@@ -1,4 +1,4 @@
 import serverlessExpress from "serverless-http";
-import { app } from "./index";
+import { app } from "./server";
 
 exports.handler = serverlessExpress(app);

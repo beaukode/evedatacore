@@ -7,6 +7,7 @@
     "start": "ts-node src/index.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "package": "npm run build && mkdir -p ./dist_package && rm -f ./dist_package/backend.zip && cd dist/ && zip -r ../dist_package/backend.zip . -x \"*node_modules/aws-sdk/*\"",
+    "doc": "ts-node src/doc.ts",
     "lambda": "ts-node src/lambda.ts"
   },
   "keywords": [],
@@ -16,11 +17,16 @@
   "dependencies": {
     "aws-lambda": "^1.0.7",
     "express": "^4.21.2",
-    "serverless-http": "^3.2.0"
+    "express-zod-api": "^22.11.2",
+    "http-errors": "^2.0.0",
+    "lodash": "^4.17.21",
+    "serverless-http": "^3.2.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147",
     "@types/express": "^5.0.0",
+    "@types/http-errors": "^2.0.4",
     "@types/node": "^22.13.10",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
