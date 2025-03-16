@@ -7,7 +7,7 @@ app.disable("x-powered-by");
 
 const { notFoundHandler } = attachRouting(
   createConfig({ app, cors: false, startupLogo: false }),
-  routes
+  { api: routes }
 );
 
 app.use(notFoundHandler);
