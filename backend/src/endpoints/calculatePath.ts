@@ -1,5 +1,5 @@
-import { defaultEndpointsFactory } from "express-zod-api";
 import { z } from "zod";
+import { endpointsFactory } from "./factories";
 
 const pathItemSchema = z.object({
   from: z.number(),
@@ -8,7 +8,7 @@ const pathItemSchema = z.object({
   type: z.enum(["jump", "gate", "smartgate"]),
 });
 
-export const calculatePath = defaultEndpointsFactory.build({
+export const calculatePath = endpointsFactory.build({
   method: "get",
   input: z.object({
     from: z.coerce.number().positive().min(30000000).max(39000000),
