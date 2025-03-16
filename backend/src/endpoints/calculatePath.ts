@@ -22,8 +22,8 @@ export const calculatePath = endpointsFactory.build({
     logger.debug("Options:", options); // middlewares provide options
     return {
       path: [
-        { from, to, distance: jumpDistance, type: "jump" as const },
-        { from: to, to: 30013950, distance: 1, type: "gate" as const },
+        { from, to: 30001570, distance: jumpDistance, type: "jump" as const },
+        { from: 30001570, to: 30013950, distance: 1, type: "gate" as const },
         { from: 30013950, to, distance: 1, type: "smartgate" as const },
       ],
     };
