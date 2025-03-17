@@ -26,8 +26,8 @@ const schema = z
         { message: "Please select a system" }
       )
       .default({
-        label: "E.G1G.6GD",
-        id: 30017903,
+        label: "C.0LD.DB5",
+        id: 30001573,
       }),
     system2: z
       .object(
@@ -38,8 +38,8 @@ const schema = z
         { message: "Please select a system" }
       )
       .default({
-        label: "Nod",
-        id: 30008580,
+        label: "O0G-4M6",
+        id: 30013956,
       }),
     jumpDistance: z.number().int().positive().min(1).max(500).default(120),
     optimize: z.enum(["fuel", "distance", "hops"]).default("fuel"),
@@ -59,7 +59,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   solarSystemsIndex,
 }) => {
   const [store, setStore] = useAppLocalStorage(
-    "v1_calculator_route_planner",
+    "v2_calculator_route_planner",
     schema
   );
 
