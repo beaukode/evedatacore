@@ -12,7 +12,7 @@ import {
   InputAdornment,
   Typography,
 } from "@mui/material";
-import { Inventory } from "@/api/mudsql";
+import { Inventory } from "@shared/mudsql";
 import { useTypesIndex } from "@/contexts/AppContext";
 
 interface ItemInventoryFormProps {

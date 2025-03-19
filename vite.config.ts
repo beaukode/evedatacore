@@ -12,6 +12,7 @@ export default defineConfig({
   plugins: [react(), visualizer()],
   resolve: {
     alias: {
+      "@shared": path.resolve(__dirname, "./shared"),
       "@": path.resolve(__dirname, "./src"),
     },
   },
