@@ -27,8 +27,8 @@ const CalculateRoute: React.FC = () => {
         },
         query: {
           jumpDistance: queryData.jumpDistance,
-          // optimize: queryData.optimize,
-          // useSmartGates: queryData.useSmartGates,
+          optimize: queryData.optimize,
+          useSmartGates: queryData.useSmartGates,
         },
       }).then((r) => {
         if (r.error) {
