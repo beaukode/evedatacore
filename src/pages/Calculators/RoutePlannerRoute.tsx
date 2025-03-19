@@ -130,10 +130,10 @@ function enrichRoute(
       const distance = lyDistance(from.location, to.location);
       if (step.type === "jump") {
         acc.jumps += 1;
-        acc.jumpsDistance += step.distance;
+        acc.jumpsDistance += distance;
         acc.distance += distance;
       } else {
-        acc.distance += step.distance;
+        acc.distance += distance;
       }
       acc.path.push({
         ...step,
