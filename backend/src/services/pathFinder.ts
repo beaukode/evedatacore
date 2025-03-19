@@ -1,7 +1,7 @@
 import { Lambda } from "@aws-sdk/client-lambda";
 import { NotFound, InternalServerError } from "http-errors";
 import { z } from "zod";
-import { chunk } from "lodash";
+import { chunk } from "lodash-es";
 import { zodParse } from "../utils";
 import { EnvVariablesService } from "./envVariables";
 import { SolarSystemsService } from "./solarSystems";
