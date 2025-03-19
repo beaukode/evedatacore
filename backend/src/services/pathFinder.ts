@@ -1,6 +1,7 @@
 import { Lambda } from "@aws-sdk/client-lambda";
-import { NotFound, RequestTimeout } from "http-errors";
+import { NotFound, InternalServerError } from "http-errors";
 import { z } from "zod";
+import { chunk } from "lodash";
 import { zodParse } from "../utils";
 import { EnvVariablesService } from "./envVariables";
 import { SolarSystemsService } from "./solarSystems";
@@ -69,7 +70,7 @@ interface PathFinderServiceConfig {
   solarSystems: SolarSystemsService;
 }
 
-export function createPathFinderService({ env }: PathFinderServiceConfig) {
+export function createPathFinderService({ env, solarSystems }: PathFinderServiceConfig) {
   async function callPathFinder(
     from: number,
     to: number,
@@ -87,31 +88,48 @@ export function createPathFinderService({ env }: PathFinderServiceConfig) {
     const r = await invokeLambda(arn, from, to, jumpDistance, optimize, useSmartGates);
     const { status, path, stats } = r;
     console.log(
-      JSON.stringify(
-        {
-          arn,
-          from,
-          to,
-          jumpDistance,
-          status,
-          path: path,
-          ...stats,
-        },
-        null,
-        2,
-      ),
+      JSON.stringify({
+        arn,
+        from,
+        to,
+        jumpDistance,
+        status,
+        path: path,
+        ...stats,
+      }),
     );
     if (status === "notfound") {
       throw new NotFound("No path found");
     }
     if (status === "timeout") {
-      throw new RequestTimeout("Pathfinder timeout");
+      throw new InternalServerError("Pathfinder timeout");
     }
     return path;
   }
 
   return {
     findPath: async (from: number, to: number, jumpDistance: number, optimize: Optimize, useSmartGates: boolean) => {
+      const distance = await solarSystems.getDistance(from, to);
+      if (optimize !== Optimize.HOPS && distance > jumpDistance * 10) {
+        // We need to split the problem
+        const parts = Math.min(distance / (jumpDistance * 10), 4); // 4 is the maximum number of parts
+        console.log(`Splitting the path into ${parts} parts`);
+        const largePath = await callPathFinder(from, to, 500, optimize, useSmartGates);
+        const chunkSize = Math.round(largePath.length / parts);
+        const chunks = chunk(largePath, chunkSize);
+        const nodes = [from, ...chunks.map((chunk) => chunk[chunk.length - 1].target)];
+
+        let start: number = nodes.shift()!;
+        const promises: Promise<Awaited<ReturnType<typeof callPathFinder>>>[] = [];
+        while (nodes.length > 0) {
+          const end = nodes.shift()!;
+          promises.push(callPathFinder(start, end, jumpDistance, optimize, useSmartGates));
+          start = end;
+        }
+        const paths = await Promise.all(promises);
+        return paths.flat();
+      }
+
       return callPathFinder(from, to, jumpDistance, optimize, useSmartGates);
     },
   };
