@@ -1,5 +1,10 @@
 import { createContainer, asFunction, asValue, FunctionReturning } from "awilix";
-import { createEnvVariablesService, createPathFinderService, createSolarSystemsService } from "../services";
+import {
+  createEnvVariablesService,
+  createPathFinderService,
+  createSolarSystemsService,
+  createMudSqlService,
+} from "../services";
 import { Middleware } from "express-zod-api";
 
 type DiContainerService = string | number | boolean | object | FunctionReturning<unknown>;
@@ -12,6 +17,7 @@ const services = {
   env: createEnvVariablesService,
   solarSystems: createSolarSystemsService,
   pathFinder: createPathFinderService,
+  mudSql: createMudSqlService,
 };
 
 const di = createContainer({
