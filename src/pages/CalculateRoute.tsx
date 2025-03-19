@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ExternalLink from "@/components/ui/ExternalLink";
-import { getPath } from "@/api/shish";
+import { getCalcPathFromTo } from "@/api/evedatacore";
 import RoutePlannerForm from "./Calculators/RoutePlannerForm";
 import RoutePlannerRoute from "./Calculators/RoutePlannerRoute";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
@@ -20,24 +20,21 @@ const CalculateRoute: React.FC = () => {
     queryKey: ["CalculateRoute", queryData],
     queryFn: async () => {
       if (!queryData) return;
-      return getPath({
+      return getCalcPathFromTo({
+        path: {
+          from: queryData.system1.id,
+          to: queryData.system2.id,
+        },
         query: {
-          start: queryData.system1.label,
-          end: queryData.system2.label,
-          jump: queryData.jumpDistance,
-          optimize: queryData.optimize,
-          use_smart_gates: queryData.useSmartGates,
+          jumpDistance: queryData.jumpDistance,
+          // optimize: queryData.optimize,
+          // useSmartGates: queryData.useSmartGates,
         },
       }).then((r) => {
         if (r.error) {
-          throw new Error(r.error);
+          throw new Error(r.error.message);
         }
-        if (r.data?.version !== 2) {
-          throw new Error(
-            "Invalid server version, The client need to be updated, please contact me."
-          );
-        }
-        return r.data.data;
+        return r.data.path;
       });
     },
     retry: false,
