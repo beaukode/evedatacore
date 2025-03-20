@@ -4,15 +4,15 @@ import { postQ } from "../generated";
 import { MudSqlClientConfig } from "../types";
 import { transformResult } from "../utils";
 
-export const selectRaw =
+export const selectRawBatch =
   (_: MudSqlClient, config: MudSqlClientConfig, restClient: Client) =>
-  async (sql: string): Promise<Record<string, string>[]> => {
+  async (sql: string[]): Promise<Record<string, string>[][]> => {
     const r = await postQ({
-      body: [{ address: config.worldAddress, query: sql }],
+      body: sql.map((q) => ({ address: config.worldAddress, query: q })),
       client: restClient,
     });
     if (r.error) {
       throw new Error(r.error.msg);
     }
-    return transformResult(r.data.result.shift());
+    return r.data.result.map((r) => transformResult(r));
   };

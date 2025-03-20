@@ -1,9 +1,8 @@
 import { PostQResponse } from "../generated";
 
 export function transformResult(
-  data: PostQResponse["result"]
+  results?: PostQResponse["result"][number]
 ): Record<string, string>[] {
-  const results = data.shift();
   const header = results?.shift();
   if (!results || !header) {
     return [];

@@ -23,4 +23,6 @@ export * from "./listStorageUsersInventoryCapacity";
 export * from "./listSystems";
 export * from "./listTables";
 export * from "./selectFrom";
+export * from "./selectFromBatch";
 export * from "./selectRaw";
+export * from "./selectRawBatch";
