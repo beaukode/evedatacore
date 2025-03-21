@@ -21,6 +21,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@eveworld/common-constants": "^0.0.13",
     "@eveworld/contexts": "^0.1.0",
     "@eveworld/contracts": "^0.1.0",
     "@eveworld/world": "^0.0.17",

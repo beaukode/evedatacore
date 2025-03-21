@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useAccount, useSwitchChain } from "wagmi";
 import { TransactionReceipt } from "viem";
-import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
+import { isWeb3TransactionError, Web3TransactionError } from "@shared/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
@@ -176,10 +176,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
           </Button>
         )}
         {state === "chain" && (
-          <Button
-            onClick={() => switchChain({ chainId })}
-            variant="contained"
-          >
+          <Button onClick={() => switchChain({ chainId })} variant="contained">
             Switch
           </Button>
         )}
