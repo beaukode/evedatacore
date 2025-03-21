@@ -16,7 +16,7 @@ export const calculatePath = endpointsFactory.build({
     to: z.coerce.number().positive().min(30000000).max(39000000),
     jumpDistance: z.coerce.number().positive().max(500).optional().default(0),
     optimize: z.nativeEnum(Optimize).optional().default(Optimize.FUEL),
-    useSmartGates: z.coerce.boolean().optional().default(false),
+    useSmartGates: z.coerce.string().optional().default(""),
   }),
   output: z.object({
     path: z.array(pathItemSchema),
