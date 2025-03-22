@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
-    "build": "node build.js",
+    "build": "tsc -noEmit && node build.js",
     "dev": "node dev.js",
     "package": "npm run build && cd dist/ && rm -f lambda.zip && zip -r lambda.zip lambda.js",
     "doc": "node doc.js"

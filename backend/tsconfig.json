@@ -11,13 +11,20 @@
       "@shared/*": ["../shared/*"]
     },
 
+    /* Bundler mode */
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+
+    /* For ABI */
+    "resolveJsonModule": true
   },
   "include": ["src", "../shared/"]
 }
