@@ -4,7 +4,12 @@ import { useSearchParams } from "react-router";
 
 const useQuerySearch = <S extends Record<string, string>>(
   initialState: S
-): [S, (key: keyof S, value: string) => void, S] => {
+): [
+  S,
+  (key: keyof S, value: string) => void,
+  S,
+  React.ChangeEventHandler<HTMLFormElement>,
+] => {
   const isInitialState = React.useRef(true);
   const [searchParams, setSearchParams] = useSearchParams(initialState);
 
@@ -42,7 +47,22 @@ const useQuerySearch = <S extends Record<string, string>>(
     setState((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  return [state, setValue, debouncedState];
+  const handleChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLFormElement>) => {
+      const name = event.target.name;
+
+      if (name && name in state) {
+        if (event.target.type === "checkbox") {
+          setValue(name as keyof S, event.target.checked ? "true" : "false");
+        } else {
+          setValue(name as keyof S, event.target.value);
+        }
+      }
+    },
+    [state, setValue]
+  );
+
+  return [state, setValue, debouncedState, handleChange];
 };
 
 export default useQuerySearch;

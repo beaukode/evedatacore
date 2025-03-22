@@ -20,15 +20,21 @@ const CalculateRoute: React.FC = () => {
     queryKey: ["CalculateRoute", queryData],
     queryFn: async () => {
       if (!queryData) return;
+      let useSmartGates = "";
+      if (queryData.useUnrestricted) {
+        useSmartGates = "0";
+      } else if (queryData.useRestricted) {
+        useSmartGates = "1";
+      }
       return getCalcPathFromTo({
         path: {
-          from: queryData.system1.id,
-          to: queryData.system2.id,
+          from: queryData.system1,
+          to: queryData.system2,
         },
         query: {
           jumpDistance: queryData.jumpDistance,
           optimize: queryData.optimize,
-          useSmartGates: queryData.useSmartGates,
+          useSmartGates,
         },
       }).then((r) => {
         if (r.error) {
@@ -40,6 +46,14 @@ const CalculateRoute: React.FC = () => {
     retry: false,
     enabled: !!queryData,
   });
+
+  const destinationName = React.useMemo(() => {
+    if (!queryData || !solarSystemsIndex) return "";
+    return (
+      solarSystemsIndex.getById(queryData.system2.toString())
+        ?.solarSystemName ?? ""
+    );
+  }, [queryData, solarSystemsIndex]);
 
   const handleSubmit: SubmitHandler = React.useCallback((data) => {
     setQueryData(data);
@@ -64,7 +78,7 @@ const CalculateRoute: React.FC = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           {!!queryData && (
             <PaperLevel1
-              title={`Your trip to ${queryData.system2.label}`}
+              title={`Your trip to ${destinationName}`}
               loading={query.isLoading}
             >
               {query.isError && (

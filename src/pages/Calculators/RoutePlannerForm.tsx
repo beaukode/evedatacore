@@ -14,36 +14,30 @@ import AutoCompleteSolarSystem from "@/components/AutoCompleteSolarSystem";
 import HintIcon from "@/components/ui/Hint";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
+import useQuerySearch from "@/tools/useQuerySearch";
 
 const schema = z
   .object({
-    system1: z
-      .object(
-        {
-          label: z.string(),
-          id: z.number(),
-        },
-        { message: "Please select a system" }
-      )
-      .default({
-        label: "C.0LD.DB5",
-        id: 30001573,
-      }),
-    system2: z
-      .object(
-        {
-          label: z.string(),
-          id: z.number(),
-        },
-        { message: "Please select a system" }
-      )
-      .default({
-        label: "O0G-4M6",
-        id: 30013956,
-      }),
-    jumpDistance: z.number().int().positive().min(1).max(500).default(120),
+    system1: z.coerce
+      .number({ message: "Please select a system" })
+      .int()
+      .positive()
+      .default(30001573),
+    system2: z.coerce
+      .number({ message: "Please select a system" })
+      .int()
+      .positive()
+      .default(30013956),
+    jumpDistance: z.coerce
+      .number()
+      .int()
+      .positive()
+      .min(1)
+      .max(500)
+      .default(120),
     optimize: z.enum(["fuel", "distance", "hops"]).default("fuel"),
-    useSmartGates: z.boolean().default(true),
+    useUnrestricted: z.coerce.boolean().default(true),
+    useRestricted: z.coerce.boolean().default(false),
   })
   .required();
 
@@ -54,18 +48,49 @@ interface RoutePlannerFormProps {
   onSubmit: SubmitHandler<FormData>;
 }
 
+function queryToForm(values: Record<keyof FormData, string>) {
+  return {
+    system1: Number.parseInt(values.system1),
+    system2: Number.parseInt(values.system2),
+    jumpDistance: Number.parseInt(values.jumpDistance),
+    optimize: ["fuel", "distance", "hops"].includes(values.optimize)
+      ? (values.optimize as "fuel" | "distance" | "hops")
+      : "fuel",
+    useUnrestricted: values.useUnrestricted === "true",
+    useRestricted: values.useRestricted === "true",
+  };
+}
+
+function formToQuery(values: FormData) {
+  return {
+    system1: values.system1.toString(),
+    system2: values.system2.toString(),
+    jumpDistance: values.jumpDistance.toString(),
+    optimize: values.optimize.toString(),
+    useUnrestricted: values.useUnrestricted.toString(),
+    useRestricted: values.useRestricted.toString(),
+  };
+}
+
 const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   onSubmit,
   solarSystemsIndex,
 }) => {
+  // Store the last query
   const [store, setStore] = useAppLocalStorage(
     "v2_calculator_route_planner",
     schema
   );
 
+  // Get the query from the url
+  const [search, setSearch, , handleChange] = useQuerySearch(
+    formToQuery(store)
+  );
+  const [formDefaultValues] = React.useState(search);
+
   const { control, handleSubmit, reset } = useForm<FormData>({
     mode: "onChange",
-    defaultValues: store,
+    defaultValues: queryToForm(formDefaultValues),
     resolver: zodResolver(schema),
   });
 
@@ -75,11 +100,21 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   };
 
   const handleReset = () => {
-    reset(schema.parse({}));
+    reset(queryToForm(formDefaultValues));
+    for (const key in formDefaultValues) {
+      setSearch(
+        key as keyof typeof formDefaultValues,
+        formDefaultValues[key as keyof typeof formDefaultValues]
+      );
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(internalOnSubmit)} noValidate>
+    <form
+      onSubmit={handleSubmit(internalOnSubmit)}
+      onChange={handleChange}
+      noValidate
+    >
       <Controller
         name="system1"
         control={control}
@@ -87,6 +122,13 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
           return (
             <AutoCompleteSolarSystem
               {...field}
+              onChange={(value) => {
+                field.onChange(value);
+                setSearch(
+                  "system1",
+                  (value ?? formDefaultValues.system1).toString()
+                );
+              }}
               error={fieldState.error?.message}
               label="From system"
               sx={{ mb: 2 }}
@@ -103,6 +145,13 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
           return (
             <AutoCompleteSolarSystem
               {...field}
+              onChange={(value) => {
+                field.onChange(value);
+                setSearch(
+                  "system2",
+                  (value ?? formDefaultValues.system2).toString()
+                );
+              }}
               error={fieldState.error?.message}
               solarSystemsIndex={solarSystemsIndex}
               label="To system"
@@ -130,6 +179,9 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         name="optimize"
         label="Optimize for"
         control={control}
+        onChange={(value) => {
+          setSearch("optimize", value);
+        }}
         sx={{ my: 2 }}
         options={[
           { id: "fuel", label: "Fuel (Prefer gates)" },
@@ -140,9 +192,23 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         fullWidth
       />
       <CheckboxElement
-        name="useSmartGates"
-        label="Use smart gates"
+        name="useUnrestricted"
+        label="Use unrestricted smart gates"
+        inputProps={{
+          name: "useUnrestricted",
+        }}
         control={control}
+        labelProps={{
+          labelPlacement: "end",
+        }}
+      />
+      <CheckboxElement
+        name="useRestricted"
+        label="Use all smart gates that I can use"
+        control={control}
+        inputProps={{
+          name: "useRestricted",
+        }}
         labelProps={{
           labelPlacement: "end",
         }}
