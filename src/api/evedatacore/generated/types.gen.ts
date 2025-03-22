@@ -16,16 +16,40 @@ export type GetCalcPathFromToData = {
      * GET /calc/path/:from/:to Parameter
      */
     jumpDistance: number;
+    /**
+     * GET /calc/path/:from/:to Parameter
+     */
+    optimize?: "fuel" | "distance" | "hops";
+    /**
+     * GET /calc/path/:from/:to Parameter
+     */
+    useSmartGates?: string;
   };
 };
 
 export type GetCalcPathFromToResponse = {
-  path: Array<{
-    from: number;
-    to: number;
-    distance: number;
-    type: "jump" | "gate" | "smartgate";
-  }>;
+  path: Array<
+    | {
+        from: number;
+        to: number;
+        distance: number;
+        type: "jump" | "gate";
+      }
+    | {
+        from: number;
+        to: number;
+        distance: number;
+        type: "smartgate";
+        id: string;
+        owner?: {
+          address: string;
+          id: string;
+          name: string;
+          corpId: number;
+        };
+        name?: string;
+      }
+  >;
 };
 
 export type GetCalcPathFromToError = {

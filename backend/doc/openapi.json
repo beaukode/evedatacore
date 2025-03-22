@@ -45,6 +45,31 @@
               "maximum": 500,
               "default": 0
             }
+          },
+          {
+            "name": "optimize",
+            "in": "query",
+            "required": false,
+            "description": "GET /calc/path/:from/:to Parameter",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fuel",
+                "distance",
+                "hops"
+              ],
+              "default": "fuel"
+            }
+          },
+          {
+            "name": "useSmartGates",
+            "in": "query",
+            "required": false,
+            "description": "GET /calc/path/:from/:to Parameter",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
           }
         ],
         "responses": {
@@ -58,40 +83,109 @@
                     "path": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "from": {
-                            "type": "number",
-                            "format": "double",
-                            "minimum": -1.7976931348623157e+308,
-                            "maximum": 1.7976931348623157e+308
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "from": {
+                                "type": "number",
+                                "format": "double",
+                                "minimum": -1.7976931348623157e+308,
+                                "maximum": 1.7976931348623157e+308
+                              },
+                              "to": {
+                                "type": "number",
+                                "format": "double",
+                                "minimum": -1.7976931348623157e+308,
+                                "maximum": 1.7976931348623157e+308
+                              },
+                              "distance": {
+                                "type": "number",
+                                "format": "double",
+                                "minimum": -1.7976931348623157e+308,
+                                "maximum": 1.7976931348623157e+308
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "jump",
+                                  "gate"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "from",
+                              "to",
+                              "distance",
+                              "type"
+                            ]
                           },
-                          "to": {
-                            "type": "number",
-                            "format": "double",
-                            "minimum": -1.7976931348623157e+308,
-                            "maximum": 1.7976931348623157e+308
-                          },
-                          "distance": {
-                            "type": "number",
-                            "format": "double",
-                            "minimum": -1.7976931348623157e+308,
-                            "maximum": 1.7976931348623157e+308
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "jump",
-                              "gate",
-                              "smartgate"
+                          {
+                            "type": "object",
+                            "properties": {
+                              "from": {
+                                "type": "number",
+                                "format": "double",
+                                "minimum": -1.7976931348623157e+308,
+                                "maximum": 1.7976931348623157e+308
+                              },
+                              "to": {
+                                "type": "number",
+                                "format": "double",
+                                "minimum": -1.7976931348623157e+308,
+                                "maximum": 1.7976931348623157e+308
+                              },
+                              "distance": {
+                                "type": "number",
+                                "format": "double",
+                                "minimum": -1.7976931348623157e+308,
+                                "maximum": 1.7976931348623157e+308
+                              },
+                              "type": {
+                                "type": "string",
+                                "const": "smartgate"
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "owner": {
+                                "type": "object",
+                                "properties": {
+                                  "address": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "corpId": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "minimum": -1.7976931348623157e+308,
+                                    "maximum": 1.7976931348623157e+308
+                                  }
+                                },
+                                "required": [
+                                  "address",
+                                  "id",
+                                  "name",
+                                  "corpId"
+                                ]
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "from",
+                              "to",
+                              "distance",
+                              "type",
+                              "id"
                             ]
                           }
-                        },
-                        "required": [
-                          "from",
-                          "to",
-                          "distance",
-                          "type"
                         ]
                       }
                     }
