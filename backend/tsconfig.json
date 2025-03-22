@@ -3,14 +3,21 @@
     "target": "ES2020",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "paths": {
       "@shared/*": ["../shared/*"]
-    }
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": ["src", "../shared/"]
 }
