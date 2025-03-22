@@ -6,7 +6,17 @@ const pathItemSchema = z.object({
   from: z.number(),
   to: z.number(),
   distance: z.number(),
-  type: z.enum(["jump", "gate", "smartgate"]),
+  type: z.enum(["jump", "gate"]),
+});
+
+const pathSmartgateItemSchema = z.object({
+  from: z.number(),
+  to: z.number(),
+  distance: z.number(),
+  type: z.literal("smartgate"),
+  id: z.string(),
+  owner: z.object({ address: z.string(), id: z.string(), name: z.string(), corpId: z.number() }).optional(),
+  name: z.string().optional(),
 });
 
 export const calculatePath = endpointsFactory.build({
@@ -19,7 +29,7 @@ export const calculatePath = endpointsFactory.build({
     useSmartGates: z.string().optional().default(""),
   }),
   output: z.object({
-    path: z.array(pathItemSchema),
+    path: z.array(z.union([pathItemSchema, pathSmartgateItemSchema])),
   }),
   handler: async ({
     input: { from, to, jumpDistance, optimize, useSmartGates },
@@ -31,14 +41,26 @@ export const calculatePath = endpointsFactory.build({
     let prevSystem = from;
     const pathItems = path.map((item) => {
       const { conn_type, distance, target } = item;
-      const newItem = {
-        from: prevSystem,
-        to: target,
-        distance,
-        type: conn_type,
-      };
+      const from = prevSystem;
       prevSystem = target;
-      return newItem;
+      if (conn_type === "smartgate") {
+        return {
+          from,
+          to: target,
+          distance,
+          type: "smartgate" as const,
+          id: item.id,
+          owner: item.owner,
+          name: item.name,
+        };
+      } else {
+        return {
+          from,
+          to: target,
+          distance,
+          type: conn_type,
+        };
+      }
     });
     return {
       path: pathItems,

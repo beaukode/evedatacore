@@ -1,24 +1,6 @@
 import { Lambda } from "@aws-sdk/client-lambda";
-import { z } from "zod";
 import { zodParse } from "../../utils";
-import { Optimize, SmartGateLink } from "./types";
-const pathFinderResponseSchema = z.object({
-  status: z.enum(["found", "notfound", "timeout"]),
-  path: z.array(
-    z.object({
-      conn_type: z.enum(["gate", "smartgate", "jump"]),
-      distance: z.number(),
-      target: z.number(),
-    }),
-  ),
-  stats: z.object({
-    cost: z.number(),
-    total_time: z.number(),
-    successors_spend: z.number(),
-    loop_spend: z.number(),
-    visited: z.number(),
-  }),
-});
+import { Optimize, PathFinderResponse, pathFinderResponseSchema, SmartGateLink } from "./types";
 
 export async function invokeLambda(
   arn: string,
@@ -27,7 +9,7 @@ export async function invokeLambda(
   jumpDistance: number,
   optimize: Optimize,
   smartGates: SmartGateLink[],
-) {
+): Promise<PathFinderResponse> {
   const lambda = new Lambda({
     region: "eu-west-1",
   });

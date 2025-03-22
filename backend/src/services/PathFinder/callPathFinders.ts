@@ -1,6 +1,6 @@
 import { InternalServerError, NotFound } from "http-errors";
 import { invokeLambda } from "./invokeLambda";
-import { Optimize, SmartGateLink } from "./types";
+import { Optimize, PathFinderPathItem, SmartGateLink } from "./types";
 
 export interface CallPathFinderConfig {
   lambda370Arn: string;
@@ -14,7 +14,7 @@ export async function callPathFinder(
   optimize: Optimize,
   smartGates: SmartGateLink[],
   config: CallPathFinderConfig,
-) {
+): Promise<PathFinderPathItem[]> {
   let arn = "";
   if (jumpDistance <= 370) {
     arn = config.lambda370Arn;

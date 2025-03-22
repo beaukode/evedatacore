@@ -1,5 +1,6 @@
 import { EnvVariablesService } from "./envVariables";
 import { createMudSqlClient } from "@shared/mudsql/client";
+export * from "@shared/mudsql";
 
 export type MudSqlService = ReturnType<typeof createMudSqlService>;
 
