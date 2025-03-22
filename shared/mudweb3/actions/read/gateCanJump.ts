@@ -6,6 +6,7 @@ import { systemSimulate } from "./systemSimulate";
 import { worldAbi } from "../../abi";
 
 export type GateCanJumpParameters = {
+  characterId?: string;
   sourceGateId: string;
   destinationGateId: string;
 };
@@ -17,18 +18,21 @@ export async function gateCanJump(
   args: GateCanJumpParameters
 ): Promise<GateCanJumpReturnType> {
   const { sourceGateId, destinationGateId } = args;
+  let characterId = args.characterId ? BigInt(args.characterId) : undefined;
 
-  const address = client.writeClient?.account?.address;
-
-  if (!address) {
-    throw new Error("Current user address is not set");
-  }
-
-  const characterId = await characterGetId(client, {
-    ownerAddress: address,
-  });
   if (!characterId) {
-    throw new Error(`Character not found for address ${address}`);
+    const address = client.writeClient?.account?.address;
+
+    if (!address) {
+      throw new Error("Current user address is not set");
+    }
+
+    characterId = await characterGetId(client, {
+      ownerAddress: address,
+    });
+    if (!characterId) {
+      throw new Error(`Character not found for address ${address}`);
+    }
   }
 
   const data = encodeFunctionData({
