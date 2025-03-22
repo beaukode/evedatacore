@@ -4,6 +4,7 @@ import {
   createPathFinderService,
   createSolarSystemsService,
   createMudSqlService,
+  createMudWeb3Service,
 } from "../services";
 import { Middleware } from "express-zod-api";
 
@@ -18,6 +19,7 @@ const services = {
   solarSystems: createSolarSystemsService,
   pathFinder: createPathFinderService,
   mudSql: createMudSqlService,
+  mudWeb3: createMudWeb3Service,
 };
 
 const di = createContainer({

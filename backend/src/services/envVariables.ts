@@ -12,7 +12,7 @@ const envSchema = z.object({
     .default("arn:aws:lambda:eu-west-1:216634561923:function:evedatacore-route-planner-300-500-main"),
   SOLARSYSTEMS_PATH: z.string().default("data/solarsystems.json"),
   MUDSQL_INDEXER_BASE_URL: z.string().default("https://indexer.mud.pyropechain.com"),
-  WORLD_ADDRESS: z.string().default("0x9891ee4bf5f2a9e74e9d81b06b855eec70b78d4f"),
+  WORLD_ADDRESS: z.string().startsWith("0x").default("0x9891ee4bf5f2a9e74e9d81b06b855eec70b78d4f"),
   CHAIN_ID: z.number().default(695569),
 });
 

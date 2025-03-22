@@ -1,10 +1,11 @@
 import { createCache } from "async-cache-dedupe";
 import { chunk, groupBy } from "lodash-es";
+import { Smartgate } from "@shared/mudsql";
 import { EnvVariablesService } from "./envVariables";
 import { SolarSystemsService } from "./solarSystems";
 import { MudSqlService } from "./mudSql";
+import { MudWeb3Service } from "./mudWeb3";
 import { Optimize, SmartGateLink } from "./PathFinder/types";
-import { Smartgate } from "@shared/mudsql";
 import { callPathFinder, CallPathFinderConfig } from "./PathFinder/callPathFinders";
 export { Optimize };
 
@@ -12,9 +13,10 @@ interface PathFinderServiceConfig {
   env: EnvVariablesService;
   solarSystems: SolarSystemsService;
   mudSql: MudSqlService;
+  mudWeb3: MudWeb3Service;
 }
 
-export function createPathFinderService({ env, solarSystems, mudSql }: PathFinderServiceConfig) {
+export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: PathFinderServiceConfig) {
   const config: CallPathFinderConfig = {
     lambda370Arn: env.PATHFINDER_ARN_370,
     lambda500Arn: env.PATHFINDER_ARN_500,
@@ -46,10 +48,40 @@ export function createPathFinderService({ env, solarSystems, mudSql }: PathFinde
         throw new Error(`Destination destination not found: ${smartGate.id} -> ${smartGate.destinationId}`);
       }),
     ).then(
-      (results) => results.filter((r) => r.status === "fulfilled").map((p) => p.value), // Be kind and ignore errors, it's not a big deal,
+      (results) => results.filter((r) => r.status === "fulfilled").map((p) => p.value), // Missconfigured smartgate may throw an error, ignore it
     );
 
-    return links;
+    let allowedLinks: SmartGateLink[] = [];
+    if (characterId !== "0") {
+      const start = Date.now();
+      allowedLinks = await Promise.allSettled(
+        (smartGatesByAccess.restricted ?? []).map(async (smartGate) => {
+          const destination = smartGates[smartGate.destinationId];
+
+          if (destination) {
+            const canJump = await mudWeb3.gateCanJump({
+              characterId,
+              sourceGateId: smartGate.id,
+              destinationGateId: destination.id,
+            });
+            if (canJump) {
+              const distance = await solarSystems.getDistance(smartGate.solarSystemId, destination.solarSystemId);
+              return {
+                from: Number(smartGate.solarSystemId),
+                to: Number(destination.solarSystemId),
+                distance: Math.round(distance),
+              };
+            }
+          }
+          throw new Error(`Destination destination not found: ${smartGate.id} -> ${smartGate.destinationId}`);
+        }),
+      ).then(
+        (results) => results.filter((r) => r.status === "fulfilled").map((p) => p.value), // Missconfigured smartgate may throw an error, ignore it
+      );
+      console.log(`Got ${allowedLinks.length} allowed smartgate links in ${Date.now() - start}ms`);
+    }
+
+    return [...links, ...allowedLinks];
   });
 
   return {
