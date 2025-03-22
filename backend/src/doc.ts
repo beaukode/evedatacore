@@ -1,8 +1,7 @@
 import { mkdirSync, writeFileSync } from "fs";
 import { Documentation } from "express-zod-api";
 import { routes } from "./routes";
-import _ from "lodash";
-
+import { escape } from "lodash-es";
 // Ensure ./doc folder exists
 mkdirSync("./doc", { recursive: true });
 
@@ -24,7 +23,7 @@ const html = `<!DOCTYPE html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="SwaggerUI" />
-  <title>${_.escape(doc.getSpec().info.title)}</title>
+  <title>${escape(doc.getSpec().info.title)}</title>
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css" />
 </head>
 <body>
