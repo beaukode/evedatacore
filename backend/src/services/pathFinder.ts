@@ -26,63 +26,70 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
     ttl: 60 * 15, // 15 minutes
     stale: 60,
     storage: { type: "memory" },
-  }).define("getSmartGateLinks", async (characterId: string): Promise<SmartGateLink[]> => {
-    if (!characterId) return [];
-    const smartGates = await mudSql.listUsableSmartgates();
+  })
+    .define("getUsableSmartgates", async () => {
+      const smartGates = await mudSql.listUsableSmartgates();
 
-    const smartGatesByAccess = groupBy(Object.values(smartGates), (v) =>
-      v.systemId == "0x0000000000000000000000000000000000000000000000000000000000000000" ? "public" : "restricted",
-    ) as Record<"restricted" | "public", Smartgate[] | undefined>;
+      const byAccess = groupBy(Object.values(smartGates), (v) =>
+        v.systemId == "0x0000000000000000000000000000000000000000000000000000000000000000" ? "public" : "restricted",
+      ) as Record<"restricted" | "public", Smartgate[] | undefined>;
 
-    const links = await Promise.allSettled(
-      (smartGatesByAccess.public ?? []).map(async (smartGate) => {
-        const destination = smartGates[smartGate.destinationId];
-        if (destination) {
-          const distance = await solarSystems.getDistance(smartGate.solarSystemId, destination.solarSystemId);
-          return {
-            from: Number(smartGate.solarSystemId),
-            to: Number(destination.solarSystemId),
-            distance: Math.round(distance),
-          };
-        }
-        throw new Error(`Destination destination not found: ${smartGate.id} -> ${smartGate.destinationId}`);
-      }),
-    ).then(
-      (results) => results.filter((r) => r.status === "fulfilled").map((p) => p.value), // Missconfigured smartgate may throw an error, ignore it
-    );
+      return { ...byAccess, all: smartGates };
+    })
+    .define("getSmartGateLinks", async (characterId: string): Promise<SmartGateLink[]> => {
+      console.log("getSmartGateLinks", characterId);
+      if (!characterId) return [];
+      const smartGates = await cache.getUsableSmartgates();
 
-    let allowedLinks: SmartGateLink[] = [];
-    if (characterId !== "0") {
-      const start = Date.now();
-      allowedLinks = await Promise.allSettled(
-        (smartGatesByAccess.restricted ?? []).map(async (smartGate) => {
-          const destination = smartGates[smartGate.destinationId];
-
+      const links = await Promise.allSettled(
+        (smartGates.public ?? []).map(async (smartGate) => {
+          const destination = smartGates.all[smartGate.destinationId];
           if (destination) {
-            const canJump = await mudWeb3.gateCanJump({
-              characterId,
-              sourceGateId: smartGate.id,
-              destinationGateId: destination.id,
-            });
-            if (canJump) {
-              const distance = await solarSystems.getDistance(smartGate.solarSystemId, destination.solarSystemId);
-              return {
-                from: Number(smartGate.solarSystemId),
-                to: Number(destination.solarSystemId),
-                distance: Math.round(distance),
-              };
-            }
+            const distance = await solarSystems.getDistance(smartGate.solarSystemId, destination.solarSystemId);
+            return {
+              from: Number(smartGate.solarSystemId),
+              to: Number(destination.solarSystemId),
+              distance: Math.round(distance),
+            };
           }
           throw new Error(`Destination destination not found: ${smartGate.id} -> ${smartGate.destinationId}`);
         }),
       ).then(
         (results) => results.filter((r) => r.status === "fulfilled").map((p) => p.value), // Missconfigured smartgate may throw an error, ignore it
       );
-      console.log(`Got ${allowedLinks.length} allowed smartgate links in ${Date.now() - start}ms`);
-    }
 
-    return [...links, ...allowedLinks];
-  });
+      let allowedLinks: SmartGateLink[] = [];
+      if (characterId !== "0") {
+        const start = Date.now();
+        allowedLinks = await Promise.allSettled(
+          (smartGates.restricted ?? []).map(async (smartGate) => {
+            const destination = smartGates.all[smartGate.destinationId];
+
+            if (destination) {
+              const canJump = await mudWeb3.gateCanJump({
+                characterId,
+                sourceGateId: smartGate.id,
+                destinationGateId: destination.id,
+              });
+              if (canJump) {
+                const distance = await solarSystems.getDistance(smartGate.solarSystemId, destination.solarSystemId);
+                return {
+                  from: Number(smartGate.solarSystemId),
+                  to: Number(destination.solarSystemId),
+                  distance: Math.round(distance),
+                };
+              }
+            }
+            throw new Error(`Destination destination not found: ${smartGate.id} -> ${smartGate.destinationId}`);
+          }),
+        ).then(
+          (results) => results.filter((r) => r.status === "fulfilled").map((p) => p.value), // Missconfigured smartgate may throw an error, ignore it
+        );
+        console.log(`Got ${allowedLinks.length} allowed smartgate links in ${Date.now() - start}ms`);
+      }
+
+      return [...links, ...allowedLinks];
+    });
 
   return {
     findPath: async (from: number, to: number, jumpDistance: number, optimize: Optimize, characterId: string = "0") => {
