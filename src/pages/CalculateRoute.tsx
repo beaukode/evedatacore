@@ -8,6 +8,7 @@ import { getCalcPathFromTo } from "@/api/evedatacore";
 import RoutePlannerForm from "./Calculators/RoutePlannerForm";
 import RoutePlannerRoute from "./Calculators/RoutePlannerRoute";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
+import useCharacter from "@/tools/useCharacter";
 
 type SubmitHandler = React.ComponentProps<typeof RoutePlannerForm>["onSubmit"];
 type RoutePlannerFormData = Parameters<SubmitHandler>[0];
@@ -16,15 +17,21 @@ const CalculateRoute: React.FC = () => {
   const [queryData, setQueryData] = React.useState<RoutePlannerFormData>();
   const solarSystemsIndex = useSolarSystemsIndex();
 
+  const character = useCharacter();
+
   const query = useQuery({
     queryKey: ["CalculateRoute", queryData],
     queryFn: async () => {
       if (!queryData) return;
       let useSmartGates = "";
-      if (queryData.useUnrestricted) {
+      if (queryData.smartGates === "unrestricted") {
         useSmartGates = "0";
-      } else if (queryData.useRestricted) {
-        useSmartGates = "1";
+      } else if (queryData.smartGates === "restricted") {
+        if (character.character) {
+          useSmartGates = character.character.id.toString();
+        } else {
+          useSmartGates = "0"; // Wallet is not connected, fallback to unrestricted smart gates
+        }
       }
       return getCalcPathFromTo({
         path: {
@@ -44,7 +51,7 @@ const CalculateRoute: React.FC = () => {
       });
     },
     retry: false,
-    enabled: !!queryData,
+    enabled: !!queryData && !character.isLoading,
   });
 
   const destinationName = React.useMemo(() => {

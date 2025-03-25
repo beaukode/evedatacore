@@ -1,13 +1,12 @@
 import React from "react";
 import z from "zod";
-import { Box, Button } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import {
   TextFieldElement,
   SubmitHandler,
   useForm,
   Controller,
   SelectElement,
-  CheckboxElement,
 } from "react-hook-form-mui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AutoCompleteSolarSystem from "@/components/AutoCompleteSolarSystem";
@@ -15,6 +14,7 @@ import HintIcon from "@/components/ui/Hint";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 import useQuerySearch from "@/tools/useQuerySearch";
+import useCharacter from "@/tools/useCharacter";
 
 const schema = z
   .object({
@@ -36,8 +36,9 @@ const schema = z
       .max(500)
       .default(120),
     optimize: z.enum(["fuel", "distance", "hops"]).default("fuel"),
-    useUnrestricted: z.coerce.boolean().default(true),
-    useRestricted: z.coerce.boolean().default(false),
+    smartGates: z
+      .enum(["none", "unrestricted", "restricted"])
+      .default("unrestricted"),
   })
   .required();
 
@@ -56,8 +57,11 @@ function queryToForm(values: Record<keyof FormData, string>) {
     optimize: ["fuel", "distance", "hops"].includes(values.optimize)
       ? (values.optimize as "fuel" | "distance" | "hops")
       : "fuel",
-    useUnrestricted: values.useUnrestricted === "true",
-    useRestricted: values.useRestricted === "true",
+    smartGates: ["none", "unrestricted", "restricted"].includes(
+      values.smartGates
+    )
+      ? (values.smartGates as "none" | "unrestricted" | "restricted")
+      : "unrestricted",
   };
 }
 
@@ -67,8 +71,7 @@ function formToQuery(values: FormData) {
     system2: values.system2.toString(),
     jumpDistance: values.jumpDistance.toString(),
     optimize: values.optimize.toString(),
-    useUnrestricted: values.useUnrestricted.toString(),
-    useRestricted: values.useRestricted.toString(),
+    smartGates: values.smartGates.toString(),
   };
 }
 
@@ -88,11 +91,12 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   );
   const [formDefaultValues] = React.useState(search);
 
-  const { control, handleSubmit, reset } = useForm<FormData>({
+  const { control, handleSubmit, watch, reset } = useForm<FormData>({
     mode: "onChange",
     defaultValues: queryToForm(formDefaultValues),
     resolver: zodResolver(schema),
   });
+  const smartGates = watch("smartGates");
 
   const internalOnSubmit: SubmitHandler<FormData> = (data) => {
     setStore(data);
@@ -108,6 +112,8 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
       );
     }
   };
+
+  const character = useCharacter();
 
   return (
     <form
@@ -191,28 +197,40 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         required
         fullWidth
       />
-      <CheckboxElement
-        name="useUnrestricted"
-        label="Use unrestricted smart gates"
-        inputProps={{
-          name: "useUnrestricted",
-        }}
+      <SelectElement
+        name="smartGates"
+        label="Smart gates"
         control={control}
-        labelProps={{
-          labelPlacement: "end",
+        onChange={(value) => {
+          setSearch("smartGates", value);
         }}
+        sx={{ my: 2 }}
+        options={[
+          { id: "none", label: "None" },
+          { id: "unrestricted", label: "Unrestricted" },
+          { id: "restricted", label: "Unrestricted + Restricted you can use" },
+        ]}
+        required
+        fullWidth
       />
-      <CheckboxElement
-        name="useRestricted"
-        label="Use all smart gates that I can use"
-        control={control}
-        inputProps={{
-          name: "useRestricted",
-        }}
-        labelProps={{
-          labelPlacement: "end",
-        }}
-      />
+      {smartGates === "restricted" && (
+        <>
+          {!character.isLoading && !character.character && (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              Unable to retrieve your character ID. Please check that your
+              wallet is connected to the correct address.
+              <br />
+              The route will be calculated using unrestricted smart gates.
+            </Alert>
+          )}
+          {character.character && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Your character ID will be sent to the server to check which smart
+              gates you can use.
+            </Alert>
+          )}
+        </>
+      )}
       <Box display="flex" justifyContent="flex-end">
         <Button
           type="reset"
