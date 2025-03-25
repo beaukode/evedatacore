@@ -156,7 +156,7 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
         const parts = Math.min(Math.ceil(distance / (jumpDistance * 20)), 4); // 4 is the maximum number of parts
         console.log(`Splitting the path into ${parts} parts`, distance);
         const largePath = await callPathFinder(from, to, 500, optimize, smartGateLinks.links, config);
-        const chunkSize = Math.round(largePath.length / parts);
+        const chunkSize = Math.ceil(largePath.length / parts);
         const chunks = chunk(largePath, chunkSize);
         const nodes = [from, ...chunks.map((chunk) => chunk[chunk.length - 1]?.target ?? from)];
 
