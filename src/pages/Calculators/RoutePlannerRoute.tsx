@@ -167,28 +167,27 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
   if (data.length === 0) return null;
 
   const copyRoute = () => {
-    setCopyError(true);
-    // const content = data
-    //   .reduce(
-    //     (acc, step) => {
-    //       const connectionText = connectionTexts[step.type] || "Unknown";
-    //       const { name, id } = step.to;
-    //       acc.push(
-    //         `${connectionText} to <a href="showinfo:5//${id}">${name}</a> ${step.distance.toFixed()}ly`
-    //       );
-    //       return acc;
-    //     },
-    //     [`${data[0]?.from.name} → ${data[data.length - 1]?.to.name}`, ""]
-    //   )
-    //   .join("\n");
-    // navigator.clipboard
-    //   .writeText(content)
-    //   .then(() => {
-    //     setCopyError(false);
-    //   })
-    //   .catch(() => {
-    //     setCopyError(true);
-    //   });
+    setCopyError(false);
+    const content = path
+      .reduce(
+        (acc, step) => {
+          const connectionText = connectionTexts[step.type] || "Unknown";
+          acc.push(
+            `${connectionText} to <a href="showinfo:5//${step.to}">${step.toName}</a> ${step.distance.toFixed()}ly`
+          );
+          return acc;
+        },
+        [`${path[0]?.fromName} → ${path[path.length - 1]?.toName}`, ""]
+      )
+      .join("\n");
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        setCopyError(false);
+      })
+      .catch(() => {
+        setCopyError(true);
+      });
   };
 
   return (
