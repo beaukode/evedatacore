@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Box, Grid2 as Grid } from "@mui/material";
+import { Alert, Box, Grid2 as Grid, Typography } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -76,7 +76,11 @@ const CalculateRoute: React.FC = () => {
       </Helmet>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <PaperLevel1 title="Route planner" loading={!solarSystemsIndex}>
+          <PaperLevel1
+            title="Route planner"
+            loading={!solarSystemsIndex}
+            sx={{ mb: 0 }}
+          >
             {solarSystemsIndex && (
               <RoutePlannerForm
                 loading={query.isLoading}
@@ -85,6 +89,11 @@ const CalculateRoute: React.FC = () => {
               />
             )}
           </PaperLevel1>
+          <Box display="flex" justifyContent="flex-end">
+            <Typography variant="caption">
+              Some data my be cached up to 15 minutes
+            </Typography>
+          </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           {!!queryData && (
