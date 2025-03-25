@@ -2,8 +2,13 @@ import { useDebounce } from "@uidotdev/usehooks";
 import React from "react";
 import { useSearchParams } from "react-router";
 
+interface UseQuerySearchOptions {
+  syncInitialState?: boolean;
+}
+
 const useQuerySearch = <S extends Record<string, string>>(
-  initialState: S
+  initialState: S,
+  options: UseQuerySearchOptions = {}
 ): [
   S,
   (key: keyof S, value: string) => void,
@@ -22,14 +27,15 @@ const useQuerySearch = <S extends Record<string, string>>(
   const debouncedState = useDebounce(state, 300);
 
   React.useEffect(() => {
-    if (isInitialState.current) return;
+    if (!options.syncInitialState && isInitialState.current) return;
     setSearchParams(
       () => {
         const next = new URLSearchParams();
         for (const key in debouncedState) {
           if (
             debouncedState[key] !== undefined &&
-            debouncedState[key] !== initialState[key]
+            (debouncedState[key] !== initialState[key] ||
+              options.syncInitialState)
           ) {
             next.set(key, debouncedState[key]);
           }

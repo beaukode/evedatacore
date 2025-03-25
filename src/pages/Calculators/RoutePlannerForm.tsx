@@ -89,7 +89,8 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
 
   // Get the query from the url
   const [search, setSearch, , handleChange] = useQuerySearch(
-    formToQuery(store)
+    formToQuery(store),
+    { syncInitialState: true }
   );
   const [formDefaultValues] = React.useState(search);
 
