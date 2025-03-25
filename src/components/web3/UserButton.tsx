@@ -10,13 +10,12 @@ import {
 import { Hex } from "viem";
 import { useDisconnect } from "wagmi";
 import { NavLink } from "react-router";
-import { useQuery } from "@tanstack/react-query";
 import UnknwonUserIcon from "@mui/icons-material/QuestionMark";
 import DisconnectIcon from "@mui/icons-material/PowerOff";
 import CharacterPageIcon from "@mui/icons-material/Person";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { shorten } from "@/tools";
-import { useMudWeb3 } from "@/contexts/AppContext";
+import useCharacter from "@/tools/useCharacter";
 
 interface UserButtonProps {
   address: Hex;
@@ -27,24 +26,13 @@ const UserButton: React.FC<UserButtonProps> = ({ address }) => {
   const [showMenu, setShowMenu] = React.useState(false);
   const { disconnect } = useDisconnect();
 
-  const mudWeb3 = useMudWeb3();
-
   const copyAddress = React.useCallback(() => {
     navigator.clipboard.writeText(address).catch((e) => {
       console.error("Fail to copying content", e);
     });
   }, [address]);
 
-  const userNameQuery = useQuery({
-    queryKey: ["User", address],
-    queryFn: () =>
-      mudWeb3.characterGetId({ ownerAddress: address }).then((id) => {
-        if (!id) return null;
-        return mudWeb3
-          .assemblyGetMetadata({ assemblyId: id })
-          .then((metadata) => metadata.name || null);
-      }),
-  });
+  const { character } = useCharacter();
 
   return (
     <>
@@ -59,7 +47,7 @@ const UserButton: React.FC<UserButtonProps> = ({ address }) => {
         }}
         variant="outlined"
         endIcon={
-          userNameQuery.data ? (
+          character ? (
             <Avatar
               sx={{ my: "-5px", mr: "-4px" }}
               variant="rounded"
@@ -75,7 +63,7 @@ const UserButton: React.FC<UserButtonProps> = ({ address }) => {
           )
         }
       >
-        <>{userNameQuery.data || shorten(address, 8)}</>
+        <>{character?.name || shorten(address, 8)}</>
       </Button>
       <Menu
         anchorEl={menuAnchor.current}
