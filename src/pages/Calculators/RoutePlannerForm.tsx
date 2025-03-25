@@ -94,7 +94,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   );
   const [formDefaultValues] = React.useState(search);
 
-  const { control, handleSubmit, watch, reset } = useForm<FormData>({
+  const { control, handleSubmit, watch } = useForm<FormData>({
     mode: "onChange",
     defaultValues: queryToForm(formDefaultValues),
     resolver: zodResolver(schema),
@@ -104,16 +104,6 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   const internalOnSubmit: SubmitHandler<FormData> = (data) => {
     setStore(data);
     onSubmit(data);
-  };
-
-  const handleReset = () => {
-    reset(queryToForm(formDefaultValues));
-    for (const key in formDefaultValues) {
-      setSearch(
-        key as keyof typeof formDefaultValues,
-        formDefaultValues[key as keyof typeof formDefaultValues]
-      );
-    }
   };
 
   const character = useCharacter();
@@ -235,15 +225,6 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         </>
       )}
       <Box display="flex" justifyContent="flex-end">
-        <Button
-          type="reset"
-          variant="outlined"
-          color="warning"
-          onClick={handleReset}
-          sx={{ mr: 2 }}
-        >
-          Reset
-        </Button>
         <Button type="submit" variant="contained" disabled={loading}>
           Calculate Route
         </Button>
