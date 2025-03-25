@@ -44,11 +44,6 @@ const schema = z
 
 type FormData = z.infer<typeof schema>;
 
-interface RoutePlannerFormProps {
-  solarSystemsIndex: SolarSystemsIndex;
-  onSubmit: SubmitHandler<FormData>;
-}
-
 function queryToForm(values: Record<keyof FormData, string>) {
   return {
     system1: Number.parseInt(values.system1),
@@ -75,9 +70,16 @@ function formToQuery(values: FormData) {
   };
 }
 
+interface RoutePlannerFormProps {
+  solarSystemsIndex: SolarSystemsIndex;
+  onSubmit: SubmitHandler<FormData>;
+  loading: boolean;
+}
+
 const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   onSubmit,
   solarSystemsIndex,
+  loading,
 }) => {
   // Store the last query
   const [store, setStore] = useAppLocalStorage(
@@ -241,7 +243,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         >
           Reset
         </Button>
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" disabled={loading}>
           Calculate Route
         </Button>
       </Box>

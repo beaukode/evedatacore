@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, Box, Grid2 as Grid } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ExternalLink from "@/components/ui/ExternalLink";
@@ -16,7 +16,7 @@ type RoutePlannerFormData = Parameters<SubmitHandler>[0];
 const CalculateRoute: React.FC = () => {
   const [queryData, setQueryData] = React.useState<RoutePlannerFormData>();
   const solarSystemsIndex = useSolarSystemsIndex();
-
+  const queryClient = useQueryClient();
   const character = useCharacter();
 
   const query = useQuery({
@@ -62,9 +62,13 @@ const CalculateRoute: React.FC = () => {
     );
   }, [queryData, solarSystemsIndex]);
 
-  const handleSubmit: SubmitHandler = React.useCallback((data) => {
-    setQueryData(data);
-  }, []);
+  const handleSubmit: SubmitHandler = React.useCallback(
+    (data) => {
+      queryClient.resetQueries({ queryKey: ["CalculateRoute"] });
+      setQueryData(data);
+    },
+    [queryClient]
+  );
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
@@ -76,6 +80,7 @@ const CalculateRoute: React.FC = () => {
           <PaperLevel1 title="Route planner" loading={!solarSystemsIndex}>
             {solarSystemsIndex && (
               <RoutePlannerForm
+                loading={query.isLoading}
                 onSubmit={handleSubmit}
                 solarSystemsIndex={solarSystemsIndex}
               />
