@@ -63,7 +63,7 @@ const UserButton: React.FC<UserButtonProps> = ({ address }) => {
             <Avatar
               sx={{ my: "-5px", mr: "-4px" }}
               variant="rounded"
-              src="https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
+              src="https://artifacts.evefrontier.com/Character/123456789_256.jpg"
             />
           ) : (
             <Avatar

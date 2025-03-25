@@ -50,7 +50,7 @@ const ExploreCharacters: React.FC = () => {
               <Avatar
                 alt={sm.name}
                 sx={{ bgcolor: "black", color: "silver", mr: 1 }}
-                src="https://images.dev.quasar.reitnorf.com/Character/123456789_256.jpg"
+                src="https://artifacts.evefrontier.com/Character/123456789_256.jpg"
                 variant="rounded"
               />
               <ButtonCharacter
