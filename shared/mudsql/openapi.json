@@ -7,6 +7,10 @@
     },
     "servers": [
         {
+            "url": "https://indexer.mud.pyropechain.com",
+            "description": "Pyrope indexer"
+        },
+        {
             "url": "https://indexer.mud.garnetchain.com",
             "description": "Garnet indexer"
         },

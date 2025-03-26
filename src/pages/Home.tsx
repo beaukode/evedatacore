@@ -23,8 +23,8 @@ const Home: React.FC = () => {
           Redstone blockchain
         </ExternalLink>{" "}
         (Actually{" "}
-        <ExternalLink title="Garnet testnet" href="https://garnetchain.com/">
-          Garnet testnet
+        <ExternalLink title="Pyrope testnet" href="https://pyropechain.com/">
+          Pyrope testnet
         </ExternalLink>{" "}
         during the alpha).
         <br />
@@ -100,6 +100,7 @@ const Home: React.FC = () => {
         <br />
         Fly safe <span style={{ fontSize: "80%" }}>o</span>7
         <br />
+        beauKode
       </Typography>
     </Box>
   );

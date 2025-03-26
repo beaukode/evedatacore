@@ -39,37 +39,51 @@ const About: React.FC = () => {
               textAlign="justify"
               padding={2}
             >
-              You are welcome to contact me with any feedback, suggestions via
-              Discord:{" "}
+              You are welcome to contact me with any feedback, suggestions via{" "}
               <ExternalLink
                 href="https://discordapp.com/users/978559673571606589"
-                title="Discord"
-              />
-            </Typography>
-            <Typography
-              variant="body2"
-              component="p"
-              textAlign="justify"
-              padding={2}
-            >
-              You can also report issues on GitHub at:
-              <br />
+                title="Discord DM"
+              >
+                Discord DM
+              </ExternalLink>{" "}
+              or by joinning the{" "}
               <ExternalLink
-                href="https://github.com/beaukode/eve-frontier-tools/issues"
-                title="GitHub issues"
-              />
+                href="https://discord.gg/cu2n3wjqgb"
+                title="EVE Datacore Discord server"
+              >
+                Discord server
+              </ExternalLink>
             </Typography>
+          </Paper>
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{ bgcolor: "background.default" }}
+            gutterBottom
+          >
+            <SourceCodeIcon />
+            Source code
+          </Typography>
+          <Paper elevation={1} sx={{ mb: 2 }}>
             <Typography
               variant="body2"
               component="p"
               textAlign="justify"
               padding={2}
             >
-              If you would like to contribute to this project, feel free to fork
-              it and submit a pull request.
+              The source code for this project is available on GitHub.
               <br />
-              For new features or major changes, please contact me beforehand to
-              discuss your plans.
+              Website:{" "}
+              <ExternalLink
+                href="https://github.com/beaukode/evedatacore"
+                title="EVE Datacore website GitHub"
+              />
+              <br />
+              Route planner:{" "}
+              <ExternalLink
+                href="https://github.com/beaukode/evedatacore-route-planner"
+                title="EVE Datacore route planner GitHub"
+              />
             </Typography>
           </Paper>
           <Typography
@@ -97,6 +111,22 @@ const About: React.FC = () => {
               textAlign="justify"
               padding={2}
             >
+              Many thanks to Shish for his work on the first version of the
+              route planner:
+              <br />
+              <ExternalLink
+                href="https://eftb.shish.io/"
+                title="Shish route planner"
+              >
+                https://eftb.shish.io/
+              </ExternalLink>
+            </Typography>
+            <Typography
+              variant="body2"
+              component="p"
+              textAlign="justify"
+              padding={2}
+            >
               This website is built using some libraries and tools, many thanks
               to the contributors of these projects. You can refer to the{" "}
               <code>package.json</code> file for the full list of dependencies.
@@ -104,30 +134,6 @@ const About: React.FC = () => {
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{ bgcolor: "background.default" }}
-            gutterBottom
-          >
-            <SourceCodeIcon />
-            Source code
-          </Typography>
-          <Paper elevation={1} sx={{ mb: 2 }}>
-            <Typography
-              variant="body2"
-              component="p"
-              textAlign="justify"
-              padding={2}
-            >
-              The source code for this website is available on GitHub at:
-              <br />
-              <ExternalLink
-                href="https://github.com/beaukode/eve-frontier-tools"
-                title="GitHub"
-              />
-            </Typography>
-          </Paper>
           <Typography
             variant="h6"
             component="h2"

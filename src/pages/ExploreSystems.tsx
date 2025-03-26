@@ -206,7 +206,7 @@ const ExploreSystems: React.FC = () => {
           </TableCell>
           <TableCell>
             <ExternalLink
-              href={`https://explorer.garnetchain.com/address/${sys.contract}`}
+              href={`https://explorer.pyropechain.com/address/${sys.contract}`}
               title={sys.contract}
             >
               {sys.contract}
