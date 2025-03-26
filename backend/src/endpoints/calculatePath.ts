@@ -34,6 +34,7 @@ export const calculatePath = endpointsFactory.build({
   handler: async ({
     input: { from, to, jumpDistance, optimize, useSmartGates },
     options: {
+      responseHeaders,
       services: { pathFinder },
     },
   }) => {
@@ -62,6 +63,7 @@ export const calculatePath = endpointsFactory.build({
         };
       }
     });
+    responseHeaders.setCache(60 * 10);
     return {
       path: pathItems,
     };
