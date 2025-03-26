@@ -7,7 +7,7 @@ esbuild
     platform: "node",
     target: "node20",
     outdir: "dist",
-    format: "esm",    
+    format: "cjs",
     external: ["@aws-sdk"], // Exclude AWS SDK from the bundle
   })
   .catch(() => process.exit(1));
