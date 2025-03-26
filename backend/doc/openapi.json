@@ -176,6 +176,9 @@
                               },
                               "name": {
                                 "type": "string"
+                              },
+                              "itemId": {
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -183,7 +186,8 @@
                               "to",
                               "distance",
                               "type",
-                              "id"
+                              "id",
+                              "itemId"
                             ]
                           }
                         ]

@@ -40,6 +40,7 @@ type SmartGatePathFinderItem = BasePathFinderItem & {
   id: string;
   owner?: Character;
   name?: string;
+  itemId: string;
 };
 
 type JumpPathFinderItem = BasePathFinderItem & {
@@ -185,6 +186,7 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
             id: smartGate.id,
             owner: smartGate.owner,
             name: smartGate.name,
+            itemId: smartGate.itemId,
           };
         }
         return item as JumpPathFinderItem | GatePathFinderItem;

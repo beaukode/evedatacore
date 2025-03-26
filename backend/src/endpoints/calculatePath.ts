@@ -17,6 +17,7 @@ const pathSmartgateItemSchema = z.object({
   id: z.string(),
   owner: z.object({ address: z.string(), id: z.string(), name: z.string(), corpId: z.number() }).optional(),
   name: z.string().optional(),
+  itemId: z.string(),
 });
 
 export const calculatePath = endpointsFactory.build({
@@ -53,6 +54,7 @@ export const calculatePath = endpointsFactory.build({
           id: item.id,
           owner: item.owner,
           name: item.name,
+          itemId: item.itemId,
         };
       } else {
         return {
