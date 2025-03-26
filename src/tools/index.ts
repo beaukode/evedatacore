@@ -6,12 +6,13 @@ export function ensureArray<T>(value: T | T[]): T[] {
 
 export function shorten(
   text?: string,
-  length: number = 16
+  length: number = 16,
+  ellipsis: string = "..."
 ): string | undefined {
   if (text && text.length > length) {
     return (
       text.substring(0, Math.round(length / 2)) +
-      "..." +
+      ellipsis +
       text.substring(text.length - Math.round(length / 2))
     );
   }
