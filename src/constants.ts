@@ -22,7 +22,7 @@ export type Fuel = {
 };
 
 export const fuels = {
-  "uSOF-30": { efficiency: 0.3 },
+  "uSOF-20": { efficiency: 0.2 },
   "SOF-40": { efficiency: 0.4 },
   "EU-40": { efficiency: 0.4 },
   "SOF-80": { efficiency: 0.8 },
@@ -77,7 +77,7 @@ export const ships: Record<string, Ship> = {
   Explorer: {
     mass: 4517000,
     fuel: 230,
-    fuelType: "uSOF-30",
+    fuelType: "uSOF-20",
   },
   Flegel: {
     mass: 142121000,
@@ -86,7 +86,7 @@ export const ships: Record<string, Ship> = {
     image:
       "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmXwQNtnQYJc5eT4sTAiAhudcq59qJSQghos9rVAF7zFN9",
   },
-  Forager: { mass: 7642000, fuel: 120, fuelType: "uSOF-30" },
+  Forager: { mass: 7642000, fuel: 120, fuelType: "uSOF-20" },
   Grus: {
     mass: 2383202000,
     fuel: 71340,
@@ -104,7 +104,7 @@ export const ships: Record<string, Ship> = {
   Juav: {
     mass: 12928000,
     fuel: 360,
-    fuelType: "uSOF-30",
+    fuelType: "uSOF-20",
     image:
       "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmXshWcMSvt5mCgCapnhMqvxF14AbamcMaUKB3BJS2pNnr",
   },
