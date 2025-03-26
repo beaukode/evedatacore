@@ -51,7 +51,7 @@ jobs:
       - name: "Deploy to lambda"
         if: vars.LAMBDA_FUNCTION_ARN
         run: |
-          aws lambda update-function-code --region eu-west-1 --publish --zip-file fileb://backend/dist_package/backend.zip --function-name ${{vars.LAMBDA_FUNCTION_ARN}}
+          aws lambda update-function-code --region eu-west-1 --publish --zip-file fileb://backend/dist/backend.zip --function-name ${{vars.LAMBDA_FUNCTION_ARN}}
       - name: "Deploy to s3"
         if: vars.S3_BUCKET
         run: |
