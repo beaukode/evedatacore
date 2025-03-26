@@ -23,8 +23,8 @@ const Home: React.FC = () => {
           Redstone blockchain
         </ExternalLink>{" "}
         (Actually{" "}
-        <ExternalLink title="Garnet testnet" href="https://garnetchain.com/">
-          Garnet testnet
+        <ExternalLink title="Pyrope testnet" href="https://pyropechain.com/">
+          Pyrope testnet
         </ExternalLink>{" "}
         during the alpha).
         <br />
