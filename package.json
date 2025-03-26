@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "USE_LOCAL_API=true vite",
     "dev:anvil": "VITE_APP_USE_ANVIL=true vite",
     "build": "tsc -b && vite build",
     "test": "vitest",
@@ -12,7 +13,7 @@
     "preview": "vite preview",
     "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts",
     "api:shish": "openapi-ts -f src/api/shish/openapi-ts.config.ts",
-    "api:mudsql": "openapi-ts -f src/api/mudsql/openapi-ts.config.ts",
+    "api:mudsql": "openapi-ts -f shared/mudsql/openapi-ts.config.ts",
     "api:evedatacore": "openapi-ts -f src/api/evedatacore/openapi-ts.config.ts",
     "data:solarsystems": "jiti scripts/data-solarsystems.ts",
     "data:types": "jiti scripts/data-types.ts"
@@ -20,6 +21,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@eveworld/common-constants": "^0.0.13",
     "@eveworld/contexts": "^0.1.0",
     "@eveworld/contracts": "^0.1.0",
     "@eveworld/world": "^0.0.17",

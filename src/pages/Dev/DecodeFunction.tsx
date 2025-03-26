@@ -3,7 +3,7 @@ import { Box, TextField, Button, Alert, List } from "@mui/material";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { toJson } from "@/tools";
 import BasicListItem from "@/components/ui/BasicListItem";
-import { decodeFunctionSignature } from "@/api/mudweb3";
+import { decodeFunctionSignature } from "@shared/mudweb3";
 
 interface DecodeFunctionProps {
   signature: string;

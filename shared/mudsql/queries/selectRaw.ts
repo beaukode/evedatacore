@@ -14,5 +14,5 @@ export const selectRaw =
     if (r.error) {
       throw new Error(r.error.msg);
     }
-    return transformResult(r.data.result);
+    return transformResult(r.data.result.shift());
   };

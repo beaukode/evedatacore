@@ -6,27 +6,22 @@ import {
   type OptionsLegacyParser,
 } from "@hey-api/client-fetch";
 import type {
-  GetApiCalcPathFromToJumpDistanceData,
-  GetApiCalcPathFromToJumpDistanceError,
-  GetApiCalcPathFromToJumpDistanceResponse,
+  GetCalcPathFromToData,
+  GetCalcPathFromToError,
+  GetCalcPathFromToResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
 
-export const getApiCalcPathFromToJumpDistance = <
-  ThrowOnError extends boolean = false,
->(
-  options: OptionsLegacyParser<
-    GetApiCalcPathFromToJumpDistanceData,
-    ThrowOnError
-  >,
+export const getCalcPathFromTo = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCalcPathFromToData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    GetApiCalcPathFromToJumpDistanceResponse,
-    GetApiCalcPathFromToJumpDistanceError,
+    GetCalcPathFromToResponse,
+    GetCalcPathFromToError,
     ThrowOnError
   >({
     ...options,
-    url: "/api/calc/path/{from}/{to}/{jumpDistance}",
+    url: "/calc/path/{from}/{to}",
   });
 };

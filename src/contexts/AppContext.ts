@@ -1,10 +1,10 @@
 import React from "react";
 import { getSolarsystems, getTypes } from "@/api/stillness";
 import { createSolarSystemsIndex } from "@/tools/solarSystemsIndex";
-import { MudSqlClient } from "@/api/mudsql";
+import { MudSqlClient } from "@shared/mudsql";
 import { useQuery } from "@tanstack/react-query";
 import { createTypesIndex } from "@/tools/typesIndex";
-import { MudWeb3Client } from "@/api/mudweb3";
+import { MudWeb3Client } from "@shared/mudweb3";
 
 interface AppContextProps {
   mudSql: MudSqlClient;

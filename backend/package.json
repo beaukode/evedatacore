@@ -3,33 +3,41 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc && cp package*.json dist/ && cd dist/ && npm ci --omit=dev",
-    "start": "ts-node src/index.ts",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "package": "npm run build && mkdir -p ./dist_package && rm -f ./dist_package/backend.zip && cd dist/ && zip -r ../dist_package/backend.zip . -x \"*node_modules/aws-sdk/*\"",
-    "doc": "ts-node src/doc.ts",
-    "lambda": "ts-node src/lambda.ts"
+    "build": "tsc -noEmit && node build.js",
+    "dev": "node dev.js",
+    "package": "npm run build && cd dist/ && rm -f lambda.zip && zip -r lambda.zip lambda.js",
+    "doc": "node doc.js"
   },
   "keywords": [],
   "author": "",
   "license": "CC BY-NC 4.0",
   "description": "",
   "dependencies": {
-    "aws-lambda": "^1.0.7",
+    "@aws-sdk/client-lambda": "^3.758.0",
+    "@eveworld/common-constants": "^0.0.13",
+    "@eveworld/contracts": "^0.1.0",
+    "@eveworld/world": "^0.0.17",
+    "@latticexyz/common": "2.2.21-1d354b89f3aeb28e9dc085bdde27647a7ba6d8ae",
+    "@latticexyz/config": "2.2.21-1d354b89f3aeb28e9dc085bdde27647a7ba6d8ae",
+    "@latticexyz/protocol-parser": "2.2.21-1d354b89f3aeb28e9dc085bdde27647a7ba6d8ae",
+    "@latticexyz/store": "2.2.21-1d354b89f3aeb28e9dc085bdde27647a7ba6d8ae",
+    "@latticexyz/world": "2.2.21-1d354b89f3aeb28e9dc085bdde27647a7ba6d8ae",
+    "async-cache-dedupe": "^2.2.0",
+    "awilix": "^12.0.5",
+    "big.js": "^6.2.2",
     "express": "^4.21.2",
     "express-zod-api": "^22.11.2",
     "http-errors": "^2.0.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "serverless-http": "^3.2.0",
+    "viem": "^2.22.10",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.147",
     "@types/express": "^5.0.0",
     "@types/http-errors": "^2.0.4",
     "@types/node": "^22.13.10",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
+    "esbuild": "^0.25.1",
     "typescript": "^5.8.2"
   }
 }

@@ -146,3 +146,20 @@ export type Killmail = {
   solarSystemId: number;
   timestamp: number;
 };
+
+export type Smartgate = {
+  id: string;
+  solarSystemId: string;
+  location: {
+    x: string;
+    y: string;
+    z: string;
+  };
+  systemId: string;
+  ownerAddress: string;
+  owner?: Character;
+  name?: string;
+  dappUrl?: string;
+  description?: string;
+  destinationId: string;
+};

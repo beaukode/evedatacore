@@ -1,13 +1,13 @@
 import React from "react";
-import { Alert, Box, Grid2 as Grid } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { Alert, Box, Grid2 as Grid, Typography } from "@mui/material";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import ExternalLink from "@/components/ui/ExternalLink";
-import { getPath } from "@/api/shish";
+import { getCalcPathFromTo } from "@/api/evedatacore";
 import RoutePlannerForm from "./Calculators/RoutePlannerForm";
 import RoutePlannerRoute from "./Calculators/RoutePlannerRoute";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
+import useCharacter from "@/tools/useCharacter";
 
 type SubmitHandler = React.ComponentProps<typeof RoutePlannerForm>["onSubmit"];
 type RoutePlannerFormData = Parameters<SubmitHandler>[0];
@@ -15,38 +15,59 @@ type RoutePlannerFormData = Parameters<SubmitHandler>[0];
 const CalculateRoute: React.FC = () => {
   const [queryData, setQueryData] = React.useState<RoutePlannerFormData>();
   const solarSystemsIndex = useSolarSystemsIndex();
+  const queryClient = useQueryClient();
+  const character = useCharacter();
 
   const query = useQuery({
     queryKey: ["CalculateRoute", queryData],
     queryFn: async () => {
       if (!queryData) return;
-      return getPath({
+      let useSmartGates = "";
+      if (queryData.smartGates === "unrestricted") {
+        useSmartGates = "0";
+      } else if (queryData.smartGates === "restricted") {
+        if (character.character) {
+          useSmartGates = character.character.id.toString();
+        } else {
+          useSmartGates = "0"; // Wallet is not connected, fallback to unrestricted smart gates
+        }
+      }
+      return getCalcPathFromTo({
+        path: {
+          from: queryData.system1,
+          to: queryData.system2,
+        },
         query: {
-          start: queryData.system1.label,
-          end: queryData.system2.label,
-          jump: queryData.jumpDistance,
+          jumpDistance: queryData.jumpDistance,
           optimize: queryData.optimize,
-          use_smart_gates: queryData.useSmartGates,
+          useSmartGates,
         },
       }).then((r) => {
         if (r.error) {
-          throw new Error(r.error);
+          throw new Error(r.error.message);
         }
-        if (r.data?.version !== 2) {
-          throw new Error(
-            "Invalid server version, The client need to be updated, please contact me."
-          );
-        }
-        return r.data.data;
+        return r.data.path;
       });
     },
     retry: false,
-    enabled: !!queryData,
+    enabled: !!queryData && !character.isLoading,
   });
 
-  const handleSubmit: SubmitHandler = React.useCallback((data) => {
-    setQueryData(data);
-  }, []);
+  const destinationName = React.useMemo(() => {
+    if (!queryData || !solarSystemsIndex) return "";
+    return (
+      solarSystemsIndex.getById(queryData.system2.toString())
+        ?.solarSystemName ?? ""
+    );
+  }, [queryData, solarSystemsIndex]);
+
+  const handleSubmit: SubmitHandler = React.useCallback(
+    (data) => {
+      queryClient.resetQueries({ queryKey: ["CalculateRoute"] });
+      setQueryData(data);
+    },
+    [queryClient]
+  );
 
   return (
     <Box p={2} flexGrow={1} overflow="auto">
@@ -55,19 +76,29 @@ const CalculateRoute: React.FC = () => {
       </Helmet>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <PaperLevel1 title="Route planner" loading={!solarSystemsIndex}>
+          <PaperLevel1
+            title="Route planner"
+            loading={!solarSystemsIndex}
+            sx={{ mb: 0 }}
+          >
             {solarSystemsIndex && (
               <RoutePlannerForm
+                loading={query.isLoading}
                 onSubmit={handleSubmit}
                 solarSystemsIndex={solarSystemsIndex}
               />
             )}
           </PaperLevel1>
+          <Box display="flex" justifyContent="flex-end">
+            <Typography variant="caption">
+              Some data my be cached up to 15 minutes
+            </Typography>
+          </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           {!!queryData && (
             <PaperLevel1
-              title={`Your trip to ${queryData.system2.label}`}
+              title={`Your trip to ${destinationName}`}
               loading={query.isLoading}
             >
               {query.isError && (
@@ -82,19 +113,6 @@ const CalculateRoute: React.FC = () => {
           )}
         </Grid>
       </Grid>
-      <Alert severity="info">
-        This calculator is based on the work of Shish, from his website{" "}
-        <ExternalLink
-          title="EVE Frontier Toolbox"
-          href="https://eftb.shish.io/"
-        />{" "}
-        and its source code
-        <br />
-        <br />
-        If you enjoy this calculator, please consider supporting him by buying a
-        coffee at{" "}
-        <ExternalLink title="Buy a coffee" href="https://ko-fi.com/shish2k" />
-      </Alert>
     </Box>
   );
 };

@@ -3,14 +3,14 @@ info:
   title: EVE Datacore API
   version: 0.0.0
 paths:
-  /api/calc/path/{from}/{to}/{jumpDistance}:
+  /calc/path/{from}/{to}:
     get:
-      operationId: GetApiCalcPathFromToJumpDistance
+      operationId: GetCalcPathFromTo
       parameters:
         - name: from
           in: path
           required: true
-          description: GET /api/calc/path/:from/:to/:jumpDistance Parameter
+          description: GET /calc/path/:from/:to Parameter
           schema:
             type: number
             format: double
@@ -19,40 +19,53 @@ paths:
         - name: to
           in: path
           required: true
-          description: GET /api/calc/path/:from/:to/:jumpDistance Parameter
+          description: GET /calc/path/:from/:to Parameter
           schema:
             type: number
             format: double
             exclusiveMinimum: 30000000
             maximum: 39000000
         - name: jumpDistance
-          in: path
+          in: query
           required: true
-          description: GET /api/calc/path/:from/:to/:jumpDistance Parameter
+          description: GET /calc/path/:from/:to Parameter
           schema:
             type: number
             format: double
             exclusiveMinimum: 0
             maximum: 500
             default: 0
+        - name: optimize
+          in: query
+          required: false
+          description: GET /calc/path/:from/:to Parameter
+          schema:
+            type: string
+            enum:
+              - fuel
+              - distance
+              - hops
+            default: fuel
+        - name: useSmartGates
+          in: query
+          required: false
+          description: GET /calc/path/:from/:to Parameter
+          schema:
+            type: string
+            default: ""
       responses:
         "200":
-          description: GET /api/calc/path/:from/:to/:jumpDistance Positive response
+          description: GET /calc/path/:from/:to Positive response
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: string
-                    const: success
-                  data:
-                    type: object
-                    properties:
-                      path:
-                        type: array
-                        items:
-                          type: object
+                  path:
+                    type: array
+                    items:
+                      oneOf:
+                        - type: object
                           properties:
                             from:
                               type: number
@@ -74,43 +87,73 @@ paths:
                               enum:
                                 - jump
                                 - gate
-                                - smartgate
                           required:
                             - from
                             - to
                             - distance
                             - type
-                    required:
-                      - path
+                        - type: object
+                          properties:
+                            from:
+                              type: number
+                              format: double
+                              minimum: -1.7976931348623157e+308
+                              maximum: 1.7976931348623157e+308
+                            to:
+                              type: number
+                              format: double
+                              minimum: -1.7976931348623157e+308
+                              maximum: 1.7976931348623157e+308
+                            distance:
+                              type: number
+                              format: double
+                              minimum: -1.7976931348623157e+308
+                              maximum: 1.7976931348623157e+308
+                            type:
+                              type: string
+                              const: smartgate
+                            id:
+                              type: string
+                            owner:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                                corpId:
+                                  type: number
+                                  format: double
+                                  minimum: -1.7976931348623157e+308
+                                  maximum: 1.7976931348623157e+308
+                              required:
+                                - address
+                                - id
+                                - name
+                                - corpId
+                            name:
+                              type: string
+                          required:
+                            - from
+                            - to
+                            - distance
+                            - type
+                            - id
                 required:
-                  - status
-                  - data
+                  - path
         "400":
-          description: GET /api/calc/path/:from/:to/:jumpDistance Negative response
+          description: GET /calc/path/:from/:to Negative response
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
+                  message:
                     type: string
-                    const: error
-                  error:
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                    required:
-                      - message
                 required:
-                  - status
-                  - error
-              examples:
-                example1:
-                  value:
-                    status: error
-                    error:
-                      message: Sample error message
+                  - message
 components:
   schemas: {}
   responses: {}

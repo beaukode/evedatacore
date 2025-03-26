@@ -1,85 +1,119 @@
 import React from "react";
 import z from "zod";
-import { Box, Button } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import {
   TextFieldElement,
   SubmitHandler,
   useForm,
   Controller,
   SelectElement,
-  CheckboxElement,
 } from "react-hook-form-mui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AutoCompleteSolarSystem from "@/components/AutoCompleteSolarSystem";
 import HintIcon from "@/components/ui/Hint";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
+import useQuerySearch from "@/tools/useQuerySearch";
+import useCharacter from "@/tools/useCharacter";
 
 const schema = z
   .object({
-    system1: z
-      .object(
-        {
-          label: z.string(),
-          id: z.number(),
-        },
-        { message: "Please select a system" }
-      )
-      .default({
-        label: "E.G1G.6GD",
-        id: 30017903,
-      }),
-    system2: z
-      .object(
-        {
-          label: z.string(),
-          id: z.number(),
-        },
-        { message: "Please select a system" }
-      )
-      .default({
-        label: "Nod",
-        id: 30008580,
-      }),
-    jumpDistance: z.number().int().positive().min(1).max(500).default(120),
+    system1: z.coerce
+      .number({ message: "Please select a system" })
+      .int()
+      .positive()
+      .default(30001573),
+    system2: z.coerce
+      .number({ message: "Please select a system" })
+      .int()
+      .positive()
+      .default(30013956),
+    jumpDistance: z.coerce
+      .number()
+      .int()
+      .positive()
+      .min(1)
+      .max(500)
+      .default(120),
     optimize: z.enum(["fuel", "distance", "hops"]).default("fuel"),
-    useSmartGates: z.boolean().default(true),
+    smartGates: z
+      .enum(["none", "unrestricted", "restricted"])
+      .default("unrestricted"),
   })
   .required();
 
 type FormData = z.infer<typeof schema>;
 
+function queryToForm(values: Record<keyof FormData, string>) {
+  return {
+    system1: Number.parseInt(values.system1),
+    system2: Number.parseInt(values.system2),
+    jumpDistance: Number.parseInt(values.jumpDistance),
+    optimize: ["fuel", "distance", "hops"].includes(values.optimize)
+      ? (values.optimize as "fuel" | "distance" | "hops")
+      : "fuel",
+    smartGates: ["none", "unrestricted", "restricted"].includes(
+      values.smartGates
+    )
+      ? (values.smartGates as "none" | "unrestricted" | "restricted")
+      : "unrestricted",
+  };
+}
+
+function formToQuery(values: FormData) {
+  return {
+    system1: values.system1.toString(),
+    system2: values.system2.toString(),
+    jumpDistance: values.jumpDistance.toString(),
+    optimize: values.optimize.toString(),
+    smartGates: values.smartGates.toString(),
+  };
+}
+
 interface RoutePlannerFormProps {
   solarSystemsIndex: SolarSystemsIndex;
   onSubmit: SubmitHandler<FormData>;
+  loading: boolean;
 }
 
 const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   onSubmit,
   solarSystemsIndex,
+  loading,
 }) => {
+  // Store the last query
   const [store, setStore] = useAppLocalStorage(
-    "v1_calculator_route_planner",
+    "v2_calculator_route_planner",
     schema
   );
 
-  const { control, handleSubmit, reset } = useForm<FormData>({
+  // Get the query from the url
+  const [search, setSearch, , handleChange] = useQuerySearch(
+    formToQuery(store),
+    { syncInitialState: true }
+  );
+  const [formDefaultValues] = React.useState(search);
+
+  const { control, handleSubmit, watch } = useForm<FormData>({
     mode: "onChange",
-    defaultValues: store,
+    defaultValues: queryToForm(formDefaultValues),
     resolver: zodResolver(schema),
   });
+  const smartGates = watch("smartGates");
 
   const internalOnSubmit: SubmitHandler<FormData> = (data) => {
     setStore(data);
     onSubmit(data);
   };
 
-  const handleReset = () => {
-    reset(schema.parse({}));
-  };
+  const character = useCharacter();
 
   return (
-    <form onSubmit={handleSubmit(internalOnSubmit)} noValidate>
+    <form
+      onSubmit={handleSubmit(internalOnSubmit)}
+      onChange={handleChange}
+      noValidate
+    >
       <Controller
         name="system1"
         control={control}
@@ -87,6 +121,13 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
           return (
             <AutoCompleteSolarSystem
               {...field}
+              onChange={(value) => {
+                field.onChange(value);
+                setSearch(
+                  "system1",
+                  (value ?? formDefaultValues.system1).toString()
+                );
+              }}
               error={fieldState.error?.message}
               label="From system"
               sx={{ mb: 2 }}
@@ -103,6 +144,13 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
           return (
             <AutoCompleteSolarSystem
               {...field}
+              onChange={(value) => {
+                field.onChange(value);
+                setSearch(
+                  "system2",
+                  (value ?? formDefaultValues.system2).toString()
+                );
+              }}
               error={fieldState.error?.message}
               solarSystemsIndex={solarSystemsIndex}
               label="To system"
@@ -130,6 +178,9 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         name="optimize"
         label="Optimize for"
         control={control}
+        onChange={(value) => {
+          setSearch("optimize", value);
+        }}
         sx={{ my: 2 }}
         options={[
           { id: "fuel", label: "Fuel (Prefer gates)" },
@@ -139,25 +190,42 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         required
         fullWidth
       />
-      <CheckboxElement
-        name="useSmartGates"
-        label="Use smart gates"
+      <SelectElement
+        name="smartGates"
+        label="Smart gates"
         control={control}
-        labelProps={{
-          labelPlacement: "end",
+        onChange={(value) => {
+          setSearch("smartGates", value);
         }}
+        sx={{ my: 2 }}
+        options={[
+          { id: "none", label: "None" },
+          { id: "unrestricted", label: "Unrestricted" },
+          { id: "restricted", label: "Unrestricted + Restricted you can use" },
+        ]}
+        required
+        fullWidth
       />
+      {smartGates === "restricted" && (
+        <>
+          {!character.isLoading && !character.character && (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              Unable to retrieve your character ID. Please check that your
+              wallet is connected to the correct address.
+              <br />
+              The route will be calculated using unrestricted smart gates.
+            </Alert>
+          )}
+          {character.character && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Your character ID will be sent to the server to check which smart
+              gates you can use.
+            </Alert>
+          )}
+        </>
+      )}
       <Box display="flex" justifyContent="flex-end">
-        <Button
-          type="reset"
-          variant="outlined"
-          color="warning"
-          onClick={handleReset}
-          sx={{ mr: 2 }}
-        >
-          Reset
-        </Button>
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" disabled={loading}>
           Calculate Route
         </Button>
       </Box>
