@@ -39,68 +39,138 @@ export type Ship = {
 };
 
 export const ships: Record<string, Ship> = {
-  Explorer: {
-    mass: 5000000,
-    fuel: 280,
-    fuelType: "uSOF-30",
-  },
-  Forager: { mass: 11000000, fuel: 63, fuelType: "uSOF-30" },
-  Juav: { mass: 14000000, fuel: 182, fuelType: "uSOF-30" },
-  Microptero: {
-    mass: 17000000,
-    fuel: 245,
-    fuelType: "SOF-40",
-    image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmchGgYrRT45dH9EEnnzdXGsQuxE5oCMnnckEDvA9UCHCe",
-  },
-  Val: {
-    mass: 28000000,
-    fuel: 539,
-    fuelType: "SOF-40",
-    image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmPgFk5Csw2WbPtr5PfYvfMjnsbUGXDYNp9VmAh5qoLLV9",
-  },
-  Flegel: {
-    mass: 145000000,
-    fuel: 2990,
-    fuelType: "SOF-40",
-    image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmXwQNtnQYJc5eT4sTAiAhudcq59qJSQghos9rVAF7zFN9",
-  },
   Anser: {
-    mass: 285000000,
-    fuel: 7090,
+    mass: 281681000,
+    fuel: 7050,
     fuelType: "SOF-40",
     image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmcsyZM3V81b59R3PKm8o93vMTYyh3BSXLr9iUvPM62ufY",
-  },
-  Dremar: {
-    mass: 70250000,
-    fuel: 1100,
-    fuelType: "SOF-40",
-    image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmRaHLUTUPhbzweyZU4qvMoFqtKNyU57rB3htPt3tWLSo6",
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmcsyZM3V81b59R3PKm8o93vMTYyh3BSXLr9iUvPM62ufY",
   },
   Axte: {
-    mass: 807000000,
-    fuel: 22500,
+    mass: 800711000,
+    fuel: 22030,
     fuelType: "SOF-40",
     image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmazawrffP8SVcUdDvMoZAAaZ14kXQ4fGmjmkXDpzxt4wn",
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmazawrffP8SVcUdDvMoZAAaZ14kXQ4fGmjmkXDpzxt4wn",
+  },
+  Baile: {
+    mass: 487820000,
+    fuel: 12200,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmNwGEMfmJLsT3UZdRpjfNgRL9XB3PbndonG1rigiS6Q1i",
   },
   Caruda: {
-    mass: 1400000000,
-    fuel: 38900,
+    mass: 1424833000,
+    fuel: 49870,
     fuelType: "SOF-40",
     image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmWbPLQhTtkx3MfevyKWCTKbBZiR6hEEPg7yuga8ENW1dg",
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmWbPLQhTtkx3MfevyKWCTKbBZiR6hEEPg7yuga8ENW1dg",
   },
-  Grus: {
-    mass: 2425000000,
-    fuel: 66200,
+  Dremar: {
+    mass: 68221000,
+    fuel: 1110,
     fuelType: "SOF-40",
     image:
-      "https://mainnet-game-ipfs-gateway.nursery.reitnorf.com/ipfs/QmR1UMFyikEv2MGVxgntMEZS8qFbTY78c4U3EaNdW5xs6f",
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmRaHLUTUPhbzweyZU4qvMoFqtKNyU57rB3htPt3tWLSo6",
+  },
+  Explorer: {
+    mass: 4517000,
+    fuel: 230,
+    fuelType: "uSOF-30",
+  },
+  Flegel: {
+    mass: 142121000,
+    fuel: 2860,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmXwQNtnQYJc5eT4sTAiAhudcq59qJSQghos9rVAF7zFN9",
+  },
+  Forager: { mass: 7642000, fuel: 120, fuelType: "uSOF-30" },
+  Grus: {
+    mass: 2383202000,
+    fuel: 71340,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmR1UMFyikEv2MGVxgntMEZS8qFbTY78c4U3EaNdW5xs6f",
+  },
+  Harpia: {
+    mass: 62359000,
+    fuel: 95300,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmR1UMFyikEv2MGVxgntMEZS8qFbTY78c4U3EaNdW5xs6f",
+  },
+  Juav: {
+    mass: 12928000,
+    fuel: 360,
+    fuelType: "uSOF-30",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmXshWcMSvt5mCgCapnhMqvxF14AbamcMaUKB3BJS2pNnr",
+  },
+  Klinge: {
+    mass: 798858000,
+    fuel: 21970,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmTwM1FF7X2tNVLkvqNJ7qnuGXvvrDJUrDchMArFhzoJXj",
+  },
+  Microptero: {
+    mass: 20464000,
+    fuel: 240,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmchGgYrRT45dH9EEnnzdXGsQuxE5oCMnnckEDvA9UCHCe",
+  },
+  Pici: {
+    mass: 25921000,
+    fuel: 320,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmPTsfuXJZm6rWyfZck8VSDh9gVHhUQnZCMZiJikk8pEPU",
+  },
+  Raubtier: {
+    mass: 45402000,
+    fuel: 690,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/Qmeg4xGuCGkwi6KyXKDGjw9ViwtM7BUxzdNv28JfQCQTmH",
+  },
+  "Rebus-K": {
+    mass: 1474255000,
+    fuel: 41620,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmQFfkPKYdPTpYfPR6qh9zPX127F7SC7DNtsYt2CLQ9Kzs",
+  },
+  "Samoskyd-1": {
+    mass: 24552000,
+    fuel: 300,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmQG9VTiTdspTxryqZ3cuBoPETbsnRV5NcymjbuQt5oFwQ",
+  },
+  Strix: {
+    mass: 95376000,
+    fuel: 1550,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmTrXyViKaAgMvs1DPmdNb4ytAJen88iq2V1pYiFQuaVEy",
+  },
+
+  Ungher: {
+    mass: 74389000,
+    fuel: 1400,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/Qmbo22RxWw95ayiRf1dvWFqUMibtvS6fJHZ8we9GjgEEoN",
+  },
+  Val: {
+    mass: 27210000,
+    fuel: 550,
+    fuelType: "SOF-40",
+    image:
+      "https://ipfs-gateway.live.tech.evefrontier.com/ipfs/QmPgFk5Csw2WbPtr5PfYvfMjnsbUGXDYNp9VmAh5qoLLV9",
   },
 } as const;
 
