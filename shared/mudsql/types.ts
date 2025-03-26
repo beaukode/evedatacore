@@ -162,4 +162,5 @@ export type Smartgate = {
   dappUrl?: string;
   description?: string;
   destinationId: string;
+  itemId: string;
 };
