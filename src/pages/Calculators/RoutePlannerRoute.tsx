@@ -255,7 +255,17 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
               }}
             >
               {connectionLine}
-              {connectionText} {step.distance.toFixed(2)} Ly
+              {connectionText}{" "}
+              {step.type === "smartgate"
+                ? `[${step.name || shorten(step.id)}]`
+                : ""}{" "}
+              {step.distance.toFixed(2)} Ly
+              {step.type === "smartgate" && step.owner && (
+                <>
+                  <br />
+                  Owner: {step.owner.name}
+                </>
+              )}
             </Typography>
             <Typography variant="body1">
               <SystemIcon color="secondary" fontSize="large" />
