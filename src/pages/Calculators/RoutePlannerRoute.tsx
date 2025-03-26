@@ -4,7 +4,7 @@ import SystemIcon from "@mui/icons-material/Adjust";
 import { GetCalcPathFromToResponse } from "@/api/evedatacore";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
-import { lyDistance } from "@/tools";
+import { lyDistance, shorten } from "@/tools";
 
 type RouteData = GetCalcPathFromToResponse["path"];
 
@@ -168,18 +168,33 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
 
   const copyRoute = () => {
     setCopyError(false);
-    const content = path
-      .reduce(
-        (acc, step) => {
-          const connectionText = connectionTexts[step.type] || "Unknown";
+    const lines = [
+      `${path[0]?.fromName} → ${path[path.length - 1]?.toName}`,
+      "Gate: ()→ SmartGate: []→ Jump: ly→",
+      "",
+    ];
+    const pathText = path.reduce(
+      (acc, step) => {
+        if (step.type === "gate") {
+          acc.push(`()→ <a href="showinfo:5//${step.to}">${step.toName}</a>`);
+        } else if (step.type === "smartgate") {
+          const name = step.name
+            ? shorten(step.name, 10, "…")
+            : shorten(step.name, 6, step.id);
           acc.push(
-            `${connectionText} to <a href="showinfo:5//${step.to}">${step.toName}</a> ${step.distance.toFixed()}ly`
+            `[<a href="showinfo:84955//${step.itemId}">${name}</a>]→ <a href="showinfo:5//${step.to}">${step.toName}</a>`
           );
-          return acc;
-        },
-        [`${path[0]?.fromName} → ${path[path.length - 1]?.toName}`, ""]
-      )
-      .join("\n");
+        } else if (step.type === "jump") {
+          acc.push(
+            `${step.distance.toFixed(0)}→ <a href="showinfo:5//${step.to}">${step.toName}</a>`
+          );
+        }
+        return acc;
+      },
+      [`<a href="showinfo:5//${path[0]?.to}">${path[0]?.fromName}</a>`]
+    );
+    lines.push(pathText.join(" "));
+    const content = lines.join("\n");
     navigator.clipboard
       .writeText(content)
       .then(() => {
@@ -211,7 +226,7 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
         <Box>
           <Tooltip title="If you paste with EVE-Links into in-game notepad, you get clickable links">
             <Button variant="outlined" size="small" onClick={copyRoute}>
-              Copy with EVE-Links
+              Copy
             </Button>
           </Tooltip>
         </Box>
