@@ -100,6 +100,7 @@ const Home: React.FC = () => {
         <br />
         Fly safe <span style={{ fontSize: "80%" }}>o</span>7
         <br />
+        beauKode
       </Typography>
     </Box>
   );
