@@ -14,9 +14,10 @@ type AssemblyDbRow = {
   updatedBlockTime: string;
 };
 
-type TypeDbRow = {
-  smartObjectId: string;
-  smartAssemblyType: number;
+type EntityRecordDbRow = {
+  entityId: string;
+  itemId: string;
+  typeId: string;
 };
 
 type LocationDbRow = {
@@ -52,8 +53,8 @@ type Owner = {
 
 export const listUsableSmartgates =
   (client: MudSqlClient) => async (): Promise<Record<string, Smartgate>> => {
-    const [assemblies, types, links] = await client.selectFromBatch<
-      [AssemblyDbRow, TypeDbRow, LinkDbRow]
+    const [assemblies, items, links] = await client.selectFromBatch<
+      [AssemblyDbRow, EntityRecordDbRow, LinkDbRow]
     >([
       {
         ns: "eveworld",
@@ -64,9 +65,9 @@ export const listUsableSmartgates =
       },
       {
         ns: "eveworld",
-        table: "SmartAssemblyTab",
+        table: "EntityRecordTabl",
         options: {
-          where: `"smartAssemblyType" = 2`,
+          where: `"typeId" = 84955`,
         },
       },
       {
@@ -81,7 +82,7 @@ export const listUsableSmartgates =
     const linksById = keyBy(links, "sourceGateId");
     const smartObjectIds = intersection(
       assemblies.map((a) => (linksById[a.smartObjectId] ? a.smartObjectId : 0)), // Filter out non linked gates (0 will never be in the types array)
-      types.map((t) => t.smartObjectId)
+      items.map((t) => t.entityId)
     );
 
     const [locations, owners, entities, config] = await client.selectFromBatch<
@@ -120,6 +121,7 @@ export const listUsableSmartgates =
     const ownersById = keyBy(owners, "tokenId");
     const entitiesById = keyBy(entities, "entityId");
     const configById = keyBy(config, "smartObjectId");
+    const itemsById = keyBy(items, "entityId");
 
     const ownersAddresses = [...new Set(owners.map((o) => o.owner))];
     const characters = await client.listCharacters({
@@ -141,6 +143,7 @@ export const listUsableSmartgates =
           dappUrl: entitiesById[smartObjectId]?.dappURL,
           description: entitiesById[smartObjectId]?.description,
           destinationId: linksById[smartObjectId]!.destinationGateId,
+          itemId: itemsById[smartObjectId]?.itemId || "0",
         };
         return acc;
       },

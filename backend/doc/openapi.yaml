@@ -135,12 +135,15 @@ paths:
                                 - corpId
                             name:
                               type: string
+                            itemId:
+                              type: string
                           required:
                             - from
                             - to
                             - distance
                             - type
                             - id
+                            - itemId
                 required:
                   - path
         "400":
