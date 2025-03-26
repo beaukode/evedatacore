@@ -48,6 +48,7 @@ export type GetCalcPathFromToResponse = {
           corpId: number;
         };
         name?: string;
+        itemId: string;
       }
   >;
 };
