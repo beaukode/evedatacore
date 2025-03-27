@@ -1,4 +1,4 @@
-import { Hex, http, createPublicClient } from "viem";
+import { Hex, webSocket, createPublicClient } from "viem";
 import { EnvVariablesService } from "./envVariables";
 import { createMudWeb3PublicClient } from "@shared/mudweb3";
 import { pyrope } from "@latticexyz/common/chains";
@@ -16,10 +16,8 @@ export function createMudWeb3Service({ env }: MudWeb3ServiceConfig) {
     },
     publicClient: createPublicClient({
       chain: pyrope,
-      transport: http(),
-      batch: { multicall: true },
+      transport: webSocket(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }) as any,
   });
 }
- 
