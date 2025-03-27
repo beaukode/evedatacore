@@ -1,10 +1,17 @@
 import React from "react";
-import { Alert, Box, Button, Tooltip, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  ButtonGroup,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import SystemIcon from "@mui/icons-material/Adjust";
 import { GetCalcPathFromToResponse } from "@/api/evedatacore";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
-import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
-import { lyDistance, shorten } from "@/tools";
+import { shorten } from "@/tools";
+import { enrichRoute, gameNotepadRoute } from "@/tools/route";
 
 type RouteData = GetCalcPathFromToResponse["path"];
 
@@ -108,52 +115,6 @@ const connectionsLines: Record<keyof typeof connectionTexts, React.ReactNode> =
     ),
   };
 
-type EnrichedRouteData = {
-  path: Array<RouteData[number] & { fromName: string; toName: string }>;
-  distance: number;
-  jumps: number;
-  jumpsDistance: number;
-  hops: number;
-};
-
-function enrichRoute(
-  solarSystems: SolarSystemsIndex,
-  data: RouteData
-): EnrichedRouteData {
-  const summary = data.reduce(
-    (acc, step) => {
-      const from = solarSystems.getById(step.from.toString());
-      const to = solarSystems.getById(step.to.toString());
-      if (!from || !to) {
-        return acc; // Should not happen
-      }
-      const distance = lyDistance(from.location, to.location);
-      if (step.type === "jump") {
-        acc.jumps += 1;
-        acc.jumpsDistance += distance;
-        acc.distance += distance;
-      } else {
-        acc.distance += distance;
-      }
-      acc.path.push({
-        ...step,
-        fromName: from.solarSystemName,
-        toName: to.solarSystemName,
-        distance,
-      });
-      return acc;
-    },
-    {
-      path: [],
-      distance: 0,
-      jumps: 0,
-      jumpsDistance: 0,
-      hops: data.length,
-    } as EnrichedRouteData
-  );
-  return summary;
-}
-
 const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
   const [copyError, setCopyError] = React.useState(false);
   const solarSystemsIndex = useSolarSystemsIndex();
@@ -164,37 +125,18 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
     return enrichRoute(solarSystemsIndex, data);
   }, [solarSystemsIndex, data]);
 
+  const notepadRoute = React.useMemo(() => {
+    return gameNotepadRoute(path);
+  }, [path]);
+
   if (data.length === 0) return null;
 
-  const copyRoute = () => {
+  const copyRoute = (idx: number) => () => {
     setCopyError(false);
-    const lines = [
-      `${path[0]?.fromName} → ${path[path.length - 1]?.toName}`,
-      "Gate: ()→ SmartGate: []→ Jump: ly→",
-      "",
-    ];
-    const pathText = path.reduce(
-      (acc, step) => {
-        if (step.type === "gate") {
-          acc.push(`()→ <a href="showinfo:5//${step.to}">${step.toName}</a>`);
-        } else if (step.type === "smartgate") {
-          const name = step.name
-            ? shorten(step.name, 10, "…")
-            : shorten(step.name, 6, step.id);
-          acc.push(
-            `[<a href="showinfo:84955//${step.itemId}">${name}</a>]→ <a href="showinfo:5//${step.to}">${step.toName}</a>`
-          );
-        } else if (step.type === "jump") {
-          acc.push(
-            `${step.distance.toFixed(0)}→ <a href="showinfo:5//${step.to}">${step.toName}</a>`
-          );
-        }
-        return acc;
-      },
-      [`<a href="showinfo:5//${path[0]?.to}">${path[0]?.fromName}</a>`]
-    );
-    lines.push(pathText.join(" "));
-    const content = lines.join("\n");
+    const content = notepadRoute[idx];
+    if (!content) {
+      return;
+    }
     navigator.clipboard
       .writeText(content)
       .then(() => {
@@ -225,9 +167,28 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
         </Box>
         <Box>
           <Tooltip title="If you paste with EVE-Links into in-game notepad, you get clickable links">
-            <Button variant="outlined" size="small" onClick={copyRoute}>
-              Copy
-            </Button>
+            <ButtonGroup orientation="horizontal">
+              <Button variant="outlined" size="small" onClick={copyRoute(0)}>
+                {notepadRoute.length > 1
+                  ? `Copy 1/${notepadRoute.length}`
+                  : "Copy"}
+              </Button>
+              {notepadRoute.length > 1 &&
+                notepadRoute.map((_, idx) => {
+                  if (idx === 0) {
+                    return null; // First part is already rendered
+                  }
+                  return (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={copyRoute(idx)}
+                    >
+                      {idx + 1}/{notepadRoute.length}
+                    </Button>
+                  );
+                })}
+            </ButtonGroup>
           </Tooltip>
         </Box>
       </Box>
