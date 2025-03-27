@@ -91,7 +91,7 @@ const CalculateRoute: React.FC = () => {
           </PaperLevel1>
           <Box display="flex" justifyContent="flex-end">
             <Typography variant="caption">
-              Some data my be cached up to 15 minutes
+              Some data may be cached up to 15 minutes
             </Typography>
           </Box>
         </Grid>
