@@ -9,7 +9,7 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
-import { decodeFunctionSignature } from "@/api/mudweb3";
+import { decodeFunctionSignature } from "@shared/mudweb3";
 import { toJson } from "@/tools";
 
 const grid3perRow = { sm: 12, md: 4 };

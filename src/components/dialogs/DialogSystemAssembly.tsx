@@ -16,7 +16,7 @@ import { useMudSql, useMudWeb3 } from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useValueChanged from "@/tools/useValueChanged";
 import { Hex, isHex } from "viem";
-import { System } from "@/api/mudsql";
+import { System } from "@shared/mudsql";
 import { shorten } from "@/tools";
 
 interface DialogSystemAssemblyProps {

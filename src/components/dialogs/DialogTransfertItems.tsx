@@ -13,9 +13,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import { useMudSql, useMudWeb3 } from "@/contexts/AppContext";
 import useValueChanged from "@/tools/useValueChanged";
-import { Character } from "@/api/mudsql";
+import { Character } from "@shared/mudsql";
 import { filterInProps, shorten } from "@/tools";
-import { InventoryItemTransfert } from "@/api/mudweb3";
+import { InventoryItemTransfert } from "@shared/mudweb3";
 import ItemInventoryForm from "../ui/ItemInventoryForm";
 
 interface DialogTransfertItemsProps {

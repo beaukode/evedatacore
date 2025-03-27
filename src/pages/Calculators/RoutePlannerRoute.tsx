@@ -1,150 +1,142 @@
-import { GetPathResponse } from "@/api/shish";
-import { Alert, Box, Button, Tooltip, Typography } from "@mui/material";
-import SystemIcon from "@mui/icons-material/Adjust";
 import React from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  ButtonGroup,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import SystemIcon from "@mui/icons-material/Adjust";
+import { GetCalcPathFromToResponse } from "@/api/evedatacore";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
+import { shorten } from "@/tools";
+import { enrichRoute, gameNotepadRoute } from "@/tools/route";
 
-type RouteData = GetPathResponse["data"];
+type RouteData = GetCalcPathFromToResponse["path"];
 
 interface RoutePlannerRouteProps {
   data: RouteData;
 }
 
 const connectionTexts: Record<string, string> = {
-  npc_gate: "Game gate",
+  gate: "Game gate",
   jump: "Ship jump",
-  smart_gate: "Smart gate",
+  smartgate: "Smart gate",
 };
 
-const connectionsLines: Record<string, React.ReactNode> = {
-  npc_gate: (
-    <svg
-      height="48"
-      width="16"
-      style={{
-        margin: "0 14px",
-        position: "absolute",
-        top: -4,
-        left: 0,
-      }}
-    >
-      <line
-        x1="0"
-        y1="0"
-        x2="0"
-        y2="48"
+const connectionsLines: Record<keyof typeof connectionTexts, React.ReactNode> =
+  {
+    gate: (
+      <svg
+        height="48"
+        width="16"
         style={{
-          stroke: "#5fbe92",
-          strokeWidth: 16,
+          margin: "0 14px",
+          position: "absolute",
+          top: -4,
+          left: 0,
         }}
-      />
-    </svg>
-  ),
-  jump: (
-    <svg
-      height="48"
-      width="16"
-      style={{
-        margin: "0 14px",
-        position: "absolute",
-        top: -4,
-        left: 0,
-      }}
-    >
-      <animate
-        attributeName="stroke-dashoffset"
-        from="48"
-        to="0"
-        dur="4s"
-        repeatCount="indefinite"
-      />
-      <line
-        x1="0"
-        y1="0"
-        x2="0"
-        y2="48"
+      >
+        <line
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="48"
+          style={{
+            stroke: "#5fbe92",
+            strokeWidth: 16,
+          }}
+        />
+      </svg>
+    ),
+    jump: (
+      <svg
+        height="48"
+        width="16"
         style={{
-          stroke: "#5fbe92",
-          strokeWidth: 16,
-          strokeDasharray: 4,
+          margin: "0 14px",
+          position: "absolute",
+          top: -4,
+          left: 0,
         }}
-      />
-    </svg>
-  ),
-  smart_gate: (
-    <svg
-      height="48"
-      width="16"
-      style={{
-        margin: "0 14px",
-        position: "absolute",
-        top: -4,
-        left: 0,
-      }}
-    >
-      <animate
-        attributeName="stroke-dashoffset"
-        from="42"
-        to="0"
-        dur="4s"
-        repeatCount="indefinite"
-      />
-      <line
-        x1="4"
-        y1="0"
-        x2="4"
-        y2="48"
+      >
+        <animate
+          attributeName="stroke-dashoffset"
+          from="48"
+          to="0"
+          dur="4s"
+          repeatCount="indefinite"
+        />
+        <line
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="48"
+          style={{
+            stroke: "#5fbe92",
+            strokeWidth: 16,
+            strokeDasharray: 4,
+          }}
+        />
+      </svg>
+    ),
+    smartgate: (
+      <svg
+        height="48"
+        width="16"
         style={{
-          stroke: "#5fbe92",
-          strokeWidth: 5,
-          strokeLinecap: "round",
-          strokeDasharray: "4,10",
+          margin: "0 14px",
+          position: "absolute",
+          top: -4,
+          left: 0,
         }}
-      />
-    </svg>
-  ),
-};
-
-function summarizeRoute(data: RouteData) {
-  const summary = data.reduce(
-    (acc, step) => {
-      acc.distance += step.distance;
-      if (step.conn_type === "jump") {
-        acc.jumps += 1;
-        acc.jumpsDistance += step.distance;
-      }
-      return acc;
-    },
-    {
-      distance: 0,
-      jumps: 0,
-      jumpsDistance: 0,
-      hops: data.length,
-    }
-  );
-  return summary;
-}
+      >
+        <animate
+          attributeName="stroke-dashoffset"
+          from="42"
+          to="0"
+          dur="4s"
+          repeatCount="indefinite"
+        />
+        <line
+          x1="4"
+          y1="0"
+          x2="4"
+          y2="48"
+          style={{
+            stroke: "#5fbe92",
+            strokeWidth: 5,
+            strokeLinecap: "round",
+            strokeDasharray: "4,10",
+          }}
+        />
+      </svg>
+    ),
+  };
 
 const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
   const [copyError, setCopyError] = React.useState(false);
-  const { hops, distance, jumps, jumpsDistance } = summarizeRoute(data);
+  const solarSystemsIndex = useSolarSystemsIndex();
+
+  const { hops, distance, jumps, jumpsDistance, path } = React.useMemo(() => {
+    if (!solarSystemsIndex)
+      return { hops: 0, distance: 0, jumps: 0, jumpsDistance: 0, path: [] };
+    return enrichRoute(solarSystemsIndex, data);
+  }, [solarSystemsIndex, data]);
+
+  const notepadRoute = React.useMemo(() => {
+    return gameNotepadRoute(path);
+  }, [path]);
 
   if (data.length === 0) return null;
 
-  const copyRoute = () => {
-    const content = data
-      .reduce(
-        (acc, step) => {
-          const connectionText = connectionTexts[step.conn_type] || "Unknown";
-          const { name, id } = step.to;
-          acc.push(
-            `${connectionText} to <a href="showinfo:5//${id}">${name}</a> ${step.distance.toFixed()}ly`
-          );
-          return acc;
-        },
-        [`${data[0]?.from.name} → ${data[data.length - 1]?.to.name}`, ""]
-      )
-      .join("\n");
-
+  const copyRoute = (idx: number) => () => {
+    setCopyError(false);
+    const content = notepadRoute[idx];
+    if (!content) {
+      return;
+    }
     navigator.clipboard
       .writeText(content)
       .then(() => {
@@ -175,23 +167,42 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
         </Box>
         <Box>
           <Tooltip title="If you paste with EVE-Links into in-game notepad, you get clickable links">
-            <Button variant="outlined" size="small" onClick={copyRoute}>
-              Copy with EVE-Links
-            </Button>
+            <ButtonGroup orientation="horizontal">
+              <Button variant="outlined" size="small" onClick={copyRoute(0)}>
+                {notepadRoute.length > 1
+                  ? `Copy 1/${notepadRoute.length}`
+                  : "Copy"}
+              </Button>
+              {notepadRoute.length > 1 &&
+                notepadRoute.map((_, idx) => {
+                  if (idx === 0) {
+                    return null; // First part is already rendered
+                  }
+                  return (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={copyRoute(idx)}
+                    >
+                      {idx + 1}/{notepadRoute.length}
+                    </Button>
+                  );
+                })}
+            </ButtonGroup>
           </Tooltip>
         </Box>
       </Box>
-      {data.map((step, idx) => {
-        const key = `${step.from.id}-${step.to.id}`;
-        const connectionText = connectionTexts[step.conn_type] || "Unknown";
+      {path.map((step, idx) => {
+        const key = `${step.from}-${step.to}`;
+        const connectionText = connectionTexts[step.type] || "Unknown";
         const connectionLine =
-          connectionsLines[step.conn_type] || connectionsLines["npc_gate"];
+          connectionsLines[step.type] || connectionsLines.gate;
         return (
           <React.Fragment key={key}>
             {idx === 0 && (
               <Typography variant="body1">
                 <SystemIcon color="secondary" fontSize="large" />
-                {step.from.name}
+                {step.fromName}
               </Typography>
             )}
             <Typography
@@ -205,11 +216,21 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
               }}
             >
               {connectionLine}
-              {connectionText} {step.distance.toFixed(2)} Ly
+              {connectionText}{" "}
+              {step.type === "smartgate"
+                ? `[${step.name || shorten(step.id)}]`
+                : ""}{" "}
+              {step.distance.toFixed(2)} Ly
+              {step.type === "smartgate" && step.owner && (
+                <>
+                  <br />
+                  Owner: {step.owner.name}
+                </>
+              )}
             </Typography>
             <Typography variant="body1">
               <SystemIcon color="secondary" fontSize="large" />
-              {step.to.name}
+              {step.toName}
             </Typography>
           </React.Fragment>
         );

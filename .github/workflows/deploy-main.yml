@@ -24,11 +24,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
-      - name: "Pre build"
+      - name: "Frontend install"
         run: "npm ci"
-      - name: "Test"
+      - name: "Frontend test"
         run: "npm run test"
-      - name: "Build"
+      - name: "Frontend build"
         env:
           DOT_ENV_FILE: ".env.${{ github.ref_name }}"
         run: |
@@ -36,12 +36,22 @@ jobs:
             export $(grep -v '^#' $DOT_ENV_FILE | xargs -d '\n')
           fi
           npm run build
+      - name: "Backend install"
+        run: "cd backend && npm ci"
+      - name: "Backend build"
+        run: "cd backend && npm run build"
+      - name: "Backend package"
+        run: "cd backend && npm run package"
       - name: Configure AWS credentials
         if: vars.AWS_ACCOUNT_ID && vars.AWS_ROLE_NAME
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{vars.AWS_ACCOUNT_ID}}:role/${{vars.AWS_ROLE_NAME}}
           aws-region: "us-east-1"
+      - name: "Deploy to lambda"
+        if: vars.LAMBDA_FUNCTION_ARN
+        run: |
+          aws lambda update-function-code --region eu-west-1 --publish --zip-file fileb://backend/dist/lambda.zip --function-name ${{vars.LAMBDA_FUNCTION_ARN}}
       - name: "Deploy to s3"
         if: vars.S3_BUCKET
         run: |

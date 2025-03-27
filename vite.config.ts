@@ -12,17 +12,24 @@ export default defineConfig({
   plugins: [react(), visualizer()],
   resolve: {
     alias: {
+      "@shared": path.resolve(__dirname, "./shared"),
       "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
     proxy: {
       "/api-stillness": {
-        target: "https://eve.beaukode.net/",
+        target: "https://evedataco.re/",
         changeOrigin: true,
       },
       "/api-shish": {
-        target: "https://eve.beaukode.net/",
+        target: "https://evedataco.re/",
+        changeOrigin: true,
+      },
+      "/api": {
+        target: process.env.USE_LOCAL_API
+          ? "http://localhost:3000/"
+          : "https://main.eve.beaukode.net/",
         changeOrigin: true,
       },
     },

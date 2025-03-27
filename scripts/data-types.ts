@@ -6,7 +6,7 @@ import { ensureDirSync } from "fs-extra";
 import { writeFileSync } from "fs";
 import { join } from "path";
 
-const typesUrl = "https://eve.beaukode.net/api-stillness/types";
+const typesUrl = "https://blockchain-gateway-stillness.live.tech.evefrontier.com/types";
 
 async function main() {
   ensureDirSync("./output");

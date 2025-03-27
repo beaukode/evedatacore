@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useAccount, useSwitchChain } from "wagmi";
 import { TransactionReceipt } from "viem";
-import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
+import { isWeb3TransactionError, Web3TransactionError } from "@shared/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
@@ -92,8 +92,8 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
               {state === "connect" &&
                 "This action require you to connect your wallet."}
               {state === "chain" &&
-                "Your wallet is connected to the wrong network, please switch to garnet."}
-              {state === "owner" && "You do not seems to be the owner."}
+                "Your wallet is connected to the wrong network, please switch to pyrope."}
+              {state === "owner" && "You do not seem to be the owner."}
               {state === "address" &&
                 "Your current address do not match the owner, please switch the matching account."}
             </DialogContentText>
@@ -144,7 +144,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
               {txError.message}{" "}
               {isWeb3TransactionError(txError) && txError.tx && (
                 <ExternalLink
-                  href={`https://explorer.garnetchain.com/tx/${txError.tx}`}
+                  href={`https://explorer.pyropechain.com/tx/${txError.tx}`}
                   title="View transaction"
                 >
                   {shorten(txError.tx)}
@@ -160,7 +160,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
           <Alert severity="success">
             Successful transaction:{" "}
             <ExternalLink
-              href={`https://explorer.garnetchain.com/tx/${txReceipt.transactionHash}`}
+              href={`https://explorer.pyropechain.com/tx/${txReceipt.transactionHash}`}
               title="View transaction"
             >
               {shorten(txReceipt.transactionHash)}
@@ -176,10 +176,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
           </Button>
         )}
         {state === "chain" && (
-          <Button
-            onClick={() => switchChain({ chainId })}
-            variant="contained"
-          >
+          <Button onClick={() => switchChain({ chainId })} variant="contained">
             Switch
           </Button>
         )}

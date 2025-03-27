@@ -1,4 +1,4 @@
-import { InventoryItem } from "@/api/mudsql";
+import { InventoryItem } from "@shared/mudsql";
 import { FixedGetTypesResponse, Type } from "@/api/stillness";
 
 export type IndexedType = Type & {

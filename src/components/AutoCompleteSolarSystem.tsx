@@ -8,9 +8,9 @@ interface AutoCompleteSolarSystemProps
     "onChange" | "renderInput" | "options"
   > {
   label: string;
-  value: SolarSystemValue | null;
+  value: number | null;
   error?: string;
-  onChange: (value: SolarSystemValue | null) => void;
+  onChange: (value: number | null) => void;
   solarSystemsIndex: SolarSystemsIndex;
 }
 
@@ -25,7 +25,7 @@ const AutoCompleteSolarSystem = React.forwardRef<
 >(({ label, value, onChange, error, solarSystemsIndex, ...rest }, ref) => {
   const [inputValue, setInputValue] = React.useState<string>("");
 
-  const options: Array<SolarSystemValue | null> = React.useMemo(() => {
+  const options: Array<SolarSystemValue> = React.useMemo(() => {
     if (inputValue.length < 1) return [];
     return solarSystemsIndex
       .searchByName(inputValue)
@@ -33,15 +33,28 @@ const AutoCompleteSolarSystem = React.forwardRef<
       .map((ss) => ({ label: ss.solarSystemName, id: ss.solarSystemId }));
   }, [solarSystemsIndex, inputValue]);
 
+  const currentValue = React.useMemo(() => {
+    if (value === null) return null;
+    const solarSystem = solarSystemsIndex.getById(value.toString());
+    return {
+      label: solarSystem?.solarSystemName ?? "Unknown",
+      id: value,
+    };
+  }, [value, solarSystemsIndex]);
+
   return (
     <Autocomplete
-      value={value || null}
+      value={currentValue}
       noOptionsText={
         inputValue.length === 0 ? "Type to search" : "No solar system found"
       }
       options={options}
       onChange={(_, newValue) => {
-        onChange(newValue as SolarSystemValue | null);
+        if (newValue === null) {
+          onChange(null);
+        } else {
+          onChange((newValue as SolarSystemValue).id);
+        }
       }}
       onInputChange={(_, newInputValue) => {
         setInputValue(newInputValue);

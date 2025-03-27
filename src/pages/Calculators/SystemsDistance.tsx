@@ -1,28 +1,14 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import z from "zod";
-import AutoCompleteSolarSystem, {
-  SolarSystemValue,
-} from "@/components/AutoCompleteSolarSystem";
+import AutoCompleteSolarSystem from "@/components/AutoCompleteSolarSystem";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 import { lyDistance } from "@/tools";
 
 const storageSchema = z.object({
-  system1: z
-    .object({
-      label: z.string(),
-      id: z.number(),
-    })
-    .nullable()
-    .default(null),
-  system2: z
-    .object({
-      label: z.string(),
-      id: z.number(),
-    })
-    .nullable()
-    .default(null),
+  system1: z.number().int().positive().nullable().default(null),
+  system2: z.number().int().positive().nullable().default(null),
 });
 
 interface SystemsDistanceProps {
@@ -33,21 +19,17 @@ const SystemsDistance: React.FC<SystemsDistanceProps> = ({
   solarSystemsIndex,
 }) => {
   const [store, setStore] = useAppLocalStorage(
-    "v1_calculator_systems_distance",
+    "v2_calculator_systems_distance",
     storageSchema
   );
 
-  const [system1, setSystem1] = React.useState<SolarSystemValue | null>(
-    store.system1
-  );
-  const [system2, setSystem2] = React.useState<SolarSystemValue | null>(
-    store.system2
-  );
+  const [system1, setSystem1] = React.useState<number | null>(store.system1);
+  const [system2, setSystem2] = React.useState<number | null>(store.system2);
 
   const result = React.useMemo(() => {
-    if (system1?.id && system2?.id) {
-      const s1 = solarSystemsIndex.getById(system1.id.toString());
-      const s2 = solarSystemsIndex.getById(system2.id.toString());
+    if (system1 && system2) {
+      const s1 = solarSystemsIndex.getById(system1.toString());
+      const s2 = solarSystemsIndex.getById(system2.toString());
 
       // TODO: Better error handling
       if (!s1 || !s2) return undefined;
