@@ -4,10 +4,8 @@ import { routes } from "./routes";
 
 export const app = express();
 app.disable("x-powered-by");
+app.use(express.json());
 
-const { notFoundHandler } = attachRouting(
-  createConfig({ app, cors: false, startupLogo: false }),
-  { api: routes }
-);
+const { notFoundHandler } = attachRouting(createConfig({ app, cors: false, startupLogo: false }), { api: routes });
 
 app.use(notFoundHandler);
