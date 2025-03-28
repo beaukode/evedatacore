@@ -1,11 +1,12 @@
 import React from "react";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { AppContext } from "./AppContext";
 import { createMudSqlClient } from "@shared/mudsql";
 import { createMudWeb3Client } from "@shared/mudweb3";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import ConnectDialog from "@/components/web3/ConnectDialog";
 import { chainId, indexerBaseUrl, worldAddress } from "@/config";
+import { AppContext } from "./AppContext";
+import useEventsTracking from "./useEventsTracking";
 
 interface AppContextProviderProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     () => createMudSqlClient({ indexerBaseUrl, worldAddress }),
     []
   );
+  const { pushEvent } = useEventsTracking();
 
   const publicClient = usePublicClient({ chainId });
   const { data: walletClient } = useWalletClient({ chainId });
@@ -50,6 +52,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
           mudSql,
           mudWeb3,
           showConnectDialog: () => setShowConnectDialog(true),
+          pushTrackingEvent: pushEvent,
         }}
       >
         {children}
