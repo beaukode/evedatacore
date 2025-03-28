@@ -16,9 +16,10 @@ export const events = endpointsFactory.build({
   output: z.object({}),
   handler: async ({ input: { events } }) => {
     try {
+      console.log("events", events);
       await Promise.all(
         events.map((event) => {
-          const day = new Date(event.ts * 1000).toISOString().substring(0, 10);
+          const day = new Date(event.ts).toISOString().substring(0, 10);
           return EventEntity.build(UpdateItemCommand)
             .item({
               key: event.key,
