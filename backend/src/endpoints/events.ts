@@ -22,7 +22,6 @@ export const events = endpointsFactory.build({
         console.log("Bot detected", userAgent);
         return {};
       }
-      console.log("headers", request.headers);
       await Promise.all(
         events.map((event) => {
           const day = new Date(event.ts).toISOString().substring(0, 10);
