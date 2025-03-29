@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isbot } from "isbot";
 import { endpointsFactory } from "./factories";
 import { EventEntity } from "../db/schema/TableEvents";
 import { $add, UpdateItemCommand } from "dynamodb-toolbox";
@@ -14,9 +15,13 @@ export const events = endpointsFactory.build({
     ),
   }),
   output: z.object({}),
-  handler: async ({ input: { events } }) => {
+  handler: async ({ input: { events }, options: { request } }) => {
     try {
-      console.log("events", events);
+      const userAgent = request.headers["user-agent"];
+      if (isbot(userAgent)) {
+        console.log("Bot detected", userAgent);
+        return {};
+      }
       await Promise.all(
         events.map((event) => {
           const day = new Date(event.ts).toISOString().substring(0, 10);
@@ -30,6 +35,7 @@ export const events = endpointsFactory.build({
         }),
       );
     } catch (e) {
+      // This endpoint log errors silently
       console.error(e);
     }
     return {};

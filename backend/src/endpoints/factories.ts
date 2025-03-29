@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { EndpointsFactory, ResultHandler, ensureHttpError, getMessageFromError } from "express-zod-api";
-import { middlewareServices, middlewareResponseHeaders, ResponseHeadersContainer } from "../middlewares";
+import {
+  middlewareServices,
+  middlewareResponseHeaders,
+  ResponseHeadersContainer,
+  middlewareRequest,
+} from "../middlewares";
 
 const resultHandler = new ResultHandler({
   positive: (data) => ({
@@ -23,4 +28,5 @@ const resultHandler = new ResultHandler({
 
 export const endpointsFactory = new EndpointsFactory(resultHandler)
   .addMiddleware(middlewareServices)
-  .addMiddleware(middlewareResponseHeaders);
+  .addMiddleware(middlewareResponseHeaders)
+  .addMiddleware(middlewareRequest);
