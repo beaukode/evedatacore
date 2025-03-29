@@ -1,4 +1,4 @@
-import { Entity, item, number, string, Table } from "dynamodb-toolbox";
+import { Entity, item, number, string, record, Table } from "dynamodb-toolbox";
 import { documentClient } from "./client";
 
 export const TableEvents = new Table({
@@ -22,6 +22,7 @@ export const EventEntity = new Entity({
     key: string().key(),
     day: string().key(),
     count: number().default(0),
+    visitors: record(string(), number()).default({}),
   }),
   timestamps: false,
 });
