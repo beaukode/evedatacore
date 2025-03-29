@@ -9,6 +9,9 @@ import type {
   GetCalcPathFromToData,
   GetCalcPathFromToError,
   GetCalcPathFromToResponse,
+  PostEventsData,
+  PostEventsError,
+  PostEventsResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -23,5 +26,18 @@ export const getCalcPathFromTo = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/calc/path/{from}/{to}",
+  });
+};
+
+export const postEvents = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<PostEventsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<
+    PostEventsResponse,
+    PostEventsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/events",
   });
 };
