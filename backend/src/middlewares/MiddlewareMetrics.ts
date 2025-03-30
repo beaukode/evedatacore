@@ -18,7 +18,7 @@ export class MetricsCollector {
     this.metrics.addMetric(eventKey, MetricUnit.Count, count);
     const [type] = eventKey.split(":", 2);
     this.metrics.addMetric(`total:${type}`, MetricUnit.Count, count);
-    this.metrics.addMetric(`total}`, MetricUnit.Count, count);
+    this.metrics.addMetric("total", MetricUnit.Count, count);
   }
 
   flush() {
