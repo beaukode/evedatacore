@@ -6,7 +6,10 @@ import {
   middlewareResponseHeaders,
   ResponseHeadersContainer,
   middlewareRequest,
+  middlewareMetrics,
+  MetricsCollector,
 } from "../middlewares";
+
 const resultHandler = new ResultHandler({
   positive: (data) => ({
     schema: data,
@@ -14,6 +17,9 @@ const resultHandler = new ResultHandler({
   }),
   negative: z.object({ message: z.string() }),
   handler: ({ error, output, response, options }) => {
+    if ("metrics" in options && options.metrics instanceof MetricsCollector) {
+      options.metrics.flush();
+    }
     if (error) {
       const { statusCode } = ensureHttpError(error);
       const message = getMessageFromError(error);
@@ -32,6 +38,7 @@ export const endpointsFactory = new EndpointsFactory(resultHandler)
   .addOptions(async () => ({
     db,
   }))
+  .addMiddleware(middlewareMetrics)
   .addMiddleware(middlewareServices)
   .addMiddleware(middlewareResponseHeaders)
   .addMiddleware(middlewareRequest);
