@@ -26,6 +26,7 @@ export const events = endpointsFactory.build({
           "Set-Cookie",
           `uid=${uid}; HttpOnly; Secure; SameSite=Strict; Expires=${expirationDate.toUTCString()}`,
         );
+        metrics.analyticsNewVisitor();
       }
 
       // Database updates

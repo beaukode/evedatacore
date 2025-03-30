@@ -24,6 +24,9 @@ async function flushEvents() {
 }
 
 function pushEventToQueue(key: string) {
+  if (import.meta.env.VITE_DISABLE_ANALYTICS) {
+    return;
+  }
   if (!eventQueue) {
     eventQueue = {};
   }
