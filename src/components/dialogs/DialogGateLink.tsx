@@ -9,7 +9,11 @@ import {
 import LinkIcon from "@mui/icons-material/Link";
 import UnlinkIcon from "@mui/icons-material/LinkOff";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import { useMudWeb3, useSolarSystemsIndex } from "@/contexts/AppContext";
+import {
+  useMudWeb3,
+  usePushTrackingEvent,
+  useSolarSystemsIndex,
+} from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useValueChanged from "@/tools/useValueChanged";
 import { shorten } from "@/tools";
@@ -55,6 +59,7 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
 }) => {
   const mudWeb3 = useMudWeb3();
   const solarSystems = useSolarSystemsIndex();
+  const pushTrackingEvent = usePushTrackingEvent();
 
   const query = useQuery({
     queryKey: ["SmartGateLink", sourceGateId, destinationGateId],
@@ -102,6 +107,7 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
       }
     },
     onSuccess() {
+      pushTrackingEvent(`web3://gateLink`);
       query.refetch();
     },
     retry: false,

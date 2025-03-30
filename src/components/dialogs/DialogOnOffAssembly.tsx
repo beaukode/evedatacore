@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, DialogContentText, Skeleton, Typography } from "@mui/material";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import { useMudWeb3 } from "@/contexts/AppContext";
+import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import { smartAssemblyStates } from "@/constants";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useValueChanged from "@/tools/useValueChanged";
@@ -21,6 +21,7 @@ const DialogOnOffAssembly: React.FC<DialogOnOffAssemblyProps> = ({
   open,
   onClose,
 }) => {
+  const pushTrackingEvent = usePushTrackingEvent();
   const mudWeb3 = useMudWeb3();
 
   const queryState = useQuery({
@@ -39,6 +40,9 @@ const DialogOnOffAssembly: React.FC<DialogOnOffAssemblyProps> = ({
       } else {
         return mudWeb3.assemblyBringOffline({ assemblyId: BigInt(assemblyId) });
       }
+    },
+    onSuccess() {
+      pushTrackingEvent(`web3://assemblyOnOff`);
     },
     onSettled() {
       queryState.refetch();

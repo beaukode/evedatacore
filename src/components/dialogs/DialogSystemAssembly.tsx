@@ -12,7 +12,11 @@ import {
   TextField,
 } from "@mui/material";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import { useMudSql, useMudWeb3 } from "@/contexts/AppContext";
+import {
+  useMudSql,
+  useMudWeb3,
+  usePushTrackingEvent,
+} from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useValueChanged from "@/tools/useValueChanged";
 import { Hex, isHex } from "viem";
@@ -44,6 +48,7 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
   type,
   onClose,
 }) => {
+  const pushTrackingEvent = usePushTrackingEvent();
   const [selectedValue, setSelectedValue] = React.useState("default");
   const [currentSystemId, setCurrentrSystemId] = React.useState<System | null>(
     null
@@ -161,6 +166,9 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
       } else {
         throw new Error(`Invalid type ${type}`);
       }
+    },
+    onSuccess() {
+      pushTrackingEvent(`web3://assemblySystem`);
     },
     onSettled() {
       querySystemId.refetch();
