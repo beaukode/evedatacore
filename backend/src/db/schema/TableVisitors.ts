@@ -2,7 +2,7 @@ import { Entity, item, number, string, Table } from "dynamodb-toolbox";
 import { documentClient } from "./client";
 
 export const TableVisitors = new Table({
-  name: "evedatacore-main-visitors",
+  name: `evedatacore-${process.env.ENV}-visitors`,
   documentClient,
   partitionKey: { name: "uid", type: "string" },
   sortKey: { name: "day", type: "string" },
