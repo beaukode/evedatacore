@@ -1,30 +1,33 @@
 import React from "react";
 import { useBeforeUnload, useLocation, useNavigationType } from "react-router";
-import { postEvents } from "@/api/evedatacore";
-
-export type TrackingEvent = {
-  key: string;
-  ts: number;
-};
 
 const FLUSH_INTERVAL = 1000 * 60; // 60 seconds
 
-let eventQueue: TrackingEvent[] | undefined = undefined;
+let eventQueue: Record<string, number> | undefined = undefined;
 
 async function flushEvents() {
-  if (!eventQueue) {
-    return;
+  if (eventQueue && Object.keys(eventQueue).length > 0) {
+    const events = eventQueue;
+    const data = new Blob(
+      [
+        JSON.stringify({
+          events,
+        }),
+      ],
+      {
+        type: "application/json",
+      }
+    );
+    navigator.sendBeacon("/api/events", data);
+    eventQueue = {};
   }
-  const events = eventQueue;
-  postEvents({ body: { events } });
-  eventQueue = [];
 }
 
 function pushEventToQueue(key: string) {
   if (!eventQueue) {
-    eventQueue = [];
+    eventQueue = {};
   }
-  eventQueue.push({ key, ts: Date.now() });
+  eventQueue[key] = (eventQueue[key] || 0) + 1;
 }
 
 function redactNavigationPath(path: string) {
@@ -46,21 +49,7 @@ function useEventsTracking() {
 
   // Flush event when user quit the website
   useBeforeUnload(() => {
-    if (eventQueue && eventQueue.length > 0) {
-      const events = eventQueue;
-      eventQueue = [];
-      const data = new Blob(
-        [
-          JSON.stringify({
-            events,
-          }),
-        ],
-        {
-          type: "application/json",
-        }
-      );
-      navigator.sendBeacon("/api/events", data);
-    }
+    flushEvents();
   });
 
   const scheduleFlush = React.useCallback(() => {

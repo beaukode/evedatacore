@@ -62,10 +62,9 @@ export type PostEventsData = {
    * POST /events Request body
    */
   body: {
-    events: Array<{
-      key: string;
-      ts: number;
-    }>;
+    events: {
+      [key: string]: number;
+    };
   };
 };
 

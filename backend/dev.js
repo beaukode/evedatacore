@@ -1,5 +1,8 @@
 const esbuild = require("esbuild");
 const { spawn } = require("child_process");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 let childProcess = null;
 
