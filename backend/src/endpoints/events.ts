@@ -9,12 +9,7 @@ import { $add, $set, UpdateItemCommand } from "dynamodb-toolbox";
 export const events = endpointsFactory.build({
   method: "post",
   input: z.object({
-    events: z.array(
-      z.object({
-        key: z.string(),
-        ts: z.number(),
-      }),
-    ),
+    events: z.record(z.string(), z.number()),
   }),
   output: z.object({}),
   handler: async ({ input: { events }, options: { request, responseHeaders } }) => {
@@ -37,12 +32,12 @@ export const events = endpointsFactory.build({
       }
       const day = now.toISOString().substring(0, 10);
       await Promise.all([
-        ...events.map((event) => {
+        ...Object.entries(events).map(([key, count]) => {
           return EventEntity.build(UpdateItemCommand)
             .item({
-              key: event.key,
+              key,
               day,
-              count: $add(1),
+              count: $add(count),
               visitors: $set({ [uid]: 1 }),
             })
             .send();
