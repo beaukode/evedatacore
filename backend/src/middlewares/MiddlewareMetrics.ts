@@ -21,6 +21,10 @@ export class MetricsCollector {
     this.metrics.addMetric("total", MetricUnit.Count, count);
   }
 
+  analyticsNewVisitor(count: number = 1) {
+    this.metrics.addMetric("visitors", MetricUnit.Count, count);
+  }
+
   flush() {
     if (this.metrics.hasStoredMetrics()) {
       this.metrics.publishStoredMetrics();
