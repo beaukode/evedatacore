@@ -3,6 +3,7 @@ import { isbot } from "isbot";
 import { v4 as uuidv4 } from "uuid";
 import { endpointsFactory } from "./factories";
 import { EventEntity } from "../db/schema/TableEvents";
+import { VisitorEntity } from "../db/schema/TableVisitors";
 import { $add, $set, UpdateItemCommand } from "dynamodb-toolbox";
 
 export const events = endpointsFactory.build({
@@ -34,9 +35,9 @@ export const events = endpointsFactory.build({
           `uid=${uid}; HttpOnly; Secure; SameSite=Strict; Expires=${expirationDate.toUTCString()}`,
         );
       }
-      await Promise.all(
-        events.map((event) => {
-          const day = now.toISOString().substring(0, 10);
+      const day = now.toISOString().substring(0, 10);
+      await Promise.all([
+        ...events.map((event) => {
           return EventEntity.build(UpdateItemCommand)
             .item({
               key: event.key,
@@ -46,7 +47,14 @@ export const events = endpointsFactory.build({
             })
             .send();
         }),
-      );
+        VisitorEntity.build(UpdateItemCommand)
+          .item({
+            uid,
+            day,
+            count: $add(1),
+          })
+          .send(),
+      ]);
     } catch (e) {
       // This endpoint log errors silently
       console.error(e);
