@@ -9,7 +9,7 @@ export const events = endpointsFactory.build({
     events: z.record(z.string(), z.number()),
   }),
   output: z.object({}),
-  handler: async ({ input: { events }, options: { request, responseHeaders, db } }) => {
+  handler: async ({ input: { events }, options: { request, responseHeaders, db, metrics } }) => {
     try {
       const userAgent = request.headers["user-agent"];
       if (isbot(userAgent)) {
@@ -34,6 +34,7 @@ export const events = endpointsFactory.build({
       let totalEventsCount = 0;
       for (const [key, count] of Object.entries(events)) {
         updatePromises.push(db.events.incrementEvent(key, day, uid, count));
+        metrics.analyticEvent(key, count);
         totalEventsCount += count;
       }
       updatePromises.push(db.visitors.incrementEvents(day, uid, totalEventsCount));
