@@ -2,9 +2,6 @@ import { z } from "zod";
 import { isbot } from "isbot";
 import { v4 as uuidv4 } from "uuid";
 import { endpointsFactory } from "./factories";
-import { EventEntity } from "../db/schema/TableEvents";
-import { VisitorEntity } from "../db/schema/TableVisitors";
-import { $add, $set, UpdateItemCommand } from "dynamodb-toolbox";
 
 export const events = endpointsFactory.build({
   method: "post",
@@ -12,7 +9,7 @@ export const events = endpointsFactory.build({
     events: z.record(z.string(), z.number()),
   }),
   output: z.object({}),
-  handler: async ({ input: { events }, options: { request, responseHeaders } }) => {
+  handler: async ({ input: { events }, options: { request, responseHeaders, db } }) => {
     try {
       const userAgent = request.headers["user-agent"];
       if (isbot(userAgent)) {
@@ -30,26 +27,18 @@ export const events = endpointsFactory.build({
           `uid=${uid}; HttpOnly; Secure; SameSite=Strict; Expires=${expirationDate.toUTCString()}`,
         );
       }
+
+      // Database updates
       const day = now.toISOString().substring(0, 10);
-      await Promise.all([
-        ...Object.entries(events).map(([key, count]) => {
-          return EventEntity.build(UpdateItemCommand)
-            .item({
-              key,
-              day,
-              count: $add(count),
-              visitors: $set({ [uid]: 1 }),
-            })
-            .send();
-        }),
-        VisitorEntity.build(UpdateItemCommand)
-          .item({
-            uid,
-            day,
-            count: $add(1),
-          })
-          .send(),
-      ]);
+      const updatePromises: Promise<unknown>[] = [];
+      let totalEventsCount = 0;
+      for (const [key, count] of Object.entries(events)) {
+        updatePromises.push(db.events.incrementEvent(key, day, uid, count));
+        totalEventsCount += count;
+      }
+      updatePromises.push(db.visitors.incrementEvents(day, uid, totalEventsCount));
+
+      await Promise.all(updatePromises);
     } catch (e) {
       // This endpoint log errors silently
       console.error(e);

@@ -14,7 +14,7 @@ export const VisitorEntity = new Entity({
   schema: item({
     uid: string().key(),
     day: string().key(),
-    count: number().default(0),
+    eventsCount: number().default(0),
   }),
   timestamps: false,
 });

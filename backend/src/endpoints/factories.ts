@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { EndpointsFactory, ResultHandler, ensureHttpError, getMessageFromError } from "express-zod-api";
+import { createDb } from "../db";
 import {
   middlewareServices,
   middlewareResponseHeaders,
   ResponseHeadersContainer,
   middlewareRequest,
 } from "../middlewares";
-
 const resultHandler = new ResultHandler({
   positive: (data) => ({
     schema: data,
@@ -26,7 +26,12 @@ const resultHandler = new ResultHandler({
   },
 });
 
+const db = createDb();
+
 export const endpointsFactory = new EndpointsFactory(resultHandler)
+  .addOptions(async () => ({
+    db,
+  }))
   .addMiddleware(middlewareServices)
   .addMiddleware(middlewareResponseHeaders)
   .addMiddleware(middlewareRequest);
