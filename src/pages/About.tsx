@@ -256,10 +256,11 @@ const About: React.FC = () => {
               margin={2}
             >
               The website does not send the exact page you visited, only the
-              first two parts of the route, like /explore/characters. This is
-              because we do not want to track your exact page visits, nor the
-              query strings and parameters of your web3 calls (Obviously, we
-              already watching them from the blockchain).
+              first two parts of the route, like{" "}
+              <code>/explore/characters</code>. This is because we do not want
+              to track your exact page visits, nor the query strings and
+              parameters of your web3 calls (Obviously, we already watching them
+              from the blockchain).
             </Typography>
             <Typography
               variant="body2"
@@ -267,7 +268,7 @@ const About: React.FC = () => {
               textAlign="justify"
               margin={2}
             >
-              You can check data sent to the server by looking at the
+              You can check data sent to the server by looking at the{" "}
               <code>/api/events</code> requests in your browser's developer
               tools.
             </Typography>
