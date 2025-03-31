@@ -12,6 +12,7 @@ import ContributorsIcon from "@mui/icons-material/Diversity1";
 import SourceCodeIcon from "@mui/icons-material/Code";
 import LicenseIcon from "@mui/icons-material/Gavel";
 import DisclaimerIcon from "@mui/icons-material/WarningAmber";
+import PrivacyIcon from "@mui/icons-material/PrivacyTip";
 import { Helmet } from "react-helmet";
 import ExternalLink from "@/components/ui/ExternalLink";
 
@@ -132,6 +133,44 @@ const About: React.FC = () => {
               <code>package.json</code> file for the full list of dependencies.
             </Typography>
           </Paper>
+
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{ bgcolor: "background.default" }}
+            gutterBottom
+          >
+            <DisclaimerIcon />
+            Disclaimer
+          </Typography>
+          <Paper elevation={1} sx={{ mb: 2 }}>
+            <Typography
+              variant="body2"
+              component="p"
+              textAlign="justify"
+              padding={2}
+            >
+              This website is provided "as is," without any guarantee of
+              completeness, accuracy, timeliness, or the results obtained from
+              the use of its information. It is offered without any warranty,
+              express or implied, including, but not limited to, warranties of
+              performance, merchantability, and fitness for a particular
+              purpose.
+            </Typography>
+            <Typography
+              variant="body2"
+              component="p"
+              textAlign="justify"
+              padding={2}
+            >
+              EVE Frontier is a registered trademark of CCP. All rights are
+              reserved worldwide. All other trademarks are the property of their
+              respective owners. This website is not affiliated with CCP in any
+              way. CCP is not responsible for the content or functionality of
+              this website, nor can it be held liable for any damages arising
+              from its use.
+            </Typography>
+          </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <Typography
@@ -189,43 +228,69 @@ const About: React.FC = () => {
               />
             </Typography>
           </Paper>
-        </Grid>
-        <Grid size={12}>
           <Typography
             variant="h6"
             component="h2"
             sx={{ bgcolor: "background.default" }}
             gutterBottom
           >
-            <DisclaimerIcon />
-            Disclaimer
+            <PrivacyIcon />
+            Privacy policy
           </Typography>
-          <Paper elevation={1} sx={{ mb: 2 }}>
+          <Paper elevation={1} sx={{ mb: 2, py: 0.1 }}>
             <Typography
               variant="body2"
               component="p"
               textAlign="justify"
-              padding={2}
+              margin={2}
             >
-              This website is provided "as is," without any guarantee of
-              completeness, accuracy, timeliness, or the results obtained from
-              the use of its information. It is offered without any warranty,
-              express or implied, including, but not limited to, warranties of
-              performance, merchantability, and fitness for a particular
-              purpose.
+              This website reports some of your activity to the server, such as
+              the pages you visited and the features you used. This data is
+              collected anonymously to improve the website and is not shared
+              with anyone.
             </Typography>
             <Typography
               variant="body2"
               component="p"
               textAlign="justify"
-              padding={2}
+              margin={2}
             >
-              EVE Frontier is a registered trademark of CCP. All rights are
-              reserved worldwide. All other trademarks are the property of their
-              respective owners. This website is not affiliated with CCP in any
-              way. CCP is not responsible for the content or functionality of
-              this website, nor can it be held liable for any damages arising
-              from its use.
+              The website does not send the exact page you visited, only the
+              first two parts of the route, like{" "}
+              <code>/explore/characters</code>. This is because we do not want
+              to track your exact page visits, nor the query strings and
+              parameters of your web3 calls (Obviously, we already watching them
+              from the blockchain).
+            </Typography>
+            <Typography
+              variant="body2"
+              component="p"
+              textAlign="justify"
+              margin={2}
+            >
+              You can check data sent to the server by looking at the{" "}
+              <code>/api/events</code> requests in your browser's developer
+              tools.
+            </Typography>
+            <Typography
+              variant="body2"
+              component="p"
+              textAlign="justify"
+              margin={2}
+            >
+              Each day the server give you a random cookie to identify you as a
+              unique visitor. This cookie expire at midnight UTC. Next day, you
+              will get a new cookie and there is no way to link your cookies
+              across multiple days.
+            </Typography>
+            <Typography
+              variant="body2"
+              component="p"
+              textAlign="justify"
+              margin={2}
+            >
+              Servers logs store your IP address, user agent, and the date and
+              time. They are deleted after 365 days.
             </Typography>
           </Paper>
         </Grid>
