@@ -1,6 +1,14 @@
 import { z } from "zod";
 import { EndpointsFactory, ResultHandler, ensureHttpError, getMessageFromError } from "express-zod-api";
-import { middlewareServices, middlewareResponseHeaders, ResponseHeadersContainer } from "../middlewares";
+import { createDb } from "../db";
+import {
+  middlewareServices,
+  middlewareResponseHeaders,
+  ResponseHeadersContainer,
+  middlewareRequest,
+  middlewareMetrics,
+  MetricsCollector,
+} from "../middlewares";
 
 const resultHandler = new ResultHandler({
   positive: (data) => ({
@@ -9,6 +17,9 @@ const resultHandler = new ResultHandler({
   }),
   negative: z.object({ message: z.string() }),
   handler: ({ error, output, response, options }) => {
+    if ("metrics" in options && options.metrics instanceof MetricsCollector) {
+      options.metrics.flush();
+    }
     if (error) {
       const { statusCode } = ensureHttpError(error);
       const message = getMessageFromError(error);
@@ -21,6 +32,13 @@ const resultHandler = new ResultHandler({
   },
 });
 
+const db = createDb();
+
 export const endpointsFactory = new EndpointsFactory(resultHandler)
+  .addOptions(async () => ({
+    db,
+  }))
+  .addMiddleware(middlewareMetrics)
   .addMiddleware(middlewareServices)
-  .addMiddleware(middlewareResponseHeaders);
+  .addMiddleware(middlewareResponseHeaders)
+  .addMiddleware(middlewareRequest);

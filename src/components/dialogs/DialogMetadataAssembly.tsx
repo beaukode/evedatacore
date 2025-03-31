@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import { useMudWeb3 } from "@/contexts/AppContext";
+import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useValueChanged from "@/tools/useValueChanged";
 
@@ -26,6 +26,7 @@ const DialogMetadataAssembly: React.FC<DialogMetadataAssemblyProps> = ({
   title,
   onClose,
 }) => {
+  const pushTrackingEvent = usePushTrackingEvent();
   const [{ name, dappURL, description }, setMetaData] = React.useState({
     name: "",
     dappURL: "",
@@ -48,6 +49,9 @@ const DialogMetadataAssembly: React.FC<DialogMetadataAssemblyProps> = ({
         dappURL,
         description,
       });
+    },
+    onSuccess() {
+      pushTrackingEvent(`web3://assemblyMetadata`);
     },
     retry: false,
   });
@@ -93,7 +97,6 @@ const DialogMetadataAssembly: React.FC<DialogMetadataAssemblyProps> = ({
         }
         txError={mutateState.error}
         txReceipt={mutateState.data}
-        disabledOwnerCheck
       >
         <DialogContentText component="div" gutterBottom>
           <Grid2 container spacing={2}>

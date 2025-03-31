@@ -56,3 +56,22 @@ export type GetCalcPathFromToResponse = {
 export type GetCalcPathFromToError = {
   message: string;
 };
+
+export type PostEventsData = {
+  /**
+   * POST /events Request body
+   */
+  body: {
+    events: {
+      [key: string]: number;
+    };
+  };
+};
+
+export type PostEventsResponse = {
+  [key: string]: unknown;
+};
+
+export type PostEventsError = {
+  message: string;
+};

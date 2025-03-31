@@ -10,6 +10,7 @@ interface AppContextProps {
   mudSql: MudSqlClient;
   mudWeb3: MudWeb3Client;
   showConnectDialog: () => void;
+  pushTrackingEvent: (key: string) => void;
 }
 
 export const AppContext = React.createContext<AppContextProps | undefined>(
@@ -64,4 +65,9 @@ export function useTypesIndex() {
   });
 
   return query.data;
+}
+
+export function usePushTrackingEvent() {
+  const { pushTrackingEvent } = useAppContext();
+  return pushTrackingEvent;
 }

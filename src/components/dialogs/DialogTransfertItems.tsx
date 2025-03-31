@@ -11,7 +11,11 @@ import {
 import { Hex } from "viem";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import { useMudSql, useMudWeb3 } from "@/contexts/AppContext";
+import {
+  useMudSql,
+  useMudWeb3,
+  usePushTrackingEvent,
+} from "@/contexts/AppContext";
 import useValueChanged from "@/tools/useValueChanged";
 import { Character } from "@shared/mudsql";
 import { filterInProps, shorten } from "@/tools";
@@ -65,6 +69,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   open,
   onClose,
 }) => {
+  const pushTrackingEvent = usePushTrackingEvent();
   const [character, setCharacter] = React.useState<CharacterWithGroup | null>(
     null
   );
@@ -150,6 +155,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
       }
     },
     onSuccess() {
+      pushTrackingEvent(`web3://transfertItems`);
       query.refetch();
       setQuantities({});
     },

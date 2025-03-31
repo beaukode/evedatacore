@@ -82,11 +82,11 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider theme={theme}>
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
-          <AppContextProvider>
-            <BrowserRouter>
+          <BrowserRouter>
+            <AppContextProvider>
               <App />
-            </BrowserRouter>
-          </AppContextProvider>
+            </AppContextProvider>
+          </BrowserRouter>
         </QueryClientProvider>
       </WagmiProvider>
     </ThemeProvider>

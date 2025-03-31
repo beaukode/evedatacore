@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Table } from "@latticexyz/config";
-import { useMudWeb3 } from "@/contexts/AppContext";
+import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import useAbiFields from "@/tools/useAbiFields";
 import useValueChanged from "@/tools/useValueChanged";
 import { TableRecordValues } from "@/tools/abi";
@@ -27,6 +27,7 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
   open,
   onClose,
 }) => {
+  const pushTrackingEvent = usePushTrackingEvent();
   const formRef = React.useRef<HTMLFormElement>(null);
   const queryClient = useQueryClient();
   const mudWeb3 = useMudWeb3();
@@ -97,6 +98,9 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         values: values,
       });
     },
+    onSuccess() {
+      pushTrackingEvent(`web3://tableRecord`);
+    },
     retry: false,
   });
 
@@ -117,6 +121,9 @@ const DialogTableRecord: React.FC<DialogTableRecordProps> = ({
         table,
         key,
       });
+    },
+    onSuccess() {
+      pushTrackingEvent(`web3://tableRecordDelete`);
     },
     retry: false,
   });
