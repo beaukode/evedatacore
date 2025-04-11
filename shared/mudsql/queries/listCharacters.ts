@@ -1,3 +1,4 @@
+import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { Character } from "../types";
 import { ensureArray, toSqlHex } from "../utils";
@@ -8,10 +9,13 @@ type DbRow = {
   characterAddress: Hex;
   corpId: string;
   createdAt: string;
-  entity__entityId: string;
-  entity__name: string;
-  entity__dappURL?: string;
-  entity__description?: string;
+};
+
+type EntityDbRow = {
+  entityId: string;
+  name: string;
+  dappURL: string;
+  description: string;
 };
 
 type ListCharactersOptions = {
@@ -38,29 +42,27 @@ export const listCharacters =
       where = `"corpId" IN ('${corporationsId.join("', '")}')`;
     }
 
-    return client
-      .selectFrom<DbRow>("eveworld", "CharactersTable", {
-        where: where,
-        orderBy: "createdAt",
-        orderDirection: "DESC",
-        rels: {
-          entity: {
-            ns: "eveworld",
-            table: "EntityRecordOffc",
-            field: "entityId",
-            fkNs: "eveworld",
-            fkTable: "CharactersTable",
-            fkField: "characterId",
-          },
-        },
-      })
-      .then((result) =>
-        result.map((c) => ({
-          address: c.characterAddress,
-          id: c.characterId,
-          name: c.entity__name,
-          corpId: Number.parseInt(c.corpId, 10),
-          createdAt: Number.parseInt(c.createdAt, 10) * 1000,
-        }))
-      );
+    const [characters, entities] = await client.selectFromBatch<
+      [DbRow, EntityDbRow]
+    >([
+      {
+        ns: "eveworld",
+        table: "CharactersTable",
+        options: { where, orderBy: "createdAt", orderDirection: "DESC" },
+      },
+      {
+        ns: "eveworld",
+        table: "EntityRecordOffc",
+      },
+    ]);
+
+    const entitiesById = keyBy(entities, "entityId");
+
+    return characters.map((c) => ({
+      address: c.characterAddress,
+      id: c.characterId,
+      name: entitiesById[c.characterId]?.name || "**Unknown**",
+      corpId: Number.parseInt(c.corpId, 10),
+      createdAt: Number.parseInt(c.createdAt, 10) * 1000,
+    }));
   };
