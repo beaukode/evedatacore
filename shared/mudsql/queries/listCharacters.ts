@@ -2,13 +2,15 @@ import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { Character } from "../types";
 import { ensureArray, toSqlHex } from "../utils";
-import { Hex } from "viem";
 
 type DbRow = {
-  characterId: string;
-  characterAddress: Hex;
-  corpId: string;
+  smartObjectId: string;
+  tribeId: string;
   createdAt: string;
+  entity__entityId: string;
+  entity__name: string;
+  entity__dappURL?: string;
+  entity__description?: string;
 };
 
 type EntityDbRow = {
@@ -31,15 +33,15 @@ export const listCharacters =
     if (options?.addresses) {
       const addresses = ensureArray(options.addresses);
       if (addresses.length === 0) return []; // No addresses to query
-      where = `"characterAddress" IN ('${addresses.map(toSqlHex).join("', '")}')`;
+      where = `"evefrontier__OwnershipByObjec"."smartObjectId" IN ('${addresses.map(toSqlHex).join("', '")}')`;
     } else if (options?.ids) {
       const ids = ensureArray(options.ids);
       if (ids.length === 0) return []; // No ids to query
-      where = `"characterId" IN ('${ids.join("', '")}')`;
+      where = `"evefrontier__Characters"."smartObjectId" IN ('${ids.join("', '")}')`;
     } else if (options?.corporationsId) {
       const corporationsId = ensureArray(options.corporationsId);
       if (corporationsId.length === 0) return []; // No corporations ids to query
-      where = `"corpId" IN ('${corporationsId.join("', '")}')`;
+      where = `"evefrontier__Characters"."tribeId" IN ('${corporationsId.join("', '")}')`;
     }
 
     const [characters, entities] = await client.selectFromBatch<

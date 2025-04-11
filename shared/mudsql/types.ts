@@ -45,7 +45,7 @@ export type Assembly = {
 export type AssemblyFuel = {
   id: string;
   fuelUnitVolume: string;
-  fuelConsumptionPerMinute: string;
+  fuelConsumptionIntervalInSeconds: string;
   fuelMaxCapacity: string;
   fuelAmount: string;
   lastUpdatedAt: number;
@@ -113,7 +113,6 @@ export type Table = MudTable & {
 export type InventoryItem = {
   itemId: string;
   quantity: string;
-  stateUpdate: number;
 };
 
 export type Inventory = {

@@ -4,9 +4,9 @@ import { toSqlHex } from "../utils";
 import { Character } from "../types";
 
 type DbRow = {
-  characterId: string;
+  smartObjectId: string;
   characterAddress: Hex;
-  corpId: string;
+  tribeId: string;
   createdAt: string;
   entity__entityId: string;
   entity__name: string;
@@ -19,18 +19,18 @@ export const getCharacter =
   async (address: string): Promise<Character | undefined> => {
     if (address.length !== 42 || !isHex(address)) return undefined;
     const result = await client.selectFrom<DbRow>(
-      "eveworld",
+      "evefrontier",
       "CharactersTable",
       {
         where: `"characterAddress" = '${toSqlHex(address)}'`,
         rels: {
           entity: {
-            ns: "eveworld",
-            table: "EntityRecordOffc",
-            field: "entityId",
-            fkNs: "eveworld",
+            ns: "evefrontier",
+            table: "EntityRecordMeta",
+            field: "smartObjectId",
+            fkNs: "evefrontier",
             fkTable: "CharactersTable",
-            fkField: "characterId",
+            fkField: "smartObjectId",
           },
         },
       }
@@ -40,10 +40,10 @@ export const getCharacter =
     if (!c) return undefined;
 
     return {
-      address: c.characterAddress,
-      id: c.characterId,
+      address,
+      id: c.smartObjectId,
       name: c.entity__name,
-      corpId: Number.parseInt(c.corpId, 10),
+      corpId: Number.parseInt(c.tribeId, 10),
       createdAt: Number.parseInt(c.createdAt, 10) * 1000,
     };
   };

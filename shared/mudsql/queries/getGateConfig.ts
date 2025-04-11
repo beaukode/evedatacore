@@ -10,8 +10,8 @@ export const getGateConfig =
   (client: MudSqlClient) =>
   async (id: string): Promise<AssemblySystemConfig | undefined> => {
     const configs = await client.selectFrom<DbRow>(
-      "eveworld",
-      "SmartGateConfigT",
+      "evefrontier",
+      "SmartGateConfig",
       {
         where: `"smartObjectId" = '${id}'`,
       }

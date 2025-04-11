@@ -35,8 +35,8 @@ export const listKillmails =
     }
 
     const killmails = await client.selectFrom<DbRow>(
-      "eveworld",
-      "KillMailTable",
+      "evefrontier",
+      "KillMail",
       {
         where: where,
         orderBy: "killTimestamp",

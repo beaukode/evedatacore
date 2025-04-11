@@ -11,10 +11,10 @@ export const getStorageInventoryCapacity =
   (client: MudSqlClient) =>
   async (id: string): Promise<InventoryCapacity> => {
     const records = await client.selectFrom<DbRow>(
-      "eveworld",
-      "InventoryTable",
+      "evefrontier",
+      "Inventory",
       {
-        where: `"eveworld__InventoryTable"."smartObjectId" = '${id}'`,
+        where: `"evefrontier__Inventory"."smartObjectId" = '${id}'`,
       }
     );
 

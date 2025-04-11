@@ -10,7 +10,7 @@ export const getTurretConfig =
   (client: MudSqlClient) =>
   async (id: string): Promise<AssemblySystemConfig | undefined> => {
     const configs = await client.selectFrom<DbRow>(
-      "eveworld",
+      "evefrontier",
       "SmartTurretConfi",
       {
         where: `"smartObjectId" = '${id}'`,

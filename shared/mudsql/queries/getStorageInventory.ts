@@ -3,10 +3,9 @@ import { Inventory } from "../types";
 
 type DbRow = {
   smartObjectId: string;
-  inventoryItemId: string;
+  itemObjectId: string;
   quantity: string;
   index: string;
-  stateUpdate: string;
 };
 
 export const getStorageInventory =
@@ -14,8 +13,8 @@ export const getStorageInventory =
   async (id: string): Promise<Inventory> => {
     const [capacity, items] = await Promise.all([
       client.getStorageInventoryCapacity(id),
-      client.selectFrom<DbRow>("eveworld", "InventoryItemTab", {
-        where: `"eveworld__InventoryItemTab"."smartObjectId" = '${id}'`,
+      client.selectFrom<DbRow>("evefrontier", "InventoryItem", {
+        where: `"evefrontier__InventoryItem"."smartObjectId" = '${id}' AND "evefrontier__InventoryItem"."exists" = true`,
         orderBy: "index",
       }),
     ]);
@@ -23,9 +22,8 @@ export const getStorageInventory =
     return {
       ...capacity,
       items: items.map((i) => ({
-        itemId: i.inventoryItemId,
+        itemId: i.itemObjectId,
         quantity: i.quantity,
-        stateUpdate: Number.parseInt(i.stateUpdate, 10) * 1000,
       })),
     };
   };

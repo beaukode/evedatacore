@@ -57,21 +57,21 @@ export const listUsableSmartgates =
       [AssemblyDbRow, EntityRecordDbRow, LinkDbRow]
     >([
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "DeployableState",
         options: {
           where: `"currentState" = 3`,
         },
       },
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "EntityRecordTabl",
         options: {
           where: `"typeId" = 84955`,
         },
       },
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "SmartGateLinkTab",
         options: {
           where: `"isLinked" = true`,
@@ -89,7 +89,7 @@ export const listUsableSmartgates =
       [LocationDbRow, Owner, EntityDbRow, ConfigDbRow]
     >([
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "LocationTable",
         options: {
           where: `"smartObjectId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
@@ -103,14 +103,14 @@ export const listUsableSmartgates =
         },
       },
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "EntityRecordOffc",
         options: {
           where: `"entityId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
         },
       },
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "SmartGateConfigT",
         options: {
           where: `"smartObjectId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,

@@ -5,11 +5,10 @@ import { UsersInventory } from "../types";
 
 type DbRow = {
   smartObjectId: string;
-  inventoryItemId: string;
-  ephemeralInvOwner: Hex;
+  itemObjectId: string;
+  ephemeralOwner: Hex;
   quantity: string;
   index: string;
-  stateUpdate: string;
 };
 
 export const listStorageUsersInventory =
@@ -17,14 +16,14 @@ export const listStorageUsersInventory =
   async (ssuId: string): Promise<UsersInventory[]> => {
     const [capacities, items] = await Promise.all([
       client.listStorageUsersInventoryCapacity(ssuId),
-      client.selectFrom<DbRow>("eveworld", "EphemeralInvItem", {
-        where: `"eveworld__EphemeralInvItem"."smartObjectId" = '${ssuId}'`,
-        orderBy: ["ephemeralInvOwner", "index"],
+      client.selectFrom<DbRow>("evefrontier", "EphemeralInvItem", {
+        where: `"evefrontier__EphemeralInvItem"."smartObjectId" = '${ssuId}' AND "evefrontier__EphemeralInvItem"."exists" = true`,
+        orderBy: ["ephemeralOwner", "index"],
       }),
     ]);
 
     const capacitiesByOwner = keyBy(capacities, "ownerId");
-    const itemsByOwner = groupBy(items, "ephemeralInvOwner");
+    const itemsByOwner = groupBy(items, "ephemeralOwner");
 
     return Object.entries(itemsByOwner).map(([owner, items]) => {
       const capacity = capacitiesByOwner[owner];
@@ -34,9 +33,8 @@ export const listStorageUsersInventory =
         used: capacity?.used || "0",
         total: capacity?.total || "0",
         items: items.map((i) => ({
-          itemId: i.inventoryItemId,
+          itemId: i.itemObjectId,
           quantity: i.quantity,
-          stateUpdate: Number.parseInt(i.stateUpdate, 10) * 1000,
         })),
       };
     });

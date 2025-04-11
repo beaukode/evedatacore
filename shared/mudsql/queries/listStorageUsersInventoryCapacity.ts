@@ -5,10 +5,11 @@ type DbRow = {
   smartObjectId: string;
   capacity: string;
   usage__smartObjectId: string;
-  usage__ephemeralInvOwner: string;
+  usage__ephemeralOwner: string;
   usage__usedCapacity: string;
-  character__characterAddress: string;
-  character__characterId: string;
+  usage_capacity: string;
+  character__account: string;
+  character__smartObjectId: string;
   entity__entityId: string;
   entity__name: string;
 };
@@ -17,40 +18,40 @@ export const listStorageUsersInventoryCapacity =
   (client: MudSqlClient) =>
   async (ssuId: string): Promise<UserInventoryCapacity[]> => {
     const records = await client.selectFrom<DbRow>(
-      "eveworld",
+      "evefrontier",
       "EphemeralInvCapa",
       {
-        where: `"eveworld__EphemeralInvCapa"."smartObjectId" = '${ssuId}'`,
+        where: `"evefrontier__EphemeralInvCapa"."smartObjectId" = '${ssuId}'`,
         rels: {
           usage: {
-            ns: "eveworld",
-            table: "EphemeralInvTabl",
+            ns: "evefrontier",
+            table: "EphemeralInvento",
             field: "smartObjectId",
-            fkNs: "eveworld",
+            fkNs: "evefrontier",
             fkTable: "EphemeralInvCapa",
             fkField: "smartObjectId",
           },
           character: {
-            ns: "eveworld",
-            table: "CharactersByAddr",
-            field: "characterAddress",
-            fkNs: "eveworld",
-            fkTable: "EphemeralInvTabl",
-            fkField: "ephemeralInvOwner",
+            ns: "evefrontier",
+            table: "CharactersByAcco",
+            field: "account",
+            fkNs: "evefrontier",
+            fkTable: "EphemeralInvento",
+            fkField: "ephemeralOwner",
           },
           entity: {
-            ns: "eveworld",
-            table: "EntityRecordOffc",
-            field: "entityId",
-            fkNs: "eveworld",
-            fkTable: "CharactersByAddr",
-            fkField: "characterId",
+            ns: "evefrontier",
+            table: "EntityRecordMeta",
+            field: "smartObjectId",
+            fkNs: "evefrontier",
+            fkTable: "CharactersByAcco",
+            fkField: "smartObjectId",
           },
         },
       }
     );
     return records.map((r) => ({
-      ownerId: r.character__characterAddress,
+      ownerId: r.character__account,
       ownerName: r.entity__name,
       used: r.usage__usedCapacity,
       total: r.capacity,
