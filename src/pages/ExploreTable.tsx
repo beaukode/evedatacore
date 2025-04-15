@@ -265,7 +265,7 @@ const ExploreTable: React.FC = () => {
                 }}
               />
             </ConditionalMount>
-            <Box flexGrow={1} overflow="auto">
+            <Box flexGrow={1} flexBasis={1}>
               <DataTable
                 data={filteredRecords}
                 columns={columnsLabels}

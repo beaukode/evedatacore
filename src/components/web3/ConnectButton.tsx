@@ -1,16 +1,21 @@
 import { Button } from "@mui/material";
 import ConnectIcon from "@mui/icons-material/Power";
-import { useAccount } from "wagmi";
-import { useShowConnectDialog } from "@/contexts/AppContext";
+import { useShowConnectDialog, useSmartCharacter } from "@/contexts/AppContext";
 import UserButton from "./UserButton";
 
-export const ConnectButton = () => {
-  const account = useAccount();
+interface ConnectButtonProps {
+  disableMenu?: boolean;
+}
+
+export const ConnectButton: React.FC<ConnectButtonProps> = ({
+  disableMenu,
+}) => {
+  const smartCharacter = useSmartCharacter();
   const showConnectDialog = useShowConnectDialog();
 
   return (
     <>
-      {!account.isConnected && (
+      {!smartCharacter.isConnected && !smartCharacter.isConnecting && (
         <Button
           onClick={showConnectDialog}
           variant="contained"
@@ -20,9 +25,7 @@ export const ConnectButton = () => {
           Connect
         </Button>
       )}
-      {account.isConnected && account.address && (
-        <UserButton address={account.address} />
-      )}
+      {smartCharacter.isConnected && <UserButton disableMenu={disableMenu} />}
     </>
   );
 };

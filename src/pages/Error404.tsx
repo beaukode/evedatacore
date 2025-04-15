@@ -12,7 +12,11 @@ const subtitles = [
   "Whoa.",
 ];
 
-const Error404: React.FC = () => {
+interface Error404Props {
+  hideBackButton?: boolean;
+}
+
+const Error404: React.FC<Error404Props> = ({ hideBackButton }) => {
   const navigate = useNavigate();
 
   const randomSubtitle =
@@ -33,15 +37,17 @@ const Error404: React.FC = () => {
         <Typography variant="h1">404</Typography>
         <Typography variant="h2">Page Not found</Typography>
         <Typography variant="subtitle2">{randomSubtitle}</Typography>
-        <Button
-          onClick={() => navigate(-1)}
-          sx={{ mt: 8 }}
-          variant="contained"
-          size="large"
-          startIcon={<BackIcon />}
-        >
-          Back
-        </Button>
+        {!hideBackButton && (
+          <Button
+            onClick={() => navigate(-1)}
+            sx={{ mt: 8 }}
+            variant="contained"
+            size="large"
+            startIcon={<BackIcon />}
+          >
+            Back
+          </Button>
+        )}
       </Box>
     </>
   );

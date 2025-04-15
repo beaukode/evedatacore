@@ -14,8 +14,8 @@ const columns: DataTableColumn[] = [
   { label: "Date", width: columnWidths.datetime },
   { label: "Killer", width: columnWidths.common },
   { label: "Victim", width: columnWidths.common },
-  { label: "Loss Type", width: columnWidths.common },
-  { label: "Solar System", width: columnWidths.common },
+  { label: "Loss Type", width: columnWidths.common / 2 },
+  { label: "Solar System", width: columnWidths.common / 2 },
 ];
 
 const ExploreKillmails: React.FC = () => {
