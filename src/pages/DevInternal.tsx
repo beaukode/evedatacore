@@ -6,7 +6,10 @@ import { toJson } from "@/tools";
 import { Helmet } from "react-helmet";
 
 const DevInternal: React.FC = () => {
-  const [data, setData] = React.useState<string>("");
+  const [data1, setData1] = React.useState<string>("");
+  const [data2, setData2] = React.useState<string>("");
+  const [data3, setData3] = React.useState<string>("");
+  const [data4, setData4] = React.useState<string>("");
   const [result, setResult] = React.useState<unknown>();
   const [error, setError] = React.useState<unknown>();
 
@@ -34,16 +37,34 @@ const DevInternal: React.FC = () => {
         <Grid2 container spacing={2} sx={{ mb: 2 }}>
           <Grid2 size={12}>
             <TextField
-              label="Data"
-              value={data}
-              onChange={(e) => setData(e.target.value)}
+              label="Data 1"
+              value={data1}
+              onChange={(e) => setData1(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Data 2"
+              value={data2}
+              onChange={(e) => setData2(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Data 3"
+              value={data3}
+              onChange={(e) => setData3(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Data 4"
+              value={data4}
+              onChange={(e) => setData4(e.target.value)}
               fullWidth
             />
           </Grid2>
           <Grid2 size={12}>
             <Button
               onClick={createHandler(() =>
-                mudWeb3.assemblyGetState({ assemblyId: BigInt(data) })
+                mudWeb3.assemblyGetState({ assemblyId: BigInt(data1) })
               )}
               variant="contained"
               sx={{ mr: 1 }}
@@ -52,7 +73,7 @@ const DevInternal: React.FC = () => {
             </Button>
             <Button
               onClick={createHandler(() =>
-                mudWeb3.assemblyBringOnline({ assemblyId: BigInt(data) })
+                mudWeb3.assemblyBringOnline({ assemblyId: BigInt(data1) })
               )}
               variant="contained"
               disabled={!mudWeb3.isWriteClient}
@@ -62,7 +83,7 @@ const DevInternal: React.FC = () => {
             </Button>
             <Button
               onClick={createHandler(() =>
-                mudWeb3.assemblyBringOffline({ assemblyId: BigInt(data) })
+                mudWeb3.assemblyBringOffline({ assemblyId: BigInt(data1) })
               )}
               variant="contained"
               disabled={!mudWeb3.isWriteClient}
