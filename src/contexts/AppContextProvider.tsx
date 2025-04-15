@@ -6,7 +6,6 @@ import { AppContext, SmartCharacter } from "./AppContext";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import ConnectDialog from "@/components/web3/ConnectDialog";
 import { chainId, indexerBaseUrl, worldAddress } from "@/config";
-import { AppContext } from "./AppContext";
 import useEventsTracking from "./useEventsTracking";
 
 interface AppContextProviderProps {
