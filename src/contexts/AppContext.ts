@@ -15,9 +15,20 @@ export type SmartCharacter =
   | {
       isConnected: true;
       isConnecting: boolean;
+      isFound: false;
       address: Hex;
       characterId?: bigint;
       characterName?: string;
+      corporationId?: bigint;
+    }
+  | {
+      isConnected: true;
+      isConnecting: boolean;
+      isFound: true;
+      address: Hex;
+      characterId: bigint;
+      characterName: string;
+      corporationId: bigint;
     };
 
 interface AppContextProps {

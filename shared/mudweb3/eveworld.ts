@@ -59,6 +59,15 @@ export const eveworld = defineWorld({
           },
           key: ["smartObjectId"],
         },
+        CharactersTable: {
+          schema: {
+            characterId: "uint256",
+            characterAddress: "address",
+            corpId: "uint256",
+            createdAt: "uint256",
+          },
+          key: ["characterId"],
+        },
         EntityRecordOffchainTable: {
           schema: {
             entityId: "uint256",

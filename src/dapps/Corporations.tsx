@@ -2,8 +2,8 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import DappLayout from "@/components/layouts/DappLayout";
 import Error404 from "@/pages/Error404";
-import Index from "./corporations/Index";
-import Directory from "./corporations/Directory";
+import Index from "./corporations/pages/Index";
+import Directory from "./corporations/pages/Directory";
 
 const Corporations: React.FC = () => {
   return (

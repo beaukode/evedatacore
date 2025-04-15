@@ -15,6 +15,11 @@ import {
   assemblyGetState,
 } from "./read/assemblyGetState";
 import {
+  GetSmartCharacterParameters,
+  GetSmartCharacterReturnType,
+  characterGet,
+} from "./read/characterGet";
+import {
   GetSmartCharacterIdParameters,
   GetSmartCharacterIdReturnType,
   characterGetId,
@@ -83,6 +88,9 @@ export type MudWeb3ReadActions = {
   assemblyGetState: (
     args: AssemblyGetStateParameters
   ) => Promise<AssemblyGetStateReturnType>;
+  characterGet: (
+    args: GetSmartCharacterParameters
+  ) => Promise<GetSmartCharacterReturnType>;
   characterGetId: (
     args: GetSmartCharacterIdParameters
   ) => Promise<GetSmartCharacterIdReturnType>;
@@ -139,6 +147,11 @@ export function mudWeb3ReadActions(
       args: GateCanJumpParameters
     ): Promise<GateCanJumpReturnType> => {
       return gateCanJump(client, args);
+    },
+    characterGet: async (
+      args: GetSmartCharacterParameters
+    ): Promise<GetSmartCharacterReturnType> => {
+      return characterGet(client, args);
     },
     characterGetId: async (
       args: GetSmartCharacterIdParameters
