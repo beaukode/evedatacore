@@ -10,7 +10,6 @@ import useEventsTracking from "./useEventsTracking";
 
 interface AppContextProviderProps {
   children: React.ReactNode;
-  smartCharacter: SmartCharacter;
 }
 
 export const AppContextProvider: React.FC<AppContextProviderProps> = ({
