@@ -17,7 +17,13 @@ const DappLayout: React.FC<DappLayoutProps> = ({ children, title, tabs }) => {
         <title>{title}</title>
       </Helmet>
       <DappHeader title={title} tabs={tabs} />
-      <Box sx={{ mt: { xs: 14, md: 7 }, mb: 6, overflow: "hidden" }}>
+      <Box
+        sx={{
+          mt: { xs: 14, md: 7 },
+          mb: 6,
+          overflow: "hidden",
+        }}
+      >
         {children}
       </Box>
       <DappFooter />
