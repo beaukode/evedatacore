@@ -10,7 +10,7 @@ const assemblyTypeMap = {
   2: 84955,
 } as const;
 
-type DbRow = {
+type AssemblyDbRow = {
   smartObjectId: string;
   createdAt: string;
   previousState: string;
@@ -19,15 +19,24 @@ type DbRow = {
   anchoredAt: string;
   updatedBlockNumber: string;
   updatedBlockTime: string;
-  type__smartObjectId: string;
-  type__smartAssemblyType: keyof typeof assemblyTypeMap;
-  owner__tokenId: string;
-  owner__owner: Hex;
-  location__smartObjectId: string;
-  location__solarSystemId: string;
-  location__x: string;
-  location__y: string;
-  location__z: string;
+};
+
+type TypeDbRow = {
+  smartObjectId: string;
+  smartAssemblyType: keyof typeof assemblyTypeMap;
+};
+
+type OwnerDbRow = {
+  tokenId: string;
+  owner: Hex;
+};
+
+type LocationDbRow = {
+  smartObjectId: string;
+  solarSystemId: string;
+  x: string;
+  y: string;
+  z: string;
 };
 
 type EntityDbRow = {
@@ -40,7 +49,6 @@ type EntityDbRow = {
 type ListAssembliesOptions = {
   owners?: string[] | string;
   solarSystemId?: string[] | string;
-  states?: string[] | string; // Not used, very slow filter
 };
 
 type Owner = {
@@ -51,118 +59,127 @@ type Owner = {
 export const listAssemblies =
   (client: MudSqlClient) =>
   async (options?: ListAssembliesOptions): Promise<Assembly[]> => {
-    const whereParts: string[] = [];
+    let ids: string[] | undefined = undefined;
     if (options?.owners) {
-      const owners = ensureArray(options.owners);
-      if (owners.length === 0) return []; // No owner to query
+      const ownersAddress = ensureArray(options.owners);
+      if (ownersAddress.length === 0) return []; // No owner to query
 
-      const tokens = await client.selectFrom<Owner>(
+      const owners = await client.selectFrom<Owner>(
         "erc721deploybl",
         "Owners",
         {
-          where: `"owner" IN ('${owners.map(toSqlHex).join("', '")}')`,
+          where: `"owner" IN ('${ownersAddress.map(toSqlHex).join("', '")}')`,
         }
       );
-      const tokenIds = tokens.map((t) => t.tokenId);
-      if (tokenIds.length === 0) return []; // No token to query
-      whereParts.push(
-        `"eveworld__DeployableState"."smartObjectId" IN ('${tokenIds.join("', '")}')`
-      );
+      ids = owners.map((o) => o.tokenId);
     }
     if (options?.solarSystemId) {
       const solarSystemIds = ensureArray(options.solarSystemId);
       if (solarSystemIds.length === 0) return []; // No solar system to query
 
-      whereParts.push(
-        `"eveworld__LocationTable"."solarSystemId" IN ('${solarSystemIds.join("', '")}')`
+      const locations = await client.selectFrom<LocationDbRow>(
+        "eveworld",
+        "LocationTable",
+        {
+          where: `"solarSystemId" IN ('${solarSystemIds.join("', '")}')`,
+        }
       );
-    }
-    if (options?.states) {
-      const states = ensureArray(options.states);
-      if (states.length === 0) return []; // No state to query
-      if (states.length === 1) {
-        whereParts.push(
-          `"eveworld__DeployableState"."currentState" = '${states[0]}'`
-        );
-      } else {
-        whereParts.push(
-          `"eveworld__DeployableState"."currentState" IN ('${states.join("', '")}')`
-        );
-      }
+      ids = locations.map((l) => l.smartObjectId);
     }
 
-    const assemblies = await client.selectFrom<DbRow>(
-      "eveworld",
-      "DeployableState",
-      {
-        where: whereParts.join(" AND "),
-        orderBy: "createdAt",
-        orderDirection: "DESC",
-        rels: {
-          type: {
-            ns: "eveworld",
-            table: "SmartAssemblyTab",
-            field: "smartObjectId",
-            fkNs: "eveworld",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
-          },
-          owner: {
-            ns: "erc721deploybl",
-            table: "Owners",
-            field: "tokenId",
-            fkNs: "eveworld",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
-          },
-          location: {
-            ns: "eveworld",
-            table: "LocationTable",
-            field: "smartObjectId",
-            fkNs: "eveworld",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
+    if (ids && ids.length === 0) return [];
+
+    const [assemblies, types, owners, locations, entities] =
+      await client.selectFromBatch<
+        [AssemblyDbRow, TypeDbRow, OwnerDbRow, LocationDbRow, EntityDbRow]
+      >([
+        {
+          ns: "eveworld",
+          table: "DeployableState",
+          options: {
+            orderBy: "createdAt",
+            orderDirection: "DESC",
+            where: ids
+              ? `"smartObjectId" IN ('${ids.join("', '")}')`
+              : undefined,
           },
         },
-      }
-    );
+        {
+          ns: "eveworld",
+          table: "SmartAssemblyTab",
+          options: {
+            where: ids
+              ? `"smartObjectId" IN ('${ids.join("', '")}')`
+              : undefined,
+          },
+        },
+        {
+          ns: "erc721deploybl",
+          table: "Owners",
+          options: {
+            where: ids ? `"tokenId" IN ('${ids.join("', '")}')` : undefined,
+          },
+        },
+        {
+          ns: "eveworld",
+          table: "LocationTable",
+          options: {
+            where: ids
+              ? `"smartObjectId" IN ('${ids.join("', '")}')`
+              : undefined,
+          },
+        },
+        {
+          ns: "eveworld",
+          table: "EntityRecordOffc",
+          options: {
+            where: ids ? `"entityId" IN ('${ids.join("', '")}')` : undefined,
+          },
+        },
+      ]);
 
-    const smartObjectIds = assemblies.map((a) => a.smartObjectId);
-    if (smartObjectIds.length === 0) return [];
+    if (assemblies.length === 0) return [];
 
-    const ownersAddresses = [...new Set(assemblies.map((a) => a.owner__owner))];
-
-    const [entities, owners] = await Promise.all([
-      client.selectFrom<EntityDbRow>("eveworld", "EntityRecordOffc", {
-        where: `"entityId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
-      }),
+    const ownersAddresses = [...new Set(owners.map((o) => o.owner))];
+    const [characters] = await Promise.all([
       client.listCharacters({ addresses: ownersAddresses }),
     ]);
+    const typesById = keyBy(types, "smartObjectId");
+    const ownersById = keyBy(owners, "tokenId");
+    const locationsById = keyBy(locations, "smartObjectId");
     const entitiesById = keyBy(entities, "entityId");
-    const ownersById = keyBy(owners, "address");
+    const charactersById = keyBy(characters, "address");
 
-    return assemblies.map((a) => ({
-      id: a.smartObjectId,
-      state: Number.parseInt(a.currentState, 10),
-      anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
-      isValid: a.isValid || false,
-      typeId: assemblyTypeMap[a.type__smartAssemblyType],
-      ownerId: a.owner__owner,
-      ownerName: ownersById[a.owner__owner]?.name || "Unknown",
-      solarSystemId:
-        a.location__solarSystemId !== "0"
-          ? Number.parseInt(a.location__solarSystemId, 10)
-          : undefined,
-      location:
-        a.location__solarSystemId !== "0"
-          ? {
-              x: a.location__x,
-              y: a.location__y,
-              z: a.location__z,
-            }
-          : undefined,
-      name: entitiesById[a.smartObjectId]?.name,
-      dappUrl: entitiesById[a.smartObjectId]?.dappURL,
-      description: entitiesById[a.smartObjectId]?.description,
-    }));
+    return assemblies
+      .map((a) => {
+        const type = typesById[a.smartObjectId];
+        const owner = ownersById[a.smartObjectId];
+        const location = locationsById[a.smartObjectId];
+        if (!type || !owner || !location) return undefined;
+        return {
+          id: a.smartObjectId,
+          state: Number.parseInt(a.currentState, 10),
+          anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
+          isValid: a.isValid || false,
+          typeId: assemblyTypeMap[type.smartAssemblyType],
+          ownerId: owner.owner,
+          ownerName: charactersById[owner.owner]?.name || "Unknown",
+          solarSystemId:
+            location.solarSystemId !== "0"
+              ? Number.parseInt(location.solarSystemId, 10)
+              : undefined,
+          location:
+            location.solarSystemId !== "0"
+              ? {
+                  x: location.x,
+                  y: location.y,
+                  z: location.z,
+                }
+              : undefined,
+          name: entitiesById[a.smartObjectId]?.name,
+          dappUrl: entitiesById[a.smartObjectId]?.dappURL,
+          description: entitiesById[a.smartObjectId]?.description,
+        };
+      })
+      .filter((a) => a !== undefined);
   };
