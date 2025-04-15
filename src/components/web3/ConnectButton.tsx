@@ -4,7 +4,13 @@ import { useAccount } from "wagmi";
 import { useShowConnectDialog } from "@/contexts/AppContext";
 import UserButton from "./UserButton";
 
-export const ConnectButton = () => {
+interface ConnectButtonProps {
+  disableMenu?: boolean;
+}
+
+export const ConnectButton: React.FC<ConnectButtonProps> = ({
+  disableMenu,
+}) => {
   const account = useAccount();
   const showConnectDialog = useShowConnectDialog();
 
@@ -21,7 +27,7 @@ export const ConnectButton = () => {
         </Button>
       )}
       {account.isConnected && account.address && (
-        <UserButton address={account.address} />
+        <UserButton address={account.address} disableMenu={disableMenu} />
       )}
     </>
   );
