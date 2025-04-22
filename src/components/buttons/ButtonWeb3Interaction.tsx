@@ -3,11 +3,13 @@ import { Button } from "@mui/material";
 import InteractIcon from "@mui/icons-material/Settings";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const iconMap = {
   interact: InteractIcon,
   edit: EditIcon,
   add: AddIcon,
+  delete: DeleteIcon,
 };
 interface ButtonWeb3InteractionProps {
   onClick: () => void;
