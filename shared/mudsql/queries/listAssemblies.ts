@@ -2,12 +2,18 @@ import { keyBy } from "lodash-es";
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
-import { Assembly } from "../types";
+import { Assembly, AssemblyState, AssemblyType } from "../types";
 
 const assemblyTypeMap = {
-  0: 77917,
-  1: 84556,
-  2: 84955,
+  0: AssemblyType.Storage,
+  1: AssemblyType.Turret,
+  2: AssemblyType.Gate,
+} as const;
+
+const assemblyTypeReverseMap = {
+  [AssemblyType.Storage]: 0,
+  [AssemblyType.Turret]: 1,
+  [AssemblyType.Gate]: 2,
 } as const;
 
 type AssemblyDbRow = {
@@ -49,12 +55,20 @@ type EntityDbRow = {
 type ListAssembliesOptions = {
   owners?: string[] | string;
   solarSystemId?: string[] | string;
+  types?: AssemblyType[] | AssemblyType;
+  states?: AssemblyState[] | AssemblyState;
 };
 
-type Owner = {
-  tokenId: string;
-  owner: string;
-};
+function buildWhere(
+  filter: string,
+  idColumn: string,
+  ids: string[] | undefined
+) {
+  if (!ids) {
+    return filter;
+  }
+  return `${filter} AND "${idColumn}" IN ('${ids.join("', '")}')`;
+}
 
 export const listAssemblies =
   (client: MudSqlClient) =>
@@ -64,11 +78,15 @@ export const listAssemblies =
       const ownersAddress = ensureArray(options.owners);
       if (ownersAddress.length === 0) return []; // No owner to query
 
-      const owners = await client.selectFrom<Owner>(
+      const owners = await client.selectFrom<OwnerDbRow>(
         "erc721deploybl",
         "Owners",
         {
-          where: `"owner" IN ('${ownersAddress.map(toSqlHex).join("', '")}')`,
+          where: buildWhere(
+            `"owner" IN ('${ownersAddress.map(toSqlHex).join("', '")}')`,
+            "tokenId",
+            ids
+          ),
         }
       );
       ids = owners.map((o) => o.tokenId);
@@ -81,10 +99,47 @@ export const listAssemblies =
         "eveworld",
         "LocationTable",
         {
-          where: `"solarSystemId" IN ('${solarSystemIds.join("', '")}')`,
+          where: buildWhere(
+            `"solarSystemId" IN ('${solarSystemIds.join("', '")}')`,
+            "smartObjectId",
+            ids
+          ),
         }
       );
       ids = locations.map((l) => l.smartObjectId);
+    }
+    if (options?.types) {
+      const typesIds = ensureArray(options.types).map(
+        (t) => assemblyTypeReverseMap[t]
+      );
+      if (typesIds.length === 0) return []; // No types to query
+
+      const types = await client.selectFrom<TypeDbRow>(
+        "eveworld",
+        "SmartAssemblyTab",
+        {
+          where: buildWhere(
+            `"smartAssemblyType" IN ('${typesIds.join("', '")}')`,
+            "smartObjectId",
+            ids
+          ),
+        }
+      );
+      ids = types.map((t) => t.smartObjectId);
+    }
+
+    let assembliesWhere = ids
+      ? `"smartObjectId" IN ('${ids.join("', '")}')`
+      : undefined;
+    if (options?.states) {
+      const statesIds = ensureArray(options.states);
+      if (statesIds.length === 0) return []; // No states to query
+
+      assembliesWhere = buildWhere(
+        `"currentState" IN ('${statesIds.join("', '")}')`,
+        "smartObjectId",
+        ids
+      );
     }
 
     if (ids && ids.length === 0) return [];
@@ -99,9 +154,7 @@ export const listAssemblies =
           options: {
             orderBy: "createdAt",
             orderDirection: "DESC",
-            where: ids
-              ? `"smartObjectId" IN ('${ids.join("', '")}')`
-              : undefined,
+            where: assembliesWhere,
           },
         },
         {
