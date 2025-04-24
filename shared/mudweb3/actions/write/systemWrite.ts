@@ -1,4 +1,5 @@
 import {
+  Abi,
   BaseError,
   ContractFunctionArgs,
   ContractFunctionName,
@@ -15,7 +16,7 @@ import { Web3TransactionError } from "../../Web3TransactionError";
 type mutability = "nonpayable" | "payable";
 
 export type SytemWriteParameters<
-  abi extends WorldAbi = WorldAbi,
+  abi extends Abi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -35,7 +36,7 @@ export type SytemWriteParameters<
 export type SystemWriteReturnType = TransactionReceipt;
 
 export async function systemWrite<
-  abi extends WorldAbi = WorldAbi,
+  abi extends Abi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -51,7 +52,7 @@ export async function systemWrite<
 ): Promise<SystemWriteReturnType> {
   try {
     const abi: abi = args.abi || (worldAbi as unknown as abi);
-    await client.systemSimulate<abi>({
+    await client.systemSimulate({
       abi,
       systemAddress: args.systemAddress,
       functionName: args.functionName,
@@ -79,7 +80,7 @@ export async function systemWrite<
 
     if (receipt.status === "reverted") {
       // In case of revert, we simulate the transaction on the same block to get the revert reason
-      await client.systemSimulate<abi>({
+      await client.systemSimulate({
         abi,
         systemAddress: args.systemAddress,
         functionName: args.functionName,
