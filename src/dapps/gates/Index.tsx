@@ -6,35 +6,51 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import PaperLevel1 from "@/components/ui/PaperLevel1";
+import { keyBy } from "lodash-es";
+import { AssemblyType, AssemblyState, Gate } from "@shared/mudsql";
 import { useMudSql, useSmartCharacter } from "@/contexts/AppContext";
+import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonAssembly from "@/components/buttons/ButtonAssembly";
 import SolarsystemName from "@/components/ui/SolarsystemName";
+import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
+import { isGateManaged } from "./lib/utils";
 
 const Index: React.FC = () => {
   const mudSql = useMudSql();
   const smartCharacter = useSmartCharacter();
 
   // const owner = smartCharacter.isConnected ? smartCharacter.address : undefined;
-  const owner = "0x8e7bbf2dc8e3866201aa1171f0ada88b45eb5dd9";
+  // const owner = "0x583289b59ee21647205232276793cdde3e437fbd";
+  // const owner = "0x5413b829603a528ce16db99d13130f28448d63f4";
+  const owner = "0xf277b52f97ed7b9dc0a4bf438c4e37f869589828";
 
   const query = useQuery({
-    queryKey: ["GateAccess", "Smartgates", owner],
+    queryKey: ["GatesDapp", "Smartgates", owner],
     queryFn: async () =>
-      mudSql
-        .listAssemblies({ owners: owner })
-        .then((assemblies) =>
-          assemblies.filter(
-            (assembly) =>
-              assembly.typeId === 84955 && [2, 3].includes(assembly.state)
-          )
-        ),
+      mudSql.listGates({
+        owners: owner,
+        types: AssemblyType.Gate,
+        states: [AssemblyState.Anchored, AssemblyState.Online],
+      }),
     enabled: !!owner,
   });
 
   const gates = query.data;
+  const gatesById = keyBy(gates, "id");
+
+  function getGateDestination(gate: Gate) {
+    if (gate.isLinked && gate.destinationId) {
+      const destination = gatesById[gate.destinationId];
+      if (!destination) {
+        return "Not found";
+      }
+      return <SolarsystemName solarSystemId={gate.solarSystemId} />;
+    }
+    return "-";
+  }
 
   return (
     <Box m={2}>
@@ -44,7 +60,8 @@ const Index: React.FC = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
-                <TableCell width={250}>Solar system</TableCell>
+                <TableCell width={250}>Location</TableCell>
+                <TableCell width={250}>Destination</TableCell>
                 <TableCell width={250}>Access</TableCell>
               </TableRow>
             </TableHead>
@@ -52,12 +69,34 @@ const Index: React.FC = () => {
               {query.data?.map((gate) => (
                 <TableRow key={gate.id}>
                   <TableCell>
-                    <ButtonAssembly key={gate.id} id={gate.id} to={`/dapps/gateaccess/${gate.id}`} />
+                    <Box display="flex" alignItems="center">
+                      <DisplayAssemblyIcon
+                        typeId={gate.typeId}
+                        stateId={gate.state}
+                        sx={{ mr: 1 }}
+                        tooltip
+                      />
+                      <ButtonAssembly
+                        name={gate.name}
+                        key={gate.id}
+                        id={gate.id}
+                        to={`/dapps/gates/${gate.id}`}
+                      />
+                    </Box>
                   </TableCell>
                   <TableCell>
                     <SolarsystemName solarSystemId={gate.solarSystemId} />
                   </TableCell>
-                  <TableCell>Unmanaged</TableCell>
+                  <TableCell>{getGateDestination(gate)}</TableCell>
+                  <TableCell>
+                    {isGateManaged(gate) ? (
+                      <Typography variant="inherit" color="warning">
+                        Not managed
+                      </Typography>
+                    ) : (
+                      <Typography variant="inherit">Managed</Typography>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
