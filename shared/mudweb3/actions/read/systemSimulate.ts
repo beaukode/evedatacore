@@ -1,5 +1,4 @@
 import {
-  Abi,
   BaseError,
   ContractFunctionArgs,
   ContractFunctionName,
@@ -18,7 +17,7 @@ import { Web3TransactionError } from "../../Web3TransactionError";
 type mutability = "pure" | "view" | "payable" | "nonpayable";
 
 export type SystemSimulateParameters<
-  abi extends Abi = WorldAbi,
+  abi extends WorldAbi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -29,6 +28,7 @@ export type SystemSimulateParameters<
     functionName
   > = ContractFunctionArgs<abi, mutability, functionName>,
 > = {
+  abi: abi;
   systemAddress: Hex;
   functionName: functionName;
   args: args;
@@ -36,7 +36,7 @@ export type SystemSimulateParameters<
 };
 
 export type SystemSimulateReturnType<
-  abi extends Abi = WorldAbi,
+  abi extends WorldAbi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -49,7 +49,7 @@ export type SystemSimulateReturnType<
 > = DecodeFunctionResultReturnType<abi, functionName, args>;
 
 export async function systemSimulate<
-  abi extends Abi = WorldAbi,
+  abi extends WorldAbi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -65,7 +65,7 @@ export async function systemSimulate<
 ): Promise<SystemSimulateReturnType<abi, functionName, args>> {
   try {
     const data = encodeFunctionData({
-      abi: worldAbi,
+      abi: args.abi || worldAbi,
       functionName: args.functionName,
       args: args.args,
     } as EncodeFunctionDataParameters);
@@ -80,7 +80,7 @@ export async function systemSimulate<
     });
 
     const result = decodeFunctionResult<abi, functionName, args>({
-      abi: worldAbi,
+      abi: args.abi || worldAbi,
       data: response.result,
       functionName: args.functionName,
       args: args.args,

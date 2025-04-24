@@ -2,7 +2,7 @@ import { createCache } from "async-cache-dedupe";
 import { chunk } from "lodash-es";
 import { EnvVariablesService } from "./envVariables";
 import { SolarSystemsService } from "./solarSystems";
-import { Character, MudSqlService, Smartgate } from "./mudSql";
+import { Character, MudSqlService, UsableSmartgate } from "./mudSql";
 import { MudWeb3Service } from "./mudWeb3";
 import { Optimize, PathFinderPathItem, SmartGateLink } from "./PathFinder/types";
 import { callPathFinder, CallPathFinderConfig } from "./PathFinder/callPathFinders";
@@ -15,18 +15,18 @@ interface PathFinderServiceConfig {
   mudWeb3: MudWeb3Service;
 }
 
-type RoutePlannerSmartGate = Smartgate & { routePlannerId: number };
+type RoutePlannerSmartGate = UsableSmartgate & { routePlannerId: number };
 
 interface SortedUsableSmartgates {
   public: RoutePlannerSmartGate[];
   restricted: RoutePlannerSmartGate[];
-  bySmartObjectId: Record<string, Smartgate>;
-  byRoutePlannerId: Record<string, Smartgate>;
+  bySmartObjectId: Record<string, UsableSmartgate>;
+  byRoutePlannerId: Record<string, UsableSmartgate>;
 }
 
 interface SmartGateLinks {
   links: SmartGateLink[];
-  smartGatesByRoutePlannerId: Record<string, Smartgate>;
+  smartGatesByRoutePlannerId: Record<string, UsableSmartgate>;
 }
 
 type BasePathFinderItem = {

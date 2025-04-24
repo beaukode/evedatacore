@@ -45,6 +45,11 @@ import {
   systemSimulate,
 } from "./read/systemSimulate";
 import {
+  SystemSimulateBatchParameters,
+  SystemSimulateBatchReturnType,
+  systemSimulateBatch,
+} from "./read/systemSimulateBatch";
+import {
   TurretGetSystemParameters,
   TurretGetSystemReturnType,
   turretGetSystem,
@@ -89,6 +94,9 @@ export type MudWeb3ReadActions = {
   systemSimulate: <abi extends Abi = WorldAbi>(
     args: SystemSimulateParameters<abi>
   ) => Promise<SystemSimulateReturnType<abi>>;
+  systemSimulateBatch: (
+    args: SystemSimulateBatchParameters
+  ) => Promise<SystemSimulateBatchReturnType>;
   turretGetSystem: (
     args: TurretGetSystemParameters
   ) => Promise<TurretGetSystemReturnType>;
@@ -148,6 +156,11 @@ export function mudWeb3ReadActions(
       args: SystemSimulateParameters<abi>
     ): Promise<SystemSimulateReturnType<abi>> => {
       return systemSimulate(client, args);
+    },
+    systemSimulateBatch: async (
+      args: SystemSimulateBatchParameters
+    ): Promise<SystemSimulateBatchReturnType> => {
+      return systemSimulateBatch(client, args);
     },
     turretGetSystem: async (
       args: TurretGetSystemParameters

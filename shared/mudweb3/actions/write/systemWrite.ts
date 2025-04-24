@@ -1,5 +1,4 @@
 import {
-  Abi,
   BaseError,
   ContractFunctionArgs,
   ContractFunctionName,
@@ -16,7 +15,7 @@ import { Web3TransactionError } from "../../Web3TransactionError";
 type mutability = "nonpayable" | "payable";
 
 export type SytemWriteParameters<
-  abi extends Abi = WorldAbi,
+  abi extends WorldAbi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -27,6 +26,7 @@ export type SytemWriteParameters<
     functionName
   > = ContractFunctionArgs<abi, mutability, functionName>,
 > = {
+  readonly abi?: abi;
   systemAddress: Hex;
   functionName: functionName;
   args: args;
@@ -35,7 +35,7 @@ export type SytemWriteParameters<
 export type SystemWriteReturnType = TransactionReceipt;
 
 export async function systemWrite<
-  abi extends Abi = WorldAbi,
+  abi extends WorldAbi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -50,14 +50,16 @@ export async function systemWrite<
   args: SytemWriteParameters<abi, functionName, args>
 ): Promise<SystemWriteReturnType> {
   try {
+    const abi: abi = args.abi || (worldAbi as unknown as abi);
     await client.systemSimulate<abi>({
+      abi,
       systemAddress: args.systemAddress,
       functionName: args.functionName,
       args: args.args,
     });
 
     const data = encodeFunctionData({
-      abi: worldAbi,
+      abi,
       functionName: args.functionName,
       args: args.args,
     } as EncodeFunctionDataParameters);
@@ -78,6 +80,7 @@ export async function systemWrite<
     if (receipt.status === "reverted") {
       // In case of revert, we simulate the transaction on the same block to get the revert reason
       await client.systemSimulate<abi>({
+        abi,
         systemAddress: args.systemAddress,
         functionName: args.functionName,
         args: args.args,

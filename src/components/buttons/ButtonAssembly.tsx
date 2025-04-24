@@ -11,6 +11,7 @@ interface ButtonAssemblyProps {
   sx?:
     | React.ComponentProps<typeof LooksOutlinedButton>["sx"]
     | React.ComponentProps<typeof Button>["sx"];
+  to?: string;
 }
 
 const ButtonAssembly: React.FC<ButtonAssemblyProps> = ({
@@ -18,19 +19,16 @@ const ButtonAssembly: React.FC<ButtonAssemblyProps> = ({
   id,
   fastRender,
   sx,
+  to,
 }) => {
   if (!id) return null;
   const label = name || shorten(id);
   if (fastRender) {
     return <LooksOutlinedButton sx={sx}>{label}</LooksOutlinedButton>;
   }
+  to = to || `/explore/assemblies/${id}`;
   return (
-    <Button
-      component={NavLink}
-      to={`/explore/assemblies/${id}`}
-      sx={sx}
-      variant="outlined"
-    >
+    <Button component={NavLink} to={to} sx={sx} variant="outlined">
       {label}
     </Button>
   );

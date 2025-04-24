@@ -54,6 +54,11 @@ import {
   systemWrite,
 } from "./write/systemWrite";
 import {
+  SystemWriteBatchParameters,
+  SystemWriteBatchReturnType,
+  systemWriteBatch,
+} from "./write/systemWriteBatch";
+import {
   TurretSetSystemParameters,
   TurretSetSystemReturnType,
   turretSetSystem,
@@ -96,7 +101,12 @@ export type MudWeb3WriteActions = {
   storeSetRecord: (
     args: StoreSetRecordParameters
   ) => Promise<StoreSetRecordReturnType>;
-  systemWrite: (args: SytemWriteParameters) => Promise<SystemWriteReturnType>;
+  systemWrite: <abi extends WorldAbi = WorldAbi>(
+    args: SytemWriteParameters<abi>
+  ) => Promise<SystemWriteReturnType>;
+  systemWriteBatch: (
+    args: SystemWriteBatchParameters
+  ) => Promise<SystemWriteBatchReturnType>;
   turretSetSystem: (
     args: TurretSetSystemParameters
   ) => Promise<TurretSetSystemReturnType>;
@@ -159,17 +169,22 @@ export function mudWeb3WriteActions(
       ): Promise<StoreSetRecordReturnType> => {
         return storeSetRecord(client, args);
       },
-      systemWrite: (
-        args: SytemWriteParameters
+      systemWrite: <abi extends WorldAbi = WorldAbi>(
+        args: SytemWriteParameters<abi>
       ): Promise<SystemWriteReturnType> => {
         return systemWrite(client, args);
+      },
+      systemWriteBatch: (
+        args: SystemWriteBatchParameters
+      ): Promise<SystemWriteBatchReturnType> => {
+        return systemWriteBatch(client, args);
       },
       turretSetSystem: (
         args: TurretSetSystemParameters
       ): Promise<TurretSetSystemReturnType> => {
         return turretSetSystem(client, args);
       },
-      worldWrite: <abi extends Abi = WorldAbi>(
+      worldWrite: <abi extends WorldAbi = WorldAbi>(
         args: WorldWriteParameters<abi>
       ): Promise<WorldWriteReturnType> => {
         return worldWrite<abi>(client, args);
@@ -209,6 +224,9 @@ export function mudWeb3WriteActions(
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       systemWrite: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      systemWriteBatch: async () => {
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       turretSetSystem: async () => {
