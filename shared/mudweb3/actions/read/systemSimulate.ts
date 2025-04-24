@@ -1,4 +1,5 @@
 import {
+  Abi,
   BaseError,
   ContractFunctionArgs,
   ContractFunctionName,
@@ -17,7 +18,7 @@ import { Web3TransactionError } from "../../Web3TransactionError";
 type mutability = "pure" | "view" | "payable" | "nonpayable";
 
 export type SystemSimulateParameters<
-  abi extends WorldAbi = WorldAbi,
+  abi extends Abi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -28,7 +29,7 @@ export type SystemSimulateParameters<
     functionName
   > = ContractFunctionArgs<abi, mutability, functionName>,
 > = {
-  abi: abi;
+  abi?: abi;
   systemAddress: Hex;
   functionName: functionName;
   args: args;
@@ -36,7 +37,7 @@ export type SystemSimulateParameters<
 };
 
 export type SystemSimulateReturnType<
-  abi extends WorldAbi = WorldAbi,
+  abi extends Abi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability
@@ -49,7 +50,7 @@ export type SystemSimulateReturnType<
 > = DecodeFunctionResultReturnType<abi, functionName, args>;
 
 export async function systemSimulate<
-  abi extends WorldAbi = WorldAbi,
+  abi extends Abi = WorldAbi,
   functionName extends ContractFunctionName<
     abi,
     mutability

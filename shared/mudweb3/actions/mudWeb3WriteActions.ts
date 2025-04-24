@@ -70,8 +70,9 @@ import {
 } from "./write/worldWrite";
 import { isWorldWriteClient, MudWeb3ClientRead } from "../types";
 import { Web3TransactionError } from "../Web3TransactionError";
-import { WorldAbi } from "../abi";
-import { Abi } from "viem";
+import { Abi, ContractFunctionName } from "viem";
+
+type mutability = "nonpayable" | "payable";
 
 export type MudWeb3WriteActions = {
   isWriteClient: boolean;
@@ -101,8 +102,11 @@ export type MudWeb3WriteActions = {
   storeSetRecord: (
     args: StoreSetRecordParameters
   ) => Promise<StoreSetRecordReturnType>;
-  systemWrite: <abi extends WorldAbi = WorldAbi>(
-    args: SytemWriteParameters<abi>
+  systemWrite: <
+    abi extends Abi,
+    functionName extends ContractFunctionName<abi, mutability>,
+  >(
+    args: SytemWriteParameters<abi, functionName>
   ) => Promise<SystemWriteReturnType>;
   systemWriteBatch: (
     args: SystemWriteBatchParameters
@@ -110,8 +114,11 @@ export type MudWeb3WriteActions = {
   turretSetSystem: (
     args: TurretSetSystemParameters
   ) => Promise<TurretSetSystemReturnType>;
-  worldWrite: <abi extends Abi = WorldAbi>(
-    args: WorldWriteParameters<abi>
+  worldWrite: <
+    abi extends Abi,
+    functionName extends ContractFunctionName<abi, mutability>,
+  >(
+    args: WorldWriteParameters<abi, functionName>
   ) => Promise<WorldWriteReturnType>;
 };
 
@@ -169,8 +176,11 @@ export function mudWeb3WriteActions(
       ): Promise<StoreSetRecordReturnType> => {
         return storeSetRecord(client, args);
       },
-      systemWrite: <abi extends WorldAbi = WorldAbi>(
-        args: SytemWriteParameters<abi>
+      systemWrite: <
+        abi extends Abi,
+        functionName extends ContractFunctionName<abi, mutability>,
+      >(
+        args: SytemWriteParameters<abi, functionName>
       ): Promise<SystemWriteReturnType> => {
         return systemWrite(client, args);
       },
@@ -184,10 +194,13 @@ export function mudWeb3WriteActions(
       ): Promise<TurretSetSystemReturnType> => {
         return turretSetSystem(client, args);
       },
-      worldWrite: <abi extends WorldAbi = WorldAbi>(
-        args: WorldWriteParameters<abi>
+      worldWrite: <
+        abi extends Abi,
+        functionName extends ContractFunctionName<abi, mutability>,
+      >(
+        args: WorldWriteParameters<abi, functionName>
       ): Promise<WorldWriteReturnType> => {
-        return worldWrite<abi>(client, args);
+        return worldWrite<abi, functionName>(client, args);
       },
     };
   } else {
