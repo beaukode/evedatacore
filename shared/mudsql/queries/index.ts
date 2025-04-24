@@ -16,6 +16,7 @@ export * from "./getUserInventory";
 export * from "./listAssemblies";
 export * from "./listCharacters";
 export * from "./listFunctions";
+export * from "./listGates";
 export * from "./listKillmails";
 export * from "./listNamespaces";
 export * from "./listStorageUsersInventory";

@@ -165,6 +165,12 @@ export type UsableSmartgate = {
   itemId: string;
 };
 
+export type Gate = Assembly & {
+  isLinked: boolean;
+  destinationId?: string;
+  systemId: Hex;
+};
+
 export enum AssemblyType {
   Gate = 84955,
   Turret = 84556,
