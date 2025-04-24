@@ -22,10 +22,7 @@ const Index: React.FC = () => {
   const mudSql = useMudSql();
   const smartCharacter = useSmartCharacter();
 
-  // const owner = smartCharacter.isConnected ? smartCharacter.address : undefined;
-  // const owner = "0x583289b59ee21647205232276793cdde3e437fbd";
-  // const owner = "0x5413b829603a528ce16db99d13130f28448d63f4";
-  const owner = "0xf277b52f97ed7b9dc0a4bf438c4e37f869589828";
+  const owner = smartCharacter.isConnected ? smartCharacter.address : undefined;
 
   const query = useQuery({
     queryKey: ["GatesDapp", "Smartgates", owner],
@@ -90,11 +87,11 @@ const Index: React.FC = () => {
                   <TableCell>{getGateDestination(gate)}</TableCell>
                   <TableCell>
                     {isGateManaged(gate) ? (
+                      <Typography variant="inherit">Managed</Typography>
+                    ) : (
                       <Typography variant="inherit" color="warning">
                         Not managed
                       </Typography>
-                    ) : (
-                      <Typography variant="inherit">Managed</Typography>
                     )}
                   </TableCell>
                 </TableRow>
