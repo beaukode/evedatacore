@@ -3,6 +3,7 @@ export * from "./getAssemblyFuel";
 export * from "./getCharacter";
 export * from "./getEveBalance";
 export * from "./getFunction";
+export * from "./getGate";
 export * from "./getGateConfig";
 export * from "./getGateLink";
 export * from "./getNamespace";
