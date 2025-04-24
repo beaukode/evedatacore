@@ -147,7 +147,7 @@ export type Killmail = {
   timestamp: number;
 };
 
-export type Smartgate = {
+export type UsableSmartgate = {
   id: string;
   solarSystemId: string;
   location: {
