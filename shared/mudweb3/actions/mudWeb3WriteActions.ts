@@ -101,7 +101,9 @@ export type MudWeb3WriteActions = {
   storeSetRecord: (
     args: StoreSetRecordParameters
   ) => Promise<StoreSetRecordReturnType>;
-  systemWrite: (args: SytemWriteParameters) => Promise<SystemWriteReturnType>;
+  systemWrite: <abi extends WorldAbi = WorldAbi>(
+    args: SytemWriteParameters<abi>
+  ) => Promise<SystemWriteReturnType>;
   systemWriteBatch: (
     args: SystemWriteBatchParameters
   ) => Promise<SystemWriteBatchReturnType>;
@@ -167,8 +169,8 @@ export function mudWeb3WriteActions(
       ): Promise<StoreSetRecordReturnType> => {
         return storeSetRecord(client, args);
       },
-      systemWrite: (
-        args: SytemWriteParameters
+      systemWrite: <abi extends WorldAbi = WorldAbi>(
+        args: SytemWriteParameters<abi>
       ): Promise<SystemWriteReturnType> => {
         return systemWrite(client, args);
       },
@@ -182,7 +184,7 @@ export function mudWeb3WriteActions(
       ): Promise<TurretSetSystemReturnType> => {
         return turretSetSystem(client, args);
       },
-      worldWrite: <abi extends Abi = WorldAbi>(
+      worldWrite: <abi extends WorldAbi = WorldAbi>(
         args: WorldWriteParameters<abi>
       ): Promise<WorldWriteReturnType> => {
         return worldWrite<abi>(client, args);
