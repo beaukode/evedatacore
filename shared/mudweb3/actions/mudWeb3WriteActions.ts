@@ -54,6 +54,11 @@ import {
   systemWrite,
 } from "./write/systemWrite";
 import {
+  SystemWriteBatchParameters,
+  SystemWriteBatchReturnType,
+  systemWriteBatch,
+} from "./write/systemWriteBatch";
+import {
   TurretSetSystemParameters,
   TurretSetSystemReturnType,
   turretSetSystem,
@@ -97,6 +102,9 @@ export type MudWeb3WriteActions = {
     args: StoreSetRecordParameters
   ) => Promise<StoreSetRecordReturnType>;
   systemWrite: (args: SytemWriteParameters) => Promise<SystemWriteReturnType>;
+  systemWriteBatch: (
+    args: SystemWriteBatchParameters
+  ) => Promise<SystemWriteBatchReturnType>;
   turretSetSystem: (
     args: TurretSetSystemParameters
   ) => Promise<TurretSetSystemReturnType>;
@@ -164,6 +172,11 @@ export function mudWeb3WriteActions(
       ): Promise<SystemWriteReturnType> => {
         return systemWrite(client, args);
       },
+      systemWriteBatch: (
+        args: SystemWriteBatchParameters
+      ): Promise<SystemWriteBatchReturnType> => {
+        return systemWriteBatch(client, args);
+      },
       turretSetSystem: (
         args: TurretSetSystemParameters
       ): Promise<TurretSetSystemReturnType> => {
@@ -209,6 +222,9 @@ export function mudWeb3WriteActions(
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       systemWrite: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      systemWriteBatch: async () => {
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       turretSetSystem: async () => {
