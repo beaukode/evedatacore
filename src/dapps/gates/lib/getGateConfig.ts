@@ -46,7 +46,7 @@ export const getGateConfig =
           },
         },
         {
-          table: "GatesCorpExcepti",
+          table: "GatesCharacterEx",
           ns: "staging",
           options: {
             where: `"gateId" = '${id}'`,

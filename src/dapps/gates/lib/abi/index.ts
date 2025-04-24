@@ -1,9 +1,9 @@
-import { IWorldAbi } from "@eveworld/contracts";
+import { worldAbi } from "@shared/mudweb3";
 import GateConfigErrors from "./GateConfigErrors.abi.json";
 import GateConfigSystemAbi from "./GateConfigSystem.abi.json";
 
 export const gatesAbi = [
-  ...IWorldAbi.abi,
+  ...worldAbi,
   ...GateConfigErrors,
   ...GateConfigSystemAbi,
 ] as const;
