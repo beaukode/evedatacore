@@ -7,7 +7,7 @@ import Administrator from "./gates/Administrator";
 
 const Gates: React.FC = () => {
   return (
-    <DappLayout title="Gate Access">
+    <DappLayout title="Gates">
       <Routes>
         <Route path="" element={<Index />} />
         <Route path="/:id" element={<Administrator />} />
