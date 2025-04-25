@@ -1,7 +1,7 @@
 import { intersection, keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { ensureArray } from "../utils";
-import { Smartgate } from "../types";
+import { UsableSmartgate } from "../types";
 
 type AssemblyDbRow = {
   smartObjectId: string;
@@ -52,7 +52,7 @@ type Owner = {
 };
 
 export const listUsableSmartgates =
-  (client: MudSqlClient) => async (): Promise<Record<string, Smartgate>> => {
+  (client: MudSqlClient) => async (): Promise<Record<string, UsableSmartgate>> => {
     const [assemblies, items, links] = await client.selectFromBatch<
       [AssemblyDbRow, EntityRecordDbRow, LinkDbRow]
     >([
@@ -129,7 +129,7 @@ export const listUsableSmartgates =
     });
     const charactersByAddress = keyBy(characters, "address");
 
-    const smartgates: Record<string, Smartgate> = locations.reduce(
+    const smartgates: Record<string, UsableSmartgate> = locations.reduce(
       (acc, { smartObjectId, solarSystemId, ...location }) => {
         const ownerAddress = ownersById[smartObjectId]?.owner || "0x0";
         acc[smartObjectId] = {
@@ -147,7 +147,7 @@ export const listUsableSmartgates =
         };
         return acc;
       },
-      {} as Record<string, Smartgate>
+      {} as Record<string, UsableSmartgate>
     );
 
     return smartgates;

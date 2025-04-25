@@ -1,4 +1,5 @@
 import { Table } from "@latticexyz/config";
+import { Abi, ContractFunctionName } from "viem";
 import {
   AssemblyGetLocationParameters,
   AssemblyGetLocationReturnType,
@@ -45,6 +46,11 @@ import {
   systemSimulate,
 } from "./read/systemSimulate";
 import {
+  SystemSimulateBatchParameters,
+  SystemSimulateBatchReturnType,
+  systemSimulateBatch,
+} from "./read/systemSimulateBatch";
+import {
   TurretGetSystemParameters,
   TurretGetSystemReturnType,
   turretGetSystem,
@@ -61,7 +67,8 @@ import {
 } from "./read/worldSimulate";
 import { MudWeb3ClientBase } from "../types";
 import { WorldAbi } from "../abi";
-import { Abi } from "viem";
+
+type mutability = "pure" | "view" | "payable" | "nonpayable";
 
 export type MudWeb3ReadActions = {
   assemblyGetLocation: (
@@ -86,15 +93,24 @@ export type MudWeb3ReadActions = {
   storeGetTable: (
     args: StoreGetTableParameters
   ) => Promise<StoreGetTableReturnType>;
-  systemSimulate: (
-    args: SystemSimulateParameters
-  ) => Promise<SystemSimulateReturnType>;
+  systemSimulate: <
+    abi extends Abi,
+    functionName extends ContractFunctionName<abi, mutability>,
+  >(
+    args: SystemSimulateParameters<abi, functionName>
+  ) => Promise<SystemSimulateReturnType<abi, functionName>>;
+  systemSimulateBatch: (
+    args: SystemSimulateBatchParameters
+  ) => Promise<SystemSimulateBatchReturnType>;
   turretGetSystem: (
     args: TurretGetSystemParameters
   ) => Promise<TurretGetSystemReturnType>;
-  worldRead: <abi extends Abi = WorldAbi>(
-    args: WorldReadParameters<abi>
-  ) => Promise<WorldReadReturnType<abi>>;
+  worldRead: <
+    abi extends Abi,
+    functionName extends ContractFunctionName<abi, mutability>,
+  >(
+    args: WorldReadParameters<abi, functionName>
+  ) => Promise<WorldReadReturnType<abi, functionName>>;
   worldSimulate: <abi extends Abi = WorldAbi>(
     args: WorldSimulateParameters<abi>
   ) => Promise<WorldSimulateReturnType>;
@@ -144,25 +160,36 @@ export function mudWeb3ReadActions(
     ): Promise<StoreGetTableReturnType> => {
       return storeGetTable(client, args);
     },
-    systemSimulate: async (
-      args: SystemSimulateParameters
-    ): Promise<SystemSimulateReturnType> => {
-      return systemSimulate(client, args);
+    systemSimulate: async <
+      abi extends Abi,
+      functionName extends ContractFunctionName<abi, mutability>,
+    >(
+      args: SystemSimulateParameters<abi, functionName>
+    ): Promise<SystemSimulateReturnType<abi, functionName>> => {
+      return systemSimulate<abi, functionName>(client, args);
+    },
+    systemSimulateBatch: async (
+      args: SystemSimulateBatchParameters
+    ): Promise<SystemSimulateBatchReturnType> => {
+      return systemSimulateBatch(client, args);
     },
     turretGetSystem: async (
       args: TurretGetSystemParameters
     ): Promise<TurretGetSystemReturnType> => {
       return turretGetSystem(client, args);
     },
-    worldRead: async <abi extends Abi = WorldAbi>(
-      args: WorldReadParameters<abi>
-    ): Promise<WorldReadReturnType<abi>> => {
-      return worldRead(client, args);
+    worldRead: async <
+      abi extends Abi,
+      functionName extends ContractFunctionName<abi, mutability>,
+    >(
+      args: WorldReadParameters<abi, functionName>
+    ): Promise<WorldReadReturnType<abi, functionName>> => {
+      return worldRead<abi, functionName>(client, args);
     },
     worldSimulate: async <abi extends Abi = WorldAbi>(
       args: WorldSimulateParameters<abi>
     ): Promise<WorldSimulateReturnType> => {
-      return worldSimulate(client, args);
+      return worldSimulate<abi>(client, args);
     },
   };
 }

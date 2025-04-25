@@ -1,8 +1,7 @@
-import { encodeFunctionData, Hex, TransactionReceipt } from "viem";
+import { Hex, TransactionReceipt } from "viem";
 import { WorldWriteClient } from "../../types";
 import { eveworld } from "../../eveworld";
 import { systemWrite } from "./systemWrite";
-import { worldAbi } from "../../abi";
 
 export type TurretSetSystemParameters = {
   turretId: bigint;
@@ -15,14 +14,10 @@ export async function turretSetSystem(
   client: WorldWriteClient,
   args: TurretSetSystemParameters
 ): Promise<TurretSetSystemReturnType> {
-  const data = encodeFunctionData({
-    abi: worldAbi,
-    functionName: "configureSmartTurret",
-    args: [args.turretId, args.systemId],
-  });
   return systemWrite(client, {
     systemAddress:
       eveworld.namespaces.eveworld.systems.SmartTurretSystem.systemId,
-    data,
+    functionName: "configureSmartTurret",
+    args: [args.turretId, args.systemId],
   });
 }

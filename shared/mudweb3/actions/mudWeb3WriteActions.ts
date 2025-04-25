@@ -54,6 +54,11 @@ import {
   systemWrite,
 } from "./write/systemWrite";
 import {
+  SystemWriteBatchParameters,
+  SystemWriteBatchReturnType,
+  systemWriteBatch,
+} from "./write/systemWriteBatch";
+import {
   TurretSetSystemParameters,
   TurretSetSystemReturnType,
   turretSetSystem,
@@ -65,8 +70,9 @@ import {
 } from "./write/worldWrite";
 import { isWorldWriteClient, MudWeb3ClientRead } from "../types";
 import { Web3TransactionError } from "../Web3TransactionError";
-import { WorldAbi } from "../abi";
-import { Abi } from "viem";
+import { Abi, ContractFunctionName } from "viem";
+
+type mutability = "nonpayable" | "payable";
 
 export type MudWeb3WriteActions = {
   isWriteClient: boolean;
@@ -96,12 +102,23 @@ export type MudWeb3WriteActions = {
   storeSetRecord: (
     args: StoreSetRecordParameters
   ) => Promise<StoreSetRecordReturnType>;
-  systemWrite: (args: SytemWriteParameters) => Promise<SystemWriteReturnType>;
+  systemWrite: <
+    abi extends Abi,
+    functionName extends ContractFunctionName<abi, mutability>,
+  >(
+    args: SytemWriteParameters<abi, functionName>
+  ) => Promise<SystemWriteReturnType>;
+  systemWriteBatch: (
+    args: SystemWriteBatchParameters
+  ) => Promise<SystemWriteBatchReturnType>;
   turretSetSystem: (
     args: TurretSetSystemParameters
   ) => Promise<TurretSetSystemReturnType>;
-  worldWrite: <abi extends Abi = WorldAbi>(
-    args: WorldWriteParameters<abi>
+  worldWrite: <
+    abi extends Abi,
+    functionName extends ContractFunctionName<abi, mutability>,
+  >(
+    args: WorldWriteParameters<abi, functionName>
   ) => Promise<WorldWriteReturnType>;
 };
 
@@ -159,20 +176,31 @@ export function mudWeb3WriteActions(
       ): Promise<StoreSetRecordReturnType> => {
         return storeSetRecord(client, args);
       },
-      systemWrite: (
-        args: SytemWriteParameters
+      systemWrite: <
+        abi extends Abi,
+        functionName extends ContractFunctionName<abi, mutability>,
+      >(
+        args: SytemWriteParameters<abi, functionName>
       ): Promise<SystemWriteReturnType> => {
         return systemWrite(client, args);
+      },
+      systemWriteBatch: (
+        args: SystemWriteBatchParameters
+      ): Promise<SystemWriteBatchReturnType> => {
+        return systemWriteBatch(client, args);
       },
       turretSetSystem: (
         args: TurretSetSystemParameters
       ): Promise<TurretSetSystemReturnType> => {
         return turretSetSystem(client, args);
       },
-      worldWrite: <abi extends Abi = WorldAbi>(
-        args: WorldWriteParameters<abi>
+      worldWrite: <
+        abi extends Abi,
+        functionName extends ContractFunctionName<abi, mutability>,
+      >(
+        args: WorldWriteParameters<abi, functionName>
       ): Promise<WorldWriteReturnType> => {
-        return worldWrite<abi>(client, args);
+        return worldWrite<abi, functionName>(client, args);
       },
     };
   } else {
@@ -209,6 +237,9 @@ export function mudWeb3WriteActions(
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       systemWrite: async () => {
+        throw new Web3TransactionError("Web3 client is not a write client");
+      },
+      systemWriteBatch: async () => {
         throw new Web3TransactionError("Web3 client is not a write client");
       },
       turretSetSystem: async () => {

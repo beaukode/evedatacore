@@ -30,7 +30,7 @@ export type TableType = "table" | "offchainTable";
 export type Assembly = {
   id: string;
   state: number;
-  typeId: number;
+  typeId: AssemblyType;
   isValid: boolean;
   anchoredAt: number;
   ownerId: Hex;
@@ -147,7 +147,7 @@ export type Killmail = {
   timestamp: number;
 };
 
-export type Smartgate = {
+export type UsableSmartgate = {
   id: string;
   solarSystemId: string;
   location: {
@@ -164,3 +164,22 @@ export type Smartgate = {
   destinationId: string;
   itemId: string;
 };
+
+export type Gate = Assembly & {
+  isLinked: boolean;
+  destinationId?: string;
+  systemId: Hex;
+};
+
+export enum AssemblyType {
+  Gate = 84955,
+  Turret = 84556,
+  Storage = 77917,
+}
+
+export enum AssemblyState {
+  Unanchored = 1,
+  Anchored = 2,
+  Online = 3,
+  Destroyed = 4,
+}
