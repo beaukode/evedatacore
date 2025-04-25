@@ -44,7 +44,7 @@ const Index: React.FC = () => {
       if (!destination) {
         return "Not found";
       }
-      return <SolarsystemName solarSystemId={gate.solarSystemId} />;
+      return <SolarsystemName solarSystemId={destination.solarSystemId} />;
     }
     return "-";
   }
