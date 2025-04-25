@@ -1,4 +1,5 @@
 import { MudSqlClient } from "@shared/mudsql";
+import { getNamespace } from "./utils";
 
 type GateConfigDbRow = {
   gateId: string;
@@ -33,21 +34,21 @@ export const getGateConfig =
       >([
         {
           table: "Gates",
-          ns: "staging",
+          ns: getNamespace(),
           options: {
             where: `"gateId" = '${id}'`,
           },
         },
         {
           table: "GatesCorpExcepti",
-          ns: "staging",
+          ns: getNamespace(),
           options: {
             where: `"gateId" = '${id}'`,
           },
         },
         {
           table: "GatesCharacterEx",
-          ns: "staging",
+          ns: getNamespace(),
           options: {
             where: `"gateId" = '${id}'`,
           },

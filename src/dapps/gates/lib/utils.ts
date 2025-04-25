@@ -26,6 +26,15 @@ export function getConfigSystemId(): Hex {
   }
   return VITE_DAPP_GATES_CONFIG_SYSTEM_ID;
 }
+
+export function getNamespace(): string {
+  const VITE_DAPP_GATES_NAMESPACE = import.meta.env.VITE_DAPP_GATES_NAMESPACE;
+  if (!VITE_DAPP_GATES_NAMESPACE) {
+    throw new Error("VITE_DAPP_GATES_NAMESPACE is not set");
+  }
+  return VITE_DAPP_GATES_NAMESPACE;
+}
+
 export function isGateManaged(gate: Gate) {
   return gate.dappUrl === getDappUrl() && gate.systemId === getAccessSystemId();
 }
