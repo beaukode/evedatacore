@@ -4,6 +4,8 @@ import { postQ } from "../generated";
 import { MudSqlClientConfig } from "../types";
 import { transformResult } from "../utils";
 
+const DEBUG_SQL = import.meta.env.VITE_DEBUG_SQL === "true";
+
 export const selectRaw =
   (_: MudSqlClient, config: MudSqlClientConfig, restClient: Client) =>
   async (sql: string): Promise<Record<string, string>[]> => {
@@ -11,6 +13,12 @@ export const selectRaw =
       body: [{ address: config.worldAddress, query: sql }],
       client: restClient,
     });
+    if (DEBUG_SQL) {
+      console.log("SQL:", {
+        query: sql,
+        response: [...(r.data?.result ?? [])],
+      });
+    }
     if (r.error) {
       throw new Error(r.error.msg);
     }
