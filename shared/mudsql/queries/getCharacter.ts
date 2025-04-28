@@ -20,16 +20,24 @@ export const getCharacter =
     if (address.length !== 42 || !isHex(address)) return undefined;
     const result = await client.selectFrom<DbRow>(
       "evefrontier",
-      "CharactersTable",
+      "Characters",
       {
-        where: `"characterAddress" = '${toSqlHex(address)}'`,
+        where: `"account" = '${toSqlHex(address)}'`,
         rels: {
+          owner: {
+            ns: "evefrontier",
+            table: "OwnershipByObjec",
+            field: "smartObjectId",
+            fkNs: "evefrontier",
+            fkTable: "Characters",
+            fkField: "smartObjectId",
+          },
           entity: {
             ns: "evefrontier",
             table: "EntityRecordMeta",
             field: "smartObjectId",
             fkNs: "evefrontier",
-            fkTable: "CharactersTable",
+            fkTable: "Characters",
             fkField: "smartObjectId",
           },
         },
