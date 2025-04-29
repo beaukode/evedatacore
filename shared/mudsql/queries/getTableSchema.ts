@@ -1,9 +1,11 @@
+import { Hex } from "viem";
+import { omit } from "lodash-es";
 import { createCache } from "async-cache-dedupe";
 import { Table } from "@latticexyz/config";
+import { hexToResource } from "@latticexyz/common";
 import { MudSqlClient } from "../client";
 import { toSqlHex } from "../utils";
 import { decodeTable } from "../externals";
-import { omit } from "lodash-es";
 
 export const getTableSchema = (client: MudSqlClient) => {
   const cache = createCache({
@@ -18,6 +20,8 @@ export const getTableSchema = (client: MudSqlClient) => {
     const r = res.pop();
 
     if (!r) {
+      const resource = hexToResource(tableId as Hex);
+      console.error("Table schema not found", resource);
       throw new Error(`Table schema not found ${tableId}`);
     }
     const { keySchema, valueSchema, abiEncodedKeyNames, abiEncodedFieldNames } =
