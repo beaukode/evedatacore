@@ -1,16 +1,19 @@
 import { resourceToHex } from "@latticexyz/common";
-import { SelectOptions } from "../types";
+import { MudSqlClientConfig, SelectOptions } from "../types";
 import { listSelectedTables, queryBuilder } from "../utils";
 import { MudSqlClient } from "../client";
 
 export const selectFrom =
-  (client: MudSqlClient) =>
+  (client: MudSqlClient, config: MudSqlClientConfig) =>
   async <T extends object = Record<string, string | string[]>>(
     ns: string,
     table: string,
     options?: SelectOptions
   ): Promise<T[]> => {
     const tables = listSelectedTables(ns, table, options || {});
+    if (config.debugSql) {
+      console.log("selectFrom", tables);
+    }
     const schemasMap = Object.fromEntries(
       await Promise.all(
         Object.entries(tables).map(([k, v]) =>
