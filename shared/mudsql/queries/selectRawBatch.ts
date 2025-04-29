@@ -4,8 +4,6 @@ import { postQ } from "../generated";
 import { MudSqlClientConfig } from "../types";
 import { transformResult } from "../utils";
 
-const DEBUG_SQL = import.meta.env.VITE_DEBUG_SQL === "true";
-
 export const selectRawBatch =
   (_: MudSqlClient, config: MudSqlClientConfig, restClient: Client) =>
   async (sql: string[]): Promise<Record<string, string>[][]> => {
@@ -13,7 +11,7 @@ export const selectRawBatch =
       body: sql.map((q) => ({ address: config.worldAddress, query: q })),
       client: restClient,
     });
-    if (DEBUG_SQL) {
+    if (config.debugSql) {
       console.log("SQL Batch:", {
         query: sql,
         response: { ...r },

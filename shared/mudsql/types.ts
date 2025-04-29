@@ -4,6 +4,7 @@ import { Table as MudTable } from "@latticexyz/config";
 export type MudSqlClientConfig = {
   worldAddress: string;
   indexerBaseUrl: string;
+  debugSql?: boolean;
 };
 
 export type SelectRelation = {

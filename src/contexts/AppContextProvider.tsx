@@ -21,7 +21,12 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     isConnecting: true,
   });
   const mudSql = React.useMemo(
-    () => createMudSqlClient({ indexerBaseUrl, worldAddress }),
+    () =>
+      createMudSqlClient({
+        indexerBaseUrl,
+        worldAddress,
+        debugSql: import.meta.env.VITE_DEBUG_SQL === "true",
+      }),
     []
   );
   const { pushEvent } = useEventsTracking();
