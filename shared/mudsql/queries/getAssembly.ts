@@ -1,11 +1,11 @@
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
-import { Assembly } from "../types";
+import { Assembly, AssemblyType } from "../types";
 
 const assemblyTypeMap = {
-  0: 77917,
-  1: 84556,
-  2: 84955,
+  SSU: AssemblyType.Storage,
+  ST: AssemblyType.Turret,
+  SG: AssemblyType.Gate,
 } as const;
 
 type DbRow = {
@@ -23,8 +23,8 @@ type DbRow = {
   owner__account: Hex;
   character__account: string;
   character__smartObjectId: string;
-  entity__smartObjectId: string;
-  entity__name: string;
+  ownerEntity__smartObjectId: string;
+  ownerEntity__name: string;
   location__smartObjectId: string;
   location__solarSystemId: string;
   location__x: string;
@@ -70,15 +70,15 @@ export const getAssembly =
             field: "account",
             fkNs: "evefrontier",
             fkTable: "OwnershipByObjec",
-            fkField: "smartObjectId",
+            fkField: "account",
           },
-          entity: {
+          ownerEntity: {
             ns: "evefrontier",
             table: "EntityRecordMeta",
             field: "smartObjectId",
             fkNs: "evefrontier",
             fkTable: "CharactersByAcco",
-            fkField: "characterId",
+            fkField: "smartObjectId",
           },
           location: {
             ns: "evefrontier",
@@ -90,8 +90,8 @@ export const getAssembly =
           },
         },
       }),
-      client.selectFrom<EntityDbRow>("evefrontier", "EntityRecordOffc", {
-        where: `"entityId" = '${id}'`,
+      client.selectFrom<EntityDbRow>("evefrontier", "EntityRecordMeta", {
+        where: `"smartObjectId" = '${id}'`,
       }),
     ]);
     const assembly = assemblies[0];
@@ -106,7 +106,7 @@ export const getAssembly =
       isValid: assembly.isValid || false,
       typeId: assemblyTypeMap[assembly.type__assemblyType],
       ownerId: assembly.owner__account,
-      ownerName: assembly.entity__name,
+      ownerName: assembly.ownerEntity__name,
       solarSystemId:
         assembly.location__solarSystemId !== "0"
           ? Number.parseInt(assembly.location__solarSystemId, 10)
