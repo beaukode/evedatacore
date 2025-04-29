@@ -17,7 +17,7 @@ export const getEveBalance =
     });
 
     const c = result[0];
-    if (!c) return undefined;
+    if (!c) return { address, value: "0" };
 
     return {
       address: c.account,
