@@ -15,7 +15,15 @@ export type GetCalcPathFromToData = {
     /**
      * GET /calc/path/:from/:to Parameter
      */
+    characterId?: string;
+    /**
+     * GET /calc/path/:from/:to Parameter
+     */
     jumpDistance: number;
+    /**
+     * GET /calc/path/:from/:to Parameter
+     */
+    onlySmartGates?: "all" | "mine" | "corporation";
     /**
      * GET /calc/path/:from/:to Parameter
      */
@@ -23,7 +31,7 @@ export type GetCalcPathFromToData = {
     /**
      * GET /calc/path/:from/:to Parameter
      */
-    useSmartGates?: string;
+    smartGates?: "none" | "unrestricted" | "restricted";
   };
 };
 

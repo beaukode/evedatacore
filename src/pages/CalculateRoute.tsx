@@ -22,15 +22,14 @@ const CalculateRoute: React.FC = () => {
     queryKey: ["CalculateRoute", queryData],
     queryFn: async () => {
       if (!queryData) return;
-      let useSmartGates = "";
-      if (queryData.smartGates === "unrestricted") {
-        useSmartGates = "0";
-      } else if (queryData.smartGates === "restricted") {
-        if (character.character) {
-          useSmartGates = character.character.id.toString();
-        } else {
-          useSmartGates = "0"; // Wallet is not connected, fallback to unrestricted smart gates
-        }
+      let characterId: string | undefined = undefined;
+      if (
+        (queryData.smartGates === "restricted" ||
+          (queryData.smartGates !== "none" &&
+            queryData.onlySmartGates !== "all")) &&
+        character.character
+      ) {
+        characterId = character.character.id.toString();
       }
       return getCalcPathFromTo({
         path: {
@@ -40,7 +39,9 @@ const CalculateRoute: React.FC = () => {
         query: {
           jumpDistance: queryData.jumpDistance,
           optimize: queryData.optimize,
-          useSmartGates,
+          characterId,
+          smartGates: queryData.smartGates,
+          onlySmartGates: queryData.onlySmartGates,
         },
       }).then((r) => {
         if (r.error) {

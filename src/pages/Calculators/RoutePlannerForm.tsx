@@ -39,6 +39,7 @@ const schema = z
     smartGates: z
       .enum(["none", "unrestricted", "restricted"])
       .default("unrestricted"),
+    onlySmartGates: z.enum(["all", "mine", "corporation"]).default("all"),
   })
   .required();
 
@@ -57,6 +58,11 @@ function queryToForm(values: Record<keyof FormData, string>) {
     )
       ? (values.smartGates as "none" | "unrestricted" | "restricted")
       : "unrestricted",
+    onlySmartGates: ["all", "mine", "corporation"].includes(
+      values.onlySmartGates
+    )
+      ? (values.onlySmartGates as "all" | "mine" | "corporation")
+      : "all",
   };
 }
 
@@ -67,6 +73,7 @@ function formToQuery(values: FormData) {
     jumpDistance: values.jumpDistance.toString(),
     optimize: values.optimize.toString(),
     smartGates: values.smartGates.toString(),
+    onlySmartGates: values.onlySmartGates.toString(),
   };
 }
 
@@ -100,6 +107,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
     resolver: zodResolver(schema),
   });
   const smartGates = watch("smartGates");
+  const onlySmartGates = watch("onlySmartGates");
 
   const internalOnSubmit: SubmitHandler<FormData> = (data) => {
     setStore(data);
@@ -181,7 +189,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         onChange={(value) => {
           setSearch("optimize", value);
         }}
-        sx={{ my: 2 }}
+        sx={{ my: 1 }}
         options={[
           { id: "fuel", label: "Fuel (Prefer gates)" },
           { id: "distance", label: "Distance (Prefer jumps)" },
@@ -197,7 +205,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         onChange={(value) => {
           setSearch("smartGates", value);
         }}
-        sx={{ my: 2 }}
+        sx={{ my: 1 }}
         options={[
           { id: "none", label: "None" },
           { id: "unrestricted", label: "Unrestricted" },
@@ -206,20 +214,36 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         required
         fullWidth
       />
-      {smartGates === "restricted" && (
+      {smartGates !== "none" && (
+        <SelectElement
+          name="onlySmartGates"
+          label="Use only smart gates"
+          control={control}
+          sx={{ my: 1 }}
+          options={[
+            { id: "all", label: "All" },
+            { id: "mine", label: "That belong to me" },
+            { id: "corporation", label: "That belong to my corporation" },
+          ]}
+          required
+          fullWidth
+        />
+      )}
+      {(smartGates === "restricted" ||
+        (smartGates !== "none" && onlySmartGates !== "all")) && (
         <>
           {!character.isLoading && !character.character && (
             <Alert severity="warning" sx={{ mb: 2 }}>
               Unable to retrieve your character ID. Please check that your
               wallet is connected to the correct address.
               <br />
-              The route will be calculated using unrestricted smart gates.
+              The route will be calculated using any unrestricted smart gates.
             </Alert>
           )}
           {character.character && (
             <Alert severity="info" sx={{ mb: 2 }}>
               Your character ID will be sent to the server to check which smart
-              gates you can use.
+              gates the planner can use.
             </Alert>
           )}
         </>

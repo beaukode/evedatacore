@@ -46,13 +46,34 @@ paths:
               - distance
               - hops
             default: fuel
-        - name: useSmartGates
+        - name: characterId
           in: query
           required: false
           description: GET /calc/path/:from/:to Parameter
           schema:
             type: string
-            default: ""
+        - name: smartGates
+          in: query
+          required: false
+          description: GET /calc/path/:from/:to Parameter
+          schema:
+            type: string
+            enum:
+              - none
+              - unrestricted
+              - restricted
+            default: unrestricted
+        - name: onlySmartGates
+          in: query
+          required: false
+          description: GET /calc/path/:from/:to Parameter
+          schema:
+            type: string
+            enum:
+              - all
+              - mine
+              - corporation
+            default: all
       responses:
         "200":
           description: GET /calc/path/:from/:to Positive response
