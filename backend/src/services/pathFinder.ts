@@ -146,9 +146,26 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
       to: number,
       jumpDistance: number,
       optimize: Optimize,
-      characterId: string = "0",
+      characterId: string | undefined,
+      smartGates: "none" | "unrestricted" | "restricted",
+      onlySmartGates: "all" | "mine" | "corporation",
     ): Promise<PathFinderItem[]> => {
-      const smartGateLinks = await cache.getSmartGateLinks(characterId);
+      let smartGateLinks: SmartGateLinks = { links: [], smartGatesByRoutePlannerId: {} };
+      if (smartGates === "unrestricted") {
+        smartGateLinks = await cache.getSmartGateLinks("0");
+      } else if (smartGates === "restricted" && characterId) {
+        smartGateLinks = await cache.getSmartGateLinks(characterId);
+      }
+
+      let links = [...smartGateLinks.links]; // Copy the array to avoid mutating the original
+      if (onlySmartGates === "mine") {
+        links = links.filter((link) => {
+          const smartGate = smartGateLinks.smartGatesByRoutePlannerId[link.id];
+          return smartGate?.owner?.id === characterId;
+        });
+      } else if (onlySmartGates === "corporation") {
+        throw new Error("Corporation smartgates are not supported yet");
+      }
 
       const distance = await solarSystems.getDistance(from, to);
       let path: PathFinderPathItem[] = [];
@@ -156,7 +173,7 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
         // We need to split the problem
         const parts = Math.min(Math.ceil(distance / (jumpDistance * 20)), 4); // 4 is the maximum number of parts
         console.log(`Splitting the path into ${parts} parts`, distance);
-        const largePath = await callPathFinder(from, to, 500, optimize, smartGateLinks.links, config);
+        const largePath = await callPathFinder(from, to, 500, optimize, links, config);
         const chunkSize = Math.ceil(largePath.length / parts);
         const chunks = chunk(largePath, chunkSize);
         const nodes = [from, ...chunks.map((chunk) => chunk[chunk.length - 1]?.target ?? from)];
@@ -165,13 +182,13 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
         const promises: Promise<Awaited<ReturnType<typeof callPathFinder>>>[] = [];
         while (nodes.length > 0) {
           const end = nodes.shift()!;
-          promises.push(callPathFinder(start, end, jumpDistance, optimize, smartGateLinks.links, config));
+          promises.push(callPathFinder(start, end, jumpDistance, optimize, links, config));
           start = end;
         }
         const paths = await Promise.all(promises);
         path = paths.flat();
       } else {
-        path = await callPathFinder(from, to, jumpDistance, optimize, smartGateLinks.links, config);
+        path = await callPathFinder(from, to, jumpDistance, optimize, links, config);
       }
 
       // Post process the path to add the owner and name to the smartgate items

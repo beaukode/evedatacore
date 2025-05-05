@@ -27,19 +27,21 @@ export const calculatePath = endpointsFactory.build({
     to: z.coerce.number().positive().min(30000000).max(39000000),
     jumpDistance: z.coerce.number().positive().max(500).optional().default(0),
     optimize: z.nativeEnum(Optimize).optional().default(Optimize.FUEL),
-    useSmartGates: z.string().optional().default(""),
+    characterId: z.string().optional(),
+    smartGates: z.enum(["none", "unrestricted", "restricted"]).optional().default("unrestricted"),
+    onlySmartGates: z.enum(["all", "mine", "corporation"]).optional().default("all"),
   }),
   output: z.object({
     path: z.array(z.union([pathItemSchema, pathSmartgateItemSchema])),
   }),
   handler: async ({
-    input: { from, to, jumpDistance, optimize, useSmartGates },
+    input: { from, to, jumpDistance, optimize, characterId, smartGates, onlySmartGates },
     options: {
       responseHeaders,
       services: { pathFinder },
     },
   }) => {
-    const path = await pathFinder.findPath(from, to, jumpDistance, optimize, useSmartGates);
+    const path = await pathFinder.findPath(from, to, jumpDistance, optimize, characterId, smartGates, onlySmartGates);
     let prevSystem = from;
     const pathItems = path.map((item) => {
       const { conn_type, distance, target } = item;
