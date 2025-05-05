@@ -52,6 +52,17 @@ paths:
           description: GET /calc/path/:from/:to Parameter
           schema:
             type: string
+        - name: corpId
+          in: query
+          required: false
+          description: GET /calc/path/:from/:to Parameter
+          schema:
+            type:
+              - number
+              - "null"
+            format: double
+            minimum: -1.7976931348623157e+308
+            maximum: 1.7976931348623157e+308
         - name: smartGates
           in: query
           required: false

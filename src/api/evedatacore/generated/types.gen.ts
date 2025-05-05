@@ -19,6 +19,10 @@ export type GetCalcPathFromToData = {
     /**
      * GET /calc/path/:from/:to Parameter
      */
+    corpId?: number | null;
+    /**
+     * GET /calc/path/:from/:to Parameter
+     */
     jumpDistance: number;
     /**
      * GET /calc/path/:from/:to Parameter

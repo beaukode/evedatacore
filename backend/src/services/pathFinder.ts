@@ -147,6 +147,7 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
       jumpDistance: number,
       optimize: Optimize,
       characterId: string | undefined,
+      corpId: number | undefined,
       smartGates: "none" | "unrestricted" | "restricted",
       onlySmartGates: "all" | "mine" | "corporation",
     ): Promise<PathFinderItem[]> => {
@@ -164,7 +165,10 @@ export function createPathFinderService({ env, solarSystems, mudSql, mudWeb3 }: 
           return smartGate?.owner?.id === characterId;
         });
       } else if (onlySmartGates === "corporation") {
-        throw new Error("Corporation smartgates are not supported yet");
+        links = links.filter((link) => {
+          const smartGate = smartGateLinks.smartGatesByRoutePlannerId[link.id];
+          return smartGate?.owner?.corpId === corpId;
+        });
       }
 
       const distance = await solarSystems.getDistance(from, to);

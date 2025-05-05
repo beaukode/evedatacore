@@ -23,6 +23,7 @@ const CalculateRoute: React.FC = () => {
     queryFn: async () => {
       if (!queryData) return;
       let characterId: string | undefined = undefined;
+      let corpId: number | undefined = undefined;
       if (
         (queryData.smartGates === "restricted" ||
           (queryData.smartGates !== "none" &&
@@ -30,6 +31,7 @@ const CalculateRoute: React.FC = () => {
         character.character
       ) {
         characterId = character.character.id.toString();
+        corpId = character.character.corpId;
       }
       return getCalcPathFromTo({
         path: {
@@ -42,6 +44,7 @@ const CalculateRoute: React.FC = () => {
           characterId,
           smartGates: queryData.smartGates,
           onlySmartGates: queryData.onlySmartGates,
+          corpId,
         },
       }).then((r) => {
         if (r.error) {
