@@ -1,6 +1,7 @@
 import React from "react";
 import z from "zod";
-import { Alert, Box, Button } from "@mui/material";
+import { Alert, Box, Button, IconButton } from "@mui/material";
+import SwapIcon from "@mui/icons-material/SwapVert";
 import {
   TextFieldElement,
   SubmitHandler,
@@ -101,13 +102,15 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   );
   const [formDefaultValues] = React.useState(search);
 
-  const { control, handleSubmit, watch } = useForm<FormData>({
+  const { control, handleSubmit, watch, setValue } = useForm<FormData>({
     mode: "onChange",
     defaultValues: queryToForm(formDefaultValues),
     resolver: zodResolver(schema),
   });
   const smartGates = watch("smartGates");
   const onlySmartGates = watch("onlySmartGates");
+  const system1 = watch("system1");
+  const system2 = watch("system2");
 
   const internalOnSubmit: SubmitHandler<FormData> = (data) => {
     setStore(data);
@@ -122,52 +125,69 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
       onChange={handleChange}
       noValidate
     >
-      <Controller
-        name="system1"
-        control={control}
-        render={({ field, fieldState }) => {
-          return (
-            <AutoCompleteSolarSystem
-              {...field}
-              onChange={(value) => {
-                field.onChange(value);
-                setSearch(
-                  "system1",
-                  (value ?? formDefaultValues.system1).toString()
-                );
-              }}
-              error={fieldState.error?.message}
-              label="From system"
-              sx={{ mb: 2 }}
-              solarSystemsIndex={solarSystemsIndex}
-              fullWidth
-            />
-          );
-        }}
-      />
-      <Controller
-        name="system2"
-        control={control}
-        render={({ field, fieldState }) => {
-          return (
-            <AutoCompleteSolarSystem
-              {...field}
-              onChange={(value) => {
-                field.onChange(value);
-                setSearch(
-                  "system2",
-                  (value ?? formDefaultValues.system2).toString()
-                );
-              }}
-              error={fieldState.error?.message}
-              solarSystemsIndex={solarSystemsIndex}
-              label="To system"
-              sx={{ my: 2 }}
-              fullWidth
-            />
-          );
-        }}
-      />
+      <Box display="flex" flexDirection="row" alignItems="center">
+        <Box flexGrow={1}>
+          <Controller
+            name="system1"
+            control={control}
+            render={({ field, fieldState }) => {
+              return (
+                <AutoCompleteSolarSystem
+                  {...field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setSearch(
+                      "system1",
+                      (value ?? formDefaultValues.system1).toString()
+                    );
+                  }}
+                  error={fieldState.error?.message}
+                  label="From system"
+                  sx={{ mb: 2 }}
+                  solarSystemsIndex={solarSystemsIndex}
+                  fullWidth
+                />
+              );
+            }}
+          />
+          <Controller
+            name="system2"
+            control={control}
+            render={({ field, fieldState }) => {
+              return (
+                <AutoCompleteSolarSystem
+                  {...field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setSearch(
+                      "system2",
+                      (value ?? formDefaultValues.system2).toString()
+                    );
+                  }}
+                  error={fieldState.error?.message}
+                  solarSystemsIndex={solarSystemsIndex}
+                  label="To system"
+                  sx={{ my: 2 }}
+                  fullWidth
+                />
+              );
+            }}
+          />
+        </Box>
+        <Box>
+          <IconButton
+            color="primary"
+            onClick={() => {
+              setValue("system1", system2);
+              setSearch("system1", formDefaultValues.system2);
+              setValue("system2", system1);
+              setSearch("system2", formDefaultValues.system1);
+            }}
+          >
+            <SwapIcon />
+          </IconButton>
+        </Box>
+      </Box>
       <Box display="flex" alignItems="center" my={2}>
         <TextFieldElement
           control={control}
