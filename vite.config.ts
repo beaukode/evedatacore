@@ -22,10 +22,6 @@ export default defineConfig({
         target: "https://evedataco.re/",
         changeOrigin: true,
       },
-      "/api-shish": {
-        target: "https://evedataco.re/",
-        changeOrigin: true,
-      },
       "/api": {
         target: process.env.USE_LOCAL_API
           ? "http://localhost:3000/"
