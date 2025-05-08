@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import {
   TextField,
   TableCell,
@@ -145,27 +146,32 @@ const ExploreTypes: React.FC = () => {
   );
 
   return (
-    <DataTableLayout
-      title="Types"
-      columns={columns}
-      data={types}
-      itemContent={itemContent}
-      loading={!typesIndex}
-    >
-      <TextField
-        label="Search"
-        value={search.text}
-        onChange={(e) => {
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          );
-        }}
-        fullWidth
-      />
-      {categorySelect}
-      {groupSelect}
-    </DataTableLayout>
+    <>
+      <Helmet>
+        <title>Types</title>
+      </Helmet>
+      <DataTableLayout
+        title="Types"
+        columns={columns}
+        data={types}
+        itemContent={itemContent}
+        loading={!typesIndex}
+      >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) => {
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            );
+          }}
+          fullWidth
+        />
+        {categorySelect}
+        {groupSelect}
+      </DataTableLayout>
+    </>
   );
 };
 

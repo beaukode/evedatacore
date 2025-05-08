@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import {
   TextField,
   TableCell,
@@ -219,26 +220,31 @@ const ExploreSystems: React.FC = () => {
   );
 
   return (
-    <DataTableLayout
-      title="Systems"
-      columns={columns}
-      data={systems}
-      itemContent={itemContent}
-    >
-      <TextField
-        label="Search"
-        value={search.text}
-        onChange={(e) => {
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          );
-        }}
-        fullWidth
-      />
-      {ownerSelect}
-      {namespaceSelect}
-    </DataTableLayout>
+    <>
+      <Helmet>
+        <title>Systems</title>
+      </Helmet>
+      <DataTableLayout
+        title="Systems"
+        columns={columns}
+        data={systems}
+        itemContent={itemContent}
+      >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) => {
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            );
+          }}
+          fullWidth
+        />
+        {ownerSelect}
+        {namespaceSelect}
+      </DataTableLayout>
+    </>
   );
 };
 

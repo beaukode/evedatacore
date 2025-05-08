@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { useQuery } from "@tanstack/react-query";
@@ -61,24 +62,29 @@ const ExploreNamespaces: React.FC = () => {
   );
 
   return (
-    <DataTableLayout
-      title="Namespaces"
-      columns={columns}
-      data={namespaces}
-      itemContent={itemContent}
-    >
-      <TextField
-        label="Search"
-        value={search.text}
-        onChange={(e) => {
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          );
-        }}
-        fullWidth
-      />
-    </DataTableLayout>
+    <>
+      <Helmet>
+        <title>Namespaces</title>
+      </Helmet>
+      <DataTableLayout
+        title="Namespaces"
+        columns={columns}
+        data={namespaces}
+        itemContent={itemContent}
+      >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) => {
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            );
+          }}
+          fullWidth
+        />
+      </DataTableLayout>
+    </>
   );
 };
 
