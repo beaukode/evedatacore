@@ -12,6 +12,7 @@ interface DataTableLayoutProps<T extends Record<string, unknown>>
   loading?: boolean;
   data: T[];
   itemContent: DataTableItemContentCallback<T>;
+  dynamicWidth?: boolean;
   children?: React.ReactNode;
 }
 
@@ -21,6 +22,7 @@ const DataTableLayout = <T extends Record<string, unknown>>({
   loading,
   data,
   itemContent,
+  dynamicWidth,
   children,
   sx,
   ...rest
@@ -58,6 +60,7 @@ const DataTableLayout = <T extends Record<string, unknown>>({
           columns={columns}
           itemContent={itemContent}
           rememberScroll
+          dynamicWidth={dynamicWidth}
         />
       </Box>
     </Paper>
