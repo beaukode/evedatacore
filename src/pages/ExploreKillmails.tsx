@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { TextField, TableCell } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
@@ -74,6 +75,9 @@ const ExploreKillmails: React.FC = () => {
   );
   return (
     <>
+      <Helmet>
+        <title>Killmails</title>
+      </Helmet>
       <DataTableLayout
         title="Killmails"
         columns={columns}
