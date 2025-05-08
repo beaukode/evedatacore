@@ -117,19 +117,28 @@ const ExploreTable: React.FC = () => {
     return queryRecords.data.map((record) => {
       return Object.entries(record).reduce(
         (acc, [key, value]) => {
-          if (columnsTypes[key]?.baseType === "bool") {
+          const columnType = columnsTypes[key];
+          if (columnType?.baseType === "bool") {
             if (Array.isArray(value)) {
               acc[key] = value.map((v) => (v ? "true" : "false")).join(";");
             } else {
               acc[key] = value ? "true" : "false";
             }
-          } else if (columnsTypes[key]?.baseType === "string") {
+          } else if (columnType?.baseType === "string") {
             if (Array.isArray(value)) {
               acc[key] = value
                 .map((v) => v.replace(/\r\n|\r|\n/g, "\\n"))
                 .join(";");
             } else {
               acc[key] = value.replace(/\r\n|\r|\n/g, "\\n");
+            }
+          } else if (columnType?.baseType === "bytes" && columnType?.length) {
+            // The api add some padding to the bytes
+            const length = columnType.length * 2 + 2;
+            if (Array.isArray(value)) {
+              acc[key] = value.map((v) => v.substring(0, length)).join(";");
+            } else {
+              acc[key] = value.substring(0, length);
             }
           } else {
             if (Array.isArray(value)) {
