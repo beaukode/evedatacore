@@ -19,7 +19,7 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
-import DataTable, { DataTableColumn } from "@/components/DataTable";
+import { DataTableColumn } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
 import { pick } from "lodash-es";
@@ -27,6 +27,7 @@ import ConditionalMount from "@/components/ui/ConditionalMount";
 import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import { AbiTypeDetails, parseAbiType } from "@/tools/abi";
+import DataTableLayout from "@/components/layouts/DataTableLayout";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
@@ -116,19 +117,28 @@ const ExploreTable: React.FC = () => {
     return queryRecords.data.map((record) => {
       return Object.entries(record).reduce(
         (acc, [key, value]) => {
-          if (columnsTypes[key]?.baseType === "bool") {
+          const columnType = columnsTypes[key];
+          if (columnType?.baseType === "bool") {
             if (Array.isArray(value)) {
               acc[key] = value.map((v) => (v ? "true" : "false")).join(";");
             } else {
               acc[key] = value ? "true" : "false";
             }
-          } else if (columnsTypes[key]?.baseType === "string") {
+          } else if (columnType?.baseType === "string") {
             if (Array.isArray(value)) {
               acc[key] = value
                 .map((v) => v.replace(/\r\n|\r|\n/g, "\\n"))
                 .join(";");
             } else {
               acc[key] = value.replace(/\r\n|\r|\n/g, "\\n");
+            }
+          } else if (columnType?.baseType === "bytes" && columnType?.length) {
+            // The api add some padding to the bytes
+            const length = columnType.length * 2 + 2;
+            if (Array.isArray(value)) {
+              acc[key] = value.map((v) => v.substring(0, length)).join(";");
+            } else {
+              acc[key] = value.substring(0, length);
             }
           } else {
             if (Array.isArray(value)) {
@@ -190,7 +200,12 @@ const ExploreTable: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PaperLevel1 title={title} loading={query.isFetching} backButton>
+      <PaperLevel1
+        sx={{ mb: 0 }}
+        title={title}
+        loading={query.isFetching}
+        backButton
+      >
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <ListItem disableGutters>
             <ListItemText>Id: {table.resourceId}</ListItemText>
@@ -225,17 +240,18 @@ const ExploreTable: React.FC = () => {
           )}
         </List>
       </PaperLevel1>
-      <PaperLevel1
-        title={`${queryRecords.data?.length || ""} Records`}
+      <DataTableLayout
+        title="Records"
+        data={filteredRecords}
+        columns={columnsLabels}
+        itemContent={itemContent}
         loading={queryRecords.isFetching}
-        sx={{
-          flexGrow: 1,
-          minHeight: "50vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
+        sx={{ mx: 0 }}
+        dynamicWidth
       >
-        <Box mb={2}>
+        {queryRecords.isError ? (
+          <Alert severity="error">{queryRecords.error.message}</Alert>
+        ) : (
           <TextField
             label="Search"
             value={search.text}
@@ -247,36 +263,22 @@ const ExploreTable: React.FC = () => {
             }}
             fullWidth
           />
-          {queryRecords.isError && (
-            <Alert severity="error">{queryRecords.error.message}</Alert>
-          )}
-        </Box>
-        {data && (
-          <>
-            <ConditionalMount mount={editOpen} keepMounted>
-              <DialogTableRecord
-                open={editOpen}
-                table={data}
-                keyValues={editKey}
-                owner={data?.namespaceOwner || "0x"}
-                onClose={() => {
-                  setEditOpen(false);
-                  queryRecords.refetch();
-                }}
-              />
-            </ConditionalMount>
-            <Box flexGrow={1} flexBasis={1}>
-              <DataTable
-                data={filteredRecords}
-                columns={columnsLabels}
-                itemContent={itemContent}
-                dynamicWidth
-                rememberScroll
-              />
-            </Box>
-          </>
         )}
-      </PaperLevel1>
+      </DataTableLayout>
+      {data && (
+        <ConditionalMount mount={editOpen} keepMounted>
+          <DialogTableRecord
+            open={editOpen}
+            table={data}
+            keyValues={editKey}
+            owner={data?.namespaceOwner || "0x"}
+            onClose={() => {
+              setEditOpen(false);
+              queryRecords.refetch();
+            }}
+          />
+        </ConditionalMount>
+      )}
     </Box>
   );
 };

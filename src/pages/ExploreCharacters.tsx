@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { Box, TextField, Avatar, TableCell } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
@@ -68,24 +69,29 @@ const ExploreCharacters: React.FC = () => {
     []
   );
   return (
-    <DataTableLayout
-      title="Characters"
-      columns={columns}
-      data={smartcharacters}
-      itemContent={itemContent}
-    >
-      <TextField
-        label="Search"
-        value={search.text}
-        onChange={(e) =>
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          )
-        }
-        fullWidth
-      />
-    </DataTableLayout>
+    <>
+      <Helmet>
+        <title>Characters</title>
+      </Helmet>
+      <DataTableLayout
+        title="Characters"
+        columns={columns}
+        data={smartcharacters}
+        itemContent={itemContent}
+      >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) =>
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            )
+          }
+          fullWidth
+        />
+      </DataTableLayout>
+    </>
   );
 };
 

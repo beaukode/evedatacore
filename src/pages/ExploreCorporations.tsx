@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { Box, TextField, TableCell } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
@@ -62,24 +63,29 @@ const ExploreCorporations: React.FC = () => {
     []
   );
   return (
-    <DataTableLayout
-      title="Corporations"
-      columns={columns}
-      data={corporations}
-      itemContent={itemContent}
-    >
-      <TextField
-        label="Search"
-        value={search.text}
-        onChange={(e) =>
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          )
-        }
-        fullWidth
-      />
-    </DataTableLayout>
+    <>
+      <Helmet>
+        <title>Corporations</title>
+      </Helmet>
+      <DataTableLayout
+        title="Corporations"
+        columns={columns}
+        data={corporations}
+        itemContent={itemContent}
+      >
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) =>
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            )
+          }
+          fullWidth
+        />
+      </DataTableLayout>
+    </>
   );
 };
 

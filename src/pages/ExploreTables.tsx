@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import {
   TextField,
   TableCell,
@@ -234,51 +235,56 @@ const ExploreTables: React.FC = () => {
   );
 
   return (
-    <DataTableLayout
-      title="Tables"
-      columns={columns}
-      data={tables}
-      itemContent={itemContent}
-    >
-      <TextField
-        label="Search"
-        value={search.text}
-        onChange={(e) => {
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          );
-        }}
-        fullWidth
-      />
-      {ownerSelect}
-      {namespaceSelect}
-      <Box
-        flexGrow="1"
-        flexShrink={0}
-        display="flex"
-        justifyContent="flex-end"
-        alignItems="flex-end"
-        ml={1}
+    <>
+      <Helmet>
+        <title>Tables</title>
+      </Helmet>
+      <DataTableLayout
+        title="Tables"
+        columns={columns}
+        data={tables}
+        itemContent={itemContent}
       >
-        <Tooltip
-          title={
-            <>
-              Copy schemas as DBML format.
-              <br />
-              <ExternalLink
-                href="https://dbml.dbdiagram.io/docs/"
-                title="DBML documentation"
-              />
-            </>
-          }
+        <TextField
+          label="Search"
+          value={search.text}
+          onChange={(e) => {
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            );
+          }}
+          fullWidth
+        />
+        {ownerSelect}
+        {namespaceSelect}
+        <Box
+          flexGrow="1"
+          flexShrink={0}
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="flex-end"
+          ml={1}
         >
-          <Button variant="outlined" size="small" onClick={copySchemas}>
-            Copy schemas
-          </Button>
-        </Tooltip>
-      </Box>
-    </DataTableLayout>
+          <Tooltip
+            title={
+              <>
+                Copy schemas as DBML format.
+                <br />
+                <ExternalLink
+                  href="https://dbml.dbdiagram.io/docs/"
+                  title="DBML documentation"
+                />
+              </>
+            }
+          >
+            <Button variant="outlined" size="small" onClick={copySchemas}>
+              Copy schemas
+            </Button>
+          </Tooltip>
+        </Box>
+      </DataTableLayout>
+    </>
   );
 };
 

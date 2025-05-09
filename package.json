@@ -12,7 +12,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts",
-    "api:shish": "openapi-ts -f src/api/shish/openapi-ts.config.ts",
     "api:mudsql": "openapi-ts -f shared/mudsql/openapi-ts.config.ts",
     "api:evedatacore": "openapi-ts -f src/api/evedatacore/openapi-ts.config.ts",
     "data:solarsystems": "jiti scripts/data-solarsystems.ts",
