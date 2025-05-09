@@ -1,5 +1,7 @@
 import { Hex, isHex } from "viem";
+import { difference } from "lodash-es";
 import { Gate } from "@shared/mudsql";
+import { GateConfig } from "./getGateConfig";
 
 export function getDappUrl(): string {
   const VITE_DAPP_GATES_URL = import.meta.env.VITE_DAPP_GATES_URL;
@@ -37,4 +39,59 @@ export function getNamespace(): string {
 
 export function isGateManaged(gate: Gate) {
   return gate.dappUrl === getDappUrl() && gate.systemId === getAccessSystemId();
+}
+
+export type ConfigDiff = {
+  defaultRule?: boolean;
+  addCharacters: bigint[];
+  removeCharacters: bigint[];
+  addCorporations: bigint[];
+  removeCorporations: bigint[];
+};
+
+export function configDiff(
+  storedConfig: GateConfig,
+  newConfig: GateConfig
+): ConfigDiff | undefined {
+  let defaultRule: boolean | undefined;
+  if (storedConfig.defaultRule !== newConfig.defaultRule) {
+    defaultRule = newConfig.defaultRule;
+  }
+
+  const addedCharacters = difference(
+    newConfig.charactersExceptions,
+    storedConfig.charactersExceptions
+  );
+  const removedCharacters = difference(
+    storedConfig.charactersExceptions,
+    newConfig.charactersExceptions
+  );
+
+  const addedCorporations = difference(
+    newConfig.corporationsExceptions,
+    storedConfig.corporationsExceptions
+  );
+
+  const removedCorporations = difference(
+    storedConfig.corporationsExceptions,
+    newConfig.corporationsExceptions
+  );
+
+  if (
+    defaultRule === undefined &&
+    addedCharacters.length === 0 &&
+    removedCharacters.length === 0 &&
+    addedCorporations.length === 0 &&
+    removedCorporations.length === 0
+  ) {
+    return undefined;
+  }
+
+  return {
+    defaultRule,
+    addCharacters: addedCharacters.map(BigInt),
+    removeCharacters: removedCharacters.map(BigInt),
+    addCorporations: addedCorporations.map(BigInt),
+    removeCorporations: removedCorporations.map(BigInt),
+  };
 }
