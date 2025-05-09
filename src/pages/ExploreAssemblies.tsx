@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import {
   Box,
   TextField,
@@ -114,77 +115,87 @@ const ExploreAssemblies: React.FC = () => {
   );
 
   return (
-    <DataTableLayout
-      title="Assemblies"
-      columns={columns}
-      data={smartassemblies}
-      itemContent={itemContent}
-    >
-      <TextField
-        sx={{ minWidth: 200 }}
-        fullWidth
-        label="Search"
-        value={search.text}
-        onChange={(e) =>
-          setSearch(
-            "text",
-            e.currentTarget.value.substring(0, 255).toLowerCase()
-          )
-        }
-      />
-      <FormControl variant="standard" sx={{ width: 220, flexShrink: 0, ml: 2 }}>
-        <InputLabel id="select-type-label">Type</InputLabel>
-        <Select
-          labelId="select-type-label"
-          id="select-type"
-          value={search.typeId}
-          variant="standard"
-          onChange={(e) => {
-            setSearch("typeId", e.target.value);
-          }}
-          label="Type"
-          fullWidth
-        >
-          <MenuItem value="0">All</MenuItem>
-          {Object.entries(smartAssembliesTypes).map(([id, name]) => (
-            <MenuItem value={`${id}`} key={id}>
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl
-        variant="standard"
-        sx={{ minWidth: 150, flexShrink: 0, ml: 2 }}
+    <>
+      <Helmet>
+        <title>Assemblies</title>
+      </Helmet>
+      <DataTableLayout
+        title="Assemblies"
+        columns={columns}
+        data={smartassemblies}
+        itemContent={itemContent}
       >
-        <InputLabel id="select-state-label">State</InputLabel>
-        <Select
-          labelId="select-state-label"
-          id="select-state"
-          value={selectedStates.map((v) => `${v}`)}
-          variant="standard"
-          renderValue={(selected) =>
-            selected
-              .map((v) => smartAssemblyStates[Number(v) as SmartAssemblyState])
-              .join(", ")
-          }
-          onChange={(e) => {
-            const value = ensureArray(e.target.value).sort();
-            setSearch("stateId", value.join("-"));
-          }}
-          label="State"
-          multiple
+        <TextField
+          sx={{ minWidth: 200 }}
           fullWidth
+          label="Search"
+          value={search.text}
+          onChange={(e) =>
+            setSearch(
+              "text",
+              e.currentTarget.value.substring(0, 255).toLowerCase()
+            )
+          }
+        />
+        <FormControl
+          variant="standard"
+          sx={{ width: 220, flexShrink: 0, ml: 2 }}
         >
-          {Object.entries(smartAssemblyStates).map(([id, name]) => (
-            <MenuItem value={`${id}`} key={id}>
-              <Checkbox checked={selectedStates.includes(id)} />
-              <ListItemText primary={name} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </DataTableLayout>
+          <InputLabel id="select-type-label">Type</InputLabel>
+          <Select
+            labelId="select-type-label"
+            id="select-type"
+            value={search.typeId}
+            variant="standard"
+            onChange={(e) => {
+              setSearch("typeId", e.target.value);
+            }}
+            label="Type"
+            fullWidth
+          >
+            <MenuItem value="0">All</MenuItem>
+            {Object.entries(smartAssembliesTypes).map(([id, name]) => (
+              <MenuItem value={`${id}`} key={id}>
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="standard"
+          sx={{ minWidth: 150, flexShrink: 0, ml: 2 }}
+        >
+          <InputLabel id="select-state-label">State</InputLabel>
+          <Select
+            labelId="select-state-label"
+            id="select-state"
+            value={selectedStates.map((v) => `${v}`)}
+            variant="standard"
+            renderValue={(selected) =>
+              selected
+                .map(
+                  (v) => smartAssemblyStates[Number(v) as SmartAssemblyState]
+                )
+                .join(", ")
+            }
+            onChange={(e) => {
+              const value = ensureArray(e.target.value).sort();
+              setSearch("stateId", value.join("-"));
+            }}
+            label="State"
+            multiple
+            fullWidth
+          >
+            {Object.entries(smartAssemblyStates).map(([id, name]) => (
+              <MenuItem value={`${id}`} key={id}>
+                <Checkbox checked={selectedStates.includes(id)} />
+                <ListItemText primary={name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </DataTableLayout>
+    </>
   );
 };
 

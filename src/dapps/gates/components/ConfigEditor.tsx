@@ -2,13 +2,17 @@ import React from "react";
 import {
   Autocomplete,
   Box,
+  Button,
   FilterOptionsState,
   FormControl,
+  FormControlLabel,
+  IconButton,
   InputLabel,
   List,
   MenuItem,
   Select,
   Skeleton,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -16,6 +20,9 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { keyBy } from "lodash-es";
 import {
@@ -26,58 +33,11 @@ import {
 import { Character, Gate } from "@shared/mudsql";
 import { Web3ErrorAlert } from "@/components/web3/Web3ErrorAlert";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
-import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import BasicListItem from "@/components/ui/BasicListItem";
 import { filterInProps, shorten } from "@/tools";
-import { getGateConfig } from "../lib/getGateConfig";
-import { getConfigSystemId } from "../lib/utils";
-import { setDefaultRule } from "../lib/setDefaultRule";
-import { addCharacterException } from "../lib/addCharacterException";
-import { removeCharacterException } from "../lib/removeCharacterException";
-import { addCorpException } from "../lib/addCorpException";
-import { removeCorpException } from "../lib/removeCorpException";
-
-type MutationCommandAction =
-  | "toggleDefaultRule"
-  | "addCharacter"
-  | "removeCharacter"
-  | "addCorporation"
-  | "removeCorporation";
-
-type BaseMutationCommand = {
-  action: MutationCommandAction;
-};
-
-type MutationCommandToggleDefaultRule = BaseMutationCommand & {
-  action: "toggleDefaultRule";
-};
-
-type MutationCommandAddCharacter = BaseMutationCommand & {
-  action: "addCharacter";
-  characterId: bigint;
-};
-
-type MutationCommandRemoveCharacter = BaseMutationCommand & {
-  action: "removeCharacter";
-  characterId: bigint;
-};
-
-type MutationCommandAddCorporation = BaseMutationCommand & {
-  action: "addCorporation";
-  corporationId: bigint;
-};
-
-type MutationCommandRemoveCorporation = BaseMutationCommand & {
-  action: "removeCorporation";
-  corporationId: bigint;
-};
-
-type MutationCommand =
-  | MutationCommandToggleDefaultRule
-  | MutationCommandAddCharacter
-  | MutationCommandRemoveCharacter
-  | MutationCommandAddCorporation
-  | MutationCommandRemoveCorporation;
+import { GateConfig, getGateConfig } from "../lib/getGateConfig";
+import { configDiff, getConfigSystemId } from "../lib/utils";
+import { updateConfig } from "../lib/updateConfig";
 
 const MAX_RESULTS = 500;
 function filterOptions(
@@ -112,6 +72,7 @@ interface ConfigEditorProps {
 const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
   const [character, setCharacter] = React.useState<Character | null>(null);
   const [corporation, setCorporation] = React.useState<number>(0);
+  const [config, setConfig] = React.useState<GateConfig>();
   const pushTrackingEvent = usePushTrackingEvent();
   const mudSql = useMudSql();
   const mudWeb3 = useMudWeb3();
@@ -121,7 +82,11 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
     queryFn: async () => getGateConfig(mudSql)(gate.id).then((r) => r ?? null),
   });
 
-  const config = queryGateConfig.data;
+  React.useEffect(() => {
+    if (queryGateConfig.data) {
+      setConfig(queryGateConfig.data);
+    }
+  }, [queryGateConfig.data]);
 
   const queryCharacters = useQuery({
     queryKey: ["Smartcharacters"],
@@ -146,49 +111,24 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
     return Object.keys(map).map(Number);
   }, [queryCharacters.data]);
 
-  const mutation = useMutation({
-    mutationFn: async (command: MutationCommand) => {
-      if (!config) return;
+  const diff = React.useMemo(() => {
+    if (!config || !queryGateConfig.data) return;
+    return configDiff(queryGateConfig.data, config);
+  }, [config, queryGateConfig.data]);
 
-      if (command.action === "toggleDefaultRule") {
-        return setDefaultRule(mudWeb3, {
-          gateId: BigInt(gate.id),
-          defaultRule: !config.defaultRule,
-          configSystemId,
-        });
-      }
-      if (command.action === "addCharacter") {
-        return addCharacterException(mudWeb3, {
-          gateId: BigInt(gate.id),
-          characterId: command.characterId,
-          configSystemId,
-        });
-      }
-      if (command.action === "addCorporation") {
-        return addCorpException(mudWeb3, {
-          gateId: BigInt(gate.id),
-          corpId: command.corporationId,
-          configSystemId,
-        });
-      }
-      if (command.action === "removeCharacter") {
-        return removeCharacterException(mudWeb3, {
-          gateId: BigInt(gate.id),
-          characterId: command.characterId,
-          configSystemId,
-        });
-      }
-      if (command.action === "removeCorporation") {
-        return removeCorpException(mudWeb3, {
-          gateId: BigInt(gate.id),
-          corpId: command.corporationId,
-          configSystemId,
-        });
-      }
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!diff) return;
+
+      return await updateConfig(mudWeb3, {
+        gateId: BigInt(gate.id),
+        configSystemId,
+        ...diff,
+      });
     },
-    onSuccess() {
+    onSuccess: async () => {
       pushTrackingEvent(`web3://dapp.gates/config`);
-      queryGateConfig.refetch();
+      await queryGateConfig.refetch();
     },
     retry: false,
   });
@@ -198,16 +138,23 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
   return (
     <>
       <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-        <BasicListItem title="Default rule">
-          {config.defaultRule ? "ALLOW" : "DENY"}
-          <ButtonWeb3Interaction
-            title={config.defaultRule ? "Switch to DENY" : "Switch to ALLOW"}
-            loading={mutation.isPending}
-            onClick={() => {
-              mutation.mutate({
-                action: "toggleDefaultRule",
-              });
-            }}
+        <BasicListItem title="Default access rule" disableGutters>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={config.defaultRule}
+                onChange={(e) => {
+                  setConfig((s) => {
+                    if (!s) return s;
+                    return {
+                      ...s,
+                      defaultRule: e.target.checked,
+                    };
+                  });
+                }}
+              />
+            }
+            label={config.defaultRule ? "Allow" : "Deny"}
           />
         </BasicListItem>
       </List>
@@ -232,36 +179,50 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
                   </>
                 )}
               </TableCell>
-              <TableCell>
-                <ButtonWeb3Interaction
+              <TableCell align="right">
+                <IconButton
+                  color="primary"
+                  disabled={mutation.isPending}
                   title="Remove"
-                  icon="delete"
-                  loading={mutation.isPending}
                   onClick={() => {
-                    mutation.mutate({
-                      action: "removeCharacter",
-                      characterId: BigInt(id),
+                    setConfig((s) => {
+                      if (!s) return s;
+                      return {
+                        ...s,
+                        charactersExceptions: s.charactersExceptions.filter(
+                          (c) => c !== id
+                        ),
+                      };
                     });
                   }}
-                />
+                >
+                  <DeleteIcon fontSize="small" style={{ marginRight: 0 }} />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
           {config.corporationsExceptions.map((id) => (
             <TableRow key={id}>
               <TableCell>Corporation #{id}</TableCell>
-              <TableCell>
-                <ButtonWeb3Interaction
+              <TableCell align="right">
+                <IconButton
+                  color="primary"
+                  disabled={mutation.isPending}
                   title="Remove"
-                  icon="delete"
-                  loading={mutation.isPending}
                   onClick={() => {
-                    mutation.mutate({
-                      action: "removeCorporation",
-                      corporationId: BigInt(id),
+                    setConfig((s) => {
+                      if (!s) return s;
+                      return {
+                        ...s,
+                        corporationsExceptions: s.corporationsExceptions.filter(
+                          (c) => c !== id
+                        ),
+                      };
                     });
                   }}
-                />
+                >
+                  <DeleteIcon fontSize="small" style={{ marginRight: 0 }} />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
@@ -298,18 +259,24 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
           openOnFocus
           fullWidth
         />
-        <ButtonWeb3Interaction
+        <IconButton
+          color="primary"
+          disabled={mutation.isPending}
           title="Add"
-          icon="add"
-          loading={mutation.isPending}
           onClick={() => {
             if (!character) return;
-            mutation.mutate({
-              action: "addCharacter",
-              characterId: BigInt(character.id),
+            setConfig((s) => {
+              if (!s) return s;
+              if (s.charactersExceptions.includes(character.id)) return s;
+              return {
+                ...s,
+                charactersExceptions: [...s.charactersExceptions, character.id],
+              };
             });
           }}
-        />
+        >
+          <AddIcon fontSize="small" style={{ marginRight: 0 }} />
+        </IconButton>
       </Box>
       <Box sx={{ m: 2, display: "flex", alignItems: "center" }}>
         <FormControl variant="standard" fullWidth>
@@ -329,21 +296,45 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
             ))}
           </Select>
         </FormControl>
-        <ButtonWeb3Interaction
+        <IconButton
+          color="primary"
+          disabled={mutation.isPending}
           title="Add"
-          icon="add"
-          loading={mutation.isPending}
           onClick={() => {
             if (!corporation) return;
-            mutation.mutate({
-              action: "addCorporation",
-              corporationId: BigInt(corporation),
+            setConfig((s) => {
+              if (!s) return s;
+              if (s.corporationsExceptions.includes(corporation.toString()))
+                return s;
+              return {
+                ...s,
+                corporationsExceptions: [
+                  ...s.corporationsExceptions,
+                  corporation.toString(),
+                ],
+              };
             });
           }}
-        />
+        >
+          <AddIcon fontSize="small" style={{ marginRight: 0 }} />
+        </IconButton>
       </Box>
-      <Web3ErrorAlert error={mutation.error} />
-      <Web3SuccessAlert receipt={mutation.data} />
+      <Box sx={{ display: "flex", mx: 2, justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          color="warning"
+          startIcon={<SaveIcon />}
+          onClick={() => {
+            mutation.mutate();
+          }}
+          loading={mutation.isPending}
+          disabled={!diff}
+        >
+          Save
+        </Button>
+      </Box>
+      <Web3ErrorAlert sx={{ mt: 2 }} error={mutation.error} />
+      <Web3SuccessAlert sx={{ mt: 2 }} receipt={mutation.data} />
     </>
   );
 };
