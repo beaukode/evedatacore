@@ -32,15 +32,15 @@ export const listCharacters =
     if (options?.addresses) {
       const addresses = ensureArray(options.addresses);
       if (addresses.length === 0) return []; // No addresses to query
-      where = `"account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
+      where = `"evefrontier__OwnershipByObjec"."account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
     } else if (options?.ids) {
       const ids = ensureArray(options.ids);
       if (ids.length === 0) return []; // No ids to query
-      where = `"smartObjectId" IN ('${ids.join("', '")}')`;
+      where = `"evefrontier__Characters"."smartObjectId" IN ('${ids.join("', '")}')`;
     } else if (options?.corporationsId) {
       const corporationsId = ensureArray(options.corporationsId);
       if (corporationsId.length === 0) return []; // No corporations ids to query
-      where = `"tribeId" IN ('${corporationsId.join("', '")}')`;
+      where = `"evefrontier__Characters"."tribeId" IN ('${corporationsId.join("', '")}')`;
     }
 
     const [characters, entities] = await client.selectFromBatch<
