@@ -22,10 +22,14 @@ export const getNetworkNode =
       return;
     }
 
+    const assemblies = await client.listAssemblies({
+      ids: node.connectedAssemblies,
+    });
+
     return {
       maxEnergy: node.maxEnergyCapacity,
       producedEnergy: node.energyProduced,
       reservedEnergy: node.totalReservedEnergy,
-      assemblies: [],
+      assemblies,
     };
   };
