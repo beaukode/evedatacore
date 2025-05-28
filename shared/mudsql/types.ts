@@ -175,7 +175,28 @@ export enum AssemblyType {
   Gate = 84955,
   Turret = 84556,
   Storage = 77917,
+  NetworkNode = 88092,
+  Hangar = 87160,
+  Manufacturer = 87162,
 }
+
+export const assemblyTypeMap = {
+  SSU: AssemblyType.Storage,
+  ST: AssemblyType.Turret,
+  SG: AssemblyType.Gate,
+  NWN: AssemblyType.NetworkNode,
+  smart_hangar: AssemblyType.Hangar,
+  manufacturer: AssemblyType.Manufacturer,
+} as const;
+
+export const assemblyTypeReverseMap = {
+  [AssemblyType.Storage]: "SSU",
+  [AssemblyType.Turret]: "ST",
+  [AssemblyType.Gate]: "SG",
+  [AssemblyType.NetworkNode]: "NWN",
+  [AssemblyType.Hangar]: "smart_hangar",
+  [AssemblyType.Manufacturer]: "manufacturer",
+} as const;
 
 export enum AssemblyState {
   Unanchored = 1,

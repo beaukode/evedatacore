@@ -2,19 +2,13 @@ import { keyBy } from "lodash-es";
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
-import { Assembly, AssemblyState, AssemblyType } from "../types";
-
-const assemblyTypeMap = {
-  SSU: AssemblyType.Storage,
-  ST: AssemblyType.Turret,
-  SG: AssemblyType.Gate,
-} as const;
-
-const assemblyTypeReverseMap = {
-  [AssemblyType.Storage]: "SSU",
-  [AssemblyType.Turret]: "ST",
-  [AssemblyType.Gate]: "SG",
-} as const;
+import {
+  Assembly,
+  AssemblyState,
+  AssemblyType,
+  assemblyTypeMap,
+  assemblyTypeReverseMap,
+} from "../types";
 
 type AssemblyDbRow = {
   smartObjectId: string;

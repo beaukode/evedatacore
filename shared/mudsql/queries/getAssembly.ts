@@ -1,12 +1,6 @@
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
-import { Assembly, AssemblyType } from "../types";
-
-const assemblyTypeMap = {
-  SSU: AssemblyType.Storage,
-  ST: AssemblyType.Turret,
-  SG: AssemblyType.Gate,
-} as const;
+import { Assembly, assemblyTypeMap } from "../types";
 
 type DbRow = {
   smartObjectId: string;
