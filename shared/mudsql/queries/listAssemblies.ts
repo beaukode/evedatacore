@@ -51,6 +51,7 @@ type ListAssembliesOptions = {
   solarSystemId?: string[] | string;
   types?: AssemblyType[] | AssemblyType;
   states?: AssemblyState[] | AssemblyState;
+  ids?: string[] | string;
 };
 
 function buildWhere(
@@ -120,6 +121,9 @@ export const listAssemblies =
         }
       );
       ids = types.map((t) => t.smartObjectId);
+    }
+    if (options?.ids) {
+      ids = ensureArray(options.ids);
     }
 
     let assembliesWhere = ids
