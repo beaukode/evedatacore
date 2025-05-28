@@ -108,7 +108,7 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
                       />
                       <ButtonAssembly id={gate.id} name={gate.name} />{" "}
                       <ButtonWeb3Interaction
-                        title="Unlink gates"
+                        title="Link this gate"
                         onClick={() => {
                           setLinkOpen(true);
                           setLinkDestinationId(gate.id);
