@@ -4,16 +4,12 @@ import { Box, Link, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
-import { fuel, shorten, tsToDateTime } from "@/tools";
+import { shorten, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
-import {
-  fuelFactor,
-  smartAssembliesTypes,
-  smartAssemblyStates,
-} from "@/constants";
+import { smartAssembliesTypes, smartAssemblyStates } from "@/constants";
 import Error404 from "./Error404";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
@@ -38,18 +34,7 @@ const ExploreAssembly: React.FC = () => {
     enabled: !!id,
   });
 
-  const queryFuel = useQuery({
-    queryKey: ["SmartassembliesFuel", id],
-    queryFn: async () => mudSql.getAssemblyFuel(id || ""),
-    enabled: !!id,
-  });
-
   const data = query.data;
-
-  const refetch = React.useCallback(() => {
-    query.refetch();
-    queryFuel.refetch();
-  }, [query, queryFuel]);
 
   const { name, type, state } = React.useMemo(() => {
     if (!data) return { name: "..." };
@@ -70,16 +55,6 @@ const ExploreAssembly: React.FC = () => {
     return <Error404 />;
   }
 
-  const fuelAmount = fuel(
-    queryFuel.data?.fuelAmount || "0",
-    queryFuel.data?.fuelUnitVolume || "0",
-    fuelFactor
-  );
-  const fuelMaxCapacity = fuel(
-    queryFuel.data?.fuelMaxCapacity || "0",
-    queryFuel.data?.fuelUnitVolume || "0"
-  );
-
   return (
     <Box p={2} flexGrow={1} overflow="auto">
       {data && (
@@ -95,7 +70,6 @@ const ExploreAssembly: React.FC = () => {
               title={`Edit ${name}`}
               onClose={() => {
                 setMetadataOpen(false);
-                refetch();
               }}
             />
           </ConditionalMount>
@@ -107,7 +81,6 @@ const ExploreAssembly: React.FC = () => {
               title={`Edit ${name}`}
               onClose={() => {
                 setOnOffOpen(false);
-                refetch();
               }}
             />
           </ConditionalMount>
@@ -210,10 +183,6 @@ const ExploreAssembly: React.FC = () => {
               ) : (
                 ""
               )}
-            </BasicListItem>
-            <BasicListItem title="Fuel">
-              {fuelAmount.toFixed(2)} / {fuelMaxCapacity} (
-              {((fuelAmount / fuelMaxCapacity) * 100).toFixed(2)}%)
             </BasicListItem>
           </List>
         )}
