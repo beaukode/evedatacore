@@ -1,5 +1,4 @@
 import { Hex } from "viem";
-import { omit } from "lodash-es";
 import { createCache } from "async-cache-dedupe";
 import { Table } from "@latticexyz/config";
 import { hexToResource } from "@latticexyz/common";
@@ -45,16 +44,6 @@ export const getTableSchema = (client: MudSqlClient) => {
         abiEncodedFieldNames,
       }),
     };
-
-    if (table.namespace === "eveworld" && table.name === "SmartGateConfigT") {
-      table.schema = omit(table.schema, ["maxDistance"]);
-    }
-    if (table.namespace === "eveworld" && table.name === "EphemeralInvTabl") {
-      table.schema = omit(table.schema, ["items"]);
-    }
-    if (table.namespace === "eveworld" && table.name === "InventoryTable") {
-      table.schema = omit(table.schema, ["items"]);
-    }
 
     return table;
   });
