@@ -171,6 +171,13 @@ export type Gate = Assembly & {
   systemId: Hex;
 };
 
+export type NetworkNode = {
+  maxEnergy: string;
+  producedEnergy: string;
+  reservedEnergy: string;
+  assemblies: Assembly[];
+};
+
 export enum AssemblyType {
   Gate = 84955,
   Turret = 84556,

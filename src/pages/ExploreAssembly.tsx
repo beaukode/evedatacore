@@ -5,12 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
 import { shorten, tsToDateTime } from "@/tools";
+import { AssemblyType } from "@shared/mudsql/types";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import { smartAssembliesTypes, smartAssemblyStates } from "@/constants";
-import Error404 from "./Error404";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
 import SmartGateConfig from "@/components/SmartGateConfig";
@@ -20,6 +20,8 @@ import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import DialogMetadataAssembly from "@/components/dialogs/DialogMetadataAssembly";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import SmartGateOther from "@/components/SmartGateOther";
+import NetworkNode from "@/components/NetworkNode";
+import Error404 from "./Error404";
 
 const ExploreAssembly: React.FC = () => {
   const { id } = useParams();
@@ -187,28 +189,31 @@ const ExploreAssembly: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
-      {data?.typeId === 84955 && (
+      {data?.typeId === AssemblyType.Gate && (
         <SmartGateConfig gateId={id} owner={data.ownerId} />
       )}
-      {data?.typeId === 84955 && (
+      {data?.typeId === AssemblyType.Gate && (
         <SmartGateLink
           sourceGateId={id}
           owner={data.ownerId}
           sourceGateState={data.state}
         />
       )}
-      {data?.typeId === 84955 && (
+      {data?.typeId === AssemblyType.Gate && (
         <SmartGateOther
           currentGateId={id}
           owner={data.ownerId}
           currentGateLocation={data.location}
         />
       )}
-      {data?.typeId === 84556 && (
+      {data?.typeId === AssemblyType.Turret && (
         <SmartTurretConfig turretId={id} owner={data.ownerId} />
       )}
-      {data?.typeId === 77917 && (
+      {data?.typeId === AssemblyType.Storage && (
         <SmartStorageInventory id={id} owner={data.ownerId} />
+      )}
+      {data?.typeId === AssemblyType.NetworkNode && (
+        <NetworkNode id={id} />
       )}
     </Box>
   );

@@ -7,6 +7,7 @@ export * from "./getGate";
 export * from "./getGateConfig";
 export * from "./getGateLink";
 export * from "./getNamespace";
+export * from "./getNetworkNode";
 export * from "./getStorageInventory";
 export * from "./getStorageInventoryCapacity";
 export * from "./getSystem";
