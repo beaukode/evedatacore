@@ -23,7 +23,7 @@ export const getNetworkNode =
     }
 
     const assemblies = await client.listAssemblies({
-      ids: node.connectedAssemblies,
+      ids: [id, ...node.connectedAssemblies],
     });
 
     return {
