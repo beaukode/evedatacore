@@ -41,6 +41,7 @@ export type Assembly = {
   name?: string;
   dappUrl?: string;
   description?: string;
+  networkNodeId?: string;
 };
 
 export type AssemblyFuel = {

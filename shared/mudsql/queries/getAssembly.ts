@@ -33,60 +33,82 @@ type EntityDbRow = {
   description: string;
 };
 
+type NetworkNodeDbRow = {
+  assemblyId: string;
+  networkNodeId: string;
+};
+
 export const getAssembly =
   (client: MudSqlClient) =>
   async (id: string): Promise<Assembly | undefined> => {
-    const [assemblies, entities] = await Promise.all([
-      client.selectFrom<DbRow>("evefrontier", "DeployableState", {
-        where: `"evefrontier__DeployableState"."smartObjectId" = '${id}'`,
-        orderBy: "createdAt",
-        orderDirection: "DESC",
-        rels: {
-          type: {
-            ns: "evefrontier",
-            table: "SmartAssembly",
-            field: "smartObjectId",
-            fkNs: "evefrontier",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
-          },
-          owner: {
-            ns: "evefrontier",
-            table: "OwnershipByObjec",
-            field: "smartObjectId",
-            fkNs: "evefrontier",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
-          },
-          character: {
-            ns: "evefrontier",
-            table: "CharactersByAcco",
-            field: "account",
-            fkNs: "evefrontier",
-            fkTable: "OwnershipByObjec",
-            fkField: "account",
-          },
-          ownerEntity: {
-            ns: "evefrontier",
-            table: "EntityRecordMeta",
-            field: "smartObjectId",
-            fkNs: "evefrontier",
-            fkTable: "CharactersByAcco",
-            fkField: "smartObjectId",
-          },
-          location: {
-            ns: "evefrontier",
-            table: "Location",
-            field: "smartObjectId",
-            fkNs: "evefrontier",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
+    const [assemblies, entities, networkNodes] = await client.selectFromBatch<
+      [DbRow, EntityDbRow, NetworkNodeDbRow]
+    >([
+      {
+        ns: "evefrontier",
+        table: "DeployableState",
+        options: {
+          where: `"evefrontier__DeployableState"."smartObjectId" = '${id}'`,
+          orderBy: "createdAt",
+          orderDirection: "DESC",
+          rels: {
+            type: {
+              ns: "evefrontier",
+              table: "SmartAssembly",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "DeployableState",
+              fkField: "smartObjectId",
+            },
+            owner: {
+              ns: "evefrontier",
+              table: "OwnershipByObjec",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "DeployableState",
+              fkField: "smartObjectId",
+            },
+            character: {
+              ns: "evefrontier",
+              table: "CharactersByAcco",
+              field: "account",
+              fkNs: "evefrontier",
+              fkTable: "OwnershipByObjec",
+              fkField: "account",
+            },
+            ownerEntity: {
+              ns: "evefrontier",
+              table: "EntityRecordMeta",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "CharactersByAcco",
+              fkField: "smartObjectId",
+            },
+            location: {
+              ns: "evefrontier",
+              table: "Location",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "DeployableState",
+              fkField: "smartObjectId",
+            },
           },
         },
-      }),
-      client.selectFrom<EntityDbRow>("evefrontier", "EntityRecordMeta", {
-        where: `"smartObjectId" = '${id}'`,
-      }),
+      },
+      {
+        ns: "evefrontier",
+        table: "EntityRecordMeta",
+        options: {
+          where: `"smartObjectId" = '${id}'`,
+        },
+      },
+      {
+        ns: "evefrontier",
+        table: "NetworkNodeByAss",
+        options: {
+          where: `"assemblyId" = '${id}'`,
+        },
+      },
     ]);
     const assembly = assemblies[0];
     if (!assembly) return undefined;
@@ -116,5 +138,6 @@ export const getAssembly =
       name: entity?.name,
       dappUrl: entity?.dappURL,
       description: entity?.description,
+      networkNodeId: networkNodes[0]?.networkNodeId,
     };
   };
