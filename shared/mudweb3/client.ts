@@ -4,12 +4,13 @@ import { mudWeb3ReadActions, mudWeb3WriteActions } from "./actions";
 export function createMudWeb3Client(
   config: MudWeb3ClientConfig
 ): MudWeb3Client {
-  const { publicClient, walletClient, mudAddresses } = config;
+  const { publicClient, walletClient, mudAddresses, debugCalls } = config;
 
   const extendedClient = publicClient
     .extend(() => ({
       mudAddresses,
       writeClient: walletClient,
+      debugCalls,
     }))
     .extend(mudWeb3ReadActions)
     .extend(mudWeb3WriteActions);
@@ -20,11 +21,12 @@ export function createMudWeb3Client(
 export function createMudWeb3PublicClient(
   config: MudWeb3ClientConfig
 ): MudWeb3ClientRead {
-  const { publicClient, mudAddresses } = config;
+  const { publicClient, mudAddresses, debugCalls } = config;
 
   const extendedClient = publicClient
     .extend(() => ({
       mudAddresses,
+      debugCalls,
     }))
     .extend(mudWeb3ReadActions);
 

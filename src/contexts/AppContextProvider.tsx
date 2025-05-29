@@ -46,6 +46,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
       mudAddresses: {
         world: worldAddress,
       },
+      debugCalls: import.meta.env.VITE_WEB3_DEBUG === "true",
     });
   }, [publicClient, walletClient]);
 

@@ -57,6 +57,9 @@ export async function worldRead<
   args: WorldReadParameters<abi, functionName, args>
 ): Promise<WorldReadReturnType<abi, functionName, args>> {
   try {
+    if (client.debugCalls) {
+      console.log("worldRead", args.functionName, args.args);
+    }
     const params = {
       account: client.writeClient?.account,
       address: client.mudAddresses.world,

@@ -18,6 +18,9 @@ export async function systemWriteBatch(
   args: SystemWriteBatchParameters
 ): Promise<SystemWriteBatchReturnType> {
   try {
+    if (client.debugCalls) {
+      console.log("systemWriteBatch", args.calls);
+    }
     await client.systemSimulateBatch(args);
 
     const tx = await client.writeClient.writeContract({
