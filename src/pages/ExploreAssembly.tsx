@@ -212,8 +212,9 @@ const ExploreAssembly: React.FC = () => {
       {data?.typeId === AssemblyType.Storage && (
         <SmartStorageInventory id={id} owner={data.ownerId} />
       )}
-      {data?.typeId === AssemblyType.NetworkNode && (
-        <NetworkNode id={id} />
+      {data?.typeId === AssemblyType.NetworkNode && <NetworkNode id={id} />}
+      {data?.typeId !== AssemblyType.NetworkNode && data?.networkNodeId && (
+        <NetworkNode id={data.networkNodeId} />
       )}
     </Box>
   );
