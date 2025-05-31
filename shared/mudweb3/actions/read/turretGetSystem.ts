@@ -14,7 +14,7 @@ export async function turretGetSystem(
   args: TurretGetSystemParameters
 ): Promise<TurretGetSystemReturnType> {
   const r = await storeGetRecord(client, {
-    table: eveworld.tables.eveworld__SmartTurretConfigTable,
+    table: eveworld.tables.evefrontier__SmartTurretConfig,
     key: { smartObjectId: args.turretId },
   });
 

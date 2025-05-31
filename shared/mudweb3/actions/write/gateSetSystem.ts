@@ -16,8 +16,8 @@ export async function gateSetSystem(
 ): Promise<GateSetSystemReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
-    functionName: "configureSmartGate",
+      eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
+    functionName: "configureGate",
     args: [args.gateId, args.systemId],
   });
 }

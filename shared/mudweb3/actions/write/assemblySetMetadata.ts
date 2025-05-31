@@ -18,8 +18,11 @@ export async function assemblySetMetadata(
 ): Promise<AssemblySetMetadataReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.EntityRecordSystem.systemId,
-    functionName: "setEntityMetadata",
-    args: [args.assemblyId, args.name, args.dappURL, args.description],
+      eveworld.namespaces.evefrontier.systems.EntityRecordSystem.systemId,
+    functionName: "createMetadata",
+    args: [
+      args.assemblyId,
+      { name: args.name, dappURL: args.dappURL, description: args.description },
+    ],
   });
 }

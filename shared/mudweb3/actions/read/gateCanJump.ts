@@ -35,7 +35,7 @@ export async function gateCanJump(
 
   const r = await systemSimulate(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
+      eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
     functionName: "canJump",
     args: [characterId, BigInt(sourceGateId), BigInt(destinationGateId)],
   });

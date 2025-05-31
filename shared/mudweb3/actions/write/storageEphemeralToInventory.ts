@@ -16,13 +16,13 @@ export async function storageEphemeralToInventory(
 ): Promise<StorageEphemeralToInventoryReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.InventoryInteractSystem.systemId,
-    functionName: "ephemeralToInventoryTransfer",
+      eveworld.namespaces.evefrontier.systems.EphemeralInteractSystem.systemId,
+    functionName: "transferFromEphemeral",
     args: [
       args.storageId,
+      client.writeClient.account.address,
       args.transferts.map(({ inventoryItemId, quantity }) => ({
-        inventoryItemId,
-        owner: client.writeClient.account.address,
+        smartObjectId: inventoryItemId,
         quantity,
       })),
     ],

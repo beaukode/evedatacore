@@ -58,13 +58,21 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
           return mudWeb3
             .assemblyGetMetadata({ assemblyId: id })
             .then((metadata) => {
-              setSmartCharacter({
-                isConnected: true,
-                isConnecting: false,
-                address,
-                characterId: id,
-                characterName: metadata.name,
-              });
+              if (metadata) {
+                setSmartCharacter({
+                  isConnected: true,
+                  isConnecting: false,
+                  address,
+                  characterId: id,
+                  characterName: metadata.name,
+                });
+              } else {
+                setSmartCharacter({
+                  isConnected: true,
+                  isConnecting: false,
+                  address,
+                });
+              }
             });
         } else {
           setSmartCharacter({
