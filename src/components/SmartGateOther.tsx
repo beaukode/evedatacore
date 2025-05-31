@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
+import { lyDistance, Location, tsToDateTime, metersToLy } from "@/tools";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import ButtonSolarsystem from "./buttons/ButtonSolarsystem";
 import PaperLevel1 from "./ui/PaperLevel1";
-import { lyDistance, Location, tsToDateTime } from "@/tools";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import DialogGateLink from "./dialogs/DialogGateLink";
 import ConditionalMount from "./ui/ConditionalMount";
@@ -36,8 +36,8 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
   const mudSql = useMudSql();
 
   const query = useQuery({
-    queryKey: ["AssembliesByOwner", owner],
-    queryFn: async () => mudSql.listAssemblies({ owners: owner }),
+    queryKey: ["Gates", owner],
+    queryFn: async () => mudSql.listGates({ owners: owner }),
     staleTime: 1000 * 60,
     retry: false,
   });
@@ -56,7 +56,9 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
           currentGateLocation && gate.location
             ? lyDistance(currentGateLocation, gate.location)
             : undefined;
-        const distance = ly ? { ly, inRange: ly < 500 } : undefined;
+        const distance = ly
+          ? { ly, inRange: ly < metersToLy(gate.maxDistance) }
+          : undefined;
         return {
           ...gate,
           distance,
