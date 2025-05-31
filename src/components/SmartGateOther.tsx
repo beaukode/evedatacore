@@ -42,6 +42,11 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
     retry: false,
   });
 
+  const currentGate = React.useMemo(() => {
+    if (!query.data) return undefined;
+    return query.data.find((a) => a.id === currentGateId);
+  }, [query.data, currentGateId]);
+
   const gates = React.useMemo(() => {
     if (!query.data) return undefined;
     return query.data
@@ -57,14 +62,17 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
             ? lyDistance(currentGateLocation, gate.location)
             : undefined;
         const distance = ly
-          ? { ly, inRange: ly < metersToLy(gate.maxDistance) }
+          ? {
+              ly,
+              inRange: ly < metersToLy(currentGate?.maxDistance || "0"),
+            }
           : undefined;
         return {
           ...gate,
           distance,
         };
       });
-  }, [query.data, currentGateId, currentGateLocation]);
+  }, [query.data, currentGateId, currentGateLocation, currentGate]);
 
   return (
     <PaperLevel1 title="User’s Other Gates" loading={query.isFetching}>
@@ -85,6 +93,12 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
       </ConditionalMount>
       {gates?.length === 0 && !query.isFetching && (
         <Typography variant="body1">None</Typography>
+      )}
+      {currentGate && (
+        <Typography variant="body1" sx={{ mb: 2 }}>
+          Current gate max distance:{" "}
+          {metersToLy(currentGate.maxDistance).toFixed(0)}Ly
+        </Typography>
       )}
       {gates && (
         <Table size="small" stickyHeader>
