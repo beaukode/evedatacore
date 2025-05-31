@@ -1,3 +1,3 @@
 export const indexerBaseUrl = "https://indexer.mud.pyropechain.com";
-export const worldAddress = "0xa63074391ed2a6f5738b1a4ff1c9aa731835ee6a";
+export const worldAddress = "0x5296ef4905a263e9264d480514d1a0849c34bebb";
 export const chainId = 695569;
