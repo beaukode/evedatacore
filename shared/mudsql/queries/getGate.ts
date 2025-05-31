@@ -6,6 +6,7 @@ import { getAssembly } from "./getAssembly";
 type ConfigDbRow = {
   smartObjectId: string;
   systemId: Hex;
+  maxDistance: string;
 };
 
 type LinkDbRow = {
@@ -24,15 +25,15 @@ export const getGate =
       [ConfigDbRow, LinkDbRow]
     >([
       {
-        ns: "eveworld",
-        table: "SmartGateConfigT",
+        ns: "evefrontier",
+        table: "SmartGateConfig",
         options: {
           where: `"smartObjectId" = '${id}'`,
         },
       },
       {
-        ns: "eveworld",
-        table: "SmartGateLinkTab",
+        ns: "evefrontier",
+        table: "SmartGateLink",
         options: {
           where: `"isLinked" = true AND "sourceGateId" = '${id}'`,
         },
@@ -49,5 +50,6 @@ export const getGate =
       systemId:
         config?.systemId ||
         "0x0000000000000000000000000000000000000000000000000000000000000000",
+      maxDistance: config?.maxDistance || "0",
     };
   };

@@ -170,6 +170,7 @@ export type Gate = Assembly & {
   isLinked: boolean;
   destinationId?: string;
   systemId: Hex;
+  maxDistance: string;
 };
 
 export type NetworkNode = {
