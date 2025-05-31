@@ -3,23 +3,80 @@ import { MudSqlClient } from "../client";
 import { groupBy, keyBy } from "lodash-es";
 import { UsersInventory } from "../types";
 
-type DbRow = {
+type CapacityDbRow = {
   smartObjectId: string;
-  itemObjectId: string;
   ephemeralOwner: Hex;
+  capacity: string;
+  usedCapacity: string;
+  character__account: string;
+  character__smartObjectId: string;
+  entity__entityId: string;
+  entity__name: string;
+};
+
+type ItemDbRow = {
+  smartObjectId: string;
+  ephemeralOwner: Hex;
+  itemObjectId: string;
   quantity: string;
   index: string;
+  entity__smartObjectId: string;
+  entity__exists: boolean;
+  entity__tenantId: string;
+  entity__typeId: string;
+  entity__itemId: string;
+  entity__volume: string;
 };
 
 export const listStorageUsersInventory =
   (client: MudSqlClient) =>
   async (ssuId: string): Promise<UsersInventory[]> => {
-    const [capacities, items] = await Promise.all([
-      client.listStorageUsersInventoryCapacity(ssuId),
-      client.selectFrom<DbRow>("evefrontier", "EphemeralInvItem", {
-        where: `"evefrontier__EphemeralInvItem"."smartObjectId" = '${ssuId}' AND "evefrontier__EphemeralInvItem"."exists" = true`,
-        orderBy: ["ephemeralOwner", "index"],
-      }),
+    const [capacities, items] = await client.selectFromBatch<
+      [CapacityDbRow, ItemDbRow]
+    >([
+      {
+        ns: "evefrontier",
+        table: "EphemeralInvento",
+        options: {
+          where: `"evefrontier__EphemeralInvento"."smartObjectId" = '${ssuId}'`,
+          rels: {
+            character: {
+              ns: "evefrontier",
+              table: "CharactersByAcco",
+              field: "account",
+              fkNs: "evefrontier",
+              fkTable: "EphemeralInvento",
+              fkField: "ephemeralOwner",
+            },
+            entity: {
+              ns: "evefrontier",
+              table: "EntityRecordMeta",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "CharactersByAcco",
+              fkField: "smartObjectId",
+            },
+          },
+        },
+      },
+      {
+        ns: "evefrontier",
+        table: "EphemeralInvItem",
+        options: {
+          where: `"evefrontier__EphemeralInvItem"."smartObjectId" = '${ssuId}' AND "evefrontier__EphemeralInvItem"."exists" = true`,
+          orderBy: ["ephemeralOwner", "index"],
+          rels: {
+            entity: {
+              ns: "evefrontier",
+              table: "EntityRecord",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "EphemeralInvItem",
+              fkField: "itemObjectId",
+            },
+          },
+        },
+      },
     ]);
 
     const capacitiesByOwner = keyBy(capacities, "ownerId");
@@ -29,12 +86,13 @@ export const listStorageUsersInventory =
       const capacity = capacitiesByOwner[owner];
       return {
         ownerId: owner as Hex,
-        ownerName: capacity?.ownerName,
-        used: capacity?.used || "0",
-        total: capacity?.total || "0",
+        ownerName: capacity?.entity__name,
+        used: capacity?.usedCapacity || "0",
+        total: capacity?.capacity || "0",
         items: items.map((i) => ({
           itemId: i.itemObjectId,
           quantity: i.quantity,
+          typeId: i.entity__typeId,
         })),
       };
     });

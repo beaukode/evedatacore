@@ -115,6 +115,7 @@ export type Table = MudTable & {
 export type InventoryItem = {
   itemId: string;
   quantity: string;
+  typeId: string;
 };
 
 export type Inventory = {
