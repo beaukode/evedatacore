@@ -29,7 +29,7 @@ export async function storeGetRecord<table extends Table>(
     args: [
       args.table.tableId,
       getKeyTuple(args.table, args.key) as readonly Hex[],
-    ] as const,
+    ] as [Hex, readonly Hex[]],
   });
 
   if (

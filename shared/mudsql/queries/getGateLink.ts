@@ -10,8 +10,8 @@ export const getGateLink =
   (client: MudSqlClient) =>
   async (id: string): Promise<TargetGate | undefined> => {
     const links = await client.selectFrom<DbRow>(
-      "eveworld",
-      "SmartGateLinkTab",
+      "evefrontier",
+      "SmartGateLink",
       {
         where: `"sourceGateId" = '${id}'`,
       }

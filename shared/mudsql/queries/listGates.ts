@@ -14,6 +14,7 @@ type ListGatesOptions = {
 type ConfigDbRow = {
   smartObjectId: string;
   systemId: Hex;
+  maxDistance: string;
 };
 
 type LinkDbRow = {
@@ -33,15 +34,15 @@ export const listGates =
       [ConfigDbRow, LinkDbRow]
     >([
       {
-        ns: "eveworld",
-        table: "SmartGateConfigT",
+        ns: "evefrontier",
+        table: "SmartGateConfig",
         options: {
           where: `"smartObjectId" IN ('${ids.join("', '")}')`,
         },
       },
       {
-        ns: "eveworld",
-        table: "SmartGateLinkTab",
+        ns: "evefrontier",
+        table: "SmartGateLink",
         options: {
           where: `"isLinked" = true AND "sourceGateId" IN ('${ids.join("', '")}')`,
         },
@@ -58,5 +59,6 @@ export const listGates =
       systemId:
         configById[assembly.id]?.systemId ||
         "0x0000000000000000000000000000000000000000000000000000000000000000",
+      maxDistance: configById[assembly.id]?.maxDistance || "0",
     }));
   };

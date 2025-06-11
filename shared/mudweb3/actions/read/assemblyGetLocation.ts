@@ -7,7 +7,7 @@ export type AssemblyGetLocationParameters = {
   assemblyId: bigint;
 };
 
-type TableSchema = typeof eveworld.tables.eveworld__LocationTable.schema;
+type TableSchema = typeof eveworld.tables.evefrontier__Location.schema;
 
 export type AssemblyGetLocationReturnType = getSchemaPrimitives<TableSchema>;
 
@@ -16,7 +16,7 @@ export async function assemblyGetLocation(
   args: AssemblyGetLocationParameters
 ): Promise<AssemblyGetLocationReturnType> {
   const r = await storeGetRecord(client, {
-    table: eveworld.tables.eveworld__LocationTable,
+    table: eveworld.tables.evefrontier__Location,
     key: { smartObjectId: args.assemblyId },
   });
 

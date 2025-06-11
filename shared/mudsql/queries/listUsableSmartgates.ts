@@ -15,9 +15,15 @@ type AssemblyDbRow = {
 };
 
 type EntityRecordDbRow = {
-  entityId: string;
+  smartObjectId: string;
   itemId: string;
   typeId: string;
+};
+
+type LinkDbRow = {
+  sourceGateId: string;
+  destinationGateId: string;
+  isLinked: boolean;
 };
 
 type LocationDbRow = {
@@ -28,8 +34,13 @@ type LocationDbRow = {
   z: string;
 };
 
+type OwnershipDbRow = {
+  smartObjectId: string;
+  account: string;
+};
+
 type EntityDbRow = {
-  entityId: string;
+  smartObjectId: string;
   name: string;
   dappURL: string;
   description: string;
@@ -38,41 +49,32 @@ type EntityDbRow = {
 type ConfigDbRow = {
   smartObjectId: string;
   systemId: string;
-};
-
-type LinkDbRow = {
-  sourceGateId: string;
-  destinationGateId: string;
-  isLinked: boolean;
-};
-
-type Owner = {
-  tokenId: string;
-  owner: string;
+  maxDistance: string;
 };
 
 export const listUsableSmartgates =
-  (client: MudSqlClient) => async (): Promise<Record<string, UsableSmartgate>> => {
+  (client: MudSqlClient) =>
+  async (): Promise<Record<string, UsableSmartgate>> => {
     const [assemblies, items, links] = await client.selectFromBatch<
       [AssemblyDbRow, EntityRecordDbRow, LinkDbRow]
     >([
       {
-        ns: "eveworld",
+        ns: "evefrontier",
         table: "DeployableState",
         options: {
           where: `"currentState" = 3`,
         },
       },
       {
-        ns: "eveworld",
-        table: "EntityRecordTabl",
+        ns: "evefrontier",
+        table: "EntityRecord",
         options: {
           where: `"typeId" = 84955`,
         },
       },
       {
-        ns: "eveworld",
-        table: "SmartGateLinkTab",
+        ns: "evefrontier",
+        table: "SmartGateLink",
         options: {
           where: `"isLinked" = true`,
         },
@@ -82,48 +84,50 @@ export const listUsableSmartgates =
     const linksById = keyBy(links, "sourceGateId");
     const smartObjectIds = intersection(
       assemblies.map((a) => (linksById[a.smartObjectId] ? a.smartObjectId : 0)), // Filter out non linked gates (0 will never be in the types array)
-      items.map((t) => t.entityId)
+      items.map((t) => t.smartObjectId)
     );
 
+    if (smartObjectIds.length === 0) return {};
+
     const [locations, owners, entities, config] = await client.selectFromBatch<
-      [LocationDbRow, Owner, EntityDbRow, ConfigDbRow]
+      [LocationDbRow, OwnershipDbRow, EntityDbRow, ConfigDbRow]
     >([
       {
-        ns: "eveworld",
-        table: "LocationTable",
+        ns: "evefrontier",
+        table: "Location",
         options: {
           where: `"smartObjectId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
         },
       },
       {
-        ns: "erc721deploybl",
-        table: "Owners",
+        ns: "evefrontier",
+        table: "OwnershipByObjec",
         options: {
-          where: `"tokenId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
+          where: `"smartObjectId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
         },
       },
       {
-        ns: "eveworld",
-        table: "EntityRecordOffc",
+        ns: "evefrontier",
+        table: "EntityRecordMeta",
         options: {
-          where: `"entityId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
+          where: `"smartObjectId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
         },
       },
       {
-        ns: "eveworld",
-        table: "SmartGateConfigT",
+        ns: "evefrontier",
+        table: "SmartGateConfig",
         options: {
           where: `"smartObjectId" IN ('${ensureArray(smartObjectIds).join("', '")}')`,
         },
       },
     ]);
 
-    const ownersById = keyBy(owners, "tokenId");
-    const entitiesById = keyBy(entities, "entityId");
+    const ownersById = keyBy(owners, "smartObjectId");
+    const entitiesById = keyBy(entities, "smartObjectId");
     const configById = keyBy(config, "smartObjectId");
-    const itemsById = keyBy(items, "entityId");
+    const itemsById = keyBy(items, "smartObjectId");
 
-    const ownersAddresses = [...new Set(owners.map((o) => o.owner))];
+    const ownersAddresses = [...new Set(owners.map((o) => o.account))];
     const characters = await client.listCharacters({
       addresses: ownersAddresses,
     });
@@ -131,7 +135,7 @@ export const listUsableSmartgates =
 
     const smartgates: Record<string, UsableSmartgate> = locations.reduce(
       (acc, { smartObjectId, solarSystemId, ...location }) => {
-        const ownerAddress = ownersById[smartObjectId]?.owner || "0x0";
+        const ownerAddress = ownersById[smartObjectId]?.account || "0x0";
         acc[smartObjectId] = {
           id: smartObjectId,
           solarSystemId,

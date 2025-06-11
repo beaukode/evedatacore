@@ -28,7 +28,6 @@ interface BaseWeb3DialogProps {
   actions?: React.ReactNode;
   headerActions?: React.ReactNode;
   size?: Breakpoint;
-  disabledOwnerCheck?: boolean;
   onClose: () => void;
 }
 
@@ -42,12 +41,14 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
   actions,
   headerActions,
   size,
-  disabledOwnerCheck,
   onClose,
 }) => {
   const showConnectDialog = useShowConnectDialog();
   const { switchChain } = useSwitchChain();
   const account = useAccount();
+
+  const disabledOwnerCheck =
+    import.meta.env.VITE_WEB3_DISABLE_OWNER_CHECK === "true";
 
   const state = React.useMemo(() => {
     if (!account.isConnected) return "connect";

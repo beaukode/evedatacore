@@ -16,6 +16,9 @@ export async function worldSimulate<abi extends Abi = WorldAbi>(
   args: WorldSimulateParameters<abi>
 ): Promise<WorldSimulateReturnType> {
   try {
+    if (client.debugCalls) {
+      console.log("worldSimulate", args.functionName, args.args);
+    }
     const { result } = await client.simulateContract({
       account: client.writeClient?.account,
       address: client.mudAddresses.world,

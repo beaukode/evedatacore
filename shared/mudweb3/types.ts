@@ -10,9 +10,11 @@ export type MudWeb3ClientConfig = {
   publicClient: PublicClient;
   walletClient?: WalletClient;
   mudAddresses: MudWeb3ClientAddresses;
+  debugCalls?: boolean;
 };
 
 export type MudWeb3ClientBase = PublicClient & {
+  debugCalls?: boolean;
   mudAddresses: MudWeb3ClientAddresses;
   writeClient?: WalletClient;
 };

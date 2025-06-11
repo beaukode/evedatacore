@@ -15,7 +15,7 @@ export async function assemblyBringOnline(
 ): Promise<AssemblyBringOnlineReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartDeployableSystem.systemId,
+      eveworld.namespaces.evefrontier.systems.DeployableSystem.systemId,
     functionName: "bringOnline",
     args: [args.assemblyId],
   });

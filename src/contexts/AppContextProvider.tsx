@@ -21,7 +21,12 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     isConnecting: true,
   });
   const mudSql = React.useMemo(
-    () => createMudSqlClient({ indexerBaseUrl, worldAddress }),
+    () =>
+      createMudSqlClient({
+        indexerBaseUrl,
+        worldAddress,
+        debugSql: import.meta.env.VITE_DEBUG_SQL === "true",
+      }),
     []
   );
   const { pushEvent } = useEventsTracking();
@@ -41,6 +46,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
       mudAddresses: {
         world: worldAddress,
       },
+      debugCalls: import.meta.env.VITE_WEB3_DEBUG === "true",
     });
   }, [publicClient, walletClient]);
 
@@ -52,13 +58,21 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
           return mudWeb3
             .assemblyGetMetadata({ assemblyId: id })
             .then((metadata) => {
-              setSmartCharacter({
-                isConnected: true,
-                isConnecting: false,
-                address,
-                characterId: id,
-                characterName: metadata.name,
-              });
+              if (metadata) {
+                setSmartCharacter({
+                  isConnected: true,
+                  isConnecting: false,
+                  address,
+                  characterId: id,
+                  characterName: metadata.name,
+                });
+              } else {
+                setSmartCharacter({
+                  isConnected: true,
+                  isConnecting: false,
+                  address,
+                });
+              }
             });
         } else {
           setSmartCharacter({

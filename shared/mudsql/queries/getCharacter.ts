@@ -4,9 +4,9 @@ import { toSqlHex } from "../utils";
 import { Character } from "../types";
 
 type DbRow = {
-  characterId: string;
+  smartObjectId: string;
   characterAddress: Hex;
-  corpId: string;
+  tribeId: string;
   createdAt: string;
   entity__entityId: string;
   entity__name: string;
@@ -19,18 +19,26 @@ export const getCharacter =
   async (address: string): Promise<Character | undefined> => {
     if (address.length !== 42 || !isHex(address)) return undefined;
     const result = await client.selectFrom<DbRow>(
-      "eveworld",
-      "CharactersTable",
+      "evefrontier",
+      "Characters",
       {
-        where: `"characterAddress" = '${toSqlHex(address)}'`,
+        where: `"account" = '${toSqlHex(address)}'`,
         rels: {
+          owner: {
+            ns: "evefrontier",
+            table: "OwnershipByObjec",
+            field: "smartObjectId",
+            fkNs: "evefrontier",
+            fkTable: "Characters",
+            fkField: "smartObjectId",
+          },
           entity: {
-            ns: "eveworld",
-            table: "EntityRecordOffc",
-            field: "entityId",
-            fkNs: "eveworld",
-            fkTable: "CharactersTable",
-            fkField: "characterId",
+            ns: "evefrontier",
+            table: "EntityRecordMeta",
+            field: "smartObjectId",
+            fkNs: "evefrontier",
+            fkTable: "Characters",
+            fkField: "smartObjectId",
           },
         },
       }
@@ -40,10 +48,10 @@ export const getCharacter =
     if (!c) return undefined;
 
     return {
-      address: c.characterAddress,
-      id: c.characterId,
+      address,
+      id: c.smartObjectId,
       name: c.entity__name,
-      corpId: Number.parseInt(c.corpId, 10),
+      corpId: Number.parseInt(c.tribeId, 10),
       createdAt: Number.parseInt(c.createdAt, 10) * 1000,
     };
   };

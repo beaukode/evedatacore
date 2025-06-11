@@ -11,6 +11,12 @@ export const selectRawBatch =
       body: sql.map((q) => ({ address: config.worldAddress, query: q })),
       client: restClient,
     });
+    if (config.debugSql) {
+      console.log("SQL Batch:", {
+        query: sql,
+        response: { ...r },
+      });
+    }
     if (r.error) {
       throw new Error(r.error.msg);
     }

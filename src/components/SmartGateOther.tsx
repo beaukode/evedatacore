@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMudSql } from "@/contexts/AppContext";
+import { lyDistance, Location, tsToDateTime, metersToLy } from "@/tools";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import ButtonSolarsystem from "./buttons/ButtonSolarsystem";
 import PaperLevel1 from "./ui/PaperLevel1";
-import { lyDistance, Location, tsToDateTime } from "@/tools";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import DialogGateLink from "./dialogs/DialogGateLink";
 import ConditionalMount from "./ui/ConditionalMount";
@@ -36,11 +36,16 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
   const mudSql = useMudSql();
 
   const query = useQuery({
-    queryKey: ["AssembliesByOwner", owner],
-    queryFn: async () => mudSql.listAssemblies({ owners: owner }),
+    queryKey: ["Gates", owner],
+    queryFn: async () => mudSql.listGates({ owners: owner }),
     staleTime: 1000 * 60,
     retry: false,
   });
+
+  const currentGate = React.useMemo(() => {
+    if (!query.data) return undefined;
+    return query.data.find((a) => a.id === currentGateId);
+  }, [query.data, currentGateId]);
 
   const gates = React.useMemo(() => {
     if (!query.data) return undefined;
@@ -56,13 +61,18 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
           currentGateLocation && gate.location
             ? lyDistance(currentGateLocation, gate.location)
             : undefined;
-        const distance = ly ? { ly, inRange: ly < 500 } : undefined;
+        const distance = ly
+          ? {
+              ly,
+              inRange: ly < metersToLy(currentGate?.maxDistance || "0"),
+            }
+          : undefined;
         return {
           ...gate,
           distance,
         };
       });
-  }, [query.data, currentGateId, currentGateLocation]);
+  }, [query.data, currentGateId, currentGateLocation, currentGate]);
 
   return (
     <PaperLevel1 title="User’s Other Gates" loading={query.isFetching}>
@@ -83,6 +93,12 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
       </ConditionalMount>
       {gates?.length === 0 && !query.isFetching && (
         <Typography variant="body1">None</Typography>
+      )}
+      {currentGate && (
+        <Typography variant="body1" sx={{ mb: 2 }}>
+          Current gate max distance:{" "}
+          {metersToLy(currentGate.maxDistance).toFixed(0)}Ly
+        </Typography>
       )}
       {gates && (
         <Table size="small" stickyHeader>
@@ -108,7 +124,7 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
                       />
                       <ButtonAssembly id={gate.id} name={gate.name} />{" "}
                       <ButtonWeb3Interaction
-                        title="Unlink gates"
+                        title="Link this gate"
                         onClick={() => {
                           setLinkOpen(true);
                           setLinkDestinationId(gate.id);

@@ -144,3 +144,9 @@ export function lyDistance(locationA: Location, locationB: Location): number {
   const ly = meters.div(new Big(9.46073047258e15));
   return ly.toNumber();
 }
+
+export function metersToLy(meters: string): number {
+  const m = new Big(meters);
+  const ly = m.div(new Big(9.46073047258e15));
+  return ly.toNumber();
+}

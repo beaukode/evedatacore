@@ -96,11 +96,11 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
     smartItems: InventoryItem[]
   ): SmartItemWithType[] {
     return smartItems.map((i) => {
-      const type = indexBySmartItemId[i.itemId];
+      const type = indexById[i.typeId];
       return {
         ...i,
         id: type?.id || "0",
-        name: type?.name || "Unknown item",
+        name: type?.name || `Unknown item ${i.typeId}`,
         image: type?.image,
       };
     });

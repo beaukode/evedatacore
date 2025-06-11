@@ -37,7 +37,9 @@ const DialogMetadataAssembly: React.FC<DialogMetadataAssemblyProps> = ({
   const queryMetadata = useQuery({
     queryKey: ["SmartAssemblyMetadata", assemblyId],
     queryFn: async () =>
-      mudWeb3.assemblyGetMetadata({ assemblyId: BigInt(assemblyId) }),
+      mudWeb3
+        .assemblyGetMetadata({ assemblyId: BigInt(assemblyId) })
+        .then((metadata) => metadata || null),
     enabled: open,
   });
 

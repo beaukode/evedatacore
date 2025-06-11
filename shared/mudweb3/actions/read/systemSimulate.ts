@@ -65,6 +65,14 @@ export async function systemSimulate<
   args: SystemSimulateParameters<abi, functionName, args>
 ): Promise<SystemSimulateReturnType<abi, functionName, args>> {
   try {
+    if (client.debugCalls) {
+      console.log(
+        "systemSimulate",
+        args.systemAddress,
+        args.functionName,
+        args.args
+      );
+    }
     const data = encodeFunctionData({
       abi: args.abi || worldAbi,
       functionName: args.functionName,
