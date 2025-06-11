@@ -5,16 +5,17 @@ import { ensureArray, toSqlHex } from "../utils";
 import { Hex } from "viem";
 
 type DbRow = {
-  characterId: string;
-  characterAddress: Hex;
-  corpId: string;
+  smartObjectId: string;
+  exists: boolean;
+  tribeId: string;
   createdAt: string;
+  owner__account: Hex;
 };
 
 type EntityDbRow = {
-  entityId: string;
+  smartObjectId: string;
   name: string;
-  dappURL: string;
+  dappUrL: string;
   description: string;
 };
 
@@ -31,38 +32,52 @@ export const listCharacters =
     if (options?.addresses) {
       const addresses = ensureArray(options.addresses);
       if (addresses.length === 0) return []; // No addresses to query
-      where = `"characterAddress" IN ('${addresses.map(toSqlHex).join("', '")}')`;
+      where = `"evefrontier__OwnershipByObjec"."account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
     } else if (options?.ids) {
       const ids = ensureArray(options.ids);
       if (ids.length === 0) return []; // No ids to query
-      where = `"characterId" IN ('${ids.join("', '")}')`;
+      where = `"evefrontier__Characters"."smartObjectId" IN ('${ids.join("', '")}')`;
     } else if (options?.corporationsId) {
       const corporationsId = ensureArray(options.corporationsId);
       if (corporationsId.length === 0) return []; // No corporations ids to query
-      where = `"corpId" IN ('${corporationsId.join("', '")}')`;
+      where = `"evefrontier__Characters"."tribeId" IN ('${corporationsId.join("', '")}')`;
     }
 
     const [characters, entities] = await client.selectFromBatch<
       [DbRow, EntityDbRow]
     >([
       {
-        ns: "eveworld",
-        table: "CharactersTable",
-        options: { where, orderBy: "createdAt", orderDirection: "DESC" },
+        ns: "evefrontier",
+        table: "Characters",
+        options: {
+          where,
+          orderBy: "createdAt",
+          orderDirection: "DESC",
+          rels: {
+            owner: {
+              ns: "evefrontier",
+              table: "OwnershipByObjec",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "Characters",
+              fkField: "smartObjectId",
+            },
+          },
+        },
       },
       {
-        ns: "eveworld",
-        table: "EntityRecordOffc",
+        ns: "evefrontier",
+        table: "EntityRecordMeta",
       },
     ]);
 
-    const entitiesById = keyBy(entities, "entityId");
+    const entitiesById = keyBy(entities, "smartObjectId");
 
     return characters.map((c) => ({
-      address: c.characterAddress,
-      id: c.characterId,
-      name: entitiesById[c.characterId]?.name || "**Unknown**",
-      corpId: Number.parseInt(c.corpId, 10),
+      address: c.owner__account,
+      id: c.smartObjectId,
+      name: entitiesById[c.smartObjectId]?.name || "**Unknown**",
+      corpId: Number.parseInt(c.tribeId, 10),
       createdAt: Number.parseInt(c.createdAt, 10) * 1000,
     }));
   };

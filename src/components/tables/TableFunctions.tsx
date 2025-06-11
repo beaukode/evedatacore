@@ -56,6 +56,7 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
           <TableHead>
             <TableRow>
               <TableCell>Signature</TableCell>
+              <TableCell>Selectors (world/system)</TableCell>
               {!hideColumns.includes("namespace") && (
                 <TableCell width={180}>Namespace</TableCell>
               )}
@@ -77,6 +78,9 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
                     >
                       {fn.signature}
                     </ButtonGeneric>
+                  </TableCell>
+                  <TableCell>
+                    {fn.worldSelector} / {fn.systemSelector}
                   </TableCell>
                   {!hideColumns.includes("namespace") && (
                     <TableCell>

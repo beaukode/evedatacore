@@ -1,12 +1,6 @@
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
-import { Assembly } from "../types";
-
-const assemblyTypeMap = {
-  0: 77917,
-  1: 84556,
-  2: 84955,
-} as const;
+import { Assembly, assemblyTypeMap } from "../types";
 
 type DbRow = {
   smartObjectId: string;
@@ -18,13 +12,13 @@ type DbRow = {
   updatedBlockNumber: string;
   updatedBlockTime: string;
   type__smartObjectId: string;
-  type__smartAssemblyType: keyof typeof assemblyTypeMap;
-  owner__tokenId: string;
-  owner__owner: Hex;
-  character__characterAddress: string;
-  character__characterId: string;
-  entity__entityId: string;
-  entity__name: string;
+  type__assemblyType: keyof typeof assemblyTypeMap;
+  owner__smartObjectId: string;
+  owner__account: Hex;
+  character__account: string;
+  character__smartObjectId: string;
+  ownerEntity__smartObjectId: string;
+  ownerEntity__name: string;
   location__smartObjectId: string;
   location__solarSystemId: string;
   location__x: string;
@@ -39,60 +33,82 @@ type EntityDbRow = {
   description: string;
 };
 
+type NetworkNodeDbRow = {
+  assemblyId: string;
+  networkNodeId: string;
+};
+
 export const getAssembly =
   (client: MudSqlClient) =>
   async (id: string): Promise<Assembly | undefined> => {
-    const [assemblies, entities] = await Promise.all([
-      client.selectFrom<DbRow>("eveworld", "DeployableState", {
-        where: `"eveworld__DeployableState"."smartObjectId" = '${id}'`,
-        orderBy: "createdAt",
-        orderDirection: "DESC",
-        rels: {
-          type: {
-            ns: "eveworld",
-            table: "SmartAssemblyTab",
-            field: "smartObjectId",
-            fkNs: "eveworld",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
-          },
-          owner: {
-            ns: "erc721deploybl",
-            table: "Owners",
-            field: "tokenId",
-            fkNs: "eveworld",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
-          },
-          character: {
-            ns: "eveworld",
-            table: "CharactersByAddr",
-            field: "characterAddress",
-            fkNs: "erc721deploybl",
-            fkTable: "Owners",
-            fkField: "owner",
-          },
-          entity: {
-            ns: "eveworld",
-            table: "EntityRecordOffc",
-            field: "entityId",
-            fkNs: "eveworld",
-            fkTable: "CharactersByAddr",
-            fkField: "characterId",
-          },
-          location: {
-            ns: "eveworld",
-            table: "LocationTable",
-            field: "smartObjectId",
-            fkNs: "eveworld",
-            fkTable: "DeployableState",
-            fkField: "smartObjectId",
+    const [assemblies, entities, networkNodes] = await client.selectFromBatch<
+      [DbRow, EntityDbRow, NetworkNodeDbRow]
+    >([
+      {
+        ns: "evefrontier",
+        table: "DeployableState",
+        options: {
+          where: `"evefrontier__DeployableState"."smartObjectId" = '${id}'`,
+          orderBy: "createdAt",
+          orderDirection: "DESC",
+          rels: {
+            type: {
+              ns: "evefrontier",
+              table: "SmartAssembly",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "DeployableState",
+              fkField: "smartObjectId",
+            },
+            owner: {
+              ns: "evefrontier",
+              table: "OwnershipByObjec",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "DeployableState",
+              fkField: "smartObjectId",
+            },
+            character: {
+              ns: "evefrontier",
+              table: "CharactersByAcco",
+              field: "account",
+              fkNs: "evefrontier",
+              fkTable: "OwnershipByObjec",
+              fkField: "account",
+            },
+            ownerEntity: {
+              ns: "evefrontier",
+              table: "EntityRecordMeta",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "CharactersByAcco",
+              fkField: "smartObjectId",
+            },
+            location: {
+              ns: "evefrontier",
+              table: "Location",
+              field: "smartObjectId",
+              fkNs: "evefrontier",
+              fkTable: "DeployableState",
+              fkField: "smartObjectId",
+            },
           },
         },
-      }),
-      client.selectFrom<EntityDbRow>("eveworld", "EntityRecordOffc", {
-        where: `"entityId" = '${id}'`,
-      }),
+      },
+      {
+        ns: "evefrontier",
+        table: "EntityRecordMeta",
+        options: {
+          where: `"smartObjectId" = '${id}'`,
+        },
+      },
+      {
+        ns: "evefrontier",
+        table: "NetworkNodeByAss",
+        options: {
+          where: `"assemblyId" = '${id}'`,
+        },
+      },
     ]);
     const assembly = assemblies[0];
     if (!assembly) return undefined;
@@ -104,9 +120,9 @@ export const getAssembly =
       state: Number.parseInt(assembly.currentState, 10),
       anchoredAt: Number.parseInt(assembly.anchoredAt, 10) * 1000,
       isValid: assembly.isValid || false,
-      typeId: assemblyTypeMap[assembly.type__smartAssemblyType],
-      ownerId: assembly.owner__owner,
-      ownerName: assembly.entity__name,
+      typeId: assemblyTypeMap[assembly.type__assemblyType],
+      ownerId: assembly.owner__account,
+      ownerName: assembly.ownerEntity__name,
       solarSystemId:
         assembly.location__solarSystemId !== "0"
           ? Number.parseInt(assembly.location__solarSystemId, 10)
@@ -122,5 +138,6 @@ export const getAssembly =
       name: entity?.name,
       dappUrl: entity?.dappURL,
       description: entity?.description,
+      networkNodeId: networkNodes[0]?.networkNodeId,
     };
   };

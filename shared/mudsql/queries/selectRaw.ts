@@ -11,6 +11,12 @@ export const selectRaw =
       body: [{ address: config.worldAddress, query: sql }],
       client: restClient,
     });
+    if (config.debugSql) {
+      console.log("SQL:", {
+        query: sql,
+        response: [...(r.data?.result ?? [])],
+      });
+    }
     if (r.error) {
       throw new Error(r.error.msg);
     }

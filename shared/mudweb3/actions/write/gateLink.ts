@@ -16,8 +16,8 @@ export async function gateLink(
 ): Promise<GateLinkReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
-    functionName: "linkSmartGates",
+      eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
+    functionName: "linkGates",
     args: [args.gateId, args.destinationGateId],
   });
 }

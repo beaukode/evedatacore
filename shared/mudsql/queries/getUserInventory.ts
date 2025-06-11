@@ -5,7 +5,7 @@ import { toSqlHex } from "../utils";
 
 type DbRow = {
   smartObjectId: string;
-  inventoryItemId: string;
+  itemObjectId: string;
   quantity: string;
   index: string;
   stateUpdate: string;
@@ -15,8 +15,8 @@ export const getUserInventory =
   (client: MudSqlClient) =>
   async (ssuId: string, owner: Hex): Promise<Inventory> => {
     const [items] = await Promise.all([
-      client.selectFrom<DbRow>("eveworld", "EphemeralInvItem", {
-        where: `"eveworld__EphemeralInvItem"."smartObjectId" = '${ssuId}' AND "eveworld__EphemeralInvItem"."ephemeralInvOwner" = '${toSqlHex(owner)}'`,
+      client.selectFrom<DbRow>("evefrontier", "EphemeralInvItem", {
+        where: `"evefrontier__EphemeralInvItem"."smartObjectId" = '${ssuId}' AND "evefrontier__EphemeralInvItem"."ephemeralOwner" = '${toSqlHex(owner)}' AND "evefrontier__InventoryItem"."exists" = true`,
         orderBy: ["index"],
       }),
     ]);
@@ -25,9 +25,8 @@ export const getUserInventory =
       total: "0",
       used: "0",
       items: items.map((i) => ({
-        itemId: i.inventoryItemId,
+        itemId: i.itemObjectId,
         quantity: i.quantity,
-        stateUpdate: Number.parseInt(i.stateUpdate, 10) * 1000,
       })),
     };
   };

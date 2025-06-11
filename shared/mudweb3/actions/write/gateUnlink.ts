@@ -16,8 +16,8 @@ export async function gateUnlink(
 ): Promise<GateUnlinkReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
-    functionName: "unlinkSmartGates",
+      eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
+    functionName: "unlinkGates",
     args: [args.gateId, args.destinationGateId],
   });
 }

@@ -14,7 +14,7 @@ export async function gateGetSystem(
   args: GateGetSystemParameters
 ): Promise<GateGetSystemReturnType> {
   const r = await storeGetRecord(client, {
-    table: eveworld.tables.eveworld__SmartGateConfigTable,
+    table: eveworld.tables.evefrontier__SmartGateConfig,
     key: { smartObjectId: args.gateId },
   });
 

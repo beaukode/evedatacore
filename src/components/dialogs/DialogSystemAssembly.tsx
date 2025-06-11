@@ -34,10 +34,11 @@ interface DialogSystemAssemblyProps {
 
 const excludeNamespaces = [
   "",
-  "eveworld",
+  "evefrontier",
+  "sofaccess",
   "eveerc20",
-  "erc721charactr",
-  "erc721deploybl",
+  "metadata",
+  "puppet",
 ];
 
 const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({

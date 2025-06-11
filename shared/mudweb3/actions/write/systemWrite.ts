@@ -52,6 +52,14 @@ export async function systemWrite<
 ): Promise<SystemWriteReturnType> {
   try {
     const abi: abi = args.abi || (worldAbi as unknown as abi);
+    if (client.debugCalls) {
+      console.log(
+        "systemWrite",
+        args.systemAddress,
+        args.functionName,
+        args.args
+      );
+    }
     await client.systemSimulate({
       abi,
       systemAddress: args.systemAddress,

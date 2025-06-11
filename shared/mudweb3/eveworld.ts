@@ -1,5 +1,4 @@
 import { defineWorld } from "@latticexyz/world";
-import eveConstants from "@eveworld/common-constants/src/constants.json";
 
 export const eveworld = defineWorld({
   enums: {
@@ -14,34 +13,26 @@ export const eveworld = defineWorld({
     },
   },
   namespaces: {
-    eveworld: {
+    evefrontier: {
       systems: {
         EntityRecordSystem: {
-          name: eveConstants.systemName.ENTITY_RECORD,
+          name: "EntityRecordSyst",
           openAccess: true,
         },
-        SmartDeployableSystem: {
-          name: eveConstants.systemName.SMART_DEPLOYABLE,
+        DeployableSystem: {
+          name: "DeployableSystem",
           openAccess: true,
         },
-        InventorySystem: {
-          name: eveConstants.systemName.INVENTORY,
-          openAccess: true,
-        },
-        EphemeralInventorySystem: {
-          name: eveConstants.systemName.EPHEMERAL_INVENTORY,
-          openAccess: true,
-        },
-        InventoryInteractSystem: {
-          name: eveConstants.systemName.INVENTORY_INTERACT,
+        EphemeralInteractSystem: {
+          name: "EphemeralInterac",
           openAccess: true,
         },
         SmartTurretSystem: {
-          name: eveConstants.systemName.SMART_TURRET,
+          name: "SmartTurretSyste",
           openAccess: true,
         },
         SmartGateSystem: {
-          name: eveConstants.systemName.SMART_GATE,
+          name: "SmartGateSystem",
           openAccess: true,
         },
       },
@@ -59,16 +50,16 @@ export const eveworld = defineWorld({
           },
           key: ["smartObjectId"],
         },
-        EntityRecordOffchainTable: {
+        EntityRecordMeta: {
           schema: {
-            entityId: "uint256",
+            smartObjectId: "uint256",
             name: "string",
             dappURL: "string",
             description: "string",
           },
-          key: ["entityId"],
+          key: ["smartObjectId"],
         },
-        LocationTable: {
+        Location: {
           schema: {
             smartObjectId: "uint256",
             solarSystemId: "uint256",
@@ -78,21 +69,21 @@ export const eveworld = defineWorld({
           },
           key: ["smartObjectId"],
         },
-        CharactersByAddressTable: {
+        CharactersByAccount: {
           schema: {
-            characterAddress: "address",
-            characterId: "uint256",
+            account: "address",
+            smartObjectId: "uint256",
           },
-          key: ["characterAddress"],
+          key: ["account"],
         },
-        SmartTurretConfigTable: {
+        SmartTurretConfig: {
           schema: {
             smartObjectId: "uint256",
             systemId: "ResourceId",
           },
           key: ["smartObjectId"],
         },
-        SmartGateConfigTable: {
+        SmartGateConfig: {
           schema: {
             smartObjectId: "uint256",
             systemId: "ResourceId",
@@ -100,7 +91,7 @@ export const eveworld = defineWorld({
           },
           key: ["smartObjectId"],
         },
-        SmartGateLinkTable: {
+        SmartGateLink: {
           schema: {
             sourceGateId: "uint256",
             destinationGateId: "uint256",

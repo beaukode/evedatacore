@@ -1,9 +1,14 @@
+import { AssemblyType } from "@shared/mudsql/types";
+
 export const fuelFactor = 0.01;
 
 export const smartAssembliesTypes = {
-  84955: "Smart Gate",
-  84556: "Smart Turret",
-  77917: "Smart Storage Unit",
+  [AssemblyType.Gate]: "Smart Gate",
+  [AssemblyType.Turret]: "Smart Turret",
+  [AssemblyType.Storage]: "Smart Storage Unit",
+  [AssemblyType.NetworkNode]: "Network Node",
+  [AssemblyType.Hangar]: "Smart Hangar",
+  [AssemblyType.Manufacturer]: "Smart Manufacturer",
 } as const;
 
 export type SmartAssemblyType = keyof typeof smartAssembliesTypes;

@@ -15,7 +15,7 @@ export async function assemblyBringOffline(
 ): Promise<AssemblyBringOfflineReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartDeployableSystem.systemId,
+      eveworld.namespaces.evefrontier.systems.DeployableSystem.systemId,
     functionName: "bringOffline",
     args: [args.assemblyId],
   });

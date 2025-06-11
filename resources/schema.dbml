@@ -1,63 +1,47 @@
-// Table eveworld.AccessEnforcePer {
-//   smartObjectId uint256
-//   target bytes32
-//   isEnforced bool
-// }
-// 
-// Table eveworld.AccessEnforcemen {
-//   target bytes32
-//   isEnforced bool
-// }
-// 
-// Table eveworld.AccessRole {
-//   roleId bytes32
-//   accounts address[]
-// }
-// 
-// Table eveworld.AccessRolePerObj {
-//   smartObjectId uint256
-//   roleId bytes32
-//   accounts address[]
-// }
-// 
-// Table eveworld.AccessRolePerSys {
-//   systemId bytes32
-//   roleId bytes32
-//   accounts address[]
-// }
-
-Table eveworld.CharactersByAddr {
-  characterAddress address
-  characterId uint256
+/* 
+Table evefrontier.AccessConfig {
+  target bytes32
+  configured bool
+  targetSystemId bytes32
+  targetFunctionId bytes4
+  accessSystemId bytes32
+  accessFunctionId bytes4
+  enforcement bool
 }
+*/
+Table evefrontier.AssemblyEnergyCo {
+  assemblyTypeId uint256 [ref: > evefrontier.SmartAssembly.assemblyType, not null]
+  energyConstant uint256
+}
+/*
+Table evefrontier.CallAccess {
+  systemId bytes32
+  functionId bytes4
+  caller address
+  hasAccess bool
+} 
+*/
 
-// Table eveworld.CharactersConsta {
-//   erc721Address address
-// }
- 
-Table eveworld.CharactersTable {
-  characterId uint256
-  characterAddress address
-  corpId uint256
+Table evefrontier.Characters {
+  smartObjectId uint256 [not null]
+  exists bool
+  tribeId uint256
   createdAt uint256
 }
 
-// Table eveworld.ClassConfig {
-//   systemId bytes32
-//   classId uint256
-// }
+Ref: evefrontier.Characters.smartObjectId - evefrontier.EntityRecordMeta.smartObjectId
+Ref: evefrontier.Characters.smartObjectId - evefrontier.CharactersByAcco.smartObjectId
+Ref: evefrontier.Characters.smartObjectId > evefrontier.KillMail.killerCharacterId
+Ref: evefrontier.Characters.smartObjectId > evefrontier.KillMail.victimCharacterId
 
-Table eveworld.DeployableFuelBa {
-  smartObjectId uint256
-  fuelUnitVolume uint256
-  fuelConsumptionPerMinute uint256
-  fuelMaxCapacity uint256
-  fuelAmount uint256
-  lastUpdatedAt uint256
+Table evefrontier.CharactersByAcco {
+  account address [not null]
+  smartObjectId uint256 [not null]
 }
 
-Table eveworld.DeployableState {
-  smartObjectId uint256
+
+Table evefrontier.DeployableState {
+  smartObjectId uint256  [not null]
   createdAt uint256
   previousState uint8
   currentState uint8
@@ -67,135 +51,161 @@ Table eveworld.DeployableState {
   updatedBlockTime uint256
 }
 
-// Table eveworld.DeployableTokenT {
-//   erc721Address address
-// }
-// 
-// Table eveworld.EntityAssociatio {
-//   entityId uint256
-//   moduleIds uint256[]
-//   hookIds uint256[]
-// }
-
-Table eveworld.EntityMap {
+/*
+Table evefrontier.Entity {
   entityId uint256
-  taggedEntityIds uint256[]
+  exists bool
+  accessRole bytes32
+  entityRelationTag bytes32
+  propertyTags bytes32[]
+  resourceRelationTags bytes32[]
 }
-
-Table eveworld.EntityRecordOffc {
-  entityId uint256
+*/
+/*
+Table evefrontier.EntityRecord {
+  smartObjectId uint256
+  exists bool
+  tenantId bytes32
+  typeId uint256
+  itemId uint256
+  volume uint256
+}
+*/
+Table evefrontier.EntityRecordMeta {
+  smartObjectId uint256
   name string
   dappURL string
   description string
 }
 
-Table eveworld.EntityRecordTabl {
+/*
+Table evefrontier.EntityTagMap {
   entityId uint256
-  itemId uint256
-  typeId uint256
-  volume uint256
-  recordExists bool
+  tagId bytes32
+  hasTag bool
+  tagIndex uint256
+  value bytes
 }
- 
-Table eveworld.EntityTable {
-  entityId uint256
-  doesExists bool
-  entityType uint8
-}
-
-Table eveworld.EntityType {
-  typeId uint8
-  doesExists bool
-  typeName bytes32
+*/
+Table evefrontier.EphemeralInvCapa {
+  smartObjectId uint256
+  capacity uint256
 }
 
-// Table eveworld.EntityTypeAssoci {
-//   entityType uint8
-//   taggedEntityType uint8
-//   isAllowed bool
-// }
-// 
-// Table eveworld.EphemeralInvCapa {
-//   smartObjectId uint256
-//   capacity uint256
-// }
-// 
-// Table eveworld.EphemeralInvItem {
-//   smartObjectId uint256
-//   inventoryItemId uint256
-//   ephemeralInvOwner address
-//   quantity uint256
-//   index uint256
-//   stateUpdate uint256
-// }
-// 
-// Table eveworld.EphemeralInvTabl {
-//   smartObjectId uint256
-//   ephemeralInvOwner address
-//   usedCapacity uint256
-//   items uint256[]
-// }
-// 
-// Table eveworld.GlobalDeployable {
-//   updatedBlockNumber uint256
-//   isPaused bool
-//   lastGlobalOffline uint256
-//   lastGlobalOnline uint256
-// }
-// 
-// Table eveworld.GlobalStaticData {
-//   trustedForwarder address
-//   value bool
-// }
-// 
-// Table eveworld.HookTable {
-//   hookId uint256
-//   isHook bool
-//   systemId bytes32
-//   functionSelector bytes4
-// }
-// 
-// Table eveworld.HookTargetAfter {
-//   hookId uint256
-//   targetId uint256
-//   hasHook bool
-//   systemSelector bytes32
-//   functionSelector bytes4
-// }
-// 
-// Table eveworld.HookTargetBefore {
-//   hookId uint256
-//   targetId uint256
-//   hasHook bool
-//   systemSelector bytes32
-//   functionSelector bytes4
-// }
-// 
-// Table eveworld.InventoryItemTab {
-//   smartObjectId uint256
-//   inventoryItemId uint256
-//   quantity uint256
-//   index uint256
-//   stateUpdate uint256
-// }
-// 
-// Table eveworld.InventoryTable {
-//   smartObjectId uint256
-//   capacity uint256
-//   usedCapacity uint256
-//   items uint256[]
-// }
-// 
-// Table eveworld.ItemTransferOffc {
-//   smartObjectId uint256
-//   inventoryItemId uint256
-//   previousOwner address
-//   currentOwner address
-//   quantity uint256
-//   updatedAt uint256
-// }
+Table evefrontier.EphemeralInvItem {
+  smartObjectId uint256
+  ephemeralOwner address [ref: < evefrontier.CharactersByAcco.account]
+  itemObjectId uint256
+  exists bool
+  quantity uint256
+  index uint256
+  version uint256
+}
 
-Table eveworld.KillMailTable {
+Table evefrontier.EphemeralInvento {
+  smartObjectId uint256
+  ephemeralOwner address [ref: < evefrontier.CharactersByAcco.account]
+  capacity uint256
+  usedCapacity uint256
+  version uint256
+  items uint256[]
+}
+
+/*
+Table evefrontier.EphemeralItemTra {
+  smartObjectId uint256
+  itemObjectId uint256
+  previousOwner address
+  currentOwner address
+  quantity uint256
+  updatedAt uint256
+}
+*/
+Table evefrontier.Fuel {
+  smartObjectId uint256
+  fuelSmartObjectId uint256
+  fuelMaxCapacity uint256
+  fuelAmount uint256
+  fuelBurnRateInSeconds uint256
+  lastUpdatedAt uint256
+}
+
+Table evefrontier.FuelConsumptionS {
+  smartObjectId uint256 [ref: - evefrontier.Fuel.smartObjectId]
+  burnStartTime uint256
+  burnState bool
+  fuelConsumptionTimeRemaining uint256
+}
+
+Table evefrontier.FuelEfficiencyCo {
+  smartObjectId uint256  [ref: - evefrontier.Fuel.fuelSmartObjectId]
+  efficiency uint256
+}
+
+/*
+Table evefrontier.GlobalStaticData {
+  trustedForwarder address
+  value bool
+}
+
+Table evefrontier.HasRole {
+  role bytes32
+  account address
+  isMember bool
+  index uint256
+}
+
+Table evefrontier.Initialize {
+  systemId bytes32
+  classId uint256
+}
+
+Table evefrontier.Initialized {
+  systemId bytes32
+  initialized bool
+}
+*/
+Table evefrontier.Inventory {
+  smartObjectId uint256
+  capacity uint256
+  usedCapacity uint256
+  version uint256
+  items uint256[]
+}
+/*
+Table evefrontier.InventoryByEphem {
+  ephemeralSmartObjectId uint256
+  exists bool
+  smartObjectId uint256
+  ephemeralOwner address
+}
+
+Table evefrontier.InventoryByItem {
+  itemObjectId uint256
+  inventoryObjectId uint256
+}
+*/
+Table evefrontier.InventoryItem {
+  smartObjectId uint256
+  itemObjectId uint256
+  exists bool
+  quantity uint256
+  index uint256
+  version uint256
+}
+/*
+Table evefrontier.InventoryItemTra {
+  smartObjectId uint256
+  itemObjectId uint256
+  toObjectId uint256
+  previousOwner address
+  currentOwner address
+  quantity uint256
+  updatedAt uint256
+}
+*/
+
+Table evefrontier.KillMail {
   killMailId uint256
   killerCharacterId uint256
   victimCharacterId uint256
@@ -204,7 +214,7 @@ Table eveworld.KillMailTable {
   killTimestamp uint256
 }
 
-Table eveworld.LocationTable {
+Table evefrontier.Location {
   smartObjectId uint256
   solarSystemId uint256
   x uint256
@@ -212,86 +222,95 @@ Table eveworld.LocationTable {
   z uint256
 }
 
-// Table eveworld.ModuleSystemLook {
-//   moduleId uint256
-//   systemIds bytes32[]
-// }
-// 
-// Table eveworld.ModuleTable {
-//   moduleId uint256
-//   systemId bytes32
-//   moduleName bytes16
-//   doesExists bool
-// }
-// 
-// Table eveworld.Role {
-//   role bytes32
-//   value address
-// }
 
-Table eveworld.SmartAssemblyTab {
-  smartObjectId uint256
-  smartAssemblyType uint8
+Table evefrontier.NetworkNode {
+  smartObjectId uint256 [not null]
+  exists bool
+  maxEnergyCapacity uint256
+  energyProduced uint256
+  totalReservedEnergy uint256
+  lastUpdatedAt uint256
+  connectedAssemblies uint256[]
 }
 
-// Table eveworld.SmartGateConfigT {
-//   smartObjectId uint256
-//   systemId bytes32
-//   maxDistance uint256
-// }
-// 
-// Table eveworld.SmartGateLinkTab {
-//   sourceGateId uint256
-//   destinationGateId uint256
-//   isLinked bool
-// }
-// 
-// Table eveworld.SmartTurretConfi {
-//   smartObjectId uint256
-//   systemId bytes32
-// }
-// 
-// Table eveworld.StaticDataGlobal {
-//   systemId bytes32
-//   name string
-//   symbol string
-//   baseURI string
-// }
-// 
-// Table eveworld.StaticDataTable {
-//   entityId uint256
-//   cid string
-// }
-// 
+Table evefrontier.NetworkNodeAssem {
+  networkNodeId uint256 [ref: < evefrontier.NetworkNode.smartObjectId]
+  assemblyId uint256
+  isConnected bool
+  connectedAt uint256
+}
+
+Table evefrontier.NetworkNodeByAss {
+  assemblyId uint256 
+  networkNodeId uint256 [ref: < evefrontier.NetworkNode.smartObjectId]
+}
+
+Table evefrontier.NetworkNodeEnerg {
+  networkNodeId uint256  [ref: < evefrontier.NetworkNode.smartObjectId]
+  timestamp uint256
+  totalReservedEnergy uint256
+}
+
+Table evefrontier.OwnershipByObjec {
+  smartObjectId uint256 [not null]
+  account address
+}
+
+Ref: evefrontier.Characters.smartObjectId - evefrontier.OwnershipByObjec.smartObjectId
+
+/*
+Table evefrontier.Role {
+  role bytes32
+  exists bool
+  admin bytes32
+  members address[]
+}
+*/
 
 
+Table evefrontier.SmartAssembly {
+  smartObjectId uint256 
+  assemblyType string
+}
 
-Ref: "eveworld"."CharactersByAddr"."characterAddress" - "eveworld"."CharactersTable"."characterAddress"
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.OwnershipByObjec.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.DeployableState.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.Location.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.EntityRecordMeta.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.SmartGateConfig.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.SmartTurretConfi.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.SmartGateLink.sourceGateId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.SmartGateLink.destinationGateId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.EphemeralInvCapa.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.EphemeralInvento.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.EphemeralInvItem.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.Inventory.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.InventoryItem.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.Fuel.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.NetworkNode.smartObjectId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.NetworkNodeAssem.assemblyId
+Ref: evefrontier.SmartAssembly.smartObjectId - evefrontier.NetworkNodeByAss.assemblyId
 
-Ref: "eveworld"."CharactersByAddr"."characterId" - "eveworld"."CharactersTable"."characterId"
 
-Ref: "eveworld"."CharactersTable"."characterId" - "eveworld"."EntityRecordOffc"."entityId"
+Table evefrontier.SmartGateConfig {
+  smartObjectId uint256
+  systemId bytes32
+  maxDistance uint256
+}
 
-Ref: "eveworld"."EntityRecordOffc"."entityId" - "eveworld"."EntityMap"."entityId"
+Table evefrontier.SmartGateLink {
+  sourceGateId uint256
+  destinationGateId uint256
+  isLinked bool
+}
 
-Ref: "eveworld"."EntityRecordTabl"."entityId" - "eveworld"."EntityRecordOffc"."entityId"
+Table evefrontier.SmartTurretConfi {
+  smartObjectId uint256
+  systemId bytes32
+}
 
-Ref: "eveworld"."EntityTable"."entityId" - "eveworld"."EntityRecordOffc"."entityId"
-
-Ref: "eveworld"."EntityTable"."entityType" - "eveworld"."EntityType"."typeId"
-
-Ref: "eveworld"."DeployableState"."smartObjectId" < "eveworld"."EntityRecordOffc"."entityId"
-
-Ref: "eveworld"."DeployableState"."smartObjectId" - "eveworld"."SmartAssemblyTab"."smartObjectId"
-
-Ref: "eveworld"."DeployableState"."smartObjectId" - "eveworld"."EntityRecordTabl"."entityId"
-
-Ref: "eveworld"."DeployableState"."smartObjectId" < "eveworld"."EntityTable"."entityId"
-
-Ref: "eveworld"."DeployableState"."smartObjectId" - "eveworld"."LocationTable"."smartObjectId"
-
-Ref: "eveworld"."KillMailTable"."killerCharacterId" - "eveworld"."CharactersTable"."characterId"
-
-Ref: "eveworld"."KillMailTable"."victimCharacterId" - "eveworld"."CharactersTable"."characterId"
-
-Ref: "eveworld"."DeployableState"."smartObjectId" - "eveworld"."DeployableFuelBa"."smartObjectId"
+/*
+Table evefrontier.Tenant {
+  tenantId bytes32
+}
+ */

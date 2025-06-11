@@ -7,23 +7,20 @@ export type AssemblyGetMetadataParameters = {
   assemblyId: bigint;
 };
 
-type TableSchema =
-  typeof eveworld.tables.eveworld__EntityRecordOffchainTable.schema;
+type TableSchema = typeof eveworld.tables.evefrontier__EntityRecordMeta.schema;
 
-export type AssemblyGetMetadataReturnType = getSchemaPrimitives<TableSchema>;
+export type AssemblyGetMetadataReturnType =
+  | getSchemaPrimitives<TableSchema>
+  | undefined;
 
 export async function assemblyGetMetadata(
   client: MudWeb3ClientBase,
   args: AssemblyGetMetadataParameters
 ): Promise<AssemblyGetMetadataReturnType> {
   const r = await storeGetRecord(client, {
-    table: eveworld.tables.eveworld__EntityRecordOffchainTable,
-    key: { entityId: args.assemblyId },
+    table: eveworld.tables.evefrontier__EntityRecordMeta,
+    key: { smartObjectId: args.assemblyId },
   });
-
-  if (!r) {
-    throw new Error(`Assembly ${args.assemblyId} not found`);
-  }
 
   return r;
 }

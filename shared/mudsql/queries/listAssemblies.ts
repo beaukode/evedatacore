@@ -2,19 +2,13 @@ import { keyBy } from "lodash-es";
 import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
-import { Assembly, AssemblyState, AssemblyType } from "../types";
-
-const assemblyTypeMap = {
-  0: AssemblyType.Storage,
-  1: AssemblyType.Turret,
-  2: AssemblyType.Gate,
-} as const;
-
-const assemblyTypeReverseMap = {
-  [AssemblyType.Storage]: 0,
-  [AssemblyType.Turret]: 1,
-  [AssemblyType.Gate]: 2,
-} as const;
+import {
+  Assembly,
+  AssemblyState,
+  AssemblyType,
+  assemblyTypeMap,
+  assemblyTypeReverseMap,
+} from "../types";
 
 type AssemblyDbRow = {
   smartObjectId: string;
@@ -29,12 +23,12 @@ type AssemblyDbRow = {
 
 type TypeDbRow = {
   smartObjectId: string;
-  smartAssemblyType: keyof typeof assemblyTypeMap;
+  assemblyType: keyof typeof assemblyTypeMap;
 };
 
 type OwnerDbRow = {
-  tokenId: string;
-  owner: Hex;
+  smartObjectId: string;
+  account: Hex;
 };
 
 type LocationDbRow = {
@@ -46,7 +40,7 @@ type LocationDbRow = {
 };
 
 type EntityDbRow = {
-  entityId: string;
+  smartObjectId: string;
   name: string;
   dappURL: string;
   description: string;
@@ -57,6 +51,7 @@ type ListAssembliesOptions = {
   solarSystemId?: string[] | string;
   types?: AssemblyType[] | AssemblyType;
   states?: AssemblyState[] | AssemblyState;
+  ids?: string[] | string;
 };
 
 function buildWhere(
@@ -79,25 +74,25 @@ export const listAssemblies =
       if (ownersAddress.length === 0) return []; // No owner to query
 
       const owners = await client.selectFrom<OwnerDbRow>(
-        "erc721deploybl",
-        "Owners",
+        "evefrontier",
+        "OwnershipByObjec",
         {
           where: buildWhere(
-            `"owner" IN ('${ownersAddress.map(toSqlHex).join("', '")}')`,
-            "tokenId",
+            `"account" IN ('${ownersAddress.map(toSqlHex).join("', '")}')`,
+            "smartObjectId",
             ids
           ),
         }
       );
-      ids = owners.map((o) => o.tokenId);
+      ids = owners.map((o) => o.smartObjectId);
     }
     if (options?.solarSystemId) {
       const solarSystemIds = ensureArray(options.solarSystemId);
       if (solarSystemIds.length === 0) return []; // No solar system to query
 
       const locations = await client.selectFrom<LocationDbRow>(
-        "eveworld",
-        "LocationTable",
+        "evefrontier",
+        "Location",
         {
           where: buildWhere(
             `"solarSystemId" IN ('${solarSystemIds.join("', '")}')`,
@@ -115,17 +110,20 @@ export const listAssemblies =
       if (typesIds.length === 0) return []; // No types to query
 
       const types = await client.selectFrom<TypeDbRow>(
-        "eveworld",
-        "SmartAssemblyTab",
+        "evefrontier",
+        "SmartAssembly",
         {
           where: buildWhere(
-            `"smartAssemblyType" IN ('${typesIds.join("', '")}')`,
+            `"assemblyType" IN ('${typesIds.join("', '")}')`,
             "smartObjectId",
             ids
           ),
         }
       );
       ids = types.map((t) => t.smartObjectId);
+    }
+    if (options?.ids) {
+      ids = ensureArray(options.ids);
     }
 
     let assembliesWhere = ids
@@ -149,7 +147,7 @@ export const listAssemblies =
         [AssemblyDbRow, TypeDbRow, OwnerDbRow, LocationDbRow, EntityDbRow]
       >([
         {
-          ns: "eveworld",
+          ns: "evefrontier",
           table: "DeployableState",
           options: {
             orderBy: "createdAt",
@@ -158,8 +156,8 @@ export const listAssemblies =
           },
         },
         {
-          ns: "eveworld",
-          table: "SmartAssemblyTab",
+          ns: "evefrontier",
+          table: "SmartAssembly",
           options: {
             where: ids
               ? `"smartObjectId" IN ('${ids.join("', '")}')`
@@ -167,15 +165,8 @@ export const listAssemblies =
           },
         },
         {
-          ns: "erc721deploybl",
-          table: "Owners",
-          options: {
-            where: ids ? `"tokenId" IN ('${ids.join("', '")}')` : undefined,
-          },
-        },
-        {
-          ns: "eveworld",
-          table: "LocationTable",
+          ns: "evefrontier",
+          table: "OwnershipByObjec",
           options: {
             where: ids
               ? `"smartObjectId" IN ('${ids.join("', '")}')`
@@ -183,24 +174,35 @@ export const listAssemblies =
           },
         },
         {
-          ns: "eveworld",
-          table: "EntityRecordOffc",
+          ns: "evefrontier",
+          table: "Location",
           options: {
-            where: ids ? `"entityId" IN ('${ids.join("', '")}')` : undefined,
+            where: ids
+              ? `"smartObjectId" IN ('${ids.join("', '")}')`
+              : undefined,
+          },
+        },
+        {
+          ns: "evefrontier",
+          table: "EntityRecordMeta",
+          options: {
+            where: ids
+              ? `"smartObjectId" IN ('${ids.join("', '")}')`
+              : undefined,
           },
         },
       ]);
 
     if (assemblies.length === 0) return [];
 
-    const ownersAddresses = [...new Set(owners.map((o) => o.owner))];
+    const ownersAddresses = [...new Set(owners.map((o) => o.account))];
     const [characters] = await Promise.all([
       client.listCharacters({ addresses: ownersAddresses }),
     ]);
     const typesById = keyBy(types, "smartObjectId");
-    const ownersById = keyBy(owners, "tokenId");
+    const ownersById = keyBy(owners, "smartObjectId");
     const locationsById = keyBy(locations, "smartObjectId");
-    const entitiesById = keyBy(entities, "entityId");
+    const entitiesById = keyBy(entities, "smartObjectId");
     const charactersById = keyBy(characters, "address");
 
     return assemblies
@@ -214,9 +216,9 @@ export const listAssemblies =
           state: Number.parseInt(a.currentState, 10),
           anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
           isValid: a.isValid || false,
-          typeId: assemblyTypeMap[type.smartAssemblyType],
-          ownerId: owner.owner,
-          ownerName: charactersById[owner.owner]?.name || "Unknown",
+          typeId: assemblyTypeMap[type.assemblyType],
+          ownerId: owner.account,
+          ownerName: charactersById[owner.account]?.name || "Unknown",
           solarSystemId:
             location.solarSystemId !== "0"
               ? Number.parseInt(location.solarSystemId, 10)

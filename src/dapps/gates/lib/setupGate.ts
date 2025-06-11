@@ -22,7 +22,7 @@ export async function setupGate(
   });
   const configureSmartGateCall = encodeFunctionData({
     abi: gatesAbi,
-    functionName: "configureSmartGate",
+    functionName: "configureGate",
     args: [args.gateId, args.accessSystemId],
   });
   const configureGateConfigCall = encodeFunctionData({
@@ -35,11 +35,11 @@ export async function setupGate(
     calls: [
       {
         systemId:
-          eveworld.namespaces.eveworld.systems.EntityRecordSystem.systemId,
+          eveworld.namespaces.evefrontier.systems.EntityRecordSystem.systemId,
         callData: setDappURLCall,
       },
       {
-        systemId: eveworld.namespaces.eveworld.systems.SmartGateSystem.systemId,
+        systemId: eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
         callData: configureSmartGateCall,
       },
       {

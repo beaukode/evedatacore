@@ -46,6 +46,9 @@ export async function worldWrite<
   args: WorldWriteParameters<abi, functionName, args>
 ): Promise<WorldWriteReturnType> {
   try {
+    if (client.debugCalls) {
+      console.log("worldWrite", args.functionName, args.args);
+    }
     const params = {
       chain: client.writeClient.chain,
       account: client.writeClient.account,

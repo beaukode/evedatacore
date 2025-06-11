@@ -14,9 +14,9 @@ export async function characterGetId(
   args: GetSmartCharacterIdParameters
 ): Promise<GetSmartCharacterIdReturnType> {
   const r = await storeGetRecord(client, {
-    table: eveworld.tables.eveworld__CharactersByAddressTable,
-    key: { characterAddress: args.ownerAddress },
+    table: eveworld.tables.evefrontier__CharactersByAccount,
+    key: { account: args.ownerAddress },
   });
 
-  return r?.characterId;
+  return r?.smartObjectId;
 }

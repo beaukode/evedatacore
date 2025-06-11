@@ -1,15 +1,17 @@
-import { IWorldAbi } from "@eveworld/contracts";
-import SmartDeployableSystemAbi from "@eveworld/world/out/SmartDeployableSystem.sol/SmartDeployableSystem.abi.json";
-import EntityRecordSystemAbi from "@eveworld/world/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
-import SmartGateSystemAbi from "@eveworld/world/out/SmartGateSystem.sol/SmartGateSystem.abi.json";
-import InventoryInteractSystemAbi from "@eveworld/world/out/InventoryInteractSystem.sol/InventoryInteractSystem.abi.json";
+import IWorldAbi from "@eveworld/world-v2/out/world/IWorld.sol/IWorld.abi.json";
+import EntityRecordSystemAbi from "@eveworld/world-v2/out/EntityRecordSystem.sol/EntityRecordSystem.abi.json";
+import DeployableSystemAbi from "@eveworld/world-v2/out/DeployableSystem.sol/DeployableSystem.abi.json";
+import EphemeralInteractSystemAbi from "@eveworld/world-v2/out/EphemeralInteractSystem.sol/EphemeralInteractSystem.abi.json";
+import SmartTurretSystemAbi from "@eveworld/world-v2/out/SmartTurretSystem.sol/SmartTurretSystem.abi.json";
+import SmartGateSystemAbi from "@eveworld/world-v2/out/SmartGateSystem.sol/SmartGateSystem.abi.json";
 
 export const worldAbi = [
-  ...IWorldAbi.abi,
-  ...SmartDeployableSystemAbi,
+  ...IWorldAbi,
   ...EntityRecordSystemAbi,
+  ...DeployableSystemAbi,
+  ...EphemeralInteractSystemAbi,
+  ...SmartTurretSystemAbi,
   ...SmartGateSystemAbi,
-  ...InventoryInteractSystemAbi,
 ] as const;
 
 export type WorldAbi = typeof worldAbi;

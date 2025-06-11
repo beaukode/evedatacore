@@ -1,5 +1,5 @@
 import { resourceToHex } from "@latticexyz/common";
-import { SelectOptions } from "../types";
+import { MudSqlClientConfig, SelectOptions } from "../types";
 import { listSelectedTables, queryBuilder } from "../utils";
 import { MudSqlClient } from "../client";
 
@@ -10,7 +10,7 @@ type SelectFromBatchQuery = {
 };
 
 export const selectFromBatch =
-  (client: MudSqlClient) =>
+  (client: MudSqlClient, config: MudSqlClientConfig) =>
   async <T extends unknown[]>(
     queries: [...SelectFromBatchQuery[]]
   ): Promise<{ [K in keyof T]: T[K][] }> => {
@@ -23,6 +23,9 @@ export const selectFromBatch =
       },
       {} as ReturnType<typeof listSelectedTables>
     );
+    if (config.debugSql) {
+      console.log("selectFromBatch", tables);
+    }
     const schemasMap = Object.fromEntries(
       await Promise.all(
         Object.entries(tables).map(([k, v]) =>

@@ -19,6 +19,9 @@ export async function systemSimulateBatch(
   args: SystemSimulateBatchParameters
 ): Promise<SystemSimulateBatchReturnType> {
   try {
+    if (client.debugCalls) {
+      console.log("systemSimulateBatch", args.calls);
+    }
     const response = await client.simulateContract({
       account: client.writeClient?.account,
       address: client.mudAddresses.world,

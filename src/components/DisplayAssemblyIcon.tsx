@@ -3,6 +3,10 @@ import { SvgIcon, SvgIconOwnProps, Tooltip } from "@mui/material";
 import SmartGateIcon from "@mui/icons-material/Share";
 import SmartStorateIcon from "@mui/icons-material/Warehouse";
 import SmartTurretIcon from "@mui/icons-material/Security";
+import SmartNetworkNodeIcon from "@mui/icons-material/Hub";
+import SmartHangarIcon from "@mui/icons-material/Garage";
+import SmartManufacturerIcon from "@mui/icons-material/Factory";
+import { AssemblyType } from "@shared/mudsql/types";
 import {
   smartAssembliesTypes,
   SmartAssemblyState,
@@ -11,9 +15,12 @@ import {
 } from "@/constants";
 
 const iconMap: Record<keyof typeof smartAssembliesTypes, typeof SvgIcon> = {
-  84955: SmartGateIcon,
-  84556: SmartTurretIcon,
-  77917: SmartStorateIcon,
+  [AssemblyType.Gate]: SmartGateIcon,
+  [AssemblyType.Turret]: SmartTurretIcon,
+  [AssemblyType.Storage]: SmartStorateIcon,
+  [AssemblyType.NetworkNode]: SmartNetworkNodeIcon,
+  [AssemblyType.Hangar]: SmartHangarIcon,
+  [AssemblyType.Manufacturer]: SmartManufacturerIcon,
 };
 
 const colorMap: Record<

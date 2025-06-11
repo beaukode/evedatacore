@@ -16,8 +16,8 @@ export async function turretSetSystem(
 ): Promise<TurretSetSystemReturnType> {
   return systemWrite(client, {
     systemAddress:
-      eveworld.namespaces.eveworld.systems.SmartTurretSystem.systemId,
-    functionName: "configureSmartTurret",
+      eveworld.namespaces.evefrontier.systems.SmartTurretSystem.systemId,
+    functionName: "configureTurret",
     args: [args.turretId, args.systemId],
   });
 }

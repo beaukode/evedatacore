@@ -7,7 +7,7 @@ export type AssemblyGetStateParameters = {
   assemblyId: bigint;
 };
 
-type TableSchema = typeof eveworld.tables.eveworld__DeployableState.schema;
+type TableSchema = typeof eveworld.tables.evefrontier__DeployableState.schema;
 
 export type AssemblyGetStateReturnType = getSchemaPrimitives<TableSchema>;
 
@@ -16,7 +16,7 @@ export async function assemblyGetState(
   args: AssemblyGetStateParameters
 ): Promise<AssemblyGetStateReturnType> {
   const r = await storeGetRecord(client, {
-    table: eveworld.tables.eveworld__DeployableState,
+    table: eveworld.tables.evefrontier__DeployableState,
     key: { smartObjectId: args.assemblyId },
   });
 
