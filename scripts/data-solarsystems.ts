@@ -1,50 +1,48 @@
-// This script create a solar system data json with precise location
-// by merging data from https://blockchain-gateway-nova.nursery.reitnorf.com/solarsystems and
-// the game client data extracted using https://github.com/frontier-reapers/frontier-static-data?tab=readme-ov-file#export_starmappy
-// starmap.json must exist in the same folder as this script
+// This script create a solar system data json from the world-api
 
 import { ensureDirSync } from "fs-extra";
-import { readFileSync, writeFileSync } from "fs";
+import { writeFileSync } from "fs";
 import { join } from "path";
 
-const solarsystemsUrl = "https://blockchain-gateway-nova.nursery.reitnorf.com/solarsystems"
+const solarsystemsUrl =
+  "https://world-api-stillness.live.tech.evefrontier.com/v2/solarsystems";
+const limit = 1000;
+
+async function fetchSolarsystems(offset: number = 0) {
+  const response = await fetch(
+    `${solarsystemsUrl}?offset=${offset}&limit=${limit}`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to download solarsystems data");
+  }
+  const { data } = await response.json();
+  if (data.length > 0) {
+    const next = await fetchSolarsystems(offset + limit);
+    return [...data, ...next];
+  }
+  return data;
+}
 
 async function main() {
   ensureDirSync("./output");
 
   console.log("Downloading solarsystems data...");
-  const response = await fetch(solarsystemsUrl);
-  if (!response.ok) {
-    throw new Error("Failed to download solarsystems data");
-  }
-  const solarsystemsData = await response.json();
+  const solarsystemsData = await fetchSolarsystems();
 
-  console.log(
-    `Downloaded ${Object.keys(solarsystemsData).length} solarsystems`
-  );
+  console.log(`Downloaded ${solarsystemsData.length} solarsystems`);
 
-  console.log("Loading starmap...");
-  const starmapPath = join(__dirname, "starmap.json");
-  const starmapData = JSON.parse(readFileSync(starmapPath, "utf-8"));
+  const map = solarsystemsData.reduce((acc, solarsystem) => {
+    const { id, name, location } = solarsystem;
+    acc[solarsystem.id] = {
+      solarSystemId: id,
+      solarSystemName: name,
+      location,
+    };
+    return acc;
+  }, {});
 
-  console.log(
-    `Loaded ${Object.keys(starmapData.solarSystems).length} solarsystems`
-  );
-
-  let count = 0;
-  for (const id in solarsystemsData) {
-    if (starmapData.solarSystems[id] && starmapData.solarSystems[id].center) {
-      const [x, y, z] = starmapData.solarSystems[id].center;
-      solarsystemsData[id].location = { x, y, z };
-      count++;
-    } else {
-      console.log(`Missing starmap data for solarsystem ${id}`);
-    }
-  }
-
-  console.log(`Merged ${count} solarsystems`);
   const outputPath = join("./output", "solarsystems");
-  writeFileSync(outputPath, JSON.stringify(solarsystemsData), "utf-8");
+  writeFileSync(outputPath, JSON.stringify(map), "utf-8");
   console.log(`Solarsystems data written to ${outputPath}`);
 }
 
