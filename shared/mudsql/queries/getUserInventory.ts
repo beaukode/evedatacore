@@ -25,7 +25,8 @@ export const getUserInventory =
       total: "0",
       used: "0",
       items: items.map((i) => ({
-        itemId: i.itemObjectId,
+        itemId: i.smartObjectId,
+        typeId: i.itemObjectId,
         quantity: i.quantity,
       })),
     };
