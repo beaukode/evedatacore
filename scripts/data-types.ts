@@ -6,44 +6,41 @@ import { ensureDirSync } from "fs-extra";
 import { writeFileSync } from "fs";
 import { join } from "path";
 
-const typesUrl = "https://world-api-stillness.live.tech.evefrontier.com/types";
+const typesUrl =
+  "https://world-api-stillness.live.tech.evefrontier.com/v2/types";
 
 async function main() {
   ensureDirSync("./output");
 
   console.log("Downloading types data...");
-  const response = await fetch(typesUrl);
+  const response = await fetch(typesUrl + "?limit=1000");
   if (!response.ok) {
     throw new Error("Failed to download solarsystems data");
   }
-  const typesData = await response.json();
+  const { data } = await response.json();
 
-  const total = Object.keys(typesData).length;
+  const total = data.length;
   console.log(`Downloaded ${total} types`);
 
-  let count = 0;
-  let missing = 0;
-  for (const id in typesData) {
-    // console.log(`Loading image ${id}...`);
-    const response = await fetch(`${typesUrl}/${id}`);
-    if (response.ok) {
-      const data = await response.json();
-      if (data.metadata.image) {
-        typesData[id].image = data.metadata.image;
-        count++;
-      } else {
-        console.log(`Missing image for type ${id}`);
-        console.log(data);
-        missing++;
-      }
-    } else {
-      console.log(`Missing data for type ${id}`);
-    }
-  }
-
-  console.log(
-    `Merged ${count} types, ${missing} missing images, ${total} total types`
+  const typesData = data.reduce(
+    (acc: Record<string, unknown>, item: Record<string, unknown>) => {
+      const { iconUrl, id, name, description, ...rest } = item;
+      return {
+        ...acc,
+        [`${id}`]: {
+          name,
+          description,
+          image: iconUrl,
+          attributes: Object.entries(rest).map(([trait_type, value]) => ({
+            trait_type,
+            value,
+          })),
+        },
+      };
+    },
+    {}
   );
+
   const outputPath = join("./output", "types.json");
   writeFileSync(outputPath, JSON.stringify(typesData), "utf-8");
   console.log(`Types data written to ${outputPath}`);
