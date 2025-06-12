@@ -14,35 +14,34 @@ type DbRow = {
   entity__description: string;
 };
 
+type AccountDbRow = {
+  smartObjectId: string;
+  account: Hex;
+};
+
 export const getCharacter =
   (client: MudSqlClient) =>
   async (address: string): Promise<Character | undefined> => {
     if (address.length !== 42 || !isHex(address)) return undefined;
-    const result = await client.selectFrom<DbRow>(
-      "evefrontier",
-      "Characters",
-      {
+    const ownership = await client
+      .selectFrom<AccountDbRow>("evefrontier", "CharactersByAcco", {
         where: `"account" = '${toSqlHex(address)}'`,
-        rels: {
-          owner: {
-            ns: "evefrontier",
-            table: "OwnershipByObjec",
-            field: "smartObjectId",
-            fkNs: "evefrontier",
-            fkTable: "Characters",
-            fkField: "smartObjectId",
-          },
-          entity: {
-            ns: "evefrontier",
-            table: "EntityRecordMeta",
-            field: "smartObjectId",
-            fkNs: "evefrontier",
-            fkTable: "Characters",
-            fkField: "smartObjectId",
-          },
+      })
+      .then((r) => r[0]);
+    if (!ownership) return undefined;
+    const result = await client.selectFrom<DbRow>("evefrontier", "Characters", {
+      where: `"evefrontier__Characters"."smartObjectId" = '${ownership.smartObjectId}'`,
+      rels: {
+        entity: {
+          ns: "evefrontier",
+          table: "EntityRecordMeta",
+          field: "smartObjectId",
+          fkNs: "evefrontier",
+          fkTable: "Characters",
+          fkField: "smartObjectId",
         },
-      }
-    );
+      },
+    });
 
     const c = result[0];
     if (!c) return undefined;

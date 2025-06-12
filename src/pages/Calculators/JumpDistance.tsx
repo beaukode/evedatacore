@@ -15,12 +15,12 @@ const keys = Object.keys(fuels);
 
 const schema = z
   .object({
-    mass: z.number().int().positive().default(28000000),
-    fuelLevel: z.number().int().positive().default(539),
+    mass: z.number().int().positive().default(9750000),
+    fuelLevel: z.number().int().positive().default(1750),
     fuelType: z
       .string()
       .refine((value) => keys.includes(value))
-      .default("SOF-40"),
+      .default("D1 Fuel"),
   })
   .required();
 
@@ -40,7 +40,7 @@ function calculateJumpDistance(mass: number, fuel: number, efficiency: number) {
 
 const JumpDistance: React.FC = () => {
   const [store, setStore] = useAppLocalStorage(
-    "v1_calculator_jump_distance",
+    "v2_calculator_jump_distance",
     schema
   );
   const [openShipSelect, setOpenShipSelect] = React.useState(false);
