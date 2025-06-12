@@ -11,7 +11,7 @@ type DbRow = {
   createdAt: string;
 };
 
-type OwnershipDbRow = {
+type AccountDbRow = {
   smartObjectId: string;
   account: Hex;
 };
@@ -37,7 +37,7 @@ export const listCharacters =
     if (options?.addresses) {
       const addresses = ensureArray(options.addresses);
       if (addresses.length === 0) return []; // No addresses to query
-      whereOwnership = `"evefrontier__OwnershipByObjec"."account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
+      whereOwnership = `"evefrontier__CharactersByAcco"."account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
     } else if (options?.ids) {
       const ids = ensureArray(options.ids);
       if (ids.length === 0) return []; // No ids to query
@@ -49,7 +49,7 @@ export const listCharacters =
     }
 
     const [characters, ownerships, entities] = await client.selectFromBatch<
-      [DbRow, OwnershipDbRow, EntityDbRow]
+      [DbRow, AccountDbRow, EntityDbRow]
     >([
       {
         ns: "evefrontier",
@@ -62,7 +62,7 @@ export const listCharacters =
       },
       {
         ns: "evefrontier",
-        table: "OwnershipByObjec",
+        table: "CharactersByAcco",
         options: { where: whereOwnership },
       },
       {
