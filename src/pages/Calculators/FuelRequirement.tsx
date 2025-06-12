@@ -15,12 +15,12 @@ const keys = Object.keys(fuels);
 
 const schema = z
   .object({
-    mass: z.number().int().positive().default(28000000),
+    mass: z.number().int().positive().default(9750000),
     distance: z.number().int().positive().default(100),
     fuelType: z
       .string()
       .refine((value) => keys.includes(value))
-      .default("SOF-40"),
+      .default("D1 Fuel"),
   })
   .required();
 
@@ -44,7 +44,7 @@ function calculateFuelRequirement(
 
 const FuelRequirement: React.FC = () => {
   const [store, setStore] = useAppLocalStorage(
-    "v1_calculator_fuel_requirement",
+    "v2_calculator_fuel_requirement",
     schema
   );
   const [openShipSelect, setOpenShipSelect] = React.useState(false);
