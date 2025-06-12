@@ -9,7 +9,11 @@ type DbRow = {
   exists: boolean;
   tribeId: string;
   createdAt: string;
-  owner__account: Hex;
+};
+
+type OwnershipDbRow = {
+  smartObjectId: string;
+  account: Hex;
 };
 
 type EntityDbRow = {
@@ -29,10 +33,11 @@ export const listCharacters =
   (client: MudSqlClient) =>
   async (options?: ListCharactersOptions): Promise<Character[]> => {
     let where: string | undefined = undefined;
+    let whereOwnership: string | undefined = undefined;
     if (options?.addresses) {
       const addresses = ensureArray(options.addresses);
       if (addresses.length === 0) return []; // No addresses to query
-      where = `"evefrontier__OwnershipByObjec"."account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
+      whereOwnership = `"evefrontier__OwnershipByObjec"."account" IN ('${addresses.map(toSqlHex).join("', '")}')`;
     } else if (options?.ids) {
       const ids = ensureArray(options.ids);
       if (ids.length === 0) return []; // No ids to query
@@ -43,8 +48,8 @@ export const listCharacters =
       where = `"evefrontier__Characters"."tribeId" IN ('${corporationsId.join("', '")}')`;
     }
 
-    const [characters, entities] = await client.selectFromBatch<
-      [DbRow, EntityDbRow]
+    const [characters, ownerships, entities] = await client.selectFromBatch<
+      [DbRow, OwnershipDbRow, EntityDbRow]
     >([
       {
         ns: "evefrontier",
@@ -53,17 +58,12 @@ export const listCharacters =
           where,
           orderBy: "createdAt",
           orderDirection: "DESC",
-          rels: {
-            owner: {
-              ns: "evefrontier",
-              table: "OwnershipByObjec",
-              field: "smartObjectId",
-              fkNs: "evefrontier",
-              fkTable: "Characters",
-              fkField: "smartObjectId",
-            },
-          },
         },
+      },
+      {
+        ns: "evefrontier",
+        table: "OwnershipByObjec",
+        options: { where: whereOwnership },
       },
       {
         ns: "evefrontier",
@@ -71,13 +71,22 @@ export const listCharacters =
       },
     ]);
 
+    const ownershipsById = keyBy(ownerships, "smartObjectId");
     const entitiesById = keyBy(entities, "smartObjectId");
 
-    return characters.map((c) => ({
-      address: c.owner__account,
-      id: c.smartObjectId,
-      name: entitiesById[c.smartObjectId]?.name || "**Unknown**",
-      corpId: Number.parseInt(c.tribeId, 10),
-      createdAt: Number.parseInt(c.createdAt, 10) * 1000,
-    }));
+    return characters
+      .map((c) => {
+        const ownership = ownershipsById[c.smartObjectId];
+        if (!ownership) {
+          return;
+        }
+        return {
+          address: ownership.account,
+          id: c.smartObjectId,
+          name: entitiesById[c.smartObjectId]?.name || "**Unknown**",
+          corpId: Number.parseInt(c.tribeId, 10),
+          createdAt: Number.parseInt(c.createdAt, 10) * 1000,
+        };
+      })
+      .filter((c) => c !== undefined);
   };
