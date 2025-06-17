@@ -141,7 +141,9 @@ export const listAssemblies =
           options: {
             orderBy: "createdAt",
             orderDirection: "DESC",
-            where: assembliesWhere,
+            where: assembliesWhere
+              ? `${assembliesWhere} AND "isValid" = true`
+              : `"isValid" = true`,
           },
         },
         {
