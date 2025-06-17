@@ -18,7 +18,6 @@ type AssemblyDbRow = {
   anchoredAt: string;
   updatedBlockNumber: string;
   updatedBlockTime: string;
-  type__assemblyType: keyof typeof assemblyTypeMap;
 };
 
 type TypeDbRow = {
@@ -131,29 +130,26 @@ export const listAssemblies =
       ? `"smartObjectId" IN ('${ids.join("', '")}')`
       : undefined;
 
-    const [assemblies, owners, locations, entities] =
+    const [assemblies, types, owners, locations, entities] =
       await client.selectFromBatch<
-        [AssemblyDbRow, OwnerDbRow, LocationDbRow, EntityDbRow]
+        [AssemblyDbRow, TypeDbRow, OwnerDbRow, LocationDbRow, EntityDbRow]
       >([
         {
           ns: "evefrontier",
           table: "DeployableState",
           options: {
-            rels: {
-              type: {
-                ns: "evefrontier",
-                table: "SmartAssembly",
-                field: "smartObjectId",
-                fkNs: "evefrontier",
-                fkTable: "DeployableState",
-                fkField: "smartObjectId",
-              },
-            },
             orderBy: "createdAt",
             orderDirection: "DESC",
             where: assembliesWhere
               ? `${assembliesWhere} AND "isValid" = true`
               : `"isValid" = true`,
+          },
+        },
+        {
+          ns: "evefrontier",
+          table: "SmartAssembly",
+          options: {
+            where: assembliesWhere,
           },
         },
         {
@@ -185,6 +181,7 @@ export const listAssemblies =
     const [characters] = await Promise.all([
       client.listCharacters({ addresses: ownersAddresses }),
     ]);
+    const typesById = keyBy(types, "smartObjectId");
     const ownersById = keyBy(owners, "smartObjectId");
     const locationsById = keyBy(locations, "smartObjectId");
     const entitiesById = keyBy(entities, "smartObjectId");
@@ -192,15 +189,16 @@ export const listAssemblies =
 
     return assemblies
       .map((a) => {
+        const type = typesById[a.smartObjectId];
         const owner = ownersById[a.smartObjectId];
         const location = locationsById[a.smartObjectId];
-        if (!owner || !location) return undefined;
+        if (!type || !owner || !location) return undefined;
         return {
           id: a.smartObjectId,
           state: Number.parseInt(a.currentState, 10),
           anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
           isValid: a.isValid || false,
-          typeId: assemblyTypeMap[a.type__assemblyType],
+          typeId: assemblyTypeMap[type.assemblyType],
           ownerId: owner.account,
           ownerName: charactersById[owner.account]?.name || "Unknown",
           solarSystemId:
