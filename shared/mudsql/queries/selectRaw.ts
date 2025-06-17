@@ -7,6 +7,7 @@ import { transformResult } from "../utils";
 export const selectRaw =
   (_: MudSqlClient, config: MudSqlClientConfig, restClient: Client) =>
   async (sql: string): Promise<Record<string, string>[]> => {
+    const start = Date.now();
     const r = await postQ({
       body: [{ address: config.worldAddress, query: sql }],
       client: restClient,
@@ -15,6 +16,7 @@ export const selectRaw =
       console.log("SQL:", {
         query: sql,
         response: [...(r.data?.result ?? [])],
+        time: (Date.now() - start) / 1000,
       });
     }
     if (r.error) {
