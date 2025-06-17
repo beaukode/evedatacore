@@ -4,7 +4,6 @@ import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
 import {
   Assembly,
-  AssemblyState,
   AssemblyType,
   assemblyTypeMap,
   assemblyTypeReverseMap,
