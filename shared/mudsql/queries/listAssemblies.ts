@@ -4,7 +4,6 @@ import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
 import {
   Assembly,
-  AssemblyState,
   AssemblyType,
   assemblyTypeMap,
   assemblyTypeReverseMap,
@@ -50,7 +49,6 @@ type ListAssembliesOptions = {
   owners?: string[] | string;
   solarSystemId?: string[] | string;
   types?: AssemblyType[] | AssemblyType;
-  states?: AssemblyState[] | AssemblyState;
   ids?: string[] | string;
 };
 
@@ -126,21 +124,11 @@ export const listAssemblies =
       ids = ensureArray(options.ids);
     }
 
-    let assembliesWhere = ids
+    if (ids && ids.length === 0) return [];
+
+    const assembliesWhere = ids
       ? `"smartObjectId" IN ('${ids.join("', '")}')`
       : undefined;
-    if (options?.states) {
-      const statesIds = ensureArray(options.states);
-      if (statesIds.length === 0) return []; // No states to query
-
-      assembliesWhere = buildWhere(
-        `"currentState" IN ('${statesIds.join("', '")}')`,
-        "smartObjectId",
-        ids
-      );
-    }
-
-    if (ids && ids.length === 0) return [];
 
     const [assemblies, types, owners, locations, entities] =
       await client.selectFromBatch<
@@ -152,43 +140,37 @@ export const listAssemblies =
           options: {
             orderBy: "createdAt",
             orderDirection: "DESC",
-            where: assembliesWhere,
+            where: assembliesWhere
+              ? `${assembliesWhere} AND "isValid" = true`
+              : `"isValid" = true`,
           },
         },
         {
           ns: "evefrontier",
           table: "SmartAssembly",
           options: {
-            where: ids
-              ? `"smartObjectId" IN ('${ids.join("', '")}')`
-              : undefined,
+            where: assembliesWhere,
           },
         },
         {
           ns: "evefrontier",
           table: "OwnershipByObjec",
           options: {
-            where: ids
-              ? `"smartObjectId" IN ('${ids.join("', '")}')`
-              : undefined,
+            where: assembliesWhere,
           },
         },
         {
           ns: "evefrontier",
           table: "Location",
           options: {
-            where: ids
-              ? `"smartObjectId" IN ('${ids.join("', '")}')`
-              : undefined,
+            where: assembliesWhere,
           },
         },
         {
           ns: "evefrontier",
           table: "EntityRecordMeta",
           options: {
-            where: ids
-              ? `"smartObjectId" IN ('${ids.join("', '")}')`
-              : undefined,
+            where: assembliesWhere,
           },
         },
       ]);

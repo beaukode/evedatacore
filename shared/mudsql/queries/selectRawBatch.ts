@@ -7,6 +7,7 @@ import { transformResult } from "../utils";
 export const selectRawBatch =
   (_: MudSqlClient, config: MudSqlClientConfig, restClient: Client) =>
   async (sql: string[]): Promise<Record<string, string>[][]> => {
+    const start = Date.now();
     const r = await postQ({
       body: sql.map((q) => ({ address: config.worldAddress, query: q })),
       client: restClient,
@@ -15,6 +16,7 @@ export const selectRawBatch =
       console.log("SQL Batch:", {
         query: sql,
         response: { ...r },
+        time: (Date.now() - start) / 1000,
       });
     }
     if (r.error) {

@@ -9,6 +9,9 @@ import type {
   GetCalcPathFromToData,
   GetCalcPathFromToError,
   GetCalcPathFromToResponse,
+  GetFindNearIdDistanceData,
+  GetFindNearIdDistanceError,
+  GetFindNearIdDistanceResponse,
   PostEventsData,
   PostEventsError,
   PostEventsResponse,
@@ -26,6 +29,19 @@ export const getCalcPathFromTo = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/calc/path/{from}/{to}",
+  });
+};
+
+export const getFindNearIdDistance = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetFindNearIdDistanceData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetFindNearIdDistanceResponse,
+    GetFindNearIdDistanceError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/find/near/{id}/{distance}",
   });
 };
 

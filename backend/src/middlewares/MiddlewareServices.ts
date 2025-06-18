@@ -1,10 +1,11 @@
 import { createContainer, asFunction, asValue, FunctionReturning } from "awilix";
 import {
   createEnvVariablesService,
-  createPathFinderService,
-  createSolarSystemsService,
   createMudSqlService,
   createMudWeb3Service,
+  createNearFinderService,
+  createPathFinderService,
+  createSolarSystemsService,
 } from "../services";
 import { Middleware } from "express-zod-api";
 
@@ -16,10 +17,11 @@ type DiServices<T extends DiContainerServices> = {
 
 const services = {
   env: createEnvVariablesService,
-  solarSystems: createSolarSystemsService,
-  pathFinder: createPathFinderService,
   mudSql: createMudSqlService,
   mudWeb3: createMudWeb3Service,
+  nearFinder: createNearFinderService,
+  pathFinder: createPathFinderService,
+  solarSystems: createSolarSystemsService,
 };
 
 const di = createContainer({
