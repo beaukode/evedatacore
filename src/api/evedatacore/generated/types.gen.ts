@@ -69,6 +69,30 @@ export type GetCalcPathFromToError = {
   message: string;
 };
 
+export type GetFindNearIdDistanceData = {
+  path: {
+    /**
+     * GET /find/near/:id/:distance Parameter
+     */
+    distance: number;
+    /**
+     * GET /find/near/:id/:distance Parameter
+     */
+    id: number;
+  };
+};
+
+export type GetFindNearIdDistanceResponse = {
+  items: Array<{
+    id: number;
+    distance: number;
+  }>;
+};
+
+export type GetFindNearIdDistanceError = {
+  message: string;
+};
+
 export type PostEventsData = {
   /**
    * POST /events Request body
