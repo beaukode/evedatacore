@@ -224,7 +224,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
+                        solarSystemId:
                           type: number
                           format: double
                           minimum: -1.7976931348623157e+308
@@ -235,7 +235,7 @@ paths:
                           minimum: -1.7976931348623157e+308
                           maximum: 1.7976931348623157e+308
                       required:
-                        - id
+                        - solarSystemId
                         - distance
                 required:
                   - items

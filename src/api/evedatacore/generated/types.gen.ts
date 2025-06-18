@@ -84,7 +84,7 @@ export type GetFindNearIdDistanceData = {
 
 export type GetFindNearIdDistanceResponse = {
   items: Array<{
-    id: number;
+    solarSystemId: number;
     distance: number;
   }>;
 };
