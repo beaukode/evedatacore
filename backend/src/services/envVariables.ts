@@ -14,6 +14,7 @@ const envSchema = z.object({
   MUDSQL_INDEXER_BASE_URL: z.string().default("https://indexer.mud.pyropechain.com"),
   WORLD_ADDRESS: z.string().startsWith("0x").default("0x9891ee4bf5f2a9e74e9d81b06b855eec70b78d4f"),
   CHAIN_ID: z.number().default(695569),
+  ROUTE_PLANNER_BASE_URL: z.string().default("http://127.0.0.1:8000/api"),
 });
 
 export function createEnvVariablesService() {

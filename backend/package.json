@@ -6,7 +6,8 @@
     "build": "tsc -noEmit && node build.js",
     "dev": "node dev.js",
     "package": "npm run build && cd dist/ && rm -f lambda.zip && zip -r lambda.zip lambda.js",
-    "doc": "node doc.js"
+    "doc": "node doc.js",
+    "api:route-planner": "openapi-ts -f src/api/route-planner/openapi-ts.config.ts"
   },
   "keywords": [],
   "author": "",

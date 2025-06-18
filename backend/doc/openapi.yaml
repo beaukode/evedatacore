@@ -189,6 +189,67 @@ paths:
                     type: string
                 required:
                   - message
+  /find/near/{id}/{distance}:
+    get:
+      operationId: GetFindNearIdDistance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: GET /find/near/:id/:distance Parameter
+          schema:
+            type: number
+            format: double
+            exclusiveMinimum: 30000000
+            maximum: 39000000
+        - name: distance
+          in: path
+          required: true
+          description: GET /find/near/:id/:distance Parameter
+          schema:
+            type: number
+            format: double
+            exclusiveMinimum: 0
+            maximum: 300
+      responses:
+        "200":
+          description: GET /find/near/:id/:distance Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        solarSystemId:
+                          type: number
+                          format: double
+                          minimum: -1.7976931348623157e+308
+                          maximum: 1.7976931348623157e+308
+                        distance:
+                          type: number
+                          format: double
+                          minimum: -1.7976931348623157e+308
+                          maximum: 1.7976931348623157e+308
+                      required:
+                        - solarSystemId
+                        - distance
+                required:
+                  - items
+        "400":
+          description: GET /find/near/:id/:distance Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
   /events:
     post:
       operationId: PostEvents
