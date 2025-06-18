@@ -23,7 +23,7 @@ export const findNear = endpointsFactory.build({
     },
   }) => {
     const items = await nearFinder.findNear(id, distance);
-    responseHeaders.setCache(60 * 60 * 24); // 1 day (Should not change until the game data changes)
+    responseHeaders.setCache(60 * 60 * 1); // 1 hour (Should not change until the game data changes)
     return {
       items,
     };
