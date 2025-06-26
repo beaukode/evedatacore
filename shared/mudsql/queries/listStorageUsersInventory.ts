@@ -81,7 +81,7 @@ export const listStorageUsersInventory =
       }
     );
 
-    const capacitiesByOwner = keyBy(capacities, "ownerId");
+    const capacitiesByOwner = keyBy(capacities, "character__account");
     const itemsByOwner = groupBy(items, "ephemeralOwner");
     const entityById = keyBy(entities, "smartObjectId");
 
