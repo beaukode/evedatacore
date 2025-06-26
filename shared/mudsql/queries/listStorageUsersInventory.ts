@@ -20,12 +20,15 @@ type ItemDbRow = {
   itemObjectId: string;
   quantity: string;
   index: string;
-  entity__smartObjectId: string;
-  entity__exists: boolean;
-  entity__tenantId: string;
-  entity__typeId: string;
-  entity__itemId: string;
-  entity__volume: string;
+};
+
+type EntityDbRow = {
+  smartObjectId: string;
+  exists: boolean;
+  tenantId: string;
+  typeId: string;
+  itemId: string;
+  volume: string;
 };
 
 export const listStorageUsersInventory =
@@ -65,22 +68,22 @@ export const listStorageUsersInventory =
         options: {
           where: `"evefrontier__EphemeralInvItem"."smartObjectId" = '${ssuId}' AND "evefrontier__EphemeralInvItem"."exists" = true`,
           orderBy: ["ephemeralOwner", "index"],
-          rels: {
-            entity: {
-              ns: "evefrontier",
-              table: "EntityRecord",
-              field: "smartObjectId",
-              fkNs: "evefrontier",
-              fkTable: "EphemeralInvItem",
-              fkField: "itemObjectId",
-            },
-          },
         },
       },
     ]);
 
-    const capacitiesByOwner = keyBy(capacities, "ownerId");
+    const ids = items.map((i) => i.itemObjectId);
+    const entities = await client.selectFrom<EntityDbRow>(
+      "evefrontier",
+      "EntityRecord",
+      {
+        where: `"evefrontier__EntityRecord"."smartObjectId" IN (${ids.join(",")})`,
+      }
+    );
+
+    const capacitiesByOwner = keyBy(capacities, "character__account");
     const itemsByOwner = groupBy(items, "ephemeralOwner");
+    const entityById = keyBy(entities, "smartObjectId");
 
     return Object.entries(itemsByOwner).map(([owner, items]) => {
       const capacity = capacitiesByOwner[owner];
@@ -92,7 +95,7 @@ export const listStorageUsersInventory =
         items: items.map((i) => ({
           itemId: i.itemObjectId,
           quantity: i.quantity,
-          typeId: i.entity__typeId,
+          typeId: entityById[i.itemObjectId]?.typeId || "",
         })),
       };
     });
