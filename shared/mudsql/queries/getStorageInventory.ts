@@ -1,3 +1,4 @@
+import { keyBy } from "lodash-es";
 import { MudSqlClient } from "../client";
 import { Inventory } from "../types";
 
@@ -12,12 +13,15 @@ type ItemDbRow = {
   itemObjectId: string;
   quantity: string;
   index: string;
-  entity__smartObjectId: string;
-  entity__exists: boolean;
-  entity__tenantId: string;
-  entity__typeId: string;
-  entity__itemId: string;
-  entity__volume: string;
+};
+
+type EntityDbRow = {
+  smartObjectId: string;
+  exists: boolean;
+  tenantId: string;
+  typeId: string;
+  itemId: string;
+  volume: string;
 };
 
 export const getStorageInventory =
@@ -39,19 +43,19 @@ export const getStorageInventory =
         options: {
           where: `"evefrontier__InventoryItem"."smartObjectId" = '${id}' AND "evefrontier__InventoryItem"."exists" = true`,
           orderBy: "index",
-          rels: {
-            entity: {
-              ns: "evefrontier",
-              table: "EntityRecord",
-              field: "smartObjectId",
-              fkNs: "evefrontier",
-              fkTable: "InventoryItem",
-              fkField: "itemObjectId",
-            },
-          },
         },
       },
     ]);
+
+    const ids = items.map((i) => i.itemObjectId);
+    const entities = await client.selectFrom<EntityDbRow>(
+      "evefrontier",
+      "EntityRecord",
+      {
+        where: `"evefrontier__EntityRecord"."smartObjectId" IN (${ids.join(",")})`,
+      }
+    );
+    const entityById = keyBy(entities, "smartObjectId");
 
     return {
       used: capacity[0]?.usedCapacity || "0",
@@ -59,7 +63,7 @@ export const getStorageInventory =
       items: items.map((i) => ({
         itemId: i.itemObjectId,
         quantity: i.quantity,
-        typeId: i.entity__typeId,
+        typeId: entityById[i.itemObjectId]?.typeId || "",
       })),
     };
   };
