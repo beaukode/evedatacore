@@ -71,6 +71,7 @@ const ExploreAssembly: React.FC = () => {
               owner={data.ownerId}
               title={`Edit ${name}`}
               onClose={() => {
+                query.refetch();
                 setMetadataOpen(false);
               }}
             />
@@ -82,6 +83,7 @@ const ExploreAssembly: React.FC = () => {
               owner={data.ownerId}
               title={`Edit ${name}`}
               onClose={() => {
+                query.refetch();
                 setOnOffOpen(false);
               }}
             />
