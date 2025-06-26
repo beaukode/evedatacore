@@ -47,7 +47,7 @@ export const getUserInventory =
       total: "0",
       used: "0",
       items: items.map((i) => ({
-        itemId: i.smartObjectId,
+        itemId: i.itemObjectId,
         typeId: entityById[i.itemObjectId]?.typeId || "",
         quantity: i.quantity,
       })),
