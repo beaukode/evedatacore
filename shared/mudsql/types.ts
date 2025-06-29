@@ -24,6 +24,7 @@ export type SelectOptions = {
   orderDirection?: "ASC" | "DESC";
   rels?: Record<string, SelectRelation>;
   tableType?: TableType;
+  fields?: string[];
 };
 
 export type TableType = "table" | "offchainTable";
