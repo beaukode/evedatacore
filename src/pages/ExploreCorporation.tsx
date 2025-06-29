@@ -107,6 +107,7 @@ const ExploreCorporation: React.FC = () => {
         data={members}
         itemContent={itemContent}
         sx={{ mx: 0 }}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"

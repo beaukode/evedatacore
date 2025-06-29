@@ -83,6 +83,7 @@ const ExploreKillmails: React.FC = () => {
         columns={columns}
         data={killmails}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"

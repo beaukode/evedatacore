@@ -244,6 +244,7 @@ const ExploreTables: React.FC = () => {
         columns={columns}
         data={tables}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"
