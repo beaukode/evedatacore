@@ -78,6 +78,7 @@ const ExploreCharacters: React.FC = () => {
         columns={columns}
         data={smartcharacters}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"

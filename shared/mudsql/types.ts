@@ -24,6 +24,7 @@ export type SelectOptions = {
   orderDirection?: "ASC" | "DESC";
   rels?: Record<string, SelectRelation>;
   tableType?: TableType;
+  fields?: string[];
 };
 
 export type TableType = "table" | "offchainTable";
@@ -32,7 +33,6 @@ export type Assembly = {
   id: string;
   state: number;
   typeId: AssemblyType;
-  isValid: boolean;
   anchoredAt: number;
   ownerId: Hex;
   ownerName: string;

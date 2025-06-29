@@ -222,6 +222,7 @@ const ExploreFunctions: React.FC = () => {
         columns={columns}
         data={functions}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"

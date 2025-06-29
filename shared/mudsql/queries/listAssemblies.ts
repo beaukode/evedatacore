@@ -3,21 +3,16 @@ import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
 import {
-  Assembly,
   AssemblyType,
   assemblyTypeMap,
   assemblyTypeReverseMap,
+  Assembly,
 } from "../types";
 
 type AssemblyDbRow = {
   smartObjectId: string;
-  createdAt: string;
-  previousState: string;
   currentState: string;
-  isValid?: boolean;
   anchoredAt: string;
-  updatedBlockNumber: string;
-  updatedBlockTime: string;
 };
 
 type TypeDbRow = {
@@ -33,16 +28,11 @@ type OwnerDbRow = {
 type LocationDbRow = {
   smartObjectId: string;
   solarSystemId: string;
-  x: string;
-  y: string;
-  z: string;
 };
 
 type EntityDbRow = {
   smartObjectId: string;
   name: string;
-  dappURL: string;
-  description: string;
 };
 
 type ListAssembliesOptions = {
@@ -130,50 +120,31 @@ export const listAssemblies =
       ? `"smartObjectId" IN ('${ids.join("', '")}')`
       : undefined;
 
-    const [assemblies, types, owners, locations, entities] =
-      await client.selectFromBatch<
-        [AssemblyDbRow, TypeDbRow, OwnerDbRow, LocationDbRow, EntityDbRow]
-      >([
-        {
-          ns: "evefrontier",
-          table: "DeployableState",
-          options: {
-            orderBy: "createdAt",
-            orderDirection: "DESC",
-            where: assembliesWhere
-              ? `${assembliesWhere} AND "isValid" = true`
-              : `"isValid" = true`,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "SmartAssembly",
-          options: {
-            where: assembliesWhere,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "OwnershipByObjec",
-          options: {
-            where: assembliesWhere,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "Location",
-          options: {
-            where: assembliesWhere,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "EntityRecordMeta",
-          options: {
-            where: assembliesWhere,
-          },
-        },
-      ]);
+    const [assemblies, types, owners, locations, entities] = await Promise.all([
+      client.selectFrom<AssemblyDbRow>("evefrontier", "DeployableState", {
+        orderBy: "createdAt",
+        orderDirection: "DESC",
+        where: assembliesWhere
+          ? `${assembliesWhere} AND "isValid" = true`
+          : `"isValid" = true`,
+      }),
+      client.selectFrom<TypeDbRow>("evefrontier", "SmartAssembly", {
+        where: assembliesWhere,
+      }),
+      client.selectFrom<OwnerDbRow>("evefrontier", "OwnershipByObjec", {
+        where: assembliesWhere,
+      }),
+      client.selectFrom<LocationDbRow>("evefrontier", "Location", {
+        fields: ["smartObjectId", "solarSystemId"],
+        where: assembliesWhere
+          ? `${assembliesWhere} AND "solarSystemId" != '0'`
+          : `"solarSystemId" != '0'`,
+      }),
+      client.selectFrom<EntityDbRow>("evefrontier", "EntityRecordMeta", {
+        where: assembliesWhere,
+        fields: ["smartObjectId", "name"],
+      }),
+    ]);
 
     if (assemblies.length === 0) return [];
 
@@ -188,7 +159,7 @@ export const listAssemblies =
     const charactersById = keyBy(characters, "address");
 
     return assemblies
-      .map((a) => {
+      .map<Assembly | undefined>((a) => {
         const type = typesById[a.smartObjectId];
         const owner = ownersById[a.smartObjectId];
         const location = locationsById[a.smartObjectId];
@@ -197,7 +168,6 @@ export const listAssemblies =
           id: a.smartObjectId,
           state: Number.parseInt(a.currentState, 10),
           anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
-          isValid: a.isValid || false,
           typeId: assemblyTypeMap[type.assemblyType],
           ownerId: owner.account,
           ownerName: charactersById[owner.account]?.name || "Unknown",
@@ -205,17 +175,7 @@ export const listAssemblies =
             location.solarSystemId !== "0"
               ? Number.parseInt(location.solarSystemId, 10)
               : undefined,
-          location:
-            location.solarSystemId !== "0"
-              ? {
-                  x: location.x,
-                  y: location.y,
-                  z: location.z,
-                }
-              : undefined,
           name: entitiesById[a.smartObjectId]?.name,
-          dappUrl: entitiesById[a.smartObjectId]?.dappURL,
-          description: entitiesById[a.smartObjectId]?.description,
         };
       })
       .filter((a) => a !== undefined);

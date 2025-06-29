@@ -52,6 +52,7 @@ const ExploreAssemblies: React.FC = () => {
   const query = useQuery({
     queryKey: ["Smartassemblies"],
     queryFn: async () => mudSql.listAssemblies(),
+    retry: 1,
     staleTime: 1000 * 60,
   });
 
@@ -124,6 +125,7 @@ const ExploreAssemblies: React.FC = () => {
         columns={columns}
         data={smartassemblies}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           sx={{ minWidth: 200 }}
