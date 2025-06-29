@@ -119,7 +119,6 @@ export const getAssembly =
       id: assembly.smartObjectId,
       state: Number.parseInt(assembly.currentState, 10),
       anchoredAt: Number.parseInt(assembly.anchoredAt, 10) * 1000,
-      isValid: assembly.isValid || false,
       typeId: assemblyTypeMap[assembly.type__assemblyType],
       ownerId: assembly.owner__account,
       ownerName: assembly.ownerEntity__name,

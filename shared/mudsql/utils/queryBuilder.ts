@@ -18,9 +18,9 @@ export function queryBuilder(
     throw new Error(`Missing schemas for tables: ${missingSchemas.join(", ")}`);
   }
 
-  const selectParts = Object.keys(schemas[mainTable] || {}).map(
-    (f) => `"${mainTable}"."${f}" AS "${f}"`
-  );
+  const selectParts = Object.keys(schemas[mainTable] || {})
+    .filter((f) => !options.fields || options.fields.includes(f))
+    .map((f) => `"${mainTable}"."${f}" AS "${f}"`);
   const whereParts: string[] = options.where ? [options.where] : [];
   Object.entries(options.rels || {}).forEach(([relName, rel]) => {
     const table = `${rel.ns}__${rel.table}`;
@@ -31,7 +31,9 @@ export function queryBuilder(
         (key) => `"${table}"."${key}" AS "${relName}__${key}"`
       )
     );
-    whereParts.push(`"${table}"."${rel.field}" = "${fkTable}"."${rel.fkField}"`);
+    whereParts.push(
+      `"${table}"."${rel.field}" = "${fkTable}"."${rel.fkField}"`
+    );
   });
 
   const select = selectParts.join(", ");
