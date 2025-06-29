@@ -229,6 +229,7 @@ const ExploreSystems: React.FC = () => {
         columns={columns}
         data={systems}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"

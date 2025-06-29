@@ -125,6 +125,7 @@ const ExploreAssemblies: React.FC = () => {
         columns={columns}
         data={smartassemblies}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           sx={{ minWidth: 200 }}

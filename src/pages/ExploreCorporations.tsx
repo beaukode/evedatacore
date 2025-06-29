@@ -72,6 +72,7 @@ const ExploreCorporations: React.FC = () => {
         columns={columns}
         data={corporations}
         itemContent={itemContent}
+        loading={query.isFetching}
       >
         <TextField
           label="Search"
