@@ -120,54 +120,31 @@ export const listAssemblies =
       ? `"smartObjectId" IN ('${ids.join("', '")}')`
       : undefined;
 
-    const [assemblies, types, owners, locations, entities] =
-      await client.selectFromBatch<
-        [AssemblyDbRow, TypeDbRow, OwnerDbRow, LocationDbRow, EntityDbRow]
-      >([
-        {
-          ns: "evefrontier",
-          table: "DeployableState",
-          options: {
-            orderBy: "createdAt",
-            orderDirection: "DESC",
-            where: assembliesWhere
-              ? `${assembliesWhere} AND "isValid" = true`
-              : `"isValid" = true`,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "SmartAssembly",
-          options: {
-            where: assembliesWhere,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "OwnershipByObjec",
-          options: {
-            where: assembliesWhere,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "Location",
-          options: {
-            fields: ["smartObjectId", "solarSystemId"],
-            where: assembliesWhere
-              ? `${assembliesWhere} AND "solarSystemId" != '0'`
-              : `"solarSystemId" != '0'`,
-          },
-        },
-        {
-          ns: "evefrontier",
-          table: "EntityRecordMeta",
-          options: {
-            where: assembliesWhere,
-            fields: ["smartObjectId", "name"],
-          },
-        },
-      ]);
+    const [assemblies, types, owners, locations, entities] = await Promise.all([
+      client.selectFrom<AssemblyDbRow>("evefrontier", "DeployableState", {
+        orderBy: "createdAt",
+        orderDirection: "DESC",
+        where: assembliesWhere
+          ? `${assembliesWhere} AND "isValid" = true`
+          : `"isValid" = true`,
+      }),
+      client.selectFrom<TypeDbRow>("evefrontier", "SmartAssembly", {
+        where: assembliesWhere,
+      }),
+      client.selectFrom<OwnerDbRow>("evefrontier", "OwnershipByObjec", {
+        where: assembliesWhere,
+      }),
+      client.selectFrom<LocationDbRow>("evefrontier", "Location", {
+        fields: ["smartObjectId", "solarSystemId"],
+        where: assembliesWhere
+          ? `${assembliesWhere} AND "solarSystemId" != '0'`
+          : `"solarSystemId" != '0'`,
+      }),
+      client.selectFrom<EntityDbRow>("evefrontier", "EntityRecordMeta", {
+        where: assembliesWhere,
+        fields: ["smartObjectId", "name"],
+      }),
+    ]);
 
     if (assemblies.length === 0) return [];
 
