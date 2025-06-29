@@ -33,7 +33,6 @@ export type Assembly = {
   id: string;
   state: number;
   typeId: AssemblyType;
-  isValid: boolean;
   anchoredAt: number;
   ownerId: Hex;
   ownerName: string;

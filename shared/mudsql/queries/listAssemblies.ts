@@ -3,21 +3,16 @@ import { Hex } from "viem";
 import { MudSqlClient } from "../client";
 import { ensureArray, toSqlHex } from "../utils";
 import {
-  Assembly,
   AssemblyType,
   assemblyTypeMap,
   assemblyTypeReverseMap,
+  Assembly,
 } from "../types";
 
 type AssemblyDbRow = {
   smartObjectId: string;
-  createdAt: string;
-  previousState: string;
   currentState: string;
-  isValid?: boolean;
   anchoredAt: string;
-  updatedBlockNumber: string;
-  updatedBlockTime: string;
 };
 
 type TypeDbRow = {
@@ -33,16 +28,11 @@ type OwnerDbRow = {
 type LocationDbRow = {
   smartObjectId: string;
   solarSystemId: string;
-  x: string;
-  y: string;
-  z: string;
 };
 
 type EntityDbRow = {
   smartObjectId: string;
   name: string;
-  dappURL: string;
-  description: string;
 };
 
 type ListAssembliesOptions = {
@@ -163,7 +153,10 @@ export const listAssemblies =
           ns: "evefrontier",
           table: "Location",
           options: {
-            where: assembliesWhere,
+            fields: ["smartObjectId", "solarSystemId"],
+            where: assembliesWhere
+              ? `${assembliesWhere} AND "solarSystemId" != '0'`
+              : `"solarSystemId" != '0'`,
           },
         },
         {
@@ -171,6 +164,7 @@ export const listAssemblies =
           table: "EntityRecordMeta",
           options: {
             where: assembliesWhere,
+            fields: ["smartObjectId", "name"],
           },
         },
       ]);
@@ -188,7 +182,7 @@ export const listAssemblies =
     const charactersById = keyBy(characters, "address");
 
     return assemblies
-      .map((a) => {
+      .map<Assembly | undefined>((a) => {
         const type = typesById[a.smartObjectId];
         const owner = ownersById[a.smartObjectId];
         const location = locationsById[a.smartObjectId];
@@ -197,7 +191,6 @@ export const listAssemblies =
           id: a.smartObjectId,
           state: Number.parseInt(a.currentState, 10),
           anchoredAt: Number.parseInt(a.anchoredAt, 10) * 1000,
-          isValid: a.isValid || false,
           typeId: assemblyTypeMap[type.assemblyType],
           ownerId: owner.account,
           ownerName: charactersById[owner.account]?.name || "Unknown",
@@ -205,17 +198,7 @@ export const listAssemblies =
             location.solarSystemId !== "0"
               ? Number.parseInt(location.solarSystemId, 10)
               : undefined,
-          location:
-            location.solarSystemId !== "0"
-              ? {
-                  x: location.x,
-                  y: location.y,
-                  z: location.z,
-                }
-              : undefined,
           name: entitiesById[a.smartObjectId]?.name,
-          dappUrl: entitiesById[a.smartObjectId]?.dappURL,
-          description: entitiesById[a.smartObjectId]?.description,
         };
       })
       .filter((a) => a !== undefined);
