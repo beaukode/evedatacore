@@ -149,9 +149,12 @@ export const listAssemblies =
     if (assemblies.length === 0) return [];
 
     const ownersAddresses = [...new Set(owners.map((o) => o.account))];
-    const [characters] = await Promise.all([
-      client.listCharacters({ addresses: ownersAddresses }),
-    ]);
+    const characters =
+      ownersAddresses.length < 5000
+        ? await client.listCharacters({
+            addresses: ownersAddresses,
+          })
+        : await client.listCharacters();
     const typesById = keyBy(types, "smartObjectId");
     const ownersById = keyBy(owners, "smartObjectId");
     const locationsById = keyBy(locations, "smartObjectId");
