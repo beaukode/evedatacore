@@ -120,7 +120,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
 
     for (const c of queryCharacters.data) {
       if (c.account === "0x0000000000000000000000000000000000000000") continue;
-      if (storageUsers.includes(c.account.toLowerCase() as Hex)) {
+      if (storageUsers.includes(c.account?.toLowerCase() as Hex)) {
         known.push({ ...c, group: "Storage users" });
       } else {
         others.push({ ...c, group: "Other users" });

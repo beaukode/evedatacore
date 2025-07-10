@@ -114,7 +114,7 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
   const corporations = React.useMemo(() => {
     const map = (queryCharacters.data || []).reduce(
       (acc, c) => {
-        acc[c.tribeId] = true;
+        acc[c.tribeId ?? 1000167] = true;
         return acc;
       },
       [] as Record<number, boolean>

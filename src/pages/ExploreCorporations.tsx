@@ -34,7 +34,7 @@ const ExploreCorporations: React.FC = () => {
     if (!data) return [];
     const corps: Record<number, { id: string }> = {};
     for (const character of data) {
-      if (!corps[character.tribeId]) {
+      if (character.tribeId && !corps[character.tribeId]) {
         corps[character.tribeId] = {
           id: character.tribeId.toString(),
         };

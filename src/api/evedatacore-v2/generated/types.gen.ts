@@ -55,11 +55,11 @@ export type GetCharactersData = {
 export type GetCharactersResponse = {
   items: Array<{
     id: string;
-    account: string;
-    createdAt: number;
-    exists: boolean;
-    name: string;
-    tribeId: number;
+    account?: string;
+    createdAt?: number;
+    exists?: boolean;
+    name?: string;
+    tribeId?: number;
   }>;
   nextKey?: string;
 };
