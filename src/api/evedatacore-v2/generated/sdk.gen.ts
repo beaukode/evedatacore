@@ -18,6 +18,9 @@ import type {
   GetAssembliesData,
   GetAssembliesError,
   GetAssembliesResponse,
+  GetNamespacesData,
+  GetNamespacesError,
+  GetNamespacesResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -71,5 +74,18 @@ export const getAssemblies = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/assemblies",
+  });
+};
+
+export const getNamespaces = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetNamespacesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetNamespacesResponse,
+    GetNamespacesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/namespaces",
   });
 };

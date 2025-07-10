@@ -103,3 +103,28 @@ export type GetAssembliesResponse = {
 export type GetAssembliesError = {
   message: string;
 };
+
+export type GetNamespacesData = {
+  query?: {
+    /**
+     * GET /namespaces Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetNamespacesResponse = {
+  items: Array<{
+    id: string;
+    account: string;
+    createdAt: number;
+    name: string;
+    ownerId?: string;
+    ownerName?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetNamespacesError = {
+  message: string;
+};
