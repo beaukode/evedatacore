@@ -42,3 +42,28 @@ export type PostEventsResponse = {
 export type PostEventsError = {
   message: string;
 };
+
+export type GetCharactersData = {
+  query?: {
+    /**
+     * GET /characters Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharactersResponse = {
+  items: Array<{
+    id: string;
+    account: string;
+    createdAt: number;
+    exists: boolean;
+    name: string;
+    tribeId: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharactersError = {
+  message: string;
+};

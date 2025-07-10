@@ -12,6 +12,9 @@ import type {
   PostEventsData,
   PostEventsError,
   PostEventsResponse,
+  GetCharactersData,
+  GetCharactersError,
+  GetCharactersResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -39,5 +42,18 @@ export const postEvents = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/events",
+  });
+};
+
+export const getCharacters = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetCharactersData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharactersResponse,
+    GetCharactersError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/characters",
   });
 };

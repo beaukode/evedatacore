@@ -1,14 +1,14 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Box, TextField, Avatar, TableCell } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
+import { getCharacters } from "@/api/evedatacore-v2";
 
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
@@ -20,23 +20,28 @@ const ExploreCharacters: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
-  const mudSql = useMudSql();
 
-  const query = useQuery({
+  const { data, isFetching } = usePaginatedQuery({
     queryKey: ["Smartcharacters"],
-    queryFn: async () => mudSql.listCharacters(),
-    staleTime: 1000 * 60 * 15,
+    queryFn: async ({ pageParam }) => {
+      const r = await getCharacters({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
+    staleTime: 1000 * 60,
   });
 
   const smartcharacters = React.useMemo(() => {
-    if (!query.data) return [];
+    if (!data) return [];
     return filterInProps(
-      query.data,
+      data,
       debouncedSearch.text,
-      ["address", "name", "id"],
-      (sm) => sm.address !== "0x0000000000000000000000000000000000000000"
+      ["account", "name", "id"],
+      (sm) => sm.account !== "0x0000000000000000000000000000000000000000"
     );
-  }, [query.data, debouncedSearch.text]);
+  }, [data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
@@ -45,7 +50,7 @@ const ExploreCharacters: React.FC = () => {
       context: DataTableContext
     ) => {
       return (
-        <React.Fragment key={sm.address}>
+        <React.Fragment key={sm.account}>
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <Avatar
@@ -56,13 +61,13 @@ const ExploreCharacters: React.FC = () => {
               />
               <ButtonCharacter
                 name={sm.name}
-                address={sm.address}
+                address={sm.account}
                 fastRender={context.isScrolling}
               />
             </Box>
           </TableCell>
-          <TableCell>{sm.address}</TableCell>
-          <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
+          <TableCell>{sm.account}</TableCell>
+          <TableCell>{tsToDateTime(sm.createdAt * 1000)}</TableCell>
         </React.Fragment>
       );
     },
@@ -78,7 +83,7 @@ const ExploreCharacters: React.FC = () => {
         columns={columns}
         data={smartcharacters}
         itemContent={itemContent}
-        loading={query.isFetching}
+        loading={isFetching}
       >
         <TextField
           label="Search"
