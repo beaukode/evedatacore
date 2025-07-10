@@ -12,13 +12,17 @@ interface UsePaginatedQueryOptions<
 
 type ExtractItemType<T> = T extends { items: (infer I)[] } ? I : never;
 
+type UsePaginatedQueryReturn<T> = {
+  data?: ExtractItemType<T>[];
+  isFetching: boolean;
+  hasNextPage: boolean;
+};
+
 const MAX_PAGES = 20;
 
 export function usePaginatedQuery<
   T extends { nextKey?: string; items: unknown[] },
->(
-  options: UsePaginatedQueryOptions<T>
-): { data?: ExtractItemType<T>[]; isFetching: boolean } {
+>(options: UsePaginatedQueryOptions<T>): UsePaginatedQueryReturn<T> {
   const [page, setPage] = useState(1);
   const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
     queryKey: options.queryKey,
@@ -43,5 +47,6 @@ export function usePaginatedQuery<
   return {
     data: memoizedData as ExtractItemType<T>[],
     isFetching,
+    hasNextPage,
   };
 }
