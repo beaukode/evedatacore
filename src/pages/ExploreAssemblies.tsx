@@ -11,21 +11,22 @@ import {
   Checkbox,
   ListItemText,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
-import { DataTableColumn, DataTableContext } from "@/components/DataTable";
-import ButtonCharacter from "@/components/buttons/ButtonCharacter";
-import ButtonAssembly from "@/components/buttons/ButtonAssembly";
 import { ensureArray, filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
-import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import { getAssemblies } from "@/api/evedatacore-v2";
+import { assemblyTypeMap } from "@shared/mudsql";
 import {
   columnWidths,
   smartAssembliesTypes,
   SmartAssemblyState,
   smartAssemblyStates,
 } from "@/constants";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonAssembly from "@/components/buttons/ButtonAssembly";
+import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 
 const columns: DataTableColumn[] = [
@@ -41,7 +42,6 @@ const ExploreAssemblies: React.FC = () => {
     typeId: "0",
     stateId: "2-3",
   });
-  const mudSql = useMudSql();
 
   const { selectedStates, iSelectedState } = React.useMemo(() => {
     const selectedStates = search.stateId.split("-").filter((v) => v !== "");
@@ -49,10 +49,15 @@ const ExploreAssemblies: React.FC = () => {
     return { selectedStates, iSelectedState };
   }, [search.stateId]);
 
-  const query = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["Smartassemblies"],
-    queryFn: async () => mudSql.listAssemblies(),
-    retry: 1,
+    queryFn: async ({ pageParam }) => {
+      const r = await getAssemblies({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
     staleTime: 1000 * 60,
   });
 
@@ -65,8 +70,11 @@ const ExploreAssemblies: React.FC = () => {
       ["name", "id", "ownerName", "ownerId"],
       (sa) => {
         return (
-          (sa.typeId === iTypeId || iTypeId === 0) &&
-          iSelectedState.includes(sa.state)
+          ((sa.assemblyType &&
+            assemblyTypeMap[sa.assemblyType as keyof typeof assemblyTypeMap] ===
+              iTypeId) ||
+            iTypeId === 0) &&
+          iSelectedState.includes(sa.currentState ?? 0)
         );
       }
     );
@@ -83,8 +91,12 @@ const ExploreAssemblies: React.FC = () => {
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <DisplayAssemblyIcon
-                typeId={sa.typeId}
-                stateId={sa.state}
+                typeId={
+                  assemblyTypeMap[
+                    sa.assemblyType as keyof typeof assemblyTypeMap
+                  ]
+                }
+                stateId={sa.currentState}
                 sx={{ mr: 1 }}
                 tooltip={!context.isScrolling}
               />
@@ -108,7 +120,7 @@ const ExploreAssemblies: React.FC = () => {
               fastRender={context.isScrolling}
             />
           </TableCell>
-          <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
+          <TableCell>{tsToDateTime((sa.anchoredAt ?? 0) * 1000)}</TableCell>
         </React.Fragment>
       );
     },

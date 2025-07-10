@@ -15,6 +15,9 @@ import type {
   GetCharactersData,
   GetCharactersError,
   GetCharactersResponse,
+  GetAssembliesData,
+  GetAssembliesError,
+  GetAssembliesResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -55,5 +58,18 @@ export const getCharacters = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/characters",
+  });
+};
+
+export const getAssemblies = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetAssembliesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetAssembliesResponse,
+    GetAssembliesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/assemblies",
   });
 };

@@ -67,3 +67,39 @@ export type GetCharactersResponse = {
 export type GetCharactersError = {
   message: string;
 };
+
+export type GetAssembliesData = {
+  query?: {
+    /**
+     * GET /assemblies Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetAssembliesResponse = {
+  items: Array<{
+    id: string;
+    currentState?: number;
+    previousState?: number;
+    assemblyType?: string;
+    isValid?: boolean;
+    anchoredAt?: number;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    solarSystemId?: number;
+    x?: string;
+    y?: string;
+    z?: string;
+    name?: string;
+    dappUrl?: string;
+    description?: string;
+    networkNodeId?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetAssembliesError = {
+  message: string;
+};
