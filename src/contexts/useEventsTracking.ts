@@ -18,7 +18,7 @@ async function flushEvents() {
         type: "application/json",
       }
     );
-    navigator.sendBeacon("/api/events", data);
+    navigator.sendBeacon("/api-v2/events", data);
     eventQueue = {};
   }
 }
