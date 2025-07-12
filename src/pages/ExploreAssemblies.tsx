@@ -110,7 +110,7 @@ const ExploreAssemblies: React.FC = () => {
           <TableCell>
             <ButtonCharacter
               name={sa.ownerName}
-              address={sa.ownerId}
+              address={sa.account}
               fastRender={context.isScrolling}
             />
           </TableCell>
