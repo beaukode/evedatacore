@@ -241,6 +241,39 @@ export type GetAssembliesError = {
   message: string;
 };
 
+export type GetAssemblyIdData = {
+  path: {
+    /**
+     * GET /assembly/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetAssemblyIdResponse = {
+  id: string;
+  currentState?: number;
+  previousState?: number;
+  assemblyType?: string;
+  isValid?: boolean;
+  anchoredAt?: number;
+  account?: string;
+  ownerId?: string;
+  ownerName?: string;
+  solarSystemId?: number;
+  x?: string;
+  y?: string;
+  z?: string;
+  name?: string;
+  dappUrl?: string;
+  description?: string;
+  networkNodeId?: string;
+};
+
+export type GetAssemblyIdError = {
+  message: string;
+};
+
 export type GetNamespacesData = {
   query?: {
     /**

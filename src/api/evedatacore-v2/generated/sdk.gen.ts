@@ -30,6 +30,9 @@ import type {
   GetAssembliesData,
   GetAssembliesError,
   GetAssembliesResponse,
+  GetAssemblyIdData,
+  GetAssemblyIdError,
+  GetAssemblyIdResponse,
   GetNamespacesData,
   GetNamespacesError,
   GetNamespacesResponse,
@@ -153,6 +156,19 @@ export const getAssemblies = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/assemblies",
+  });
+};
+
+export const getAssemblyId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetAssemblyIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetAssemblyIdResponse,
+    GetAssemblyIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/assembly/{id}",
   });
 };
 
