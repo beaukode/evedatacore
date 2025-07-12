@@ -183,6 +183,28 @@ export type GetCharacterIdAssembliesError = {
   message: string;
 };
 
+export type GetCharacterIdData = {
+  path: {
+    /**
+     * GET /character/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetCharacterIdResponse = {
+  id: string;
+  account?: string;
+  createdAt?: number;
+  exists?: boolean;
+  name?: string;
+  tribeId?: number;
+};
+
+export type GetCharacterIdError = {
+  message: string;
+};
+
 export type GetAssembliesData = {
   query?: {
     /**

@@ -24,6 +24,9 @@ import type {
   GetCharacterIdAssembliesData,
   GetCharacterIdAssembliesError,
   GetCharacterIdAssembliesResponse,
+  GetCharacterIdData,
+  GetCharacterIdError,
+  GetCharacterIdResponse,
   GetAssembliesData,
   GetAssembliesError,
   GetAssembliesResponse,
@@ -124,6 +127,19 @@ export const getCharacterIdAssemblies = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/character/{id}/assemblies",
+  });
+};
+
+export const getCharacterId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdResponse,
+    GetCharacterIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}",
   });
 };
 

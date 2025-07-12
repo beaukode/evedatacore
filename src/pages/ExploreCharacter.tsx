@@ -16,7 +16,7 @@ import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import TableFunctions from "@/components/tables/TableFunctions";
 import ButtonCorporation from "@/components/buttons/ButtonCorporation";
-import { getCharacterIdNamespaces } from "@/api/evedatacore-v2";
+import { getCharacterIdNamespaces, getCharacterId } from "@/api/evedatacore-v2";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -24,7 +24,11 @@ const ExploreCharacter: React.FC = () => {
 
   const query = useQuery({
     queryKey: ["SmartcharactersById", address],
-    queryFn: async () => mudSql.getCharacter(address || "0x0"),
+    queryFn: async () => {
+      const r = await getCharacterId({ path: { id: address ?? "" } });
+      if (!r.data) return null;
+      return r.data;
+    },
     enabled: !!address,
   });
 
@@ -66,16 +70,16 @@ const ExploreCharacter: React.FC = () => {
       <PaperLevel1 title={name} loading={query.isFetching} backButton>
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{data?.id}</BasicListItem>
-          <BasicListItem title="Address">{data?.address}</BasicListItem>
+          <BasicListItem title="Address">{data?.account}</BasicListItem>
           <BasicListItem title="Corporation Id" disableGutters>
             <ButtonCorporation
-              name={data?.corpId?.toString()}
-              id={data?.corpId?.toString()}
+              name={data?.tribeId?.toString()}
+              id={data?.tribeId?.toString()}
               fastRender={false}
             />
           </BasicListItem>
           <BasicListItem title="Created At">
-            {tsToDateTime(data?.createdAt)}
+            {tsToDateTime((data?.createdAt ?? 0) * 1000)}
           </BasicListItem>
           <BasicListItem title="Eve balance">
             {queryBalance.data?.value === undefined
