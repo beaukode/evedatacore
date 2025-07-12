@@ -108,6 +108,9 @@ export function ldapToDateTime(value?: number) {
 
 export function tsToDateTime(value?: number): string {
   if (!value) return "";
+  if (value < 31467647000) { // If the timestamp is before 1970-12-31, it's in seconds
+    value *= 1000;
+  }
   const isoDate = new Date(value).toISOString();
   return isoDate.substring(0, 10) + " " + isoDate.substring(11, 19);
 }

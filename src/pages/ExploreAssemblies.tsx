@@ -120,7 +120,7 @@ const ExploreAssemblies: React.FC = () => {
               fastRender={context.isScrolling}
             />
           </TableCell>
-          <TableCell>{tsToDateTime((sa.anchoredAt ?? 0) * 1000)}</TableCell>
+          <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
         </React.Fragment>
       );
     },

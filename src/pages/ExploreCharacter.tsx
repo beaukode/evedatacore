@@ -79,7 +79,7 @@ const ExploreCharacter: React.FC = () => {
             />
           </BasicListItem>
           <BasicListItem title="Created At">
-            {tsToDateTime((data?.createdAt ?? 0) * 1000)}
+            {tsToDateTime(data?.createdAt)}
           </BasicListItem>
           <BasicListItem title="Eve balance">
             {queryBalance.data?.value === undefined

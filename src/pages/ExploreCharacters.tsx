@@ -67,7 +67,7 @@ const ExploreCharacters: React.FC = () => {
             </Box>
           </TableCell>
           <TableCell>{sm.account}</TableCell>
-          <TableCell>{tsToDateTime(sm.createdAt ?? 0 * 1000)}</TableCell>
+          <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
         </React.Fragment>
       );
     },
