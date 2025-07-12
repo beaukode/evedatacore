@@ -11,14 +11,18 @@ import {
   FormControlLabel,
   Switch,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonAssembly from "../buttons/ButtonAssembly";
 import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
 import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
 import ButtonCharacter from "../buttons/ButtonCharacter";
 import { tsToDateTime } from "@/tools";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import {
+  getCharacterIdAssemblies,
+  getSolarsystemIdAssemblies,
+} from "@/api/evedatacore-v2";
+import { assemblyTypeMap } from "@shared/mudsql/types";
 
 interface TableAssembliesProps {
   owner?: string;
@@ -30,18 +34,31 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
   solarSystemId,
 }) => {
   const [showUnanchored, setShowUnanchored] = React.useState(false);
-  const mudSql = useMudSql();
 
-  const queryByOwner = useQuery({
+  const queryByOwner = usePaginatedQuery({
     queryKey: ["AssembliesByOwner", owner],
-    queryFn: async () => mudSql.listAssemblies({ owners: owner }),
+    queryFn: async ({ pageParam }) => {
+      const r = await getCharacterIdAssemblies({
+        path: { id: owner ?? "" },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
     staleTime: 1000 * 60,
     enabled: !!owner,
   });
 
-  const queryBySolarSystem = useQuery({
+  const queryBySolarSystem = usePaginatedQuery({
     queryKey: ["AssembliesBySolarSystem", solarSystemId],
-    queryFn: async () => mudSql.listAssemblies({ solarSystemId }),
+    queryFn: async ({ pageParam }) => {
+      const r = await getSolarsystemIdAssemblies({
+        path: { id: Number(solarSystemId) },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
     staleTime: 1000 * 60,
     enabled: !!solarSystemId,
   });
@@ -51,7 +68,9 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
   const assemblies = React.useMemo(() => {
     if (!query.data) return undefined;
     if (showUnanchored) return query.data;
-    return query.data.filter((a) => a.state === 2 || a.state === 3);
+    return query.data.filter(
+      (a) => a.currentState === 2 || a.currentState === 3
+    );
   }, [query.data, showUnanchored]);
 
   return (
@@ -100,8 +119,12 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
                       <TableCell>
                         <Box display="flex" alignItems="center">
                           <DisplayAssemblyIcon
-                            typeId={sa.typeId}
-                            stateId={sa.state}
+                            typeId={
+                              assemblyTypeMap[
+                                sa.assemblyType as keyof typeof assemblyTypeMap
+                              ]
+                            }
+                            stateId={sa.currentState}
                             sx={{ mr: 1 }}
                             tooltip
                           />
@@ -111,7 +134,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
                       {!owner && (
                         <TableCell>
                           <ButtonCharacter
-                            address={sa.ownerId}
+                            address={sa.account}
                             name={sa.ownerName}
                           />
                         </TableCell>

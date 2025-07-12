@@ -141,6 +141,48 @@ export type GetCharacterIdNamespacesError = {
   message: string;
 };
 
+export type GetCharacterIdAssembliesData = {
+  path: {
+    /**
+     * GET /character/:id/assemblies Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/assemblies Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdAssembliesResponse = {
+  items: Array<{
+    id: string;
+    currentState?: number;
+    previousState?: number;
+    assemblyType?: string;
+    isValid?: boolean;
+    anchoredAt?: number;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    solarSystemId?: number;
+    x?: string;
+    y?: string;
+    z?: string;
+    name?: string;
+    dappUrl?: string;
+    description?: string;
+    networkNodeId?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharacterIdAssembliesError = {
+  message: string;
+};
+
 export type GetAssembliesData = {
   query?: {
     /**
@@ -336,5 +378,47 @@ export type GetTableIdResponse = {
 };
 
 export type GetTableIdError = {
+  message: string;
+};
+
+export type GetSolarsystemIdAssembliesData = {
+  path: {
+    /**
+     * GET /solarsystem/:id/assemblies Parameter
+     */
+    id: number | null;
+  };
+  query?: {
+    /**
+     * GET /solarsystem/:id/assemblies Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetSolarsystemIdAssembliesResponse = {
+  items: Array<{
+    id: string;
+    currentState?: number;
+    previousState?: number;
+    assemblyType?: string;
+    isValid?: boolean;
+    anchoredAt?: number;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    solarSystemId?: number;
+    x?: string;
+    y?: string;
+    z?: string;
+    name?: string;
+    dappUrl?: string;
+    description?: string;
+    networkNodeId?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetSolarsystemIdAssembliesError = {
   message: string;
 };

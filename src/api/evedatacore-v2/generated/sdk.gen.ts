@@ -21,6 +21,9 @@ import type {
   GetCharacterIdNamespacesData,
   GetCharacterIdNamespacesError,
   GetCharacterIdNamespacesResponse,
+  GetCharacterIdAssembliesData,
+  GetCharacterIdAssembliesError,
+  GetCharacterIdAssembliesResponse,
   GetAssembliesData,
   GetAssembliesError,
   GetAssembliesResponse,
@@ -39,6 +42,9 @@ import type {
   GetTableIdData,
   GetTableIdError,
   GetTableIdResponse,
+  GetSolarsystemIdAssembliesData,
+  GetSolarsystemIdAssembliesError,
+  GetSolarsystemIdAssembliesResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -105,6 +111,19 @@ export const getCharacterIdNamespaces = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/character/{id}/namespaces",
+  });
+};
+
+export const getCharacterIdAssemblies = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdAssembliesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdAssembliesResponse,
+    GetCharacterIdAssembliesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/assemblies",
   });
 };
 
@@ -183,5 +202,20 @@ export const getTableId = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/table/{id}",
+  });
+};
+
+export const getSolarsystemIdAssemblies = <
+  ThrowOnError extends boolean = false,
+>(
+  options: OptionsLegacyParser<GetSolarsystemIdAssembliesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSolarsystemIdAssembliesResponse,
+    GetSolarsystemIdAssembliesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/solarsystem/{id}/assemblies",
   });
 };
