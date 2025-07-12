@@ -164,3 +164,62 @@ export type GetTablesResponse = {
 export type GetTablesError = {
   message: string;
 };
+
+export type GetTableIdRecordsData = {
+  path: {
+    /**
+     * GET /table/:id/records Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /table/:id/records Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetTableIdRecordsResponse = {
+  items: Array<{
+    [key: string]: unknown;
+  }>;
+  nextKey?: string;
+};
+
+export type GetTableIdRecordsError = {
+  message: string;
+};
+
+export type GetTableIdData = {
+  path: {
+    /**
+     * GET /table/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetTableIdResponse = {
+  world: string;
+  tableId: string;
+  account: string;
+  namespaceId: string;
+  ownerId?: string;
+  ownerName?: string;
+  schemaOrder: Array<string>;
+  key: Array<string>;
+  name: string;
+  namespace: string;
+  type: string;
+  schema: {
+    [key: string]: {
+      type: string;
+      internalType: string;
+    };
+  };
+};
+
+export type GetTableIdError = {
+  message: string;
+};

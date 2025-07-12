@@ -24,6 +24,12 @@ import type {
   GetTablesData,
   GetTablesError,
   GetTablesResponse,
+  GetTableIdRecordsData,
+  GetTableIdRecordsError,
+  GetTableIdRecordsResponse,
+  GetTableIdData,
+  GetTableIdError,
+  GetTableIdResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -103,5 +109,31 @@ export const getTables = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/tables",
+  });
+};
+
+export const getTableIdRecords = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetTableIdRecordsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetTableIdRecordsResponse,
+    GetTableIdRecordsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/table/{id}/records",
+  });
+};
+
+export const getTableId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetTableIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetTableIdResponse,
+    GetTableIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/table/{id}",
   });
 };
