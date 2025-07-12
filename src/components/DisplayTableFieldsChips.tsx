@@ -1,10 +1,12 @@
 import React from "react";
 import { Chip } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
-import { Table } from "@latticexyz/config";
 
 interface DisplayTableFieldsChipsProps {
-  table: Table;
+  table: {
+    schema: Record<string, { type: string; internalType: string }>;
+    key: string[];
+  };
 }
 
 const DisplayTableFieldsChips: React.FC<DisplayTableFieldsChipsProps> = ({

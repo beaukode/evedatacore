@@ -18,13 +18,13 @@ async function flushEvents() {
         type: "application/json",
       }
     );
-    navigator.sendBeacon("/api/events", data);
+    navigator.sendBeacon("/api-v2/events", data);
     eventQueue = {};
   }
 }
 
 function pushEventToQueue(key: string) {
-  if (import.meta.env.VITE_DISABLE_ANALYTICS) {
+  if (import.meta.env.VITE_DISABLE_ANALYTICS === "true") {
     return;
   }
   if (!eventQueue) {

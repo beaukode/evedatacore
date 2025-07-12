@@ -10,38 +10,51 @@ import {
   Typography,
 } from "@mui/material";
 import OffChainIcon from "@mui/icons-material/BackupTable";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonTable from "@/components/buttons/ButtonTable";
 import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
+import {
+  getCharacterIdTables,
+  getNamespaceIdTables,
+} from "@/api/evedatacore-v2";
 
 interface TablesProps {
-  namespaces: string[];
+  owner?: string;
+  namespace?: string;
   hideNamespaceColumn?: boolean;
 }
 
 const TableTables: React.FC<TablesProps> = ({
-  namespaces,
+  owner,
+  namespace,
   hideNamespaceColumn,
 }) => {
-  const mudSql = useMudSql();
+  const queryKey: string[] = ["Tables"];
+  if (owner) queryKey.push(`owner:${owner}`);
+  if (namespace) queryKey.push(`namespace:${namespace}`);
 
-  const queryKey = namespaces.join("|");
-  const query = useQuery({
-    queryKey: ["Tables", queryKey],
-    queryFn: async () => mudSql.listTables({ namespaceIds: namespaces }),
-    retry: false,
-    throwOnError: true,
+  const query = usePaginatedQuery({
+    queryKey: queryKey,
+    queryFn: async ({ pageParam }) => {
+      const r = await (owner ? getCharacterIdTables : getNamespaceIdTables)({
+        path: { id: owner ?? namespace ?? "" },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
   });
 
   const tables = query.data || [];
 
   return (
     <PaperLevel1 title="Tables" loading={query.isFetching}>
-      {namespaces.length === 0 && <Typography variant="body1">None</Typography>}
-      {namespaces.length > 0 && (
+      {!query.isFetching && tables.length === 0 && (
+        <Typography variant="body1">None</Typography>
+      )}
+      {tables.length > 0 && (
         <Table size="small" stickyHeader>
           <TableHead>
             <TableRow>

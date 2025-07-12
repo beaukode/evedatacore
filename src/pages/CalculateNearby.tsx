@@ -15,7 +15,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import { getFindNearIdDistance } from "@/api/evedatacore";
+import { getFindNearIdDistance } from "@/api/evedatacore-v2";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import useCharacter from "@/tools/useCharacter";
 import NearbyForm from "./Calculators/NearbyForm";

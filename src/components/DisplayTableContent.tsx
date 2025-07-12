@@ -1,9 +1,10 @@
 import React from "react";
 
-import { Table } from "@latticexyz/config";
-
 interface DisplayTableContentProps {
-  table: Table;
+  table: {
+    schema: Record<string, { type: string; internalType: string }>;
+    key: string[];
+  };
 }
 
 function buildFieldText(fieldCount: number, keyCount: number) {
