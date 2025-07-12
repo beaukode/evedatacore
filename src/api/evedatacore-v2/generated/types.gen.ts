@@ -128,3 +128,39 @@ export type GetNamespacesResponse = {
 export type GetNamespacesError = {
   message: string;
 };
+
+export type GetTablesData = {
+  query?: {
+    /**
+     * GET /tables Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetTablesResponse = {
+  items: Array<{
+    world: string;
+    tableId: string;
+    account: string;
+    namespaceId: string;
+    ownerId?: string;
+    ownerName?: string;
+    schemaOrder: Array<string>;
+    key: Array<string>;
+    name: string;
+    namespace: string;
+    type: string;
+    schema: {
+      [key: string]: {
+        type: string;
+        internalType: string;
+      };
+    };
+  }>;
+  nextKey?: string;
+};
+
+export type GetTablesError = {
+  message: string;
+};

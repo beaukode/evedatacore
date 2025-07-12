@@ -21,6 +21,9 @@ import type {
   GetNamespacesData,
   GetNamespacesError,
   GetNamespacesResponse,
+  GetTablesData,
+  GetTablesError,
+  GetTablesResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -87,5 +90,18 @@ export const getNamespaces = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/namespaces",
+  });
+};
+
+export const getTables = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetTablesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetTablesResponse,
+    GetTablesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/tables",
   });
 };
