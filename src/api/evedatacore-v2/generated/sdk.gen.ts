@@ -15,12 +15,21 @@ import type {
   GetCharactersData,
   GetCharactersError,
   GetCharactersResponse,
+  GetCharacterIdTablesData,
+  GetCharacterIdTablesError,
+  GetCharacterIdTablesResponse,
+  GetCharacterIdNamespacesData,
+  GetCharacterIdNamespacesError,
+  GetCharacterIdNamespacesResponse,
   GetAssembliesData,
   GetAssembliesError,
   GetAssembliesResponse,
   GetNamespacesData,
   GetNamespacesError,
   GetNamespacesResponse,
+  GetNamespaceIdTablesData,
+  GetNamespaceIdTablesError,
+  GetNamespaceIdTablesResponse,
   GetTablesData,
   GetTablesError,
   GetTablesResponse,
@@ -73,6 +82,32 @@ export const getCharacters = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const getCharacterIdTables = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdTablesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdTablesResponse,
+    GetCharacterIdTablesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/tables",
+  });
+};
+
+export const getCharacterIdNamespaces = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdNamespacesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdNamespacesResponse,
+    GetCharacterIdNamespacesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/namespaces",
+  });
+};
+
 export const getAssemblies = <ThrowOnError extends boolean = false>(
   options?: OptionsLegacyParser<GetAssembliesData, ThrowOnError>,
 ) => {
@@ -96,6 +131,19 @@ export const getNamespaces = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/namespaces",
+  });
+};
+
+export const getNamespaceIdTables = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetNamespaceIdTablesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetNamespaceIdTablesResponse,
+    GetNamespaceIdTablesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/namespace/{id}/tables",
   });
 };
 

@@ -68,6 +68,79 @@ export type GetCharactersError = {
   message: string;
 };
 
+export type GetCharacterIdTablesData = {
+  path: {
+    /**
+     * GET /character/:id/tables Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/tables Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdTablesResponse = {
+  items: Array<{
+    world: string;
+    tableId: string;
+    account: string;
+    namespaceId: string;
+    ownerId?: string;
+    ownerName?: string;
+    schemaOrder: Array<string>;
+    key: Array<string>;
+    name: string;
+    namespace: string;
+    type: string;
+    schema: {
+      [key: string]: {
+        type: string;
+        internalType: string;
+      };
+    };
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharacterIdTablesError = {
+  message: string;
+};
+
+export type GetCharacterIdNamespacesData = {
+  path: {
+    /**
+     * GET /character/:id/namespaces Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/namespaces Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdNamespacesResponse = {
+  items: Array<{
+    id: string;
+    account: string;
+    createdAt: number;
+    name: string;
+    ownerId?: string;
+    ownerName?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharacterIdNamespacesError = {
+  message: string;
+};
+
 export type GetAssembliesData = {
   query?: {
     /**
@@ -126,6 +199,48 @@ export type GetNamespacesResponse = {
 };
 
 export type GetNamespacesError = {
+  message: string;
+};
+
+export type GetNamespaceIdTablesData = {
+  path: {
+    /**
+     * GET /namespace/:id/tables Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /namespace/:id/tables Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetNamespaceIdTablesResponse = {
+  items: Array<{
+    world: string;
+    tableId: string;
+    account: string;
+    namespaceId: string;
+    ownerId?: string;
+    ownerName?: string;
+    schemaOrder: Array<string>;
+    key: Array<string>;
+    name: string;
+    namespace: string;
+    type: string;
+    schema: {
+      [key: string]: {
+        type: string;
+        internalType: string;
+      };
+    };
+  }>;
+  nextKey?: string;
+};
+
+export type GetNamespaceIdTablesError = {
   message: string;
 };
 

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useMudSql } from "@/contexts/AppContext";
 import { formatCrypto, tsToDateTime } from "@/tools";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 import Error404 from "./Error404";
 import TableNamespaces from "@/components/tables/TableNamespaces";
 import TableTables from "@/components/tables/TableTables";
@@ -15,6 +16,7 @@ import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import TableFunctions from "@/components/tables/TableFunctions";
 import ButtonCorporation from "@/components/buttons/ButtonCorporation";
+import { getCharacterIdNamespaces } from "@/api/evedatacore-v2";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
@@ -32,10 +34,18 @@ const ExploreCharacter: React.FC = () => {
     enabled: !!address,
   });
 
-  const queryNamespaces = useQuery({
+  const queryNamespaces = usePaginatedQuery({
     queryKey: ["Namespaces", address],
-    queryFn: async () => mudSql.listNamespaces({ owners: address }),
+    queryFn: async ({ pageParam }) => {
+      const r = await getCharacterIdNamespaces({
+        path: { id: address ?? "" },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
     enabled: !!query.data?.id,
+    staleTime: 1000 * 60,
   });
 
   const namespaces = queryNamespaces.data || [];
@@ -76,11 +86,11 @@ const ExploreCharacter: React.FC = () => {
       </PaperLevel1>
       <TableAssemblies owner={address} />
       <TableKillmails characterId={data?.id} />
-      <TableNamespaces address={address} />
-      <TableTables namespaces={namespaces.map((ns) => ns.namespaceId)} />
-      <TableSystems namespaces={namespaces.map((ns) => ns.namespaceId)} />
+      <TableNamespaces owner={address} />
+      <TableTables owner={address} />
+      <TableSystems namespaces={namespaces.map((ns) => ns.id)} />
       <TableFunctions
-        namespaces={namespaces.map((ns) => ns.namespaceId)}
+        namespaces={namespaces.map((ns) => ns.id)}
         hideColumns={["owner"]}
       />
     </Box>
