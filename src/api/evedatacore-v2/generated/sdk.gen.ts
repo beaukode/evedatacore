@@ -42,6 +42,9 @@ import type {
   GetNamespaceIdTablesData,
   GetNamespaceIdTablesError,
   GetNamespaceIdTablesResponse,
+  GetNamespaceIdData,
+  GetNamespaceIdError,
+  GetNamespaceIdResponse,
   GetTablesData,
   GetTablesError,
   GetTablesResponse,
@@ -211,6 +214,19 @@ export const getNamespaceIdTables = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/namespace/{id}/tables",
+  });
+};
+
+export const getNamespaceId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetNamespaceIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetNamespaceIdResponse,
+    GetNamespaceIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/namespace/{id}",
   });
 };
 

@@ -5,23 +5,26 @@ import { hexToResource } from "@latticexyz/common";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { isHex } from "viem";
-import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import TableTables from "@/components/tables/TableTables";
 import TableSystems from "@/components/tables/TableSystems";
 import TableFunctions from "@/components/tables/TableFunctions";
+import { getNamespaceId } from "@/api/evedatacore-v2";
 
 const ExploreNamespace: React.FC = () => {
   const { id } = useParams();
-  const mudSql = useMudSql();
 
   const namespace = isHex(id) ? hexToResource(id) : undefined;
 
   const query = useQuery({
     queryKey: ["Namespace", id],
-    queryFn: async () => mudSql.getNamespace(id ?? "0x"),
+    queryFn: async () => {
+      const r = await getNamespaceId({ path: { id: id ?? "0x" } });
+      if (!r.data) return null;
+      return r.data;
+    },
     enabled: !!id,
   });
 
@@ -41,15 +44,18 @@ const ExploreNamespace: React.FC = () => {
         {data && (
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
             <ListItem disableGutters>
-              <ListItemText>Id: {data.namespaceId}</ListItemText>
+              <ListItemText>Id: {data.id}</ListItemText>
             </ListItem>
             <ListItem disableGutters>
               <ListItemText sx={{ my: 0 }}>
                 Owner:{" "}
-                {data.ownerName && (
-                  <ButtonCharacter address={data.owner} name={data.ownerName} />
+                {data.ownerId && (
+                  <ButtonCharacter
+                    address={data.account}
+                    name={data.ownerName}
+                  />
                 )}
-                {!data.ownerName && data.owner}
+                {!data.ownerId && data.account}
               </ListItemText>
             </ListItem>
           </List>

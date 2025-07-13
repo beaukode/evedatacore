@@ -398,6 +398,28 @@ export type GetNamespaceIdTablesError = {
   message: string;
 };
 
+export type GetNamespaceIdData = {
+  path: {
+    /**
+     * GET /namespace/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetNamespaceIdResponse = {
+  id: string;
+  account: string;
+  createdAt: number;
+  name: string;
+  ownerId?: string;
+  ownerName?: string;
+};
+
+export type GetNamespaceIdError = {
+  message: string;
+};
+
 export type GetTablesData = {
   query?: {
     /**
