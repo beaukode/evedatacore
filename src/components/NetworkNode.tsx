@@ -10,23 +10,27 @@ import {
   Box,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
 import { tsToDateTime } from "@/tools";
 import PaperLevel1 from "./ui/PaperLevel1";
 import BasicListItem from "./ui/BasicListItem";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import ButtonAssembly from "./buttons/ButtonAssembly";
+import { getAssemblyIdNetwork } from "@/api/evedatacore-v2";
+import { assemblyTypeMap } from "@shared/mudsql/types";
 
 interface NetworkNodeProps {
   id: string;
 }
 
 const NetworkNode: React.FC<NetworkNodeProps> = ({ id }) => {
-  const mudSql = useMudSql();
-
   const query = useQuery({
     queryKey: ["NetworkNode", id],
-    queryFn: async () => mudSql.getNetworkNode(id),
+    queryFn: async () => {
+      const r = await getAssemblyIdNetwork({ path: { id } });
+      if (!r.data) return null;
+      return r.data;
+    },
+    staleTime: 1000 * 60, // 1 minute
   });
 
   const data = query.data;
@@ -46,7 +50,8 @@ const NetworkNode: React.FC<NetworkNodeProps> = ({ id }) => {
                 title="Energy (reserved / produced / max)"
                 disableGutters
               >
-                {data.reservedEnergy} / {data.producedEnergy} / {data.maxEnergy}
+                {data.totalReservedEnergy} / {data.energyProduced} /{" "}
+                {data.maxEnergyCapacity}
               </BasicListItem>
             </List>
             <Table size="small" stickyHeader>
@@ -57,14 +62,18 @@ const NetworkNode: React.FC<NetworkNodeProps> = ({ id }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.assemblies.map((sa) => {
+                {data.items.map((sa) => {
                   return (
                     <TableRow key={sa.id}>
                       <TableCell>
                         <Box display="flex" alignItems="center">
                           <DisplayAssemblyIcon
-                            typeId={sa.typeId}
-                            stateId={sa.state}
+                            typeId={
+                              assemblyTypeMap[
+                                sa.assemblyType as keyof typeof assemblyTypeMap
+                              ]
+                            }
+                            stateId={sa.currentState}
                             sx={{ mr: 1 }}
                             tooltip
                           />

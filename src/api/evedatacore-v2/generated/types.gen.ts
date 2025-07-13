@@ -175,6 +175,9 @@ export type GetCharacterIdAssembliesResponse = {
     dappUrl?: string;
     description?: string;
     networkNodeId?: string;
+    maxEnergyCapacity?: number;
+    energyProduced?: number;
+    totalReservedEnergy?: number;
   }>;
   nextKey?: string;
 };
@@ -233,11 +236,62 @@ export type GetAssembliesResponse = {
     dappUrl?: string;
     description?: string;
     networkNodeId?: string;
+    maxEnergyCapacity?: number;
+    energyProduced?: number;
+    totalReservedEnergy?: number;
   }>;
   nextKey?: string;
 };
 
 export type GetAssembliesError = {
+  message: string;
+};
+
+export type GetAssemblyIdNetworkData = {
+  path: {
+    /**
+     * GET /assembly/:id/network Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /assembly/:id/network Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetAssemblyIdNetworkResponse = {
+  items: Array<{
+    id: string;
+    currentState?: number;
+    previousState?: number;
+    assemblyType?: string;
+    isValid?: boolean;
+    anchoredAt?: number;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    solarSystemId?: number;
+    x?: string;
+    y?: string;
+    z?: string;
+    name?: string;
+    dappUrl?: string;
+    description?: string;
+    networkNodeId?: string;
+    maxEnergyCapacity?: number;
+    energyProduced?: number;
+    totalReservedEnergy?: number;
+  }>;
+  maxEnergyCapacity?: number;
+  energyProduced?: number;
+  totalReservedEnergy?: number;
+  nextKey?: string;
+};
+
+export type GetAssemblyIdNetworkError = {
   message: string;
 };
 
@@ -268,6 +322,9 @@ export type GetAssemblyIdResponse = {
   dappUrl?: string;
   description?: string;
   networkNodeId?: string;
+  maxEnergyCapacity?: number;
+  energyProduced?: number;
+  totalReservedEnergy?: number;
 };
 
 export type GetAssemblyIdError = {
@@ -470,6 +527,9 @@ export type GetSolarsystemIdAssembliesResponse = {
     dappUrl?: string;
     description?: string;
     networkNodeId?: string;
+    maxEnergyCapacity?: number;
+    energyProduced?: number;
+    totalReservedEnergy?: number;
   }>;
   nextKey?: string;
 };
