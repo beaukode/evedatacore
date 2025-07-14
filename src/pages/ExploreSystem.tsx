@@ -1,11 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Box, List } from "@mui/material";
-import { isHex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { hexToResource, resourceToHex } from "@latticexyz/common";
-import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -13,32 +10,29 @@ import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import BasicListItem from "@/components/ui/BasicListItem";
 import ExternalLink from "@/components/ui/ExternalLink";
 import TableFunctions from "@/components/tables/TableFunctions";
+import { getSystemId } from "@/api/evedatacore-v2";
 
 const ExploreSystem: React.FC = () => {
   const { id } = useParams();
-  const mudSql = useMudSql();
-
-  const system = isHex(id) ? hexToResource(id) : undefined;
-  const namespaceId = system
-    ? resourceToHex({
-        type: "namespace",
-        namespace: system.namespace,
-        name: "",
-      })
-    : undefined;
 
   const query = useQuery({
     queryKey: ["System", id],
-    queryFn: async () => mudSql.getSystem(id ?? "0x"),
+    queryFn: async () => {
+      if (!id) return null;
+      const r = await getSystemId({ path: { id: id } });
+      if (!r.data) return null;
+      return r.data;
+    },
     enabled: !!id,
   });
 
-  if (!id || !system || !namespaceId || (!query.isLoading && !query.data)) {
+  const data = query.data;
+
+  if (!id || (!query.isLoading && !query.data)) {
     return <Error404 />;
   }
 
-  const data = query.data;
-  const title = `${system.name} [${system.namespace}]`;
+  const title = data ? `${data.name} [${data.namespace}]` : "...";
 
   return (
     <Box
@@ -52,41 +46,43 @@ const ExploreSystem: React.FC = () => {
         <title>{title}</title>
       </Helmet>
       <PaperLevel1 title={title} loading={query.isFetching} backButton>
-        <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-          <BasicListItem title="Id">{system.resourceId}</BasicListItem>
-          <BasicListItem title="Namespace" disableGutters>
-            <ButtonNamespace id={namespaceId} name={system.namespace} />
-          </BasicListItem>
-          {data && (
-            <>
-              {data.namespaceOwnerName ? (
-                <BasicListItem title="Owner" disableGutters>
-                  <ButtonCharacter
-                    address={data.namespaceOwner}
-                    name={data.namespaceOwnerName}
+        {data && (
+          <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+            <BasicListItem title="Id">{data.id}</BasicListItem>
+            <BasicListItem title="Namespace" disableGutters>
+              {data.namespaceId && data.namespace && (
+                <ButtonNamespace id={data.namespaceId} name={data.namespace} />
+              )}
+            </BasicListItem>
+            {data && (
+              <>
+                {data.ownerName ? (
+                  <BasicListItem title="Owner" disableGutters>
+                    <ButtonCharacter
+                      address={data.account}
+                      name={data.ownerName}
+                    />
+                  </BasicListItem>
+                ) : (
+                  <BasicListItem title="Owner">{data.account}</BasicListItem>
+                )}
+                <BasicListItem title="Public Access">
+                  {data.publicAccess ? "Yes" : "No"}
+                </BasicListItem>
+                <BasicListItem title="Contract">{data.contract}</BasicListItem>
+                <BasicListItem title="Contract link">
+                  <ExternalLink
+                    href={`https://explorer.pyropechain.com/address/${data.contract}`}
+                    title={data.contract}
                   />
                 </BasicListItem>
-              ) : (
-                <BasicListItem title="Owner">
-                  {data.namespaceOwner}
-                </BasicListItem>
-              )}
-              <BasicListItem title="Public Access">
-                {data.publicAccess ? "Yes" : "No"}
-              </BasicListItem>
-              <BasicListItem title="Contract">{data.contract}</BasicListItem>
-              <BasicListItem title="Contract link">
-                <ExternalLink
-                  href={`https://explorer.pyropechain.com/address/${data.contract}`}
-                  title={data.contract}
-                />
-              </BasicListItem>
-            </>
-          )}
-        </List>
+              </>
+            )}
+          </List>
+        )}
       </PaperLevel1>
       <TableFunctions
-        systems={[id]}
+        system={id}
         hideColumns={["system", "namespace", "owner"]}
       />
     </Box>

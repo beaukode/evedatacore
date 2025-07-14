@@ -92,6 +92,7 @@ export type GetCharacterIdTablesResponse = {
     ownerId?: string;
     ownerName?: string;
     schemaOrder: Array<string>;
+    label: string;
     key: Array<string>;
     name: string;
     namespace: string;
@@ -178,11 +179,84 @@ export type GetCharacterIdAssembliesResponse = {
     maxEnergyCapacity?: number;
     energyProduced?: number;
     totalReservedEnergy?: number;
+    systemId?: string;
+    maxDistance?: string;
   }>;
   nextKey?: string;
 };
 
 export type GetCharacterIdAssembliesError = {
+  message: string;
+};
+
+export type GetCharacterIdSystemsData = {
+  path: {
+    /**
+     * GET /character/:id/systems Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/systems Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdSystemsResponse = {
+  items: Array<{
+    id: string;
+    name: string;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    namespace?: string;
+    namespaceId?: string;
+    contract: string;
+    publicAccess: boolean;
+    createdAt: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharacterIdSystemsError = {
+  message: string;
+};
+
+export type GetCharacterIdFunctionsData = {
+  path: {
+    /**
+     * GET /character/:id/functions Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/functions Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdFunctionsResponse = {
+  items: Array<{
+    id: string;
+    signature: string;
+    systemId?: string;
+    systemName?: string;
+    systemSelector?: string;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    namespace?: string;
+    namespaceId?: string;
+    createdAt: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharacterIdFunctionsError = {
   message: string;
 };
 
@@ -239,6 +313,8 @@ export type GetAssembliesResponse = {
     maxEnergyCapacity?: number;
     energyProduced?: number;
     totalReservedEnergy?: number;
+    systemId?: string;
+    maxDistance?: string;
   }>;
   nextKey?: string;
 };
@@ -284,6 +360,8 @@ export type GetAssemblyIdNetworkResponse = {
     maxEnergyCapacity?: number;
     energyProduced?: number;
     totalReservedEnergy?: number;
+    systemId?: string;
+    maxDistance?: string;
   }>;
   maxEnergyCapacity?: number;
   energyProduced?: number;
@@ -325,6 +403,8 @@ export type GetAssemblyIdResponse = {
   maxEnergyCapacity?: number;
   energyProduced?: number;
   totalReservedEnergy?: number;
+  systemId?: string;
+  maxDistance?: string;
 };
 
 export type GetAssemblyIdError = {
@@ -380,6 +460,7 @@ export type GetNamespaceIdTablesResponse = {
     ownerId?: string;
     ownerName?: string;
     schemaOrder: Array<string>;
+    label: string;
     key: Array<string>;
     name: string;
     namespace: string;
@@ -395,6 +476,77 @@ export type GetNamespaceIdTablesResponse = {
 };
 
 export type GetNamespaceIdTablesError = {
+  message: string;
+};
+
+export type GetNamespaceIdSystemsData = {
+  path: {
+    /**
+     * GET /namespace/:id/systems Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /namespace/:id/systems Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetNamespaceIdSystemsResponse = {
+  items: Array<{
+    id: string;
+    name: string;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    namespace?: string;
+    namespaceId?: string;
+    contract: string;
+    publicAccess: boolean;
+    createdAt: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetNamespaceIdSystemsError = {
+  message: string;
+};
+
+export type GetNamespaceIdFunctionsData = {
+  path: {
+    /**
+     * GET /namespace/:id/functions Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /namespace/:id/functions Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetNamespaceIdFunctionsResponse = {
+  items: Array<{
+    id: string;
+    signature: string;
+    systemId?: string;
+    systemName?: string;
+    systemSelector?: string;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    namespace?: string;
+    namespaceId?: string;
+    createdAt: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetNamespaceIdFunctionsError = {
   message: string;
 };
 
@@ -420,6 +572,118 @@ export type GetNamespaceIdError = {
   message: string;
 };
 
+export type GetSystemsData = {
+  query?: {
+    /**
+     * GET /systems Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetSystemsResponse = {
+  items: Array<{
+    id: string;
+    name: string;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    namespace?: string;
+    namespaceId?: string;
+    contract: string;
+    publicAccess: boolean;
+    createdAt: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetSystemsError = {
+  message: string;
+};
+
+export type GetSystemIdData = {
+  path: {
+    /**
+     * GET /system/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetSystemIdResponse = {
+  id: string;
+  name: string;
+  account?: string;
+  ownerId?: string;
+  ownerName?: string;
+  namespace?: string;
+  namespaceId?: string;
+  contract: string;
+  publicAccess: boolean;
+  createdAt: number;
+};
+
+export type GetSystemIdError = {
+  message: string;
+};
+
+export type GetFunctionsData = {
+  query?: {
+    /**
+     * GET /functions Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetFunctionsResponse = {
+  items: Array<{
+    id: string;
+    signature: string;
+    systemId?: string;
+    systemName?: string;
+    systemSelector?: string;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    namespace?: string;
+    namespaceId?: string;
+    createdAt: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetFunctionsError = {
+  message: string;
+};
+
+export type GetFunctionIdData = {
+  path: {
+    /**
+     * GET /function/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetFunctionIdResponse = {
+  id: string;
+  signature: string;
+  systemId?: string;
+  systemName?: string;
+  systemSelector?: string;
+  account?: string;
+  ownerId?: string;
+  ownerName?: string;
+  namespace?: string;
+  namespaceId?: string;
+  createdAt: number;
+};
+
+export type GetFunctionIdError = {
+  message: string;
+};
+
 export type GetTablesData = {
   query?: {
     /**
@@ -438,6 +702,7 @@ export type GetTablesResponse = {
     ownerId?: string;
     ownerName?: string;
     schemaOrder: Array<string>;
+    label: string;
     key: Array<string>;
     name: string;
     namespace: string;
@@ -499,6 +764,7 @@ export type GetTableIdResponse = {
   ownerId?: string;
   ownerName?: string;
   schemaOrder: Array<string>;
+  label: string;
   key: Array<string>;
   name: string;
   namespace: string;
@@ -552,6 +818,8 @@ export type GetSolarsystemIdAssembliesResponse = {
     maxEnergyCapacity?: number;
     energyProduced?: number;
     totalReservedEnergy?: number;
+    systemId?: string;
+    maxDistance?: string;
   }>;
   nextKey?: string;
 };

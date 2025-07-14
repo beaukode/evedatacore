@@ -1,17 +1,9 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import {
-  TextField,
-  TableCell,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { useQuery } from "@tanstack/react-query";
 import { filterInProps } from "@/tools";
-import { useMudSql } from "@/contexts/AppContext";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
@@ -19,6 +11,9 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { DataTableContext, DataTableColumn } from "@/components/DataTable";
 import ButtonGeneric from "@/components/buttons/ButtonGeneric";
 import { columnWidths } from "@/constants";
+import { getFunctions, GetFunctionsResponse } from "@/api/evedatacore-v2";
+import SelectOwner from "@/components/form/SelectOwner";
+import SelectNamespace from "@/components/form/SelectNamespace";
 
 const columns: DataTableColumn[] = [
   { label: "Signature", width: 600, grow: true },
@@ -33,12 +28,16 @@ const ExploreFunctions: React.FC = () => {
     owner: "0",
     namespace: "0",
   });
-  const mudSql = useMudSql();
 
-  const query = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["Functions"],
-    queryFn: () => mudSql.listFunctions(),
-    retry: false,
+    queryFn: async ({ pageParam }) => {
+      const r = await getFunctions({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
   });
 
   const functions = React.useMemo(() => {
@@ -47,133 +46,33 @@ const ExploreFunctions: React.FC = () => {
       query.data,
       debouncedSearch.text,
       [
-        "worldSelector",
+        "id",
         "signature",
         "systemName",
         "signature",
-        "namespaceOwner",
-        "namespaceOwnerName",
+        "ownerName",
+        "namespace",
+        "systemSelector",
       ],
       (sys) =>
-        (search.owner === "0" || sys.namespaceOwner === search.owner) &&
+        (search.owner === "0" || sys.account === search.owner) &&
         (search.namespace === "0" || sys.namespaceId === search.namespace)
     );
   }, [query.data, search.owner, search.namespace, debouncedSearch.text]);
 
-  const owners = React.useMemo(() => {
-    if (!query.data) return;
-    const owners = query.data.reduce(
-      (acc, t) => {
-        const namespaceOwner = t.namespaceOwner || "0x";
-        if (!acc[namespaceOwner]) {
-          acc[namespaceOwner] = t.namespaceOwnerName || namespaceOwner;
-        }
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-
-    const sorted = Object.entries(owners).sort(
-      ([, a]: [string, string], [, b]: [string, string]) => {
-        // Put unknwon owners at the end
-        if (a.startsWith("0x") && !b.startsWith("0x")) {
-          return 1;
-        } else if (!a.startsWith("0x") && b.startsWith("0x")) {
-          return -1;
-        } else {
-          return a.localeCompare(b);
-        }
-      }
-    );
-
-    return new Map(sorted);
-  }, [query.data]);
-
-  const ownerSelect = React.useMemo(() => {
-    if (!owners) return null;
-    return (
-      <FormControl variant="standard" sx={{ width: 160, ml: 2 }}>
-        <InputLabel id="select-owner-label">Owner</InputLabel>
-        <Select
-          labelId="select-owner-label"
-          id="select-owner"
-          value={search.owner}
-          variant="standard"
-          onChange={(e) => {
-            setSearch("owner", e.target.value);
-            setSearch("namespace", "0");
-          }}
-          label="Owner"
-          fullWidth
-        >
-          <MenuItem value="0">All</MenuItem>
-          {[...owners.entries()].map(([id, name]) => (
-            <MenuItem value={id} key={id}>
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  }, [owners, search.owner, setSearch]);
-
-  const namespaces = React.useMemo(() => {
-    if (!query.data) return;
-    const namespaces = query.data.reduce(
-      (acc, { namespaceId, namespaceOwner, namespace }) => {
-        if (!(namespaceId && namespace)) return acc;
-        if (
-          !acc[namespaceId] &&
-          (search.owner === "0" || namespaceOwner === search.owner)
-        ) {
-          acc[namespaceId] = namespace;
-        }
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-
-    const sorted = Object.entries(namespaces).sort(([, a], [, b]) =>
-      (a || "").localeCompare(b || "")
-    );
-
-    return new Map(sorted);
-  }, [query.data, search.owner]);
-
-  const namespaceSelect = React.useMemo(() => {
-    if (!namespaces) return null;
-    return (
-      <FormControl variant="standard" sx={{ width: 160, mx: 2 }}>
-        <InputLabel id="select-namespace-label">Namespace</InputLabel>
-        <Select
-          labelId="select-namespace-label"
-          id="select-namespace"
-          value={search.namespace}
-          variant="standard"
-          onChange={(e) => {
-            setSearch("namespace", e.target.value);
-          }}
-          label="Namespace"
-          fullWidth
-        >
-          <MenuItem value="0">All</MenuItem>
-          {[...namespaces.entries()].map(([id, name]) => (
-            <MenuItem value={id} key={id}>
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  }, [namespaces, search.namespace, setSearch]);
+  const filterNamespace = React.useCallback(
+    (t: GetFunctionsResponse["items"][number]) =>
+      search.owner === "0" || t.account === search.owner,
+    [search.owner]
+  );
 
   const itemContent = React.useCallback(
     (_: number, fn: (typeof functions)[number], context: DataTableContext) => {
       return (
-        <React.Fragment key={fn.worldSelector}>
+        <React.Fragment key={fn.id}>
           <TableCell colSpan={2}>
             <ButtonGeneric
-              to={`/explore/functions/${fn.worldSelector}`}
+              to={`/explore/functions/${fn.id}`}
               fastRender={context.isScrolling}
             >
               {fn.signature}
@@ -189,10 +88,10 @@ const ExploreFunctions: React.FC = () => {
             )}
           </TableCell>
           <TableCell>
-            {fn.namespaceOwner && (
+            {fn.account && (
               <ButtonCharacter
-                address={fn.namespaceOwner}
-                name={fn.namespaceOwnerName}
+                address={fn.account}
+                name={fn.ownerName}
                 fastRender={context.isScrolling}
               />
             )}
@@ -235,8 +134,22 @@ const ExploreFunctions: React.FC = () => {
           }}
           fullWidth
         />
-        {ownerSelect}
-        {namespaceSelect}
+        <SelectOwner
+          value={search.owner}
+          onChange={(value) => {
+            setSearch("owner", value);
+            setSearch("namespace", "0");
+          }}
+          items={query.data}
+        />
+        <SelectNamespace
+          value={search.namespace}
+          onChange={(value) => {
+            setSearch("namespace", value);
+          }}
+          items={query.data}
+          filter={filterNamespace}
+        />
       </DataTableLayout>
     </>
   );

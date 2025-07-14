@@ -24,6 +24,12 @@ import type {
   GetCharacterIdAssembliesData,
   GetCharacterIdAssembliesError,
   GetCharacterIdAssembliesResponse,
+  GetCharacterIdSystemsData,
+  GetCharacterIdSystemsError,
+  GetCharacterIdSystemsResponse,
+  GetCharacterIdFunctionsData,
+  GetCharacterIdFunctionsError,
+  GetCharacterIdFunctionsResponse,
   GetCharacterIdData,
   GetCharacterIdError,
   GetCharacterIdResponse,
@@ -42,9 +48,27 @@ import type {
   GetNamespaceIdTablesData,
   GetNamespaceIdTablesError,
   GetNamespaceIdTablesResponse,
+  GetNamespaceIdSystemsData,
+  GetNamespaceIdSystemsError,
+  GetNamespaceIdSystemsResponse,
+  GetNamespaceIdFunctionsData,
+  GetNamespaceIdFunctionsError,
+  GetNamespaceIdFunctionsResponse,
   GetNamespaceIdData,
   GetNamespaceIdError,
   GetNamespaceIdResponse,
+  GetSystemsData,
+  GetSystemsError,
+  GetSystemsResponse,
+  GetSystemIdData,
+  GetSystemIdError,
+  GetSystemIdResponse,
+  GetFunctionsData,
+  GetFunctionsError,
+  GetFunctionsResponse,
+  GetFunctionIdData,
+  GetFunctionIdError,
+  GetFunctionIdResponse,
   GetTablesData,
   GetTablesError,
   GetTablesResponse,
@@ -139,6 +163,32 @@ export const getCharacterIdAssemblies = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const getCharacterIdSystems = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdSystemsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdSystemsResponse,
+    GetCharacterIdSystemsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/systems",
+  });
+};
+
+export const getCharacterIdFunctions = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdFunctionsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdFunctionsResponse,
+    GetCharacterIdFunctionsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/functions",
+  });
+};
+
 export const getCharacterId = <ThrowOnError extends boolean = false>(
   options: OptionsLegacyParser<GetCharacterIdData, ThrowOnError>,
 ) => {
@@ -217,6 +267,32 @@ export const getNamespaceIdTables = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const getNamespaceIdSystems = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetNamespaceIdSystemsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetNamespaceIdSystemsResponse,
+    GetNamespaceIdSystemsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/namespace/{id}/systems",
+  });
+};
+
+export const getNamespaceIdFunctions = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetNamespaceIdFunctionsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetNamespaceIdFunctionsResponse,
+    GetNamespaceIdFunctionsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/namespace/{id}/functions",
+  });
+};
+
 export const getNamespaceId = <ThrowOnError extends boolean = false>(
   options: OptionsLegacyParser<GetNamespaceIdData, ThrowOnError>,
 ) => {
@@ -227,6 +303,58 @@ export const getNamespaceId = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/namespace/{id}",
+  });
+};
+
+export const getSystems = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetSystemsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSystemsResponse,
+    GetSystemsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/systems",
+  });
+};
+
+export const getSystemId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetSystemIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSystemIdResponse,
+    GetSystemIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/system/{id}",
+  });
+};
+
+export const getFunctions = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetFunctionsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetFunctionsResponse,
+    GetFunctionsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/functions",
+  });
+};
+
+export const getFunctionId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetFunctionIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetFunctionIdResponse,
+    GetFunctionIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/function/{id}",
   });
 };
 

@@ -62,8 +62,8 @@ const ExploreNamespace: React.FC = () => {
         )}
       </PaperLevel1>
       <TableTables namespace={id} hideNamespaceColumn />
-      <TableSystems namespaces={[id]} hideNamespaceColumn />
-      <TableFunctions namespaces={[id]} hideColumns={["namespace", "owner"]} />
+      <TableSystems namespace={id} hideNamespaceColumn />
+      <TableFunctions namespace={id} hideColumns={["namespace", "owner"]} />
     </Box>
   );
 };
