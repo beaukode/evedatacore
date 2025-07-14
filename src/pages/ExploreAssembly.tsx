@@ -13,14 +13,13 @@ import BasicListItem from "@/components/ui/BasicListItem";
 import { smartAssembliesTypes, smartAssemblyStates } from "@/constants";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
-import SmartGateConfig from "@/components/SmartGateConfig";
-import SmartTurretConfig from "@/components/SmartTurretConfig";
 import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import DialogMetadataAssembly from "@/components/dialogs/DialogMetadataAssembly";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import SmartGateOther from "@/components/SmartGateOther";
 import NetworkNode from "@/components/NetworkNode";
+import AssemblyBehavior from "@/components/AssemblyBehavior";
 import { getAssemblyId } from "@/api/evedatacore-v2";
 import Error404 from "./Error404";
 
@@ -195,7 +194,13 @@ const ExploreAssembly: React.FC = () => {
       {data && (
         <>
           {typeId === AssemblyType.Gate && (
-            <SmartGateConfig gateId={id} owner={owner} />
+            <AssemblyBehavior
+              systemId={data.systemId}
+              assemblyId={id}
+              owner={owner}
+              type="gate"
+              onChange={() => query.refetch()}
+            />
           )}
           {typeId === AssemblyType.Gate && (
             <SmartGateLink
@@ -216,7 +221,13 @@ const ExploreAssembly: React.FC = () => {
             />
           )}
           {typeId === AssemblyType.Turret && (
-            <SmartTurretConfig turretId={id} owner={owner} />
+            <AssemblyBehavior
+              systemId={data.systemId}
+              assemblyId={id}
+              owner={owner}
+              type="turret"
+              onChange={() => query.refetch()}
+            />
           )}
           {typeId === AssemblyType.Storage && (
             <SmartStorageInventory id={id} owner={owner} />
