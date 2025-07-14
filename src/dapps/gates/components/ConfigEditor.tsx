@@ -35,7 +35,7 @@ import { Web3ErrorAlert } from "@/components/web3/Web3ErrorAlert";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
 import BasicListItem from "@/components/ui/BasicListItem";
 import { filterInProps, shorten } from "@/tools";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { getCharacters, GetCharactersResponse } from "@/api/evedatacore-v2";
 import { GateConfig, getGateConfig } from "../lib/getGateConfig";
 import { configDiff, getConfigSystemId } from "../lib/utils";
