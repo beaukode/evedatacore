@@ -190,6 +190,41 @@ export type GetCharacterIdAssembliesError = {
   message: string;
 };
 
+export type GetCharacterIdKillsData = {
+  path: {
+    /**
+     * GET /character/:id/kills Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/kills Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdKillsResponse = {
+  items: Array<{
+    id: string;
+    killerId?: string;
+    killerAccount?: string;
+    killerName?: string;
+    victimId?: string;
+    victimAccount?: string;
+    victimName?: string;
+    lossType?: number;
+    solarSystemId?: number;
+    killedAt?: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetCharacterIdKillsError = {
+  message: string;
+};
+
 export type GetCharacterIdSystemsData = {
   path: {
     /**
@@ -281,6 +316,35 @@ export type GetCharacterIdResponse = {
 };
 
 export type GetCharacterIdError = {
+  message: string;
+};
+
+export type GetKillsData = {
+  query?: {
+    /**
+     * GET /kills Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetKillsResponse = {
+  items: Array<{
+    id: string;
+    killerId?: string;
+    killerAccount?: string;
+    killerName?: string;
+    victimId?: string;
+    victimAccount?: string;
+    victimName?: string;
+    lossType?: number;
+    solarSystemId?: number;
+    killedAt?: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetKillsError = {
   message: string;
 };
 
@@ -859,5 +923,40 @@ export type GetSolarsystemIdAssembliesResponse = {
 };
 
 export type GetSolarsystemIdAssembliesError = {
+  message: string;
+};
+
+export type GetSolarsystemIdKillsData = {
+  path: {
+    /**
+     * GET /solarsystem/:id/kills Parameter
+     */
+    id: number | null;
+  };
+  query?: {
+    /**
+     * GET /solarsystem/:id/kills Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetSolarsystemIdKillsResponse = {
+  items: Array<{
+    id: string;
+    killerId?: string;
+    killerAccount?: string;
+    killerName?: string;
+    victimId?: string;
+    victimAccount?: string;
+    victimName?: string;
+    lossType?: number;
+    solarSystemId?: number;
+    killedAt?: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetSolarsystemIdKillsError = {
   message: string;
 };

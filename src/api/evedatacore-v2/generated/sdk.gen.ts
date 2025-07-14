@@ -24,6 +24,9 @@ import type {
   GetCharacterIdAssembliesData,
   GetCharacterIdAssembliesError,
   GetCharacterIdAssembliesResponse,
+  GetCharacterIdKillsData,
+  GetCharacterIdKillsError,
+  GetCharacterIdKillsResponse,
   GetCharacterIdSystemsData,
   GetCharacterIdSystemsError,
   GetCharacterIdSystemsResponse,
@@ -33,6 +36,9 @@ import type {
   GetCharacterIdData,
   GetCharacterIdError,
   GetCharacterIdResponse,
+  GetKillsData,
+  GetKillsError,
+  GetKillsResponse,
   GetTribeIdCharactersData,
   GetTribeIdCharactersError,
   GetTribeIdCharactersResponse,
@@ -84,6 +90,9 @@ import type {
   GetSolarsystemIdAssembliesData,
   GetSolarsystemIdAssembliesError,
   GetSolarsystemIdAssembliesResponse,
+  GetSolarsystemIdKillsData,
+  GetSolarsystemIdKillsError,
+  GetSolarsystemIdKillsResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -166,6 +175,19 @@ export const getCharacterIdAssemblies = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const getCharacterIdKills = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdKillsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdKillsResponse,
+    GetCharacterIdKillsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/kills",
+  });
+};
+
 export const getCharacterIdSystems = <ThrowOnError extends boolean = false>(
   options: OptionsLegacyParser<GetCharacterIdSystemsData, ThrowOnError>,
 ) => {
@@ -202,6 +224,19 @@ export const getCharacterId = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/character/{id}",
+  });
+};
+
+export const getKills = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetKillsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetKillsResponse,
+    GetKillsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/kills",
   });
 };
 
@@ -425,5 +460,18 @@ export const getSolarsystemIdAssemblies = <
   >({
     ...options,
     url: "/solarsystem/{id}/assemblies",
+  });
+};
+
+export const getSolarsystemIdKills = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetSolarsystemIdKillsData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSolarsystemIdKillsResponse,
+    GetSolarsystemIdKillsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/solarsystem/{id}/kills",
   });
 };
