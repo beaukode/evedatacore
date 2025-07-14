@@ -282,6 +282,37 @@ export type GetCharacterIdError = {
   message: string;
 };
 
+export type GetTribeIdCharactersData = {
+  path: {
+    /**
+     * GET /tribe/:id/characters Parameter
+     */
+    id: number | null;
+  };
+  query?: {
+    /**
+     * GET /tribe/:id/characters Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetTribeIdCharactersResponse = {
+  items: Array<{
+    id: string;
+    account?: string;
+    createdAt?: number;
+    exists?: boolean;
+    name?: string;
+    tribeId?: number;
+  }>;
+  nextKey?: string;
+};
+
+export type GetTribeIdCharactersError = {
+  message: string;
+};
+
 export type GetAssembliesData = {
   query?: {
     /**

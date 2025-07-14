@@ -1,19 +1,19 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Avatar, Box, List, TableCell, TextField } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps, tsToDateTime } from "@/tools";
+import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 import { DataTableContext } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import { DataTableColumn } from "@/components/DataTable";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
+import { getTribeIdCharacters } from "@/api/evedatacore-v2";
 
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
@@ -26,26 +26,32 @@ const ExploreCorporation: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
-  const mudSql = useMudSql();
 
   const corporationId = Number.parseInt(id ?? "0");
 
-  const query = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["CorporationCharacters", id],
-    queryFn: async () =>
-      mudSql.listCharacters({ corporationsId: corporationId }),
-    enabled: !!id,
+    queryFn: async ({ pageParam }) => {
+      if (!id) return { items: [] };
+      const r = await getTribeIdCharacters({
+        path: { id: Number(corporationId) },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [] };
+      return r.data;
+    },
+    enabled: !!corporationId,
   });
 
   const members = React.useMemo(() => {
     if (!query.data) return [];
-    return filterInProps(query.data, debouncedSearch.text, ["name", "address"]);
+    return filterInProps(query.data, debouncedSearch.text, ["name", "account"]);
   }, [query.data, debouncedSearch]);
 
   const itemContent = React.useCallback(
     (_: number, sm: (typeof members)[number], context: DataTableContext) => {
       return (
-        <React.Fragment key={sm.address}>
+        <React.Fragment key={sm.id}>
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <Avatar
@@ -56,12 +62,12 @@ const ExploreCorporation: React.FC = () => {
               />
               <ButtonCharacter
                 name={sm.name}
-                address={sm.address}
+                address={sm.account}
                 fastRender={context.isScrolling}
               />
             </Box>
           </TableCell>
-          <TableCell>{sm.address}</TableCell>
+          <TableCell>{sm.account}</TableCell>
           <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
         </React.Fragment>
       );
@@ -72,7 +78,7 @@ const ExploreCorporation: React.FC = () => {
   if (
     !corporationId ||
     Number.isNaN(corporationId) ||
-    (!query.isLoading && !query.data)
+    (!query.isFetching && !query.data)
   ) {
     return <Error404 />;
   }

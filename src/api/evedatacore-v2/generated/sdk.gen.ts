@@ -33,6 +33,9 @@ import type {
   GetCharacterIdData,
   GetCharacterIdError,
   GetCharacterIdResponse,
+  GetTribeIdCharactersData,
+  GetTribeIdCharactersError,
+  GetTribeIdCharactersResponse,
   GetAssembliesData,
   GetAssembliesError,
   GetAssembliesResponse,
@@ -199,6 +202,19 @@ export const getCharacterId = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/character/{id}",
+  });
+};
+
+export const getTribeIdCharacters = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetTribeIdCharactersData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetTribeIdCharactersResponse,
+    GetTribeIdCharactersError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/tribe/{id}/characters",
   });
 };
 
