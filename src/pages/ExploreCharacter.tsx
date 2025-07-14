@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet";
 import { Box, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { useMudSql } from "@/contexts/AppContext";
 import { formatCrypto, tsToDateTime } from "@/tools";
 import Error404 from "./Error404";
 import TableNamespaces from "@/components/tables/TableNamespaces";
@@ -19,7 +18,6 @@ import { getCharacterId } from "@/api/evedatacore-v2";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
-  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["SmartcharactersById", address],
@@ -28,12 +26,6 @@ const ExploreCharacter: React.FC = () => {
       if (!r.data) return null;
       return r.data;
     },
-    enabled: !!address,
-  });
-
-  const queryBalance = useQuery({
-    queryKey: ["CharacterBalanceById", address],
-    queryFn: async () => mudSql.getEveBalance(address || "0x0"),
     enabled: !!address,
   });
 
@@ -65,9 +57,7 @@ const ExploreCharacter: React.FC = () => {
             {tsToDateTime(data?.createdAt)}
           </BasicListItem>
           <BasicListItem title="Eve balance">
-            {queryBalance.data?.value === undefined
-              ? ""
-              : formatCrypto(queryBalance.data?.value || "0")}
+            {formatCrypto(data?.balance || "0")}
           </BasicListItem>
         </List>
       </PaperLevel1>
