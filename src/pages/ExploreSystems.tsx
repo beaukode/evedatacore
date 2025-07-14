@@ -4,7 +4,7 @@ import { TextField, TableCell, Box, Tooltip } from "@mui/material";
 import PrivateIcon from "@mui/icons-material/Lock";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";

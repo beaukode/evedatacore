@@ -17,7 +17,7 @@ import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
 import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
 import ButtonCharacter from "../buttons/ButtonCharacter";
 import { tsToDateTime } from "@/tools";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import {
   getCharacterIdAssemblies,
   getSolarsystemIdAssemblies,

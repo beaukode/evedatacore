@@ -10,7 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import PrivateIcon from "@mui/icons-material/Lock";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import ButtonSystem from "@/components/buttons/ButtonSystem";

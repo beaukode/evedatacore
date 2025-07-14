@@ -7,7 +7,7 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps, tsToDateTime } from "@/tools";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { DataTableContext } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import { DataTableColumn } from "@/components/DataTable";

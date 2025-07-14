@@ -1,4 +1,5 @@
 import React from "react";
+import { Hex, isHex } from "viem";
 import {
   Alert,
   Autocomplete,
@@ -14,11 +15,10 @@ import {
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import useValueChanged from "@/tools/useValueChanged";
-import { Hex, isHex } from "viem";
 import { shorten } from "@/tools";
+import useValueChanged from "@/tools/useValueChanged";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { getSystems, GetSystemsResponse } from "@/api/evedatacore-v2";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 
 interface DialogSystemAssemblyProps {
   assemblyId: string;

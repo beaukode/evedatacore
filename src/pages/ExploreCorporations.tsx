@@ -5,7 +5,7 @@ import { getCharacters } from "@/api/evedatacore-v2";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCorporation from "@/components/buttons/ButtonCorporation";

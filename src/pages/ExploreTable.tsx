@@ -22,7 +22,7 @@ import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import { DataTableColumn } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { pick } from "lodash-es";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import DialogTableRecord from "@/components/dialogs/DialogTableRecord";

@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { Box, TextField, Avatar, TableCell } from "@mui/material";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { columnWidths } from "@/constants";

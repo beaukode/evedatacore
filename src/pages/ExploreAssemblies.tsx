@@ -14,7 +14,7 @@ import {
 import { ensureArray, filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { getAssemblies } from "@/api/evedatacore-v2";
 import { assemblyTypeMap } from "@shared/mudsql";
 import {

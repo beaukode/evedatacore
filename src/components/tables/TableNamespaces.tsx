@@ -7,7 +7,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { getCharacterIdNamespaces } from "@/api/evedatacore-v2";

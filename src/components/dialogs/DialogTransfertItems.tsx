@@ -16,9 +16,9 @@ import {
   useMudWeb3,
   usePushTrackingEvent,
 } from "@/contexts/AppContext";
-import useValueChanged from "@/tools/useValueChanged";
-import { usePaginatedQuery } from "@/tools/usePaginatedQuery";
 import { filterInProps, shorten } from "@/tools";
+import useValueChanged from "@/tools/useValueChanged";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { InventoryItemTransfert } from "@shared/mudweb3";
 import { getCharacters, GetCharactersResponse } from "@/api/evedatacore-v2";
 import ItemInventoryForm from "../ui/ItemInventoryForm";

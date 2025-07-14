@@ -21,19 +21,26 @@ type UsePaginatedQueryReturn<T> = {
 
 const MAX_PAGES = 20;
 
-export function usePaginatedQuery<
-  T extends { nextKey?: string; items: unknown[] },
->(options: UsePaginatedQueryOptions<T>): UsePaginatedQueryReturn<T> {
+function usePaginatedQuery<T extends { nextKey?: string; items: unknown[] }>(
+  options: UsePaginatedQueryOptions<T>
+): UsePaginatedQueryReturn<T> {
   const [page, setPage] = useState(1);
-  const { data, fetchNextPage, hasNextPage, isFetching, isError, error,refetch } =
-    useInfiniteQuery({
-      queryKey: options.queryKey,
-      queryFn: options.queryFn,
-      getNextPageParam: (lastPage): string | undefined => lastPage?.nextKey,
-      initialPageParam: undefined as string | undefined,
-      staleTime: options.staleTime,
-      enabled: options.enabled,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: options.queryKey,
+    queryFn: options.queryFn,
+    getNextPageParam: (lastPage): string | undefined => lastPage?.nextKey,
+    initialPageParam: undefined as string | undefined,
+    staleTime: options.staleTime,
+    enabled: options.enabled,
+  });
 
   useEffect(() => {
     if (hasNextPage && !isFetching && page < MAX_PAGES) {
@@ -66,3 +73,5 @@ export function usePaginatedQuery<
     };
   }
 }
+
+export default usePaginatedQuery;
