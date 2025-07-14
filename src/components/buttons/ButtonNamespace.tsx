@@ -4,8 +4,8 @@ import { NavLink } from "react-router";
 import LooksOutlinedButton from "../ui/LooksOutlinedButton";
 
 interface ButtonNamespaceProps {
-  name: string;
-  id: string;
+  name?: string;
+  id?: string;
   fastRender?: boolean;
 }
 
@@ -14,6 +14,7 @@ const ButtonNamespace: React.FC<ButtonNamespaceProps> = ({
   id,
   fastRender,
 }) => {
+  if (!(id && name)) return null;
   if (fastRender) {
     return (
       <LooksOutlinedButton sx={{ justifyContent: "flex-start" }}>

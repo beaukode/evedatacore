@@ -79,13 +79,11 @@ const ExploreFunctions: React.FC = () => {
             </ButtonGeneric>
           </TableCell>
           <TableCell>
-            {fn.namespaceId && fn.namespace && (
-              <ButtonNamespace
-                id={fn.namespaceId}
-                name={fn.namespace}
-                fastRender={context.isScrolling}
-              />
-            )}
+            <ButtonNamespace
+              id={fn.namespaceId}
+              name={fn.namespace}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>
             {fn.account && (

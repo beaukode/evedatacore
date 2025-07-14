@@ -68,9 +68,7 @@ const ExploreFunction: React.FC = () => {
             </Grid2>
             <Grid2 size={grid3perRow}>
               Namespace:{" "}
-              {data.namespaceId && data.namespace && (
-                <ButtonNamespace id={data.namespaceId} name={data.namespace} />
-              )}
+              <ButtonNamespace id={data.namespaceId} name={data.namespace} />
             </Grid2>
             <Grid2 size={grid3perRow}>
               System:{" "}
@@ -78,9 +76,7 @@ const ExploreFunction: React.FC = () => {
                 <ButtonSystem id={data.systemId} name={data.systemName} />
               )}
             </Grid2>
-            <Grid2 size={grid3perRow}>
-              World selector: {data.id}
-            </Grid2>
+            <Grid2 size={grid3perRow}>World selector: {data.id}</Grid2>
             <Grid2 size={grid3perRow}>
               System selector: {data.systemSelector}
             </Grid2>

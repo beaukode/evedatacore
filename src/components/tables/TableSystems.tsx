@@ -92,12 +92,10 @@ const TableSystems: React.FC<TableSystemsProps> = ({
                   </TableCell>
                   {!hideNamespaceColumn && (
                     <TableCell>
-                      {sys.namespaceId && sys.namespace && (
-                        <ButtonNamespace
-                          id={sys.namespaceId}
-                          name={sys.namespace}
-                        />
-                      )}
+                      <ButtonNamespace
+                        id={sys.namespaceId}
+                        name={sys.namespace}
+                      />
                     </TableCell>
                   )}
                   <TableCell>

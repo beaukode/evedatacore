@@ -92,8 +92,8 @@ const ExploreSystems: React.FC = () => {
           </TableCell>
           <TableCell>
             <ButtonNamespace
-              id={sys.namespaceId ?? ""}
-              name={sys.namespace ?? ""}
+              id={sys.namespaceId}
+              name={sys.namespace}
               fastRender={context.isScrolling}
             />
           </TableCell>

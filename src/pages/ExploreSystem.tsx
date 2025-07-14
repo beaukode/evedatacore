@@ -50,9 +50,7 @@ const ExploreSystem: React.FC = () => {
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
             <BasicListItem title="Id">{data.id}</BasicListItem>
             <BasicListItem title="Namespace" disableGutters>
-              {data.namespaceId && data.namespace && (
-                <ButtonNamespace id={data.namespaceId} name={data.namespace} />
-              )}
+              <ButtonNamespace id={data.namespaceId} name={data.namespace} />
             </BasicListItem>
             {data && (
               <>

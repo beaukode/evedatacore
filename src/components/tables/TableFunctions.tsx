@@ -110,12 +110,10 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
                   </TableCell>
                   {!hideColumns.includes("namespace") && (
                     <TableCell>
-                      {fn.namespaceId && fn.namespace && (
-                        <ButtonNamespace
-                          id={fn.namespaceId}
-                          name={fn.namespace}
-                        />
-                      )}
+                      <ButtonNamespace
+                        id={fn.namespaceId}
+                        name={fn.namespace}
+                      />
                     </TableCell>
                   )}
                   {!hideColumns.includes("owner") && (
