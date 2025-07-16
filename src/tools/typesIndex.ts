@@ -73,8 +73,11 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
   const indexBySmartItemId: Record<string, IndexedType> = {};
   for (const type of allTypes) {
     indexById[type.id] = type;
-    indexBySmartItemId[type.smartItemId || ""] = type;
+    if (type.smartItemId) {
+      indexBySmartItemId[type.smartItemId] = type;
+    }
   }
+  console.log("indexBySmartItemId", indexBySmartItemId);
 
   function getAll() {
     return allTypes;
@@ -96,11 +99,11 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
     smartItems: InventoryItem[]
   ): SmartItemWithType[] {
     return smartItems.map((i) => {
-      const type = indexById[i.typeId];
+      const type = indexBySmartItemId[i.itemId];
       return {
         ...i,
         id: type?.id || "0",
-        name: type?.name || `Unknown item ${i.typeId}`,
+        name: type?.name || `Unknown item ${i.itemId}`,
         image: type?.image,
       };
     });
