@@ -31,7 +31,8 @@ const ExploreAssembly: React.FC = () => {
   const query = useQuery({
     queryKey: ["SmartassembliesById", id],
     queryFn: async () => {
-      const r = await getAssemblyId({ path: { id: id ?? "" } });
+      if (!id) return null;
+      const r = await getAssemblyId({ path: { id } });
       if (!r.data) return null;
       return r.data;
     },
@@ -205,6 +206,7 @@ const ExploreAssembly: React.FC = () => {
           {typeId === AssemblyType.Gate && (
             <SmartGateLink
               sourceGateId={id}
+              linkedGateId={data.linkedGateId}
               owner={owner}
               sourceGateState={data.currentState ?? 0}
             />

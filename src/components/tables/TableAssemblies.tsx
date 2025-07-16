@@ -38,8 +38,9 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
   const queryByOwner = usePaginatedQuery({
     queryKey: ["AssembliesByOwner", owner],
     queryFn: async ({ pageParam }) => {
+      if (!owner) return { items: [] };
       const r = await getCharacterIdAssemblies({
-        path: { id: owner ?? "" },
+        path: { id: owner },
         query: { startKey: pageParam },
       });
       if (!r.data) return { items: [], nextKey: undefined };

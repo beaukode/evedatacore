@@ -182,6 +182,7 @@ export type GetCharacterIdAssembliesResponse = {
     totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
+    linkedGateId?: string | null;
   }>;
   nextKey?: string;
 };
@@ -413,6 +414,7 @@ export type GetAssembliesResponse = {
     totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
+    linkedGateId?: string | null;
   }>;
   nextKey?: string;
 };
@@ -460,6 +462,7 @@ export type GetAssemblyIdNetworkResponse = {
     totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
+    linkedGateId?: string | null;
   }>;
   maxEnergyCapacity?: number;
   energyProduced?: number;
@@ -503,6 +506,7 @@ export type GetAssemblyIdResponse = {
   totalReservedEnergy?: number;
   systemId?: string;
   maxDistance?: string;
+  linkedGateId?: string | null;
 };
 
 export type GetAssemblyIdError = {
@@ -918,6 +922,7 @@ export type GetSolarsystemIdAssembliesResponse = {
     totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
+    linkedGateId?: string | null;
   }>;
   nextKey?: string;
 };
