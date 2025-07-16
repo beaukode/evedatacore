@@ -5,9 +5,11 @@
 import { ensureDirSync } from "fs-extra";
 import { writeFileSync } from "fs";
 import { join } from "path";
+import { keccak256, toHex, concatHex, hexToBigInt } from "viem";
 
 const typesUrl =
   "https://world-api-stillness.live.tech.evefrontier.com/v2/types";
+const tenantId = keccak256(Buffer.from("stillness"));
 
 async function main() {
   ensureDirSync("./output");
@@ -25,9 +27,14 @@ async function main() {
   const typesData = data.reduce(
     (acc: Record<string, unknown>, item: Record<string, unknown>) => {
       const { iconUrl, id, name, description, ...rest } = item;
+      const hexId = toHex(BigInt(Number(id)), { size: 32 });
+
       return {
         ...acc,
         [`${id}`]: {
+          smartItemId: hexToBigInt(
+            keccak256(concatHex([tenantId, hexId]))
+          ).toString(),
           name,
           description,
           image: iconUrl,
