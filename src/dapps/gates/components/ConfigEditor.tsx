@@ -30,7 +30,6 @@ import {
   useMudWeb3,
   usePushTrackingEvent,
 } from "@/contexts/AppContext";
-import { Gate } from "@shared/mudsql";
 import { Web3ErrorAlert } from "@/components/web3/Web3ErrorAlert";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
 import BasicListItem from "@/components/ui/BasicListItem";
@@ -38,7 +37,7 @@ import { filterInProps, shorten } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { getCharacters, GetCharactersResponse } from "@/api/evedatacore-v2";
 import { GateConfig, getGateConfig } from "../lib/getGateConfig";
-import { configDiff, getConfigSystemId } from "../lib/utils";
+import { Assembly, configDiff, getConfigSystemId } from "../lib/utils";
 import { updateConfig } from "../lib/updateConfig";
 
 type Character = GetCharactersResponse["items"][number];
@@ -71,7 +70,7 @@ function filterOptions(
 const configSystemId = getConfigSystemId();
 
 interface ConfigEditorProps {
-  gate: Gate;
+  gate: Assembly;
 }
 
 const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {

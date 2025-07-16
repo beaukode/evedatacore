@@ -12,6 +12,7 @@ import { getGateConfig } from "./lib/getGateConfig";
 import { isGateManaged } from "./lib/utils";
 import Setup from "./components/Setup";
 import ConfigEditor from "./components/ConfigEditor";
+import { getAssemblyId } from "@/api/evedatacore-v2";
 
 const Administrator: React.FC = () => {
   const { id } = useParams();
@@ -19,17 +20,26 @@ const Administrator: React.FC = () => {
 
   const query = useQuery({
     queryKey: ["GatesDapp", "Smartgate", id],
-    queryFn: async () => mudSql.getGate(id || ""),
+    queryFn: async () => {
+      if (!id) return null;
+      const r = await getAssemblyId({ path: { id } });
+      if (!r.data || r.data.assemblyType !== "SG") return null;
+      return r.data;
+    },
     enabled: !!id,
   });
 
   const gate = query.data;
 
   const queryDestination = useQuery({
-    queryKey: ["GatesDapp", "Smartgate", gate?.destinationId],
-    queryFn: async () =>
-      mudSql.getGate(gate?.destinationId || "").then((r) => r ?? null),
-    enabled: !!gate?.destinationId,
+    queryKey: ["GatesDapp", "Smartgate", gate?.linkedGateId],
+    queryFn: async () => {
+      if (!gate?.linkedGateId) return null;
+      const r = await getAssemblyId({ path: { id: gate.linkedGateId } });
+      if (!r.data || r.data.assemblyType !== "SG") return null;
+      return r.data;
+    },
+    enabled: !!gate?.linkedGateId,
   });
 
   const destination = queryDestination.data;
