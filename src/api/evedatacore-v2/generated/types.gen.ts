@@ -173,6 +173,17 @@ export type GetCharacterIdAssembliesResponse = {
     x?: string;
     y?: string;
     z?: string;
+    inventories?: {
+      [key: string]: {
+        capacity: string;
+        usedCapacity: string;
+        ownerId?: string;
+        ownerName?: string;
+        items: {
+          [key: string]: number;
+        };
+      };
+    };
     name?: string;
     dappUrl?: string;
     description?: string;
@@ -405,6 +416,17 @@ export type GetAssembliesResponse = {
     x?: string;
     y?: string;
     z?: string;
+    inventories?: {
+      [key: string]: {
+        capacity: string;
+        usedCapacity: string;
+        ownerId?: string;
+        ownerName?: string;
+        items: {
+          [key: string]: number;
+        };
+      };
+    };
     name?: string;
     dappUrl?: string;
     description?: string;
@@ -453,6 +475,17 @@ export type GetAssemblyIdNetworkResponse = {
     x?: string;
     y?: string;
     z?: string;
+    inventories?: {
+      [key: string]: {
+        capacity: string;
+        usedCapacity: string;
+        ownerId?: string;
+        ownerName?: string;
+        items: {
+          [key: string]: number;
+        };
+      };
+    };
     name?: string;
     dappUrl?: string;
     description?: string;
@@ -471,6 +504,33 @@ export type GetAssemblyIdNetworkResponse = {
 };
 
 export type GetAssemblyIdNetworkError = {
+  message: string;
+};
+
+export type GetAssemblyIdInventoriesData = {
+  path: {
+    /**
+     * GET /assembly/:id/inventories Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetAssemblyIdInventoriesResponse = {
+  inventories?: {
+    [key: string]: {
+      capacity: string;
+      usedCapacity: string;
+      ownerId?: string;
+      ownerName?: string;
+      items: {
+        [key: string]: number;
+      };
+    };
+  };
+};
+
+export type GetAssemblyIdInventoriesError = {
   message: string;
 };
 
@@ -497,6 +557,17 @@ export type GetAssemblyIdResponse = {
   x?: string;
   y?: string;
   z?: string;
+  inventories?: {
+    [key: string]: {
+      capacity: string;
+      usedCapacity: string;
+      ownerId?: string;
+      ownerName?: string;
+      items: {
+        [key: string]: number;
+      };
+    };
+  };
   name?: string;
   dappUrl?: string;
   description?: string;
@@ -913,6 +984,17 @@ export type GetSolarsystemIdAssembliesResponse = {
     x?: string;
     y?: string;
     z?: string;
+    inventories?: {
+      [key: string]: {
+        capacity: string;
+        usedCapacity: string;
+        ownerId?: string;
+        ownerName?: string;
+        items: {
+          [key: string]: number;
+        };
+      };
+    };
     name?: string;
     dappUrl?: string;
     description?: string;

@@ -12,15 +12,19 @@ import { Hex } from "viem";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import {
-  useMudSql,
   useMudWeb3,
   usePushTrackingEvent,
+  useTypesIndex,
 } from "@/contexts/AppContext";
 import { filterInProps, shorten } from "@/tools";
 import useValueChanged from "@/tools/useValueChanged";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { InventoryItemTransfert } from "@shared/mudweb3";
-import { getCharacters, GetCharactersResponse } from "@/api/evedatacore-v2";
+import {
+  getCharacters,
+  GetCharactersResponse,
+  getAssemblyIdInventories,
+} from "@/api/evedatacore-v2";
 import ItemInventoryForm from "../ui/ItemInventoryForm";
 
 interface DialogTransfertItemsProps {
@@ -73,6 +77,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   open,
   onClose,
 }) => {
+  const typesIndex = useTypesIndex();
   const pushTrackingEvent = usePushTrackingEvent();
   const [character, setCharacter] = React.useState<CharacterWithGroup | null>(
     null
@@ -80,24 +85,31 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   const [quantities, setQuantities] = React.useState<Record<string, number>>(
     {}
   );
-  const mudSql = useMudSql();
   const mudWeb3 = useMudWeb3();
 
   const queryKey =
     transfertFrom === "inventory"
-      ? ["SmartStorageInventory", storageId]
-      : ["SmartStorageUserInventory", storageId, owner];
+      ? ["TransfertInventory", storageId]
+      : ["TransfertUserInventory", storageId, owner];
 
   const query = useQuery({
     queryKey,
     queryFn: async () => {
+      const r = await getAssemblyIdInventories({
+        path: { id: storageId },
+      });
       if (transfertFrom === "inventory") {
-        return mudSql.getStorageInventory(storageId);
+        return r.data?.inventories?.["main"];
       } else {
-        return mudSql.getUserInventory(storageId, owner);
+        return r.data?.inventories?.[owner];
       }
     },
   });
+
+  const items = React.useMemo(() => {
+    if (!query.data?.items || !typesIndex) return undefined;
+    return typesIndex?.inventoryItemsToArray(query.data.items);
+  }, [query.data, typesIndex]);
 
   const queryCharacters = usePaginatedQuery({
     queryKey: ["Smartcharacters"],
@@ -214,7 +226,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
         {query.data && (
           <Box mb={2}>
             <ItemInventoryForm
-              inventory={query.data}
+              items={items}
               quantities={quantities}
               onQuantityChange={(itemId, quantity) =>
                 setQuantities({ ...quantities, [itemId]: quantity })

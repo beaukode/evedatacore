@@ -1,4 +1,3 @@
-import { InventoryItem } from "@shared/mudsql";
 import { FixedGetTypesResponse, Type } from "@/api/stillness";
 
 export type IndexedType = Type & {
@@ -9,10 +8,8 @@ export type IndexedType = Type & {
   categoryName: string;
 };
 
-export type SmartItemWithType = InventoryItem & {
-  id: string;
-  name: string;
-  image?: string;
+export type InventoryItem = IndexedType & {
+  quantity: number;
 };
 
 export interface TypesIndex {
@@ -20,7 +17,9 @@ export interface TypesIndex {
   getCatergories: () => Record<number, TypeCategory>;
   getById: (id: string) => IndexedType | undefined;
   getBySmartItemId: (smartItemId: string) => IndexedType | undefined;
-  mergeSmartItemAndType: (smartItems: InventoryItem[]) => SmartItemWithType[];
+  inventoryItemsToArray: (
+    smartItems: Record<string, number>
+  ) => InventoryItem[];
 }
 
 export type TypeCategory = {
@@ -77,7 +76,6 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
       indexBySmartItemId[type.smartItemId] = type;
     }
   }
-  console.log("indexBySmartItemId", indexBySmartItemId);
 
   function getAll() {
     return allTypes;
@@ -95,18 +93,21 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
     return indexBySmartItemId[smartItemId];
   }
 
-  function mergeSmartItemAndType(
-    smartItems: InventoryItem[]
-  ): SmartItemWithType[] {
-    return smartItems.map((i) => {
-      const type = indexBySmartItemId[i.itemId];
-      return {
-        ...i,
-        id: type?.id || "0",
-        name: type?.name || `Unknown item ${i.itemId}`,
-        image: type?.image,
-      };
-    });
+  function inventoryItemsToArray(
+    items: Record<string, number>
+  ): InventoryItem[] {
+    return Object.entries(items)
+      .map(([itemId, quantity]) => {
+        const type = indexBySmartItemId[itemId];
+        if (!type) {
+          return undefined;
+        }
+        return {
+          ...type,
+          quantity,
+        };
+      })
+      .filter((i) => i !== undefined);
   }
 
   return {
@@ -114,6 +115,6 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
     getCatergories,
     getById,
     getBySmartItemId,
-    mergeSmartItemAndType,
+    inventoryItemsToArray,
   };
 }

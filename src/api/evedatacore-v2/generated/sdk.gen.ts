@@ -48,6 +48,9 @@ import type {
   GetAssemblyIdNetworkData,
   GetAssemblyIdNetworkError,
   GetAssemblyIdNetworkResponse,
+  GetAssemblyIdInventoriesData,
+  GetAssemblyIdInventoriesError,
+  GetAssemblyIdInventoriesResponse,
   GetAssemblyIdData,
   GetAssemblyIdError,
   GetAssemblyIdResponse,
@@ -276,6 +279,19 @@ export const getAssemblyIdNetwork = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/assembly/{id}/network",
+  });
+};
+
+export const getAssemblyIdInventories = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetAssemblyIdInventoriesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetAssemblyIdInventoriesResponse,
+    GetAssemblyIdInventoriesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/assembly/{id}/inventories",
   });
 };
 
