@@ -52,7 +52,7 @@ const Menu: React.FC = () => {
           />
           <MenuItem to="/dev/web3" text="Dev" icon={<DevIcon />} />
           <MenuItem
-            to="https://discord.gg/cu2n3wjqgb"
+            to="https://discord.gg/Jv4B5dJpez"
             text="Discord"
             icon={<DiscordIcon />}
             external

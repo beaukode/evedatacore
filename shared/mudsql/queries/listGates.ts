@@ -30,6 +30,10 @@ export const listGates =
 
     const ids = assemblies.map((assembly) => assembly.id);
 
+    if (ids.length === 0) {
+      return [];
+    }
+
     const [config, links] = await client.selectFromBatch<
       [ConfigDbRow, LinkDbRow]
     >([
