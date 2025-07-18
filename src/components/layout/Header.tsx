@@ -72,7 +72,7 @@ const Header: React.FC = () => {
               color="primary"
               title="Discord"
               aria-label="Discord"
-              href="https://discord.gg/cu2n3wjqgb"
+              href="https://discord.gg/Jv4B5dJpez"
               rel="noopener"
               target="_blank"
             >

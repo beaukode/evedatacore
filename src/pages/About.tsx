@@ -49,7 +49,7 @@ const About: React.FC = () => {
               </ExternalLink>{" "}
               or by joinning the{" "}
               <ExternalLink
-                href="https://discord.gg/cu2n3wjqgb"
+                href="https://discord.gg/Jv4B5dJpez"
                 title="EVE Datacore Discord server"
               >
                 Discord server
