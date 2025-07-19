@@ -8,39 +8,50 @@ import {
   TableCell,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { keyBy } from "lodash-es";
-import { AssemblyType, AssemblyState, Gate } from "@shared/mudsql";
-import { useMudSql, useSmartCharacter } from "@/contexts/AppContext";
+import { useSmartCharacter } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonAssembly from "@/components/buttons/ButtonAssembly";
 import SolarsystemName from "@/components/ui/SolarsystemName";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
-import { isGateManaged } from "./lib/utils";
+import { Assembly, isGateManaged } from "./lib/utils";
+import { getCharacterIdAssemblies } from "@/api/evedatacore-v2";
+import { AssemblyState, assemblyTypeMap } from "@shared/mudsql";
 
 const Index: React.FC = () => {
-  const mudSql = useMudSql();
   const smartCharacter = useSmartCharacter();
 
   const owner = smartCharacter.isConnected ? smartCharacter.address : undefined;
 
-  const query = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["GatesDapp", "Smartgates", owner],
-    queryFn: async () =>
-      mudSql.listGates({
-        owners: owner,
-        types: AssemblyType.Gate,
-        states: [AssemblyState.Anchored, AssemblyState.Online],
-      }),
-    enabled: !!owner,
+    queryFn: async ({ pageParam }) => {
+      if (!owner) return { items: [] };
+      const r = await getCharacterIdAssemblies({
+        path: { id: owner },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [] };
+      return r.data;
+    },
+    staleTime: 1000 * 60,
   });
 
-  const gates = query.data;
+  const gates = React.useMemo(() => {
+    if (!query.data) return null;
+    return query.data.filter(
+      (gate) =>
+        gate.assemblyType === "SG" &&
+        !(gate.currentState === AssemblyState.Online ||
+          gate.currentState === AssemblyState.Anchored)
+    );
+  }, [query.data]);
   const gatesById = keyBy(gates, "id");
 
-  function getGateDestination(gate: Gate) {
-    if (gate.isLinked && gate.destinationId) {
-      const destination = gatesById[gate.destinationId];
+  function getGateDestination(gate: Assembly) {
+    if (gate.linkedGateId) {
+      const destination = gatesById[gate.linkedGateId];
       if (!destination) {
         return "Not found";
       }
@@ -51,7 +62,7 @@ const Index: React.FC = () => {
 
   return (
     <Box m={2}>
-      <PaperLevel1 title="Select a gate to manage" loading={query.isLoading}>
+      <PaperLevel1 title="Select a gate to manage" loading={query.isFetching}>
         {gates && (
           <Table size="small" stickyHeader>
             <TableHead>
@@ -63,13 +74,17 @@ const Index: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {query.data?.map((gate) => (
+              {gates.map((gate) => (
                 <TableRow key={gate.id}>
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <DisplayAssemblyIcon
-                        typeId={gate.typeId}
-                        stateId={gate.state}
+                        typeId={
+                          assemblyTypeMap[
+                            gate.assemblyType as keyof typeof assemblyTypeMap
+                          ]
+                        }
+                        stateId={gate.currentState}
                         sx={{ mr: 1 }}
                         tooltip
                       />

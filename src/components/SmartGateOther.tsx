@@ -8,9 +8,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
+import { useQueryClient } from "@tanstack/react-query";
 import { lyDistance, Location, tsToDateTime, metersToLy } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import ButtonSolarsystem from "./buttons/ButtonSolarsystem";
 import PaperLevel1 from "./ui/PaperLevel1";
@@ -18,6 +18,8 @@ import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import DialogGateLink from "./dialogs/DialogGateLink";
 import ConditionalMount from "./ui/ConditionalMount";
 import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
+import { getCharacterIdAssemblies } from "@/api/evedatacore-v2";
+import { assemblyTypeMap } from "@shared/mudsql/types";
 
 interface SmartGateOtherProps {
   owner: string;
@@ -33,13 +35,20 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
   const [linkOpen, setLinkOpen] = React.useState(false);
   const [linkDestinationId, setLinkDestinationId] = React.useState("");
   const queryClient = useQueryClient();
-  const mudSql = useMudSql();
 
-  const query = useQuery({
-    queryKey: ["Gates", owner],
-    queryFn: async () => mudSql.listGates({ owners: owner }),
+  const query = usePaginatedQuery({
+    queryKey: ["AssembliesByOwner", owner],
+    queryFn: async ({ pageParam }) => {
+      if (!owner) return { items: [] };
+      const r = await getCharacterIdAssemblies({
+        path: { id: owner },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
     staleTime: 1000 * 60,
-    retry: false,
+    enabled: !!owner,
   });
 
   const currentGate = React.useMemo(() => {
@@ -52,14 +61,18 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
     return query.data
       .filter(
         (a) =>
-          a.typeId == 84955 &&
+          a.assemblyType == "SG" &&
           a.id !== currentGateId &&
-          (a.state === 2 || a.state === 3)
+          (a.currentState === 2 || a.currentState === 3)
       )
       .map((gate) => {
         const ly =
-          currentGateLocation && gate.location
-            ? lyDistance(currentGateLocation, gate.location)
+          currentGateLocation && gate.x && gate.y && gate.z
+            ? lyDistance(currentGateLocation, {
+                x: gate.x,
+                y: gate.y,
+                z: gate.z,
+              })
             : undefined;
         const distance = ly
           ? {
@@ -91,13 +104,10 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
           }}
         />
       </ConditionalMount>
-      {gates?.length === 0 && !query.isFetching && (
-        <Typography variant="body1">None</Typography>
-      )}
       {currentGate && (
         <Typography variant="body1" sx={{ mb: 2 }}>
           Current gate max distance:{" "}
-          {metersToLy(currentGate.maxDistance).toFixed(0)}Ly
+          {metersToLy(currentGate.maxDistance || "0").toFixed(0)}Ly
         </Typography>
       )}
       {gates && (
@@ -117,8 +127,12 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <DisplayAssemblyIcon
-                        typeId={gate.typeId}
-                        stateId={gate.state}
+                        typeId={
+                          assemblyTypeMap[
+                            gate.assemblyType as keyof typeof assemblyTypeMap
+                          ]
+                        }
+                        stateId={gate.currentState}
                         sx={{ mr: 1 }}
                         tooltip
                       />

@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 interface ImportMetaEnv {
-  readonly VITE_APP_USE_ANVIL: boolean;
-  readonly VITE_DISABLE_ANALYTICS: boolean;
+  readonly VITE_APP_USE_ANVIL: string;
+  readonly VITE_DISABLE_ANALYTICS: string;
   readonly VITE_DAPP_GATES_URL: string;
   readonly VITE_DAPP_GATES_NAMESPACE: string;
   readonly VITE_DAPP_GATES_ACCESS_SYSTEM_ID: string;

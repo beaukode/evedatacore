@@ -12,28 +12,21 @@ import {
   InputAdornment,
   Typography,
 } from "@mui/material";
-import { Inventory } from "@shared/mudsql";
-import { useTypesIndex } from "@/contexts/AppContext";
+import { InventoryItem } from "@/tools/typesIndex";
 
 interface ItemInventoryFormProps {
-  inventory: Inventory;
+  items?: InventoryItem[];
   quantities: Record<string, number>;
   onQuantityChange: (itemId: string, quantity: number) => void;
   disabled?: boolean;
 }
 
 const ItemInventoryForm: React.FC<ItemInventoryFormProps> = ({
-  inventory,
+  items,
   quantities,
   onQuantityChange,
   disabled,
 }) => {
-  const typesIndex = useTypesIndex();
-
-  const itemsWithType = React.useMemo(() => {
-    return typesIndex?.mergeSmartItemAndType(inventory.items);
-  }, [inventory.items, typesIndex]);
-
   return (
     <Table size="small" stickyHeader>
       <TableHead>
@@ -45,16 +38,16 @@ const ItemInventoryForm: React.FC<ItemInventoryFormProps> = ({
         </TableRow>
       </TableHead>
       <TableBody>
-        {!itemsWithType && (
+        {!items && (
           <TableRow>
             <TableCell colSpan={2}>
               <LinearProgress />
             </TableCell>
           </TableRow>
         )}
-        {itemsWithType &&
-          itemsWithType.map(({ itemId, name, image, quantity }) => (
-            <TableRow key={itemId}>
+        {items &&
+          items.map(({ smartItemId, name, image, quantity }) => (
+            <TableRow key={smartItemId}>
               <TableCell>
                 <Box display="flex" alignItems="center">
                   {image && (
@@ -70,13 +63,11 @@ const ItemInventoryForm: React.FC<ItemInventoryFormProps> = ({
               </TableCell>
               <TableCell>
                 <TextField
-                  value={quantities[itemId] || 0}
+                  value={quantities[smartItemId] || 0}
                   type="number"
                   size="small"
                   variant="outlined"
-                  onChange={(e) =>
-                    onQuantityChange(itemId, Number(e.target.value))
-                  }
+                  onChange={(e) => onQuantityChange(smartItemId, Number(e.target.value))}
                   slotProps={{
                     htmlInput: {
                       sx: { textAlign: "right" },

@@ -12,14 +12,19 @@ import { Hex } from "viem";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
 import {
-  useMudSql,
   useMudWeb3,
   usePushTrackingEvent,
+  useTypesIndex,
 } from "@/contexts/AppContext";
-import useValueChanged from "@/tools/useValueChanged";
-import { Character } from "@shared/mudsql";
 import { filterInProps, shorten } from "@/tools";
+import useValueChanged from "@/tools/useValueChanged";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { InventoryItemTransfert } from "@shared/mudweb3";
+import {
+  getCharacters,
+  GetCharactersResponse,
+  getAssemblyIdInventories,
+} from "@/api/evedatacore-v2";
 import ItemInventoryForm from "../ui/ItemInventoryForm";
 
 interface DialogTransfertItemsProps {
@@ -32,7 +37,9 @@ interface DialogTransfertItemsProps {
   onClose: () => void;
 }
 
-type CharacterWithGroup = Character & { group: string };
+type CharacterWithGroup = GetCharactersResponse["items"][number] & {
+  group: string;
+};
 
 const MAX_RESULTS = 500;
 function filterOptions(
@@ -41,19 +48,20 @@ function filterOptions(
 ) {
   const filtered = filterInProps(options, state.inputValue, [
     "name",
-    "address",
+    "account",
   ]);
 
   const limitedResults = filtered.slice(0, MAX_RESULTS);
 
   if (filtered.length > MAX_RESULTS) {
     limitedResults.push({
-      address: "0x",
+      account: "0x",
       name: "There are more results, be more specific",
-      corpId: 0,
+      tribeId: 0,
       group: "",
       id: "",
       createdAt: 0,
+      exists: false,
     });
   }
 
@@ -69,6 +77,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   open,
   onClose,
 }) => {
+  const typesIndex = useTypesIndex();
   const pushTrackingEvent = usePushTrackingEvent();
   const [character, setCharacter] = React.useState<CharacterWithGroup | null>(
     null
@@ -76,47 +85,61 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
   const [quantities, setQuantities] = React.useState<Record<string, number>>(
     {}
   );
-  const mudSql = useMudSql();
   const mudWeb3 = useMudWeb3();
 
   const queryKey =
     transfertFrom === "inventory"
-      ? ["SmartStorageInventory", storageId]
-      : ["SmartStorageUserInventory", storageId, owner];
+      ? ["TransfertInventory", storageId]
+      : ["TransfertUserInventory", storageId, owner];
 
   const query = useQuery({
     queryKey,
     queryFn: async () => {
+      const r = await getAssemblyIdInventories({
+        path: { id: storageId },
+      });
       if (transfertFrom === "inventory") {
-        return mudSql.getStorageInventory(storageId);
+        return r.data?.inventories?.["main"];
       } else {
-        return mudSql.getUserInventory(storageId, owner);
+        return r.data?.inventories?.[owner];
       }
     },
   });
 
-  const queryCharacters = useQuery({
+  const items = React.useMemo(() => {
+    if (!query.data?.items || !typesIndex) return undefined;
+    return typesIndex?.inventoryItemsToArray(query.data.items);
+  }, [query.data, typesIndex]);
+
+  const queryCharacters = usePaginatedQuery({
     queryKey: ["Smartcharacters"],
-    queryFn: async () => mudSql.listCharacters(),
-    staleTime: 1000 * 60 * 15,
+    queryFn: async ({ pageParam }) => {
+      const r = await getCharacters({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
+    staleTime: 1000 * 60,
     enabled: transfertFrom === "inventory",
   });
 
   const characters = React.useMemo(() => {
-    if (!queryCharacters.data) return [];
+    // Wait all pages to be fetched
+    if (!queryCharacters.data || queryCharacters.hasNextPage) return [];
     const known: CharacterWithGroup[] = [];
     const others: CharacterWithGroup[] = [];
 
     for (const c of queryCharacters.data) {
-      if (c.address === "0x0000000000000000000000000000000000000000") continue;
-      if (storageUsers.includes(c.address)) {
+      if (c.account === "0x0000000000000000000000000000000000000000") continue;
+      if (storageUsers.includes(c.account?.toLowerCase() as Hex)) {
         known.push({ ...c, group: "Storage users" });
       } else {
         others.push({ ...c, group: "Other users" });
       }
     }
     return [...known, ...others];
-  }, [storageUsers, queryCharacters.data]);
+  }, [storageUsers, queryCharacters.data, queryCharacters.hasNextPage]);
 
   const mutate = useMutation({
     mutationFn: () => {
@@ -144,7 +167,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
 
         return mudWeb3.storageInventoryToEphemeral({
           storageId: BigInt(storageId),
-          to: character.address,
+          to: character.account as Hex,
           transferts,
         });
       } else {
@@ -203,7 +226,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
         {query.data && (
           <Box mb={2}>
             <ItemInventoryForm
-              inventory={query.data}
+              items={items}
               quantities={quantities}
               onQuantityChange={(itemId, quantity) =>
                 setQuantities({ ...quantities, [itemId]: quantity })
@@ -218,7 +241,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
               options={characters}
               value={character}
               getOptionLabel={(c) =>
-                `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`
+                `${c.name} [Corp: ${c.tribeId}] ${shorten(c.account)}`
               }
               groupBy={(option) => option.group}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -237,7 +260,7 @@ const DialogTransfertItems: React.FC<DialogTransfertItemsProps> = ({
                 >
                   {c.id === ""
                     ? `${c.name}`
-                    : `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`}
+                    : `${c.name} [Corp: ${c.tribeId}] ${shorten(c.account)}`}
                 </li>
               )}
               disabled={isLoading || mutate.isPending}

@@ -1,4 +1,5 @@
 import React from "react";
+import { Hex, isHex } from "viem";
 import {
   Alert,
   Autocomplete,
@@ -12,16 +13,12 @@ import {
   TextField,
 } from "@mui/material";
 import BaseWeb3Dialog from "./BaseWeb3Dialog";
-import {
-  useMudSql,
-  useMudWeb3,
-  usePushTrackingEvent,
-} from "@/contexts/AppContext";
+import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import useValueChanged from "@/tools/useValueChanged";
-import { Hex, isHex } from "viem";
-import { System } from "@shared/mudsql";
 import { shorten } from "@/tools";
+import useValueChanged from "@/tools/useValueChanged";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
+import { getSystems, GetSystemsResponse } from "@/api/evedatacore-v2";
 
 interface DialogSystemAssemblyProps {
   assemblyId: string;
@@ -41,6 +38,8 @@ const excludeNamespaces = [
   "puppet",
 ];
 
+type System = GetSystemsResponse["items"][number];
+
 const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
   assemblyId,
   owner,
@@ -57,32 +56,36 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
   const [userSystemId, setUserSystemId] = React.useState<System | null>(null);
   const [customSystemId, setCustomSystemId] = React.useState("");
   const radioGroupId = React.useId();
-  const mudSql = useMudSql();
   const mudWeb3 = useMudWeb3();
 
-  const querySystems = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["Systems"],
-    queryFn: () =>
-      mudSql.listSystems().then((systems) =>
-        systems.reduce(
-          (acc, sys) => {
-            if (excludeNamespaces.includes(sys.namespace)) return acc;
-            if (sys.namespaceOwner === owner) {
-              acc.currentUserSystems.push(sys);
-            } else {
-              acc.otherUsersSystems.push(sys);
-            }
-            return acc;
-          },
-          {
-            currentUserSystems: [] as System[],
-            otherUsersSystems: [] as System[],
-          }
-        )
-      ),
+    queryFn: async ({ pageParam }) => {
+      const r = await getSystems({ query: { startKey: pageParam } });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
   });
 
-  const systems = querySystems.data;
+  const systems = React.useMemo(() => {
+    if (!query.data || query.isFetching || query.hasNextPage) return null; // Wait for all systems to be fetched
+    const systems = query.data.reduce(
+      (acc, sys) => {
+        if (excludeNamespaces.includes(sys.namespace ?? "")) return acc;
+        if (sys.account === owner) {
+          acc.currentUserSystems.push(sys);
+        } else {
+          acc.otherUsersSystems.push(sys);
+        }
+        return acc;
+      },
+      {
+        currentUserSystems: [] as System[],
+        otherUsersSystems: [] as System[],
+      }
+    );
+    return systems;
+  }, [query.data, query.isFetching, query.hasNextPage, owner]);
 
   const querySystemId = useQuery({
     queryKey: ["SmartAssemblySystemId", assemblyId],
@@ -101,10 +104,10 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
   const hydrate = React.useCallback(() => {
     if (systems && querySystemId.data) {
       const fromCurrentUser = systems.currentUserSystems.find(
-        (s) => s.systemId === querySystemId.data
+        (s) => s.id === querySystemId.data
       );
       const fromOtherUsers = systems.otherUsersSystems.find(
-        (s) => s.systemId === querySystemId.data
+        (s) => s.id === querySystemId.data
       );
       if (
         querySystemId.data ===
@@ -145,12 +148,12 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
         if (!currentSystemId) {
           throw new Error("Please select a system");
         }
-        systemId = currentSystemId.systemId;
+        systemId = currentSystemId.id as Hex;
       } else if (selectedValue === "another") {
         if (!userSystemId) {
           throw new Error("Please select a system");
         }
-        systemId = userSystemId.systemId;
+        systemId = userSystemId.id as Hex;
       } else if (selectedValue === "default") {
         systemId =
           "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -185,9 +188,7 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
   }, open);
 
   const isLoading =
-    querySystemId.isFetching ||
-    mutateState.isPending ||
-    querySystems.isFetching;
+    querySystemId.isFetching || mutateState.isPending || query.isFetching;
 
   return (
     <>
@@ -264,10 +265,10 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
                     options={systems.currentUserSystems}
                     value={currentSystemId}
                     getOptionLabel={(sys: System) =>
-                      `${sys.namespace}.${sys.name} [${sys.namespaceOwnerName || shorten(sys.namespaceOwner)}]`
+                      `${sys.namespace}.${sys.name} [${sys.ownerName || shorten(sys.account)}]`
                     }
                     isOptionEqualToValue={(option, value) =>
-                      option.systemId === value.systemId
+                      option.id === value.id
                     }
                     onChange={(_, newValue) => setCurrentrSystemId(newValue)}
                     renderInput={(params) => (
@@ -283,10 +284,10 @@ const DialogSystemAssembly: React.FC<DialogSystemAssemblyProps> = ({
                     options={systems.otherUsersSystems}
                     value={userSystemId}
                     getOptionLabel={(sys: System) =>
-                      `${sys.namespace}.${sys.name} [${sys.namespaceOwnerName || shorten(sys.namespaceOwner)}]`
+                      `${sys.namespace}.${sys.name} [${sys.ownerName || shorten(sys.account)}]`
                     }
                     isOptionEqualToValue={(option, value) =>
-                      option.systemId === value.systemId
+                      option.id === value.id
                     }
                     onChange={(_, newValue) => setUserSystemId(newValue)}
                     renderInput={(params) => (

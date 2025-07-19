@@ -31,7 +31,7 @@ const CalculateRoute: React.FC = () => {
         character.character
       ) {
         characterId = character.character.id.toString();
-        corpId = character.character.corpId;
+        corpId = character.character.tribeId;
       }
       return getCalcPathFromTo({
         path: {

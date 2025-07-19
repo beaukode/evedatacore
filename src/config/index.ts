@@ -7,7 +7,7 @@ export const wagmiConfig = import.meta.env.DEV
   ? devWagmiConfig
   : prodWagmiConfig;
 
-export const web3Config = import.meta.env.VITE_APP_USE_ANVIL
+export const web3Config = import.meta.env.VITE_APP_USE_ANVIL === "true"
   ? web3ConfigAnvil
   : web3ConfigProd;
 

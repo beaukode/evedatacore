@@ -30,14 +30,17 @@ import {
   useMudWeb3,
   usePushTrackingEvent,
 } from "@/contexts/AppContext";
-import { Character, Gate } from "@shared/mudsql";
 import { Web3ErrorAlert } from "@/components/web3/Web3ErrorAlert";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
 import BasicListItem from "@/components/ui/BasicListItem";
 import { filterInProps, shorten } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
+import { getCharacters, GetCharactersResponse } from "@/api/evedatacore-v2";
 import { GateConfig, getGateConfig } from "../lib/getGateConfig";
-import { configDiff, getConfigSystemId } from "../lib/utils";
+import { Assembly, configDiff, getConfigSystemId } from "../lib/utils";
 import { updateConfig } from "../lib/updateConfig";
+
+type Character = GetCharactersResponse["items"][number];
 
 const MAX_RESULTS = 500;
 function filterOptions(
@@ -46,18 +49,19 @@ function filterOptions(
 ) {
   const filtered = filterInProps(options, state.inputValue, [
     "name",
-    "address",
+    "account",
   ]);
 
   const limitedResults = filtered.slice(0, MAX_RESULTS);
 
   if (filtered.length > MAX_RESULTS) {
     limitedResults.push({
-      address: "0x",
+      account: "0x",
       name: "There are more results, be more specific",
-      corpId: 0,
+      tribeId: 0,
       id: "",
       createdAt: 0,
+      exists: false,
     });
   }
   return limitedResults;
@@ -66,7 +70,7 @@ function filterOptions(
 const configSystemId = getConfigSystemId();
 
 interface ConfigEditorProps {
-  gate: Gate;
+  gate: Assembly;
 }
 
 const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
@@ -88,10 +92,16 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
     }
   }, [queryGateConfig.data]);
 
-  const queryCharacters = useQuery({
+  const queryCharacters = usePaginatedQuery({
     queryKey: ["Smartcharacters"],
-    queryFn: async () => mudSql.listCharacters(),
-    staleTime: 1000 * 60 * 15,
+    queryFn: async ({ pageParam }) => {
+      const r = await getCharacters({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
+    staleTime: 1000 * 60,
   });
 
   const characters = queryCharacters.data || [];
@@ -103,7 +113,7 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
   const corporations = React.useMemo(() => {
     const map = (queryCharacters.data || []).reduce(
       (acc, c) => {
-        acc[c.corpId] = true;
+        acc[c.tribeId ?? 1000167] = true;
         return acc;
       },
       [] as Record<number, boolean>
@@ -169,13 +179,13 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
           {config.charactersExceptions.map((id) => (
             <TableRow key={id}>
               <TableCell>
-                {queryCharacters.isLoading ? (
+                {queryCharacters.isFetching || queryCharacters.hasNextPage ? (
                   <Skeleton />
                 ) : (
                   <>
                     {charactersById[id]?.name} [Corp:{" "}
-                    {charactersById[id]?.corpId}]{" "}
-                    {shorten(charactersById[id]?.address)}
+                    {charactersById[id]?.tribeId}]{" "}
+                    {shorten(charactersById[id]?.account)}
                   </>
                 )}
               </TableCell>
@@ -230,10 +240,10 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
       </Table>
       <Box sx={{ m: 2, display: "flex", alignItems: "center" }}>
         <Autocomplete
-          options={characters || []}
+          options={characters}
           value={character}
           getOptionLabel={(c) =>
-            `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`
+            `${c.name} [Corp: ${c.tribeId}] ${shorten(c.account)}`
           }
           isOptionEqualToValue={(option, value) => option.id === value.id}
           onChange={(_, newValue) => setCharacter(newValue)}
@@ -251,10 +261,10 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
             >
               {c.id === ""
                 ? `${c.name}`
-                : `${c.name} [Corp: ${c.corpId}] ${shorten(c.address)}`}
+                : `${c.name} [Corp: ${c.tribeId}] ${shorten(c.account)}`}
             </li>
           )}
-          disabled={queryCharacters.isLoading}
+          disabled={queryCharacters.isFetching || queryCharacters.hasNextPage}
           filterOptions={filterOptions}
           openOnFocus
           fullWidth

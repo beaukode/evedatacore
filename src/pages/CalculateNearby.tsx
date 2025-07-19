@@ -15,9 +15,8 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import { getFindNearIdDistance } from "@/api/evedatacore";
+import { getFindNearIdDistance } from "@/api/evedatacore-v2";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
-import useCharacter from "@/tools/useCharacter";
 import NearbyForm from "./Calculators/NearbyForm";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 
@@ -29,7 +28,6 @@ const CalculateNearby: React.FC = () => {
   const [queryData, setQueryData] = React.useState<NearbyFormData>();
   const solarSystemsIndex = useSolarSystemsIndex();
   const queryClient = useQueryClient();
-  const character = useCharacter();
 
   const query = useQuery({
     queryKey: ["CalculateNearby", queryData],
@@ -48,7 +46,7 @@ const CalculateNearby: React.FC = () => {
       });
     },
     retry: false,
-    enabled: !!queryData && !character.isLoading,
+    enabled: !!queryData,
   });
 
   const fromName = React.useMemo(() => {

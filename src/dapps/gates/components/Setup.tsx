@@ -3,15 +3,19 @@ import { Alert, Box, Button } from "@mui/material";
 import InteractIcon from "@mui/icons-material/Settings";
 import ContinueIcon from "@mui/icons-material/Send";
 import { useMutation } from "@tanstack/react-query";
-import { Gate } from "@shared/mudsql";
 import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import { Web3ErrorAlert } from "@/components/web3/Web3ErrorAlert";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
 import { setupGate } from "../lib/setupGate";
-import { getDappUrl, getAccessSystemId, getConfigSystemId } from "../lib/utils";
+import {
+  getDappUrl,
+  getAccessSystemId,
+  getConfigSystemId,
+  Assembly,
+} from "../lib/utils";
 
 interface SetupProps {
-  gate: Gate;
+  gate: Assembly;
   onSuccess: () => void;
 }
 

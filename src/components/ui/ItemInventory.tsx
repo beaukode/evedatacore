@@ -8,11 +8,15 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  LinearProgress,
 } from "@mui/material";
-import { Inventory } from "@shared/mudsql";
-import { useTypesIndex } from "@/contexts/AppContext";
+import { InventoryItem } from "@/tools/typesIndex";
 import ButtonItem from "../buttons/ButtonItem";
+
+interface Inventory {
+  capacity: string;
+  usedCapacity: string;
+  items: InventoryItem[];
+}
 
 interface ItemInventoryProps {
   inventory: Inventory;
@@ -20,12 +24,6 @@ interface ItemInventoryProps {
 }
 
 const ItemInventory: React.FC<ItemInventoryProps> = ({ inventory, header }) => {
-  const typesIndex = useTypesIndex();
-
-  const itemsWithType = React.useMemo(() => {
-    return typesIndex?.mergeSmartItemAndType(inventory.items);
-  }, [inventory.items, typesIndex]);
-
   return (
     <Box>
       <Box
@@ -37,9 +35,9 @@ const ItemInventory: React.FC<ItemInventoryProps> = ({ inventory, header }) => {
         <Box>{header}</Box>
         <Box sx={{ textWrap: "nowrap", ml: 2 }}>
           <Typography variant="caption">
-            Usage: {formatLargeNumber(formatCrypto(inventory.used, 0))} of{" "}
-            {formatLargeNumber(formatCrypto(inventory.total, 0))} (
-            {bigPercentage(inventory.used, inventory.total)}%)
+            Usage: {formatLargeNumber(formatCrypto(inventory.usedCapacity, 0))}{" "}
+            of {formatLargeNumber(formatCrypto(inventory.capacity, 0))} (
+            {bigPercentage(inventory.usedCapacity, inventory.capacity)}%)
           </Typography>
         </Box>
       </Box>
@@ -51,22 +49,14 @@ const ItemInventory: React.FC<ItemInventoryProps> = ({ inventory, header }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!itemsWithType && (
-            <TableRow>
-              <TableCell colSpan={2}>
-                <LinearProgress />
+          {inventory.items.map((i) => (
+            <TableRow key={i.id}>
+              <TableCell>
+                <ButtonItem name={i.name} typeId={i.id} image={i.image} />
               </TableCell>
+              <TableCell>{i.quantity}</TableCell>
             </TableRow>
-          )}
-          {itemsWithType &&
-            itemsWithType.map((i) => (
-              <TableRow key={i.itemId}>
-                <TableCell>
-                  <ButtonItem name={i.name} typeId={i.id} image={i.image} />
-                </TableCell>
-                <TableCell>{i.quantity}</TableCell>
-              </TableRow>
-            ))}
+          ))}
         </TableBody>
       </Table>
     </Box>
