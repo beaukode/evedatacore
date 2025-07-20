@@ -23,13 +23,14 @@ import { DataTableColumn } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
+import { useMudSql } from "@/contexts/AppContext";
 import { pick } from "lodash-es";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import { AbiTypeDetails, parseAbiType } from "@/tools/abi";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import { getTableIdRecords, getTableId } from "@/api/evedatacore-v2";
+import { getTableId } from "@/api/evedatacore-v2";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
@@ -38,6 +39,8 @@ const ExploreTable: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+
+  const mudSql = useMudSql();
 
   const table = isHex(id) ? hexToResource(id) : undefined;
   const namespaceId = table
@@ -58,12 +61,24 @@ const ExploreTable: React.FC = () => {
   const queryRecords = usePaginatedQuery({
     queryKey: ["TableRecords", id],
     queryFn: async ({ pageParam }) => {
-      const r = await getTableIdRecords({
-        path: { id: id ?? "" },
-        query: { startKey: pageParam },
+      if (
+        !(table && query.data) ||
+        (table.type !== "table" && table.type !== "offchainTable")
+      ) {
+        return { items: [] };
+      }
+      const offset = pageParam ? Number.parseInt(pageParam, 10) : 0;
+      const records = await mudSql.selectFrom(table.namespace, table.name, {
+        orderBy: [...query.data.key],
+        tableType: table.type,
+        limit: 5000,
+        offset,
       });
-      if (!r.data) return { items: [], nextKey: undefined };
-      return r.data;
+
+      const nextKey =
+        records.length < 5000 ? undefined : (offset + 5000).toString();
+
+      return { items: records, nextKey };
     },
     enabled: !!query.data && !!id,
   });
