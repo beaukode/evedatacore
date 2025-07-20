@@ -48,5 +48,8 @@ export function queryBuilder(
       ? ` ORDER BY "${orderByParts.join('", "')}" ${orderDirection}`
       : "";
 
-  return `SELECT ${select} FROM "${from}"${where}${orderBy}`;
+  const limit = options.limit ? ` LIMIT ${options.limit}` : "";
+  const offset = options.offset ? ` OFFSET ${options.offset}` : "";
+
+  return `SELECT ${select} FROM "${from}"${where}${orderBy}${limit}${offset}`;
 }
