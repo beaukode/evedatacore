@@ -19,7 +19,7 @@ type UsePaginatedQueryReturn<T> = {
   refetch: () => void;
 } & ({ isError: false; error: null } | { isError: true; error: Error });
 
-const MAX_PAGES = 20;
+const MAX_PAGES = 100;
 
 function usePaginatedQuery<T extends { nextKey?: string; items: unknown[] }>(
   options: UsePaginatedQueryOptions<T>
