@@ -8,19 +8,20 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Checkbox,
-  ListItemText,
 } from "@mui/material";
-import { ensureArray, filterInProps, tsToDateTime } from "@/tools";
+import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
-import { getAssemblies } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@shared/mudsql";
+import { getAssembliesTypeState } from "@/api/evedatacore-v2";
+import {
+  AssemblyType,
+  assemblyTypeMap,
+  assemblyTypeReverseMap,
+} from "@shared/mudsql";
 import {
   columnWidths,
   smartAssembliesTypes,
-  SmartAssemblyState,
   smartAssemblyStates,
 } from "@/constants";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
@@ -39,21 +40,23 @@ const columns: DataTableColumn[] = [
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
-    typeId: "0",
-    stateId: "2-3",
+    type: AssemblyType.NetworkNode.toString(),
+    state: "3",
   });
 
-  const { selectedStates, iSelectedState } = React.useMemo(() => {
-    const selectedStates = search.stateId.split("-").filter((v) => v !== "");
-    const iSelectedState = selectedStates.map((v) => Number.parseInt(v, 10));
-    return { selectedStates, iSelectedState };
-  }, [search.stateId]);
-
   const query = usePaginatedQuery({
-    queryKey: ["Smartassemblies"],
+    queryKey: ["Smartassemblies", search.type, search.state],
     queryFn: async ({ pageParam }) => {
-      const r = await getAssemblies({
-        query: { startKey: pageParam },
+      const r = await getAssembliesTypeState({
+        path: {
+          type: assemblyTypeReverseMap[
+            Number.parseInt(search.type, 10) as AssemblyType
+          ],
+          state: Number.parseInt(search.state, 10),
+        },
+        query: {
+          startKey: pageParam,
+        },
       });
       if (!r.data) return { items: [], nextKey: undefined };
       return r.data;
@@ -63,22 +66,13 @@ const ExploreAssemblies: React.FC = () => {
 
   const smartassemblies = React.useMemo(() => {
     if (!query.data) return [];
-    const iTypeId = parseInt(search.typeId, 10);
-    return filterInProps(
-      query.data,
-      debouncedSearch.text,
-      ["name", "id", "ownerName", "ownerId"],
-      (sa) => {
-        return (
-          ((sa.assemblyType &&
-            assemblyTypeMap[sa.assemblyType as keyof typeof assemblyTypeMap] ===
-              iTypeId) ||
-            iTypeId === 0) &&
-          iSelectedState.includes(sa.currentState ?? 0)
-        );
-      }
-    );
-  }, [query.data, debouncedSearch.text, search.typeId, iSelectedState]);
+    return filterInProps(query.data, debouncedSearch.text, [
+      "name",
+      "id",
+      "ownerName",
+      "ownerId",
+    ]);
+  }, [query.data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
@@ -159,15 +153,14 @@ const ExploreAssemblies: React.FC = () => {
           <Select
             labelId="select-type-label"
             id="select-type"
-            value={search.typeId}
+            value={search.type}
             variant="standard"
             onChange={(e) => {
-              setSearch("typeId", e.target.value);
+              setSearch("type", e.target.value);
             }}
             label="Type"
             fullWidth
           >
-            <MenuItem value="0">All</MenuItem>
             {Object.entries(smartAssembliesTypes).map(([id, name]) => (
               <MenuItem value={`${id}`} key={id}>
                 {name}
@@ -183,27 +176,17 @@ const ExploreAssemblies: React.FC = () => {
           <Select
             labelId="select-state-label"
             id="select-state"
-            value={selectedStates.map((v) => `${v}`)}
+            value={search.state}
             variant="standard"
-            renderValue={(selected) =>
-              selected
-                .map(
-                  (v) => smartAssemblyStates[Number(v) as SmartAssemblyState]
-                )
-                .join(", ")
-            }
             onChange={(e) => {
-              const value = ensureArray(e.target.value).sort();
-              setSearch("stateId", value.join("-"));
+              setSearch("state", e.target.value);
             }}
             label="State"
-            multiple
             fullWidth
           >
             {Object.entries(smartAssemblyStates).map(([id, name]) => (
               <MenuItem value={`${id}`} key={id}>
-                <Checkbox checked={selectedStates.includes(id)} />
-                <ListItemText primary={name} />
+                {name}
               </MenuItem>
             ))}
           </Select>
