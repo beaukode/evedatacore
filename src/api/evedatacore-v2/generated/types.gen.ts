@@ -163,7 +163,7 @@ export type GetCharacterIdAssembliesResponse = {
     id: string;
     currentState?: number;
     previousState?: number;
-    assemblyType?: string;
+    assemblyType: string;
     isValid?: boolean;
     anchoredAt?: number;
     account?: string;
@@ -392,21 +392,31 @@ export type GetTribeIdCharactersError = {
   message: string;
 };
 
-export type GetAssembliesData = {
+export type GetAssembliesTypeStateData = {
+  path: {
+    /**
+     * GET /assemblies/:type/:state Parameter
+     */
+    state: number | null;
+    /**
+     * GET /assemblies/:type/:state Parameter
+     */
+    type: string;
+  };
   query?: {
     /**
-     * GET /assemblies Parameter
+     * GET /assemblies/:type/:state Parameter
      */
     startKey?: string;
   };
 };
 
-export type GetAssembliesResponse = {
+export type GetAssembliesTypeStateResponse = {
   items: Array<{
     id: string;
     currentState?: number;
     previousState?: number;
-    assemblyType?: string;
+    assemblyType: string;
     isValid?: boolean;
     anchoredAt?: number;
     account?: string;
@@ -441,7 +451,7 @@ export type GetAssembliesResponse = {
   nextKey?: string;
 };
 
-export type GetAssembliesError = {
+export type GetAssembliesTypeStateError = {
   message: string;
 };
 
@@ -465,7 +475,7 @@ export type GetAssemblyIdNetworkResponse = {
     id: string;
     currentState?: number;
     previousState?: number;
-    assemblyType?: string;
+    assemblyType: string;
     isValid?: boolean;
     anchoredAt?: number;
     account?: string;
@@ -547,7 +557,7 @@ export type GetAssemblyIdResponse = {
   id: string;
   currentState?: number;
   previousState?: number;
-  assemblyType?: string;
+  assemblyType: string;
   isValid?: boolean;
   anchoredAt?: number;
   account?: string;
@@ -974,7 +984,7 @@ export type GetSolarsystemIdAssembliesResponse = {
     id: string;
     currentState?: number;
     previousState?: number;
-    assemblyType?: string;
+    assemblyType: string;
     isValid?: boolean;
     anchoredAt?: number;
     account?: string;

@@ -42,9 +42,9 @@ import type {
   GetTribeIdCharactersData,
   GetTribeIdCharactersError,
   GetTribeIdCharactersResponse,
-  GetAssembliesData,
-  GetAssembliesError,
-  GetAssembliesResponse,
+  GetAssembliesTypeStateData,
+  GetAssembliesTypeStateError,
+  GetAssembliesTypeStateResponse,
   GetAssemblyIdNetworkData,
   GetAssemblyIdNetworkError,
   GetAssemblyIdNetworkResponse,
@@ -256,16 +256,16 @@ export const getTribeIdCharacters = <ThrowOnError extends boolean = false>(
   });
 };
 
-export const getAssemblies = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<GetAssembliesData, ThrowOnError>,
+export const getAssembliesTypeState = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetAssembliesTypeStateData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    GetAssembliesResponse,
-    GetAssembliesError,
+    GetAssembliesTypeStateResponse,
+    GetAssembliesTypeStateError,
     ThrowOnError
   >({
     ...options,
-    url: "/assemblies",
+    url: "/assemblies/{type}/{state}",
   });
 };
 
