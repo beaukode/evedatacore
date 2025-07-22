@@ -173,17 +173,6 @@ export type GetCharacterIdAssembliesResponse = {
     x?: string;
     y?: string;
     z?: string;
-    inventories?: {
-      [key: string]: {
-        capacity: string;
-        usedCapacity: string;
-        ownerId?: string;
-        ownerName?: string;
-        items: {
-          [key: string]: number;
-        };
-      };
-    };
     name?: string;
     dappURL?: string;
     description?: string;
@@ -426,17 +415,6 @@ export type GetAssembliesTypeStateResponse = {
     x?: string;
     y?: string;
     z?: string;
-    inventories?: {
-      [key: string]: {
-        capacity: string;
-        usedCapacity: string;
-        ownerId?: string;
-        ownerName?: string;
-        items: {
-          [key: string]: number;
-        };
-      };
-    };
     name?: string;
     dappURL?: string;
     description?: string;
@@ -485,17 +463,6 @@ export type GetAssemblyIdNetworkResponse = {
     x?: string;
     y?: string;
     z?: string;
-    inventories?: {
-      [key: string]: {
-        capacity: string;
-        usedCapacity: string;
-        ownerId?: string;
-        ownerName?: string;
-        items: {
-          [key: string]: number;
-        };
-      };
-    };
     name?: string;
     dappURL?: string;
     description?: string;
@@ -527,7 +494,7 @@ export type GetAssemblyIdInventoriesData = {
 };
 
 export type GetAssemblyIdInventoriesResponse = {
-  inventories?: {
+  inventories: {
     [key: string]: {
       capacity: string;
       usedCapacity: string;
@@ -567,17 +534,6 @@ export type GetAssemblyIdResponse = {
   x?: string;
   y?: string;
   z?: string;
-  inventories?: {
-    [key: string]: {
-      capacity: string;
-      usedCapacity: string;
-      ownerId?: string;
-      ownerName?: string;
-      items: {
-        [key: string]: number;
-      };
-    };
-  };
   name?: string;
   dappURL?: string;
   description?: string;
@@ -994,17 +950,6 @@ export type GetSolarsystemIdAssembliesResponse = {
     x?: string;
     y?: string;
     z?: string;
-    inventories?: {
-      [key: string]: {
-        capacity: string;
-        usedCapacity: string;
-        ownerId?: string;
-        ownerName?: string;
-        items: {
-          [key: string]: number;
-        };
-      };
-    };
     name?: string;
     dappURL?: string;
     description?: string;
