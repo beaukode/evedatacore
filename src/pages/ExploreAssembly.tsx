@@ -176,14 +176,14 @@ const ExploreAssembly: React.FC = () => {
                 </>
               }
             >
-              {data.dappUrl ? (
+              {data.dappURL ? (
                 <Link
-                  href={data.dappUrl}
+                  href={data.dappURL}
                   title={name}
                   rel="noopener"
                   target="_blank"
                 >
-                  {data.dappUrl}
+                  {data.dappURL}
                 </Link>
               ) : (
                 ""

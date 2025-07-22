@@ -40,7 +40,7 @@ export function getNamespace(): string {
 }
 
 export function isGateManaged(gate: Assembly) {
-  return gate.dappUrl === getDappUrl() && gate.systemId === getAccessSystemId();
+  return gate.dappURL === getDappUrl() && gate.systemId === getAccessSystemId();
 }
 
 export type ConfigDiff = {
