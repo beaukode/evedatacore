@@ -185,7 +185,7 @@ export type GetCharacterIdAssembliesResponse = {
       };
     };
     name?: string;
-    dappUrl?: string;
+    dappURL?: string;
     description?: string;
     networkNodeId?: string;
     maxEnergyCapacity?: number;
@@ -438,7 +438,7 @@ export type GetAssembliesTypeStateResponse = {
       };
     };
     name?: string;
-    dappUrl?: string;
+    dappURL?: string;
     description?: string;
     networkNodeId?: string;
     maxEnergyCapacity?: number;
@@ -497,7 +497,7 @@ export type GetAssemblyIdNetworkResponse = {
       };
     };
     name?: string;
-    dappUrl?: string;
+    dappURL?: string;
     description?: string;
     networkNodeId?: string;
     maxEnergyCapacity?: number;
@@ -579,7 +579,7 @@ export type GetAssemblyIdResponse = {
     };
   };
   name?: string;
-  dappUrl?: string;
+  dappURL?: string;
   description?: string;
   networkNodeId?: string;
   maxEnergyCapacity?: number;
@@ -1006,7 +1006,7 @@ export type GetSolarsystemIdAssembliesResponse = {
       };
     };
     name?: string;
-    dappUrl?: string;
+    dappURL?: string;
     description?: string;
     networkNodeId?: string;
     maxEnergyCapacity?: number;
