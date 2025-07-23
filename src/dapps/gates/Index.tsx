@@ -22,7 +22,9 @@ import { AssemblyState, assemblyTypeMap } from "@shared/mudsql";
 const Index: React.FC = () => {
   const smartCharacter = useSmartCharacter();
 
-  const owner = smartCharacter.isConnected ? smartCharacter.address : undefined;
+  const owner = smartCharacter.isConnected
+    ? smartCharacter.address.toLowerCase()
+    : undefined;
 
   const query = usePaginatedQuery({
     queryKey: ["GatesDapp", "Smartgates", owner],
