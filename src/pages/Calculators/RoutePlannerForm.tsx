@@ -51,14 +51,15 @@ function queryToForm(values: Record<keyof FormData, string>) {
     system1: Number.parseInt(values.system1),
     system2: Number.parseInt(values.system2),
     jumpDistance: Number.parseInt(values.jumpDistance),
+    smartGates: "none" as const,
     optimize: ["fuel", "distance", "hops"].includes(values.optimize)
       ? (values.optimize as "fuel" | "distance" | "hops")
       : "fuel",
-    smartGates: ["none", "unrestricted", "restricted"].includes(
-      values.smartGates
-    )
-      ? (values.smartGates as "none" | "unrestricted" | "restricted")
-      : "unrestricted",
+    // smartGates: ["none", "unrestricted", "restricted"].includes(
+    //   values.smartGates
+    // )
+    //   ? (values.smartGates as "none" | "unrestricted" | "restricted")
+    //   : "unrestricted",
     onlySmartGates: ["all", "mine", "corporation"].includes(
       values.onlySmartGates
     )
@@ -218,7 +219,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         required
         fullWidth
       />
-      <SelectElement
+      {/* <SelectElement
         name="smartGates"
         label="Smart gates"
         control={control}
@@ -233,7 +234,7 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
         ]}
         required
         fullWidth
-      />
+      /> */}
       {smartGates !== "none" && (
         <SelectElement
           name="onlySmartGates"
