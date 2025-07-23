@@ -13,9 +13,8 @@ import {
 } from "@mui/material";
 import OffChainIcon from "@mui/icons-material/BackupTable";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
@@ -26,6 +25,7 @@ import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DisplayTableContent from "@/components/DisplayTableContent";
 import ExternalLink from "@/components/ui/ExternalLink";
 import { columnWidths } from "@/constants";
+import { getTables } from "@/api/evedatacore-v2";
 
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
@@ -40,11 +40,16 @@ const ExploreTables: React.FC = () => {
     owner: "0",
     namespace: "0",
   });
-  const mudSql = useMudSql();
 
-  const query = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["Tables"],
-    queryFn: () => mudSql.listTables(),
+    queryFn: async ({ pageParam }) => {
+      const r = await getTables({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
   });
 
   const tables = React.useMemo(() => {
@@ -52,9 +57,9 @@ const ExploreTables: React.FC = () => {
     return filterInProps(
       query.data,
       debouncedSearch.text,
-      ["tableId", "name", "namespace", "namespaceOwnerName"],
+      ["tableId", "ownerName", "namespace", "name"],
       (table) =>
-        (search.owner === "0" || table.namespaceOwner === search.owner) &&
+        (search.owner === "0" || table.ownerId === search.owner) &&
         (search.namespace === "0" || table.namespaceId === search.namespace)
     );
   }, [query.data, search.owner, search.namespace, debouncedSearch.text]);
@@ -63,9 +68,9 @@ const ExploreTables: React.FC = () => {
     if (!query.data) return;
     const owners = query.data.reduce(
       (acc, t) => {
-        const namespaceOwner = t.namespaceOwner || "0x";
+        const namespaceOwner = t.account || "0x";
         if (!acc[namespaceOwner]) {
-          acc[namespaceOwner] = t.namespaceOwnerName || namespaceOwner;
+          acc[namespaceOwner] = t.ownerName || namespaceOwner;
         }
         return acc;
       },
@@ -122,7 +127,7 @@ const ExploreTables: React.FC = () => {
       (acc, t) => {
         if (
           !acc[t.namespaceId] &&
-          (search.owner === "0" || t.namespaceOwner === search.owner)
+          (search.owner === "0" || t.ownerName === search.owner)
         ) {
           acc[t.namespaceId] = t.namespace;
         }
@@ -208,8 +213,8 @@ const ExploreTables: React.FC = () => {
           </TableCell>
           <TableCell>
             <ButtonCharacter
-              address={t.namespaceOwner}
-              name={t.namespaceOwnerName}
+              address={t.account}
+              name={t.ownerName}
               fastRender={context.isScrolling}
             />
           </TableCell>

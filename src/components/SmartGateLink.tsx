@@ -1,7 +1,6 @@
 import React from "react";
-import { Alert, Box, List, Skeleton, Typography } from "@mui/material";
+import { Box, List, Skeleton, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
 import ButtonCharacter from "./buttons/ButtonCharacter";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import ButtonSolarsystem from "./buttons/ButtonSolarsystem";
@@ -13,30 +12,37 @@ import useCanJump from "@/tools/useCanJump";
 import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
 import ConditionalMount from "./ui/ConditionalMount";
 import DialogGateLink from "./dialogs/DialogGateLink";
+import { getAssemblyId } from "@/api/evedatacore-v2";
 
 interface SmartGateLinkProps {
   sourceGateId: string;
   sourceGateState: number;
+  linkedGateId?: string | null;
   owner: string;
 }
 
 const SmartGateLink: React.FC<SmartGateLinkProps> = ({
   sourceGateId,
   sourceGateState,
+  linkedGateId,
   owner,
 }) => {
   const [unlinkOpen, setUnlinkOpen] = React.useState(false);
-  const mudSql = useMudSql();
 
   const query = useQuery({
-    queryKey: ["SmartGateLink", sourceGateId],
-    queryFn: async () =>
-      mudSql.getGateLink(sourceGateId).then((r) => r || null), // useQuery complains if we return undefined
+    queryKey: ["SmartassembliesById", linkedGateId],
+    queryFn: async () => {
+      if (!linkedGateId) return null;
+      const r = await getAssemblyId({ path: { id: linkedGateId } });
+      if (!r.data) return null;
+      return r.data;
+    },
+    enabled: !!linkedGateId,
   });
 
   const data = query.data;
   const destinationGateId = data?.id || "";
-  const destinationGateState = data?.state || -1;
+  const destinationGateState = data?.currentState || -1;
 
   const canJump = useCanJump(
     sourceGateId,
@@ -49,8 +55,9 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({
     if (!data) return { name: "..." };
 
     const state =
-      smartAssemblyStates[data.state as keyof typeof smartAssemblyStates] ||
-      "Unknown";
+      smartAssemblyStates[
+        data.currentState as keyof typeof smartAssemblyStates
+      ] || "Unknown";
     return {
       name: `${data.name || shorten(data.id)}`,
       state,
@@ -94,10 +101,10 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({
             </BasicListItem>
             <BasicListItem title="Id">{data.id}</BasicListItem>
             <BasicListItem title="Owner" disableGutters>
-              <ButtonCharacter address={data.ownerId} name={data.ownerName} />
+              <ButtonCharacter address={data.account} name={data.ownerName} />
             </BasicListItem>
             <BasicListItem title="State">
-              {state} [{data.state}]
+              {state} [{data.currentState}]
             </BasicListItem>
             <BasicListItem title="Anchored at">
               {tsToDateTime(data.anchoredAt)}
@@ -107,19 +114,10 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({
             </BasicListItem>
             <BasicListItem title="Location">
               <Box sx={{ pl: 4 }}>
-                <span style={{ textWrap: "nowrap" }}>
-                  x: {data.location?.x}
-                </span>{" "}
-                <span style={{ textWrap: "nowrap" }}>
-                  y: {data.location?.y}
-                </span>{" "}
-                <span style={{ textWrap: "nowrap" }}>
-                  z: {data.location?.z}
-                </span>
+                <span style={{ textWrap: "nowrap" }}>x: {data.x}</span>{" "}
+                <span style={{ textWrap: "nowrap" }}>y: {data.y}</span>{" "}
+                <span style={{ textWrap: "nowrap" }}>z: {data.z}</span>
               </Box>
-            </BasicListItem>
-            <BasicListItem title="Is link active" disableGutters>
-              {data.isLinked ? "Yes" : "No"}
             </BasicListItem>
             <BasicListItem title="Can you jump">
               {!canJump && (
@@ -139,12 +137,6 @@ const SmartGateLink: React.FC<SmartGateLinkProps> = ({
               )}
             </BasicListItem>
           </List>
-          {!data.isLinked && (
-            <Alert severity="warning">
-              The link exists in the SmartGateLinkTab MUD table, but is set to
-              false
-            </Alert>
-          )}
         </>
       )}
     </PaperLevel1>

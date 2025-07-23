@@ -1,7 +1,9 @@
 import { Hex, isHex } from "viem";
 import { difference } from "lodash-es";
-import { Gate } from "@shared/mudsql";
 import { GateConfig } from "./getGateConfig";
+import { GetAssemblyIdResponse } from "@/api/evedatacore-v2";
+
+export type Assembly = GetAssemblyIdResponse;
 
 export function getDappUrl(): string {
   const VITE_DAPP_GATES_URL = import.meta.env.VITE_DAPP_GATES_URL;
@@ -37,8 +39,8 @@ export function getNamespace(): string {
   return VITE_DAPP_GATES_NAMESPACE;
 }
 
-export function isGateManaged(gate: Gate) {
-  return gate.dappUrl === getDappUrl() && gate.systemId === getAccessSystemId();
+export function isGateManaged(gate: Assembly) {
+  return gate.dappURL === getDappUrl() && gate.systemId === getAccessSystemId();
 }
 
 export type ConfigDiff = {

@@ -2,14 +2,14 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
 import { filterInProps } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { DataTableContext, DataTableColumn } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
+import { getNamespaces } from "@/api/evedatacore-v2";
 
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common },
@@ -20,19 +20,24 @@ const ExploreNamespaces: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
-  const mudSql = useMudSql();
 
-  const query = useQuery({
+  const query = usePaginatedQuery({
     queryKey: ["Namespaces"],
-    queryFn: () => mudSql.listNamespaces(),
+    queryFn: async ({ pageParam }) => {
+      const r = await getNamespaces({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
   });
 
   const namespaces = React.useMemo(() => {
     if (!query.data) return [];
     return filterInProps(query.data, debouncedSearch.text, [
       "name",
-      "namespaceId",
-      "owner",
+      "id",
+      "account",
       "ownerName",
     ]);
   }, [query.data, debouncedSearch.text]);
@@ -40,18 +45,18 @@ const ExploreNamespaces: React.FC = () => {
   const itemContent = React.useCallback(
     (_: number, ns: (typeof namespaces)[number], context: DataTableContext) => {
       return (
-        <React.Fragment key={ns.namespaceId}>
+        <React.Fragment key={ns.id}>
           <TableCell>
             <ButtonNamespace
               name={ns.name}
-              id={ns.namespaceId}
+              id={ns.id}
               fastRender={context.isScrolling}
             />
           </TableCell>
           <TableCell>
             <ButtonCharacter
               name={ns.ownerName}
-              address={ns.owner}
+              address={ns.account}
               fastRender={context.isScrolling}
             />
           </TableCell>

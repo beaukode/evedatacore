@@ -90,7 +90,7 @@ const UserButton: React.FC<UserButtonProps> = ({ disableMenu }) => {
         >
           <MenuItem
             component={NavLink}
-            to={`/explore/characters/${smartCharacter.address}`}
+            to={`/explore/characters/${smartCharacter.address.toLowerCase()}`}
             onClick={() => {
               setShowMenu(false);
             }}

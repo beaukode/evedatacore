@@ -1,11 +1,11 @@
 import React from "react";
+import { Hex } from "viem";
 import { Helmet } from "react-helmet";
 import { Box, Link, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { useMudSql } from "@/contexts/AppContext";
 import { shorten, tsToDateTime } from "@/tools";
-import { AssemblyType } from "@shared/mudsql/types";
+import { assemblyTypeMap, AssemblyType } from "@shared/mudsql/types";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -13,14 +13,14 @@ import BasicListItem from "@/components/ui/BasicListItem";
 import { smartAssembliesTypes, smartAssemblyStates } from "@/constants";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
-import SmartGateConfig from "@/components/SmartGateConfig";
-import SmartTurretConfig from "@/components/SmartTurretConfig";
 import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import DialogMetadataAssembly from "@/components/dialogs/DialogMetadataAssembly";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import SmartGateOther from "@/components/SmartGateOther";
 import NetworkNode from "@/components/NetworkNode";
+import AssemblyBehavior from "@/components/AssemblyBehavior";
+import { getAssemblyId } from "@/api/evedatacore-v2";
 import Error404 from "./Error404";
 
 const ExploreAssembly: React.FC = () => {
@@ -28,28 +28,35 @@ const ExploreAssembly: React.FC = () => {
   const [metadataOpen, setMetadataOpen] = React.useState(false);
   const [onOffOpen, setOnOffOpen] = React.useState(false);
 
-  const mudSql = useMudSql();
-
   const query = useQuery({
     queryKey: ["SmartassembliesById", id],
-    queryFn: async () => mudSql.getAssembly(id || ""),
+    queryFn: async () => {
+      if (!id) return null;
+      const r = await getAssemblyId({ path: { id } });
+      if (!r.data) return null;
+      return r.data;
+    },
     enabled: !!id,
   });
 
   const data = query.data;
 
-  const { name, type, state } = React.useMemo(() => {
-    if (!data) return { name: "..." };
-    const type =
-      smartAssembliesTypes[data.typeId as keyof typeof smartAssembliesTypes] ||
-      "Unknown";
+  const { name, type, typeId, state, owner } = React.useMemo(() => {
+    if (!data) return { name: "...", owner: "0x0" as Hex };
+    const typeId =
+      assemblyTypeMap[data.assemblyType as keyof typeof assemblyTypeMap];
+    const type = smartAssembliesTypes[typeId] || "Unknown";
     const state =
-      smartAssemblyStates[data.state as keyof typeof smartAssemblyStates] ||
-      "Unknown";
+      smartAssemblyStates[
+        data.currentState as keyof typeof smartAssemblyStates
+      ] || "Unknown";
+    const owner = (data.account ?? "0x0") as Hex;
     return {
       name: `${data.name || shorten(data.id)} [${type}]`,
       type,
+      typeId,
       state,
+      owner,
     };
   }, [data]);
 
@@ -68,7 +75,7 @@ const ExploreAssembly: React.FC = () => {
             <DialogMetadataAssembly
               open={metadataOpen}
               assemblyId={data.id}
-              owner={data.ownerId}
+              owner={owner}
               title={`Edit ${name}`}
               onClose={() => {
                 query.refetch();
@@ -80,7 +87,7 @@ const ExploreAssembly: React.FC = () => {
             <DialogOnOffAssembly
               open={onOffOpen}
               assemblyId={data.id}
-              owner={data.ownerId}
+              owner={owner}
               title={`Edit ${name}`}
               onClose={() => {
                 query.refetch();
@@ -95,16 +102,16 @@ const ExploreAssembly: React.FC = () => {
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
             <BasicListItem title="Id">{data.id}</BasicListItem>
             <BasicListItem title="Type">
-              {type} [{data.typeId}]
+              {type} [{typeId}]
             </BasicListItem>
             <BasicListItem title="Owner" disableGutters>
-              <ButtonCharacter address={data.ownerId} name={data.ownerName} />
+              <ButtonCharacter address={owner} name={data.ownerName} />
             </BasicListItem>
             <BasicListItem
               title={
                 <>
                   State
-                  {[2, 3].includes(data.state) && (
+                  {[2, 3].includes(data.currentState ?? 0) && (
                     <ButtonWeb3Interaction
                       title="Edit assembly state"
                       onClick={() => setOnOffOpen(true)}
@@ -113,7 +120,7 @@ const ExploreAssembly: React.FC = () => {
                 </>
               }
             >
-              {state} [{data.state}]{" "}
+              {state} [{data.currentState}]{" "}
             </BasicListItem>
             <BasicListItem title="Anchored at">
               {tsToDateTime(data.anchoredAt)}
@@ -123,15 +130,9 @@ const ExploreAssembly: React.FC = () => {
             </BasicListItem>
             <BasicListItem title="Location">
               <Box sx={{ pl: 4 }}>
-                <span style={{ textWrap: "nowrap" }}>
-                  x: {data.location?.x}
-                </span>{" "}
-                <span style={{ textWrap: "nowrap" }}>
-                  y: {data.location?.y}
-                </span>{" "}
-                <span style={{ textWrap: "nowrap" }}>
-                  z: {data.location?.z}
-                </span>
+                <span style={{ textWrap: "nowrap" }}>x: {data.x}</span>{" "}
+                <span style={{ textWrap: "nowrap" }}>y: {data.y}</span>{" "}
+                <span style={{ textWrap: "nowrap" }}>z: {data.z}</span>
               </Box>
             </BasicListItem>
             <BasicListItem
@@ -175,14 +176,14 @@ const ExploreAssembly: React.FC = () => {
                 </>
               }
             >
-              {data.dappUrl ? (
+              {data.dappURL ? (
                 <Link
-                  href={data.dappUrl}
+                  href={data.dappURL}
                   title={name}
                   rel="noopener"
                   target="_blank"
                 >
-                  {data.dappUrl}
+                  {data.dappURL}
                 </Link>
               ) : (
                 ""
@@ -191,32 +192,53 @@ const ExploreAssembly: React.FC = () => {
           </List>
         )}
       </PaperLevel1>
-      {data?.typeId === AssemblyType.Gate && (
-        <SmartGateConfig gateId={id} owner={data.ownerId} />
-      )}
-      {data?.typeId === AssemblyType.Gate && (
-        <SmartGateLink
-          sourceGateId={id}
-          owner={data.ownerId}
-          sourceGateState={data.state}
-        />
-      )}
-      {data?.typeId === AssemblyType.Gate && (
-        <SmartGateOther
-          currentGateId={id}
-          owner={data.ownerId}
-          currentGateLocation={data.location}
-        />
-      )}
-      {data?.typeId === AssemblyType.Turret && (
-        <SmartTurretConfig turretId={id} owner={data.ownerId} />
-      )}
-      {data?.typeId === AssemblyType.Storage && (
-        <SmartStorageInventory id={id} owner={data.ownerId} />
-      )}
-      {data?.typeId === AssemblyType.NetworkNode && <NetworkNode id={id} />}
-      {data?.typeId !== AssemblyType.NetworkNode && data?.networkNodeId && (
-        <NetworkNode id={data.networkNodeId} />
+      {data && (
+        <>
+          {typeId === AssemblyType.Gate && (
+            <AssemblyBehavior
+              systemId={data.systemId}
+              assemblyId={id}
+              owner={owner}
+              type="gate"
+              onChange={() => query.refetch()}
+            />
+          )}
+          {typeId === AssemblyType.Gate && (
+            <SmartGateLink
+              sourceGateId={id}
+              linkedGateId={data.linkedGateId}
+              owner={owner}
+              sourceGateState={data.currentState ?? 0}
+            />
+          )}
+          {typeId === AssemblyType.Gate && (
+            <SmartGateOther
+              currentGateId={id}
+              owner={owner}
+              currentGateLocation={{
+                x: data?.x ?? "0",
+                y: data?.y ?? "0",
+                z: data?.z ?? "0",
+              }}
+            />
+          )}
+          {typeId === AssemblyType.Turret && (
+            <AssemblyBehavior
+              systemId={data.systemId}
+              assemblyId={id}
+              owner={owner}
+              type="turret"
+              onChange={() => query.refetch()}
+            />
+          )}
+          {typeId === AssemblyType.Storage && (
+            <SmartStorageInventory id={id} owner={owner} />
+          )}
+          {typeId === AssemblyType.NetworkNode && <NetworkNode id={id} />}
+          {typeId !== AssemblyType.NetworkNode && data?.networkNodeId && (
+            <NetworkNode id={data.networkNodeId} />
+          )}
+        </>
       )}
     </Box>
   );

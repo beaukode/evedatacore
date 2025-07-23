@@ -2,13 +2,14 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Hex } from "viem";
-import { useMudSql, useTypesIndex } from "@/contexts/AppContext";
+import { useTypesIndex } from "@/contexts/AppContext";
 import PaperLevel1 from "./ui/PaperLevel1";
 import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
 import DialogTransfertItems from "./dialogs/DialogTransfertItems";
 import ConditionalMount from "./ui/ConditionalMount";
 import ItemInventory from "./ui/ItemInventory";
 import ButtonCharacter from "./buttons/ButtonCharacter";
+import { getAssemblyIdInventories } from "@/api/evedatacore-v2";
 
 interface SmartStorageInventoryProps {
   id: string;
@@ -27,23 +28,50 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
   const [transfertItemsOpen, setTransfertItemsOpen] = React.useState(false);
   const [selectedInventory, setSelectedInventory] =
     React.useState<SelectedInventory>();
-  const mudSql = useMudSql();
-  const typesIndex = useTypesIndex(); // Only used for loading
-
+  const typesIndex = useTypesIndex();
   const query = useQuery({
     queryKey: ["SmartStorageInventory", id],
-    queryFn: async () => mudSql.getStorageInventory(id),
+    queryFn: async () => {
+      const r = await getAssemblyIdInventories({
+        path: { id },
+      });
+      return r.data;
+    },
   });
 
-  const queryUsers = useQuery({
-    queryKey: ["SmartStorageUsersInventories", id],
-    queryFn: async () => mudSql.listStorageUsersInventory(id),
-  });
+  const mainInventory = React.useMemo(() => {
+    const main = query.data?.inventories?.["main"];
+    if (!main || !typesIndex)
+      return {
+        capacity: "0",
+        usedCapacity: "0",
+        items: [],
+      };
+    return {
+      capacity: main.capacity,
+      usedCapacity: main.usedCapacity,
+      items: typesIndex?.inventoryItemsToArray(main.items),
+    };
+  }, [query.data, typesIndex]);
+
+  const inventories = React.useMemo(() => {
+    if (!query.data || !typesIndex) return [];
+    return Object.entries(query.data.inventories || {})
+      .map(([key, value]) => {
+        if (key === "main") return undefined;
+        return {
+          account: key as Hex,
+          ...value,
+          items: typesIndex?.inventoryItemsToArray(value.items),
+        };
+      })
+      .filter((i) => i !== undefined);
+  }, [query.data, typesIndex]);
 
   const storageUsers = React.useMemo(() => {
-    if (!queryUsers.data) return [];
-    return [owner, ...queryUsers.data.map((inv) => inv.ownerId)];
-  }, [owner, queryUsers.data]);
+    if (!query.data) return [];
+    return [owner, ...Object.keys(query.data.inventories || {})] as Hex[];
+  }, [owner, query.data]);
 
   const dialogTitle = React.useMemo(() => {
     if (!selectedInventory) return "";
@@ -53,7 +81,6 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
   }, [selectedInventory]);
 
   const data = query.data;
-  const inventories = queryUsers.data;
 
   return (
     <>
@@ -75,12 +102,11 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
                 onClose={() => {
                   setTransfertItemsOpen(false);
                   query.refetch();
-                  queryUsers.refetch();
                 }}
               />
             </ConditionalMount>
             <ItemInventory
-              inventory={data}
+              inventory={mainInventory}
               header={
                 <ButtonWeb3Interaction
                   title="Item transfer"
@@ -96,7 +122,7 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
       </PaperLevel1>
       <PaperLevel1
         title="Users storage"
-        loading={queryUsers.isFetching || !typesIndex}
+        loading={query.isFetching || !typesIndex}
         sx={{ pt: inventories && inventories.length > 0 ? 0 : undefined }}
       >
         {inventories && inventories.length === 0 && (
@@ -117,7 +143,7 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
                       title="Item transfer"
                       onClick={() => {
                         setSelectedInventory({
-                          owner: inv.ownerId,
+                          owner: inv.account,
                           type: "ephemeral",
                         });
                         setTransfertItemsOpen(true);

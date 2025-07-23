@@ -1,11 +1,11 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Box, TextField, TableCell } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
+import { getCharacters } from "@/api/evedatacore-v2";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonCorporation from "@/components/buttons/ButtonCorporation";
@@ -18,27 +18,31 @@ const ExploreCorporations: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
-  const mudSql = useMudSql();
 
-  const query = useQuery({
+  const { data, isFetching } = usePaginatedQuery({
     queryKey: ["Smartcharacters"],
-    queryFn: async () => mudSql.listCharacters(),
-    staleTime: 1000 * 60 * 15,
+    queryFn: async ({ pageParam }) => {
+      const r = await getCharacters({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
   });
 
   const corporations = React.useMemo(() => {
-    if (!query.data) return [];
+    if (!data) return [];
     const corps: Record<number, { id: string }> = {};
-    for (const character of query.data) {
-      if (!corps[character.corpId]) {
-        corps[character.corpId] = {
-          id: character.corpId.toString(),
+    for (const character of data) {
+      if (character.tribeId && !corps[character.tribeId]) {
+        corps[character.tribeId] = {
+          id: character.tribeId.toString(),
         };
       }
     }
     const corpsArray = Object.values(corps);
     return filterInProps(corpsArray, debouncedSearch.text, ["id"]);
-  }, [query.data, debouncedSearch.text]);
+  }, [data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
@@ -72,7 +76,7 @@ const ExploreCorporations: React.FC = () => {
         columns={columns}
         data={corporations}
         itemContent={itemContent}
-        loading={query.isFetching}
+        loading={isFetching}
       >
         <TextField
           label="Search"

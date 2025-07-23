@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet";
 import { Alert, Box, Grid2, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -11,16 +10,21 @@ import ButtonSystem from "@/components/buttons/ButtonSystem";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { decodeFunctionSignature } from "@shared/mudweb3";
 import { toJson } from "@/tools";
+import { getFunctionId } from "@/api/evedatacore-v2";
 
 const grid3perRow = { sm: 12, md: 4 };
 
 const ExploreFunction: React.FC = () => {
   const { id } = useParams();
-  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["Function", id],
-    queryFn: async () => mudSql.getFunction(id || "0x"),
+    queryFn: async () => {
+      if (!id) return null;
+      const r = await getFunctionId({ path: { id: id } });
+      if (!r.data) return null;
+      return r.data;
+    },
     enabled: !!id,
   });
 
@@ -50,23 +54,21 @@ const ExploreFunction: React.FC = () => {
           <Grid2 container spacing={2} sx={{ mb: 2 }}>
             <Grid2 size={grid3perRow}>
               Owner:{" "}
-              {data.namespaceOwner && (
+              {data.account && (
                 <>
-                  {data.namespaceOwnerName && (
+                  {data.ownerName && (
                     <ButtonCharacter
-                      address={data.namespaceOwner}
-                      name={data.namespaceOwnerName}
+                      address={data.account}
+                      name={data.ownerName}
                     />
                   )}
-                  {!data.namespaceOwnerName && data.namespaceOwner}
+                  {!data.ownerName && data.account}
                 </>
               )}
             </Grid2>
             <Grid2 size={grid3perRow}>
               Namespace:{" "}
-              {data.namespaceId && data.namespace && (
-                <ButtonNamespace id={data.namespaceId} name={data.namespace} />
-              )}
+              <ButtonNamespace id={data.namespaceId} name={data.namespace} />
             </Grid2>
             <Grid2 size={grid3perRow}>
               System:{" "}
@@ -74,9 +76,7 @@ const ExploreFunction: React.FC = () => {
                 <ButtonSystem id={data.systemId} name={data.systemName} />
               )}
             </Grid2>
-            <Grid2 size={grid3perRow}>
-              World selector: {data.worldSelector}
-            </Grid2>
+            <Grid2 size={grid3perRow}>World selector: {data.id}</Grid2>
             <Grid2 size={grid3perRow}>
               System selector: {data.systemSelector}
             </Grid2>

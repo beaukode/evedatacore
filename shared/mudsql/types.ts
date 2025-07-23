@@ -22,6 +22,8 @@ export type SelectOptions = {
   where?: string;
   orderBy?: string | string[];
   orderDirection?: "ASC" | "DESC";
+  limit?: number;
+  offset?: number;
   rels?: Record<string, SelectRelation>;
   tableType?: TableType;
   fields?: string[];
@@ -115,7 +117,6 @@ export type Table = MudTable & {
 export type InventoryItem = {
   itemId: string;
   quantity: string;
-  typeId: string;
 };
 
 export type Inventory = {

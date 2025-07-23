@@ -10,9 +10,9 @@ import {
   TextField,
 } from "@mui/material";
 import { isHex } from "viem";
+import { AbiType, Table } from "@latticexyz/config";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { useMudSql } from "@/contexts/AppContext";
 import Error404 from "./Error404";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -22,12 +22,15 @@ import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import { DataTableColumn } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
+import { useMudSql } from "@/contexts/AppContext";
 import { pick } from "lodash-es";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import DialogTableRecord from "@/components/dialogs/DialogTableRecord";
 import ButtonWeb3Interaction from "@/components/buttons/ButtonWeb3Interaction";
 import { AbiTypeDetails, parseAbiType } from "@/tools/abi";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
+import { getTableId } from "@/api/evedatacore-v2";
 
 const ExploreTable: React.FC = () => {
   const { id } = useParams();
@@ -36,6 +39,7 @@ const ExploreTable: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+
   const mudSql = useMudSql();
 
   const table = isHex(id) ? hexToResource(id) : undefined;
@@ -49,25 +53,34 @@ const ExploreTable: React.FC = () => {
 
   const query = useQuery({
     queryKey: ["Table", id],
-    queryFn: async () => mudSql.getTable(id ?? "0x"),
+    queryFn: async () =>
+      getTableId({ path: { id: id ?? "" } }).then((r) => r.data),
     enabled: !!id,
   });
 
-  const queryRecords = useQuery({
+  const queryRecords = usePaginatedQuery({
     queryKey: ["TableRecords", id],
-    queryFn: async () => {
-      if (!(table && query.data)) {
-        return [];
+    queryFn: async ({ pageParam }) => {
+      if (
+        !(table && query.data) ||
+        (table.type !== "table" && table.type !== "offchainTable")
+      ) {
+        return { items: [] };
       }
+      const offset = pageParam ? Number.parseInt(pageParam, 10) : 0;
       const records = await mudSql.selectFrom(table.namespace, table.name, {
         orderBy: [...query.data.key],
-        tableType: query.data.type,
+        tableType: table.type,
+        limit: 5000,
+        offset,
       });
 
-      return records;
+      const nextKey =
+        records.length < 5000 ? undefined : (offset + 5000).toString();
+
+      return { items: records, nextKey };
     },
-    enabled: !!query.data,
-    retry: false,
+    enabled: !!query.data && !!id,
   });
 
   const handleEditClick = React.useCallback((keys?: Record<string, string>) => {
@@ -105,7 +118,7 @@ const ExploreTable: React.FC = () => {
           label: `${key} (${type})`,
         });
         columnsKeys.push(key);
-        columnsTypes[key] = parseAbiType(type);
+        columnsTypes[key] = parseAbiType(type as AbiType);
       }
       tableKeys.push(...query.data.key);
 
@@ -130,7 +143,7 @@ const ExploreTable: React.FC = () => {
                 .map((v) => v.replace(/\r\n|\r|\n/g, "\\n"))
                 .join(";");
             } else {
-              acc[key] = value.replace(/\r\n|\r|\n/g, "\\n");
+              acc[key] = String(value).replace(/\r\n|\r|\n/g, "\\n");
             }
           } else if (columnType?.baseType === "bytes" && columnType?.length) {
             // The api add some padding to the bytes
@@ -138,13 +151,13 @@ const ExploreTable: React.FC = () => {
             if (Array.isArray(value)) {
               acc[key] = value.map((v) => v.substring(0, length)).join(";");
             } else {
-              acc[key] = value.substring(0, length);
+              acc[key] = String(value).substring(0, length);
             }
           } else {
             if (Array.isArray(value)) {
               acc[key] = value.join(";");
             } else {
-              acc[key] = value;
+              acc[key] = String(value);
             }
           }
           return acc;
@@ -221,13 +234,13 @@ const ExploreTable: React.FC = () => {
               <ListItem disableGutters>
                 <ListItemText sx={{ my: 0 }}>
                   Owner:{" "}
-                  {data.namespaceOwnerName ? (
+                  {data.ownerName ? (
                     <ButtonCharacter
-                      address={data.namespaceOwner}
-                      name={data.namespaceOwnerName}
+                      address={data.account}
+                      name={data.ownerName}
                     />
                   ) : (
-                    data.namespaceOwner
+                    data.account
                   )}
                 </ListItemText>
               </ListItem>
@@ -269,9 +282,9 @@ const ExploreTable: React.FC = () => {
         <ConditionalMount mount={editOpen} keepMounted>
           <DialogTableRecord
             open={editOpen}
-            table={data}
+            table={data as unknown as Table}
             keyValues={editKey}
-            owner={data?.namespaceOwner || "0x"}
+            owner={data?.account || "0x"}
             onClose={() => {
               setEditOpen(false);
               queryRecords.refetch();

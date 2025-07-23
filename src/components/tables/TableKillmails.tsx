@@ -7,12 +7,15 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
+import { tsToDateTime } from "@/tools";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
-import ButtonCharacter from "../buttons/ButtonCharacter";
-import { ldapDate } from "@/tools";
+import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import {
+  getCharacterIdKills,
+  getSolarsystemIdKills,
+} from "@/api/evedatacore-v2";
 
 interface TableKillmailsProps {
   characterId?: string;
@@ -23,17 +26,31 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
   characterId,
   solarSystemId,
 }) => {
-  const mudSql = useMudSql();
-
-  const queryByCharacter = useQuery({
-    queryKey: ["KillmailsByCharacter", characterId],
-    queryFn: async () => mudSql.listKillmails({ characterId }),
+  const queryByCharacter = usePaginatedQuery({
+    queryKey: ["KillsByCharacter", characterId],
+    queryFn: async ({ pageParam }) => {
+      if (!characterId) return { items: [] };
+      const r = await getCharacterIdKills({
+        path: { id: characterId },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [] };
+      return r.data;
+    },
     enabled: !!characterId,
   });
 
-  const queryBySolarSystem = useQuery({
-    queryKey: ["KillmailsBySolarSystem", characterId],
-    queryFn: async () => mudSql.listKillmails({ solarSystemId }),
+  const queryBySolarSystem = usePaginatedQuery({
+    queryKey: ["KillsBySolarSystem", solarSystemId],
+    queryFn: async ({ pageParam }) => {
+      if (!solarSystemId) return { items: [] };
+      const r = await getSolarsystemIdKills({
+        path: { id: Number(solarSystemId) },
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [] };
+      return r.data;
+    },
     enabled: !!solarSystemId,
   });
 
@@ -59,30 +76,27 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
               </TableHead>
               <TableBody>
                 {query.data.map((km) => {
-                  const isoDate = ldapDate(km.timestamp).toISOString();
-                  const date = isoDate.substring(0, 10);
-                  const time = isoDate.substring(11, 19);
                   return (
                     <TableRow key={km.id}>
-                      <TableCell>{`${date} ${time}`}</TableCell>
+                      <TableCell>{tsToDateTime(km.killedAt)}</TableCell>
                       <TableCell>
                         <ButtonCharacter
                           name={km.killerName}
-                          address={km.killerAddress}
+                          address={km.killerAccount}
                         />
                       </TableCell>
                       <TableCell>
                         <ButtonCharacter
                           name={km.victimName}
-                          address={km.victimAddress}
+                          address={km.victimAccount}
                         />
                       </TableCell>
-                      <TableCell>{km.lossType}</TableCell>
+                      <TableCell>
+                        {km.lossType === 0 ? "Ship" : "(Unknown)"}
+                      </TableCell>
                       {!solarSystemId && (
                         <TableCell>
-                          <ButtonSolarsystem
-                            solarSystemId={km.solarSystemId}
-                          />
+                          <ButtonSolarsystem solarSystemId={km.solarSystemId} />
                         </TableCell>
                       )}
                     </TableRow>

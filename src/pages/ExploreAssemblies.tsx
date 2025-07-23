@@ -8,24 +8,26 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Checkbox,
-  ListItemText,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useMudSql } from "@/contexts/AppContext";
-import { DataTableColumn, DataTableContext } from "@/components/DataTable";
-import ButtonCharacter from "@/components/buttons/ButtonCharacter";
-import ButtonAssembly from "@/components/buttons/ButtonAssembly";
-import { ensureArray, filterInProps, tsToDateTime } from "@/tools";
+import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
-import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
+import { getAssembliesTypeState } from "@/api/evedatacore-v2";
+import {
+  AssemblyType,
+  assemblyTypeMap,
+  assemblyTypeReverseMap,
+} from "@shared/mudsql";
 import {
   columnWidths,
   smartAssembliesTypes,
-  SmartAssemblyState,
   smartAssemblyStates,
 } from "@/constants";
+import { DataTableColumn, DataTableContext } from "@/components/DataTable";
+import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonAssembly from "@/components/buttons/ButtonAssembly";
+import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 
 const columns: DataTableColumn[] = [
@@ -38,39 +40,39 @@ const columns: DataTableColumn[] = [
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
-    typeId: "0",
-    stateId: "2-3",
+    type: AssemblyType.NetworkNode.toString(),
+    state: "3",
   });
-  const mudSql = useMudSql();
 
-  const { selectedStates, iSelectedState } = React.useMemo(() => {
-    const selectedStates = search.stateId.split("-").filter((v) => v !== "");
-    const iSelectedState = selectedStates.map((v) => Number.parseInt(v, 10));
-    return { selectedStates, iSelectedState };
-  }, [search.stateId]);
-
-  const query = useQuery({
-    queryKey: ["Smartassemblies"],
-    queryFn: async () => mudSql.listAssemblies(),
-    retry: 1,
+  const query = usePaginatedQuery({
+    queryKey: ["Smartassemblies", search.type, search.state],
+    queryFn: async ({ pageParam }) => {
+      const r = await getAssembliesTypeState({
+        path: {
+          type: assemblyTypeReverseMap[
+            Number.parseInt(search.type, 10) as AssemblyType
+          ],
+          state: Number.parseInt(search.state, 10),
+        },
+        query: {
+          startKey: pageParam,
+        },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
     staleTime: 1000 * 60,
   });
 
   const smartassemblies = React.useMemo(() => {
     if (!query.data) return [];
-    const iTypeId = parseInt(search.typeId, 10);
-    return filterInProps(
-      query.data,
-      debouncedSearch.text,
-      ["name", "id", "ownerName", "ownerId"],
-      (sa) => {
-        return (
-          (sa.typeId === iTypeId || iTypeId === 0) &&
-          iSelectedState.includes(sa.state)
-        );
-      }
-    );
-  }, [query.data, debouncedSearch.text, search.typeId, iSelectedState]);
+    return filterInProps(query.data, debouncedSearch.text, [
+      "name",
+      "id",
+      "ownerName",
+      "ownerId",
+    ]);
+  }, [query.data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
@@ -83,8 +85,12 @@ const ExploreAssemblies: React.FC = () => {
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <DisplayAssemblyIcon
-                typeId={sa.typeId}
-                stateId={sa.state}
+                typeId={
+                  assemblyTypeMap[
+                    sa.assemblyType as keyof typeof assemblyTypeMap
+                  ]
+                }
+                stateId={sa.currentState}
                 sx={{ mr: 1 }}
                 tooltip={!context.isScrolling}
               />
@@ -98,7 +104,7 @@ const ExploreAssemblies: React.FC = () => {
           <TableCell>
             <ButtonCharacter
               name={sa.ownerName}
-              address={sa.ownerId}
+              address={sa.account}
               fastRender={context.isScrolling}
             />
           </TableCell>
@@ -147,15 +153,14 @@ const ExploreAssemblies: React.FC = () => {
           <Select
             labelId="select-type-label"
             id="select-type"
-            value={search.typeId}
+            value={search.type}
             variant="standard"
             onChange={(e) => {
-              setSearch("typeId", e.target.value);
+              setSearch("type", e.target.value);
             }}
             label="Type"
             fullWidth
           >
-            <MenuItem value="0">All</MenuItem>
             {Object.entries(smartAssembliesTypes).map(([id, name]) => (
               <MenuItem value={`${id}`} key={id}>
                 {name}
@@ -171,27 +176,17 @@ const ExploreAssemblies: React.FC = () => {
           <Select
             labelId="select-state-label"
             id="select-state"
-            value={selectedStates.map((v) => `${v}`)}
+            value={search.state}
             variant="standard"
-            renderValue={(selected) =>
-              selected
-                .map(
-                  (v) => smartAssemblyStates[Number(v) as SmartAssemblyState]
-                )
-                .join(", ")
-            }
             onChange={(e) => {
-              const value = ensureArray(e.target.value).sort();
-              setSearch("stateId", value.join("-"));
+              setSearch("state", e.target.value);
             }}
             label="State"
-            multiple
             fullWidth
           >
             {Object.entries(smartAssemblyStates).map(([id, name]) => (
               <MenuItem value={`${id}`} key={id}>
-                <Checkbox checked={selectedStates.includes(id)} />
-                <ListItemText primary={name} />
+                {name}
               </MenuItem>
             ))}
           </Select>
