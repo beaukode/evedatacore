@@ -1,7 +1,8 @@
-import { resourceToHex } from "@latticexyz/common";
+import { hexToResource, resourceToHex } from "@latticexyz/common";
 import { MudSqlClientConfig, SelectOptions } from "../types";
 import { listSelectedTables, queryBuilder } from "../utils";
 import { MudSqlClient } from "../client";
+import { Hex } from "viem/_types/types/misc";
 
 type SelectFromBatchQuery = {
   ns: string;
@@ -26,21 +27,21 @@ export const selectFromBatch =
     if (config.debugSql) {
       console.log("selectFromBatch", tables);
     }
-    const schemasMap = Object.fromEntries(
-      await Promise.all(
-        Object.entries(tables).map(([k, v]) =>
-          // TODO: Optimize this to fetch all schemas in one request
-          client
-            .getTableSchema(
-              resourceToHex({
-                type: v.type || "table",
-                namespace: v.ns,
-                name: v.table,
-              })
-            )
-            .then((table) => [k, table.schema])
-        )
+    const schemas = await client.getTableSchemas(
+      Object.values(tables).map((t) =>
+        resourceToHex({
+          type: t.type || "table",
+          namespace: t.ns,
+          name: t.table,
+        })
       )
+    );
+
+    const schemasMap = Object.fromEntries(
+      Object.entries(schemas).map(([k, v]) => {
+        const hex = hexToResource(k as Hex);
+        return [`${hex.namespace}__${hex.name}`, v];
+      })
     );
 
     const sql = queries.map((q) =>
