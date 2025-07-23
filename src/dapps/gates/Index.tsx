@@ -43,7 +43,7 @@ const Index: React.FC = () => {
     return query.data.filter(
       (gate) =>
         gate.assemblyType === "SG" &&
-        !(gate.currentState === AssemblyState.Online ||
+        (gate.currentState === AssemblyState.Online ||
           gate.currentState === AssemblyState.Anchored)
     );
   }, [query.data]);
