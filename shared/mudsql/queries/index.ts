@@ -12,6 +12,7 @@ export * from "./getStorageInventory";
 export * from "./getSystem";
 export * from "./getTable";
 export * from "./getTableSchema";
+export * from "./getTableSchemas";
 export * from "./getTurretConfig";
 export * from "./getUserInventory";
 export * from "./listAssemblies";
