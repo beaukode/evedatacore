@@ -8,6 +8,7 @@
     "dev:api": "USE_LOCAL_API=true vite",
     "dev:anvil": "VITE_APP_USE_ANVIL=true vite",
     "build": "tsc -b && vite build",
+    "ts-check": "tsc --noEmit -p tsconfig.app.json",
     "test": "vitest",
     "lint": "eslint .",
     "preview": "vite preview",
