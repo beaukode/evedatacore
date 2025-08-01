@@ -9,6 +9,9 @@ import type {
   GetFindNearIdDistanceData,
   GetFindNearIdDistanceError,
   GetFindNearIdDistanceResponse,
+  GetFindPathData,
+  GetFindPathError,
+  GetFindPathResponse,
   PostEventsData,
   PostEventsError,
   PostEventsResponse,
@@ -54,6 +57,9 @@ import type {
   GetAssemblyIdData,
   GetAssemblyIdError,
   GetAssemblyIdResponse,
+  GetSmartgatesStateData,
+  GetSmartgatesStateError,
+  GetSmartgatesStateResponse,
   GetNamespacesData,
   GetNamespacesError,
   GetNamespacesResponse,
@@ -110,6 +116,19 @@ export const getFindNearIdDistance = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/find/near/{id}/{distance}",
+  });
+};
+
+export const getFindPath = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetFindPathData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetFindPathResponse,
+    GetFindPathError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/find/path/{from}/{to}/{distance}/{optimize}/{useSmartGates}/{restrictSmartGates}/{character}",
   });
 };
 
@@ -305,6 +324,19 @@ export const getAssemblyId = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/assembly/{id}",
+  });
+};
+
+export const getSmartgatesState = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetSmartgatesStateData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSmartgatesStateResponse,
+    GetSmartgatesStateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/smartgates/{state}",
   });
 };
 

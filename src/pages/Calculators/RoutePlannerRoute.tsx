@@ -8,12 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import SystemIcon from "@mui/icons-material/Adjust";
-import { GetCalcPathFromToResponse } from "@/api/evedatacore";
+import { GetFindPathResponse } from "@/api/evedatacore-v2/generated/types.gen";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { shorten } from "@/tools";
 import { enrichRoute, gameNotepadRoute } from "@/tools/route";
 
-type RouteData = GetCalcPathFromToResponse["path"];
+type RouteData = GetFindPathResponse["items"];
 
 interface RoutePlannerRouteProps {
   data: RouteData;
@@ -221,10 +221,10 @@ const RoutePlannerRoute: React.FC<RoutePlannerRouteProps> = ({ data }) => {
                 ? `[${step.name || shorten(step.id)}]`
                 : ""}{" "}
               {step.distance.toFixed(2)} Ly
-              {step.type === "smartgate" && step.owner && (
+              {step.type === "smartgate" && step.ownerName && (
                 <>
                   <br />
-                  Owner: {step.owner.name}
+                  Owner: {step.ownerName}
                 </>
               )}
             </Typography>
