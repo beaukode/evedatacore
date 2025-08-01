@@ -109,6 +109,7 @@ describe("gameNotepadRoute", () => {
         id: "sg-1",
         itemId: "12345",
         name: "SmartGate Alpha",
+        ownerName: "",
         distance: 0.6,
       },
     ];
@@ -159,6 +160,7 @@ describe("gameNotepadRoute", () => {
         id: "sg-1",
         itemId: "12345",
         name: "SmartGate Alpha",
+        ownerName: "",
         distance: 0.6,
       },
     ];
@@ -198,6 +200,7 @@ describe("gameNotepadRoute", () => {
         id: "sg-123456",
         itemId: "654321",
         name: "Smart Gate XYZ",
+        ownerName: "Test User",
         distance: 0.5,
       },
     ];

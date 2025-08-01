@@ -8,5 +8,8 @@ export default defineConfig({
     lint: "eslint",
     path: "./src/api/evedatacore-v2/generated",
   },
-  plugins: [...defaultPlugins],
+  plugins: [
+    ...defaultPlugins,
+    { name: "@hey-api/sdk", methodNameBuilder: undefined },
+  ],
 });

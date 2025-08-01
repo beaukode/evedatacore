@@ -1,9 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import { enrichRoute } from "../enrichRoute";
-import { GetCalcPathFromToResponse } from "@/api/evedatacore";
+import { GetFindPathResponse } from "@/api/evedatacore-v2/generated/types.gen";
 import { createSolarSystemsIndex } from "../../solarSystemsIndex";
 
 vi.mock("../../solarSystemsIndex");
+
+type RouteData = GetFindPathResponse["items"];
 
 describe("enrichRoute", () => {
   const SYSTEM_A_ID = 1001;
@@ -15,7 +17,7 @@ describe("enrichRoute", () => {
 
   it("should enrich a route with basic information", () => {
     // Arrange
-    const routeData: GetCalcPathFromToResponse["path"] = [
+    const routeData: RouteData = [
       {
         from: SYSTEM_A_ID,
         to: SYSTEM_B_ID,
@@ -48,7 +50,7 @@ describe("enrichRoute", () => {
 
   it("should handle routes with multiple jumps", () => {
     // Arrange
-    const routeData: GetCalcPathFromToResponse["path"] = [
+    const routeData: RouteData = [
       {
         from: SYSTEM_A_ID,
         to: SYSTEM_B_ID,
@@ -76,7 +78,7 @@ describe("enrichRoute", () => {
 
   it("should handle routes with mixed jump types", () => {
     // Arrange
-    const routeData: GetCalcPathFromToResponse["path"] = [
+    const routeData: RouteData = [
       {
         from: SYSTEM_A_ID,
         to: SYSTEM_B_ID,
@@ -106,7 +108,7 @@ describe("enrichRoute", () => {
 
   it("should handle empty route data", () => {
     // Arrange
-    const routeData: GetCalcPathFromToResponse["path"] = [];
+    const routeData: RouteData = [];
 
     // Act
     const result = enrichRoute(solarSystemsIndex, routeData);
@@ -121,7 +123,7 @@ describe("enrichRoute", () => {
 
   it("should skip steps where solar systems cannot be found", () => {
     // Arrange
-    const routeData: GetCalcPathFromToResponse["path"] = [
+    const routeData: RouteData = [
       {
         from: SYSTEM_B_ID,
         to: SYSTEM_C_ID,
