@@ -77,7 +77,6 @@ export const getTableSchemas = (client: MudSqlClient) => {
         r[id] = resolvedTables[id]!;
       }
     }
-    console.log("getTableSchemas", Object.keys(r), missingIds);
     return r;
   };
 };

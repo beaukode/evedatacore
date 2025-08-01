@@ -118,7 +118,6 @@ const RoutePlannerForm: React.FC<RoutePlannerFormProps> = ({
   };
 
   const character = useCharacter();
-  console.log("character", character);
 
   return (
     <form
