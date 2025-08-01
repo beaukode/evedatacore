@@ -18,7 +18,7 @@ import {
   AssemblyType,
   assemblyTypeMap,
   assemblyTypeReverseMap,
-} from "@shared/mudsql";
+} from "@/api/mudsql";
 import {
   columnWidths,
   smartAssembliesTypes,

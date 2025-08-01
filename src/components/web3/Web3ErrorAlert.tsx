@@ -1,5 +1,5 @@
 import { Alert, SxProps } from "@mui/material";
-import { Web3TransactionError, isWeb3TransactionError } from "@shared/mudweb3";
+import { Web3TransactionError, isWeb3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 

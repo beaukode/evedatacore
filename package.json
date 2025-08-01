@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "api:stillness": "openapi-ts -f src/api/stillness/openapi-ts.config.ts",
-    "api:mudsql": "openapi-ts -f shared/mudsql/openapi-ts.config.ts",
+    "api:mudsql": "openapi-ts -f src/api/mudsql/openapi-ts.config.ts",
     "api:evedatacore-v2": "openapi-ts -f src/api/evedatacore-v2/openapi-ts.config.ts",
     "data:solarsystems": "jiti scripts/data-solarsystems.ts",
     "data:types": "jiti scripts/data-types.ts"

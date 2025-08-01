@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useMudWeb3 } from "@/contexts/AppContext";
-import { isWeb3TransactionError } from "@shared/mudweb3";
+import { isWeb3TransactionError } from "@/api/mudweb3";
 
 export type CanJumpResult = {
   canJump?: boolean;

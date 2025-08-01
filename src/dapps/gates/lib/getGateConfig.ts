@@ -1,4 +1,4 @@
-import { MudSqlClient } from "@shared/mudsql";
+import { MudSqlClient } from "@/api/mudsql";
 import { getNamespace } from "./utils";
 
 type GateConfigDbRow = {
