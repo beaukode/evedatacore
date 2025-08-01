@@ -5,7 +5,7 @@ import { Box, Link, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { shorten, tsToDateTime } from "@/tools";
-import { assemblyTypeMap, AssemblyType } from "@shared/mudsql/types";
+import { assemblyTypeMap, AssemblyType } from "@/api/mudsql";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";

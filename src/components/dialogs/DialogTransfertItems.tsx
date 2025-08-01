@@ -19,7 +19,7 @@ import {
 import { filterInProps, shorten } from "@/tools";
 import useValueChanged from "@/tools/useValueChanged";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
-import { InventoryItemTransfert } from "@shared/mudweb3";
+import { InventoryItemTransfert } from "@/api/mudweb3";
 import {
   getCharacters,
   GetCharactersResponse,

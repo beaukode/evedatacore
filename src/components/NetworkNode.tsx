@@ -16,7 +16,7 @@ import BasicListItem from "./ui/BasicListItem";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import { getAssemblyIdNetwork } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@shared/mudsql/types";
+import { assemblyTypeMap } from "@/api/mudsql";
 
 interface NetworkNodeProps {
   id: string;

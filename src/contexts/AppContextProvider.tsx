@@ -1,7 +1,7 @@
 import React from "react";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { createMudSqlClient } from "@shared/mudsql";
-import { createMudWeb3Client } from "@shared/mudweb3";
+import { createMudSqlClient } from "@/api/mudsql";
+import { createMudWeb3Client } from "@/api/mudweb3";
 import { AppContext, SmartCharacter } from "./AppContext";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import ConnectDialog from "@/components/web3/ConnectDialog";

@@ -22,7 +22,7 @@ import {
   getCharacterIdAssemblies,
   getSolarsystemIdAssemblies,
 } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@shared/mudsql/types";
+import { assemblyTypeMap } from "@/api/mudsql";
 
 interface TableAssembliesProps {
   owner?: string;

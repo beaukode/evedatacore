@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useAccount, useSwitchChain } from "wagmi";
 import { TransactionReceipt } from "viem";
-import { isWeb3TransactionError, Web3TransactionError } from "@shared/mudweb3";
+import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";

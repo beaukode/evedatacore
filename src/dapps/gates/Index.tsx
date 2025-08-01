@@ -17,7 +17,7 @@ import SolarsystemName from "@/components/ui/SolarsystemName";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import { Assembly, isGateManaged } from "./lib/utils";
 import { getCharacterIdAssemblies } from "@/api/evedatacore-v2";
-import { AssemblyState, assemblyTypeMap } from "@shared/mudsql";
+import { AssemblyState, assemblyTypeMap } from "@/api/mudsql";
 
 const Index: React.FC = () => {
   const smartCharacter = useSmartCharacter();

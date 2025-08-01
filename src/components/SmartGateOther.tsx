@@ -19,7 +19,7 @@ import DialogGateLink from "./dialogs/DialogGateLink";
 import ConditionalMount from "./ui/ConditionalMount";
 import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
 import { getCharacterIdAssemblies } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@shared/mudsql/types";
+import { assemblyTypeMap } from "@/api/mudsql";
 
 interface SmartGateOtherProps {
   owner: string;

@@ -6,7 +6,7 @@ import SmartTurretIcon from "@mui/icons-material/Security";
 import SmartNetworkNodeIcon from "@mui/icons-material/Hub";
 import SmartHangarIcon from "@mui/icons-material/Garage";
 import SmartManufacturerIcon from "@mui/icons-material/Factory";
-import { AssemblyType } from "@shared/mudsql/types";
+import { AssemblyType } from "@/api/mudsql";
 import {
   smartAssembliesTypes,
   SmartAssemblyState,

@@ -1,4 +1,4 @@
-import { AssemblyType } from "@shared/mudsql/types";
+import { AssemblyType } from "@/api/mudsql";
 
 export const fuelFactor = 0.01;
 
