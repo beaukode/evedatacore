@@ -24,6 +24,70 @@ export type GetFindNearIdDistanceError = {
   message: string;
 };
 
+export type GetFindPathData = {
+  path: {
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    character: string;
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    distance: number;
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    from: number;
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    optimize: "fuel" | "distance" | "hops";
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    restrictSmartGates: "all" | "mine" | "corporation";
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    to: number;
+    /**
+     * GET /find/path/:from/:to/:distance/:optimize/:useSmartGates/:restrictSmartGates/:character Parameter
+     */
+    useSmartGates: "none" | "unrestricted" | "restricted";
+  };
+};
+
+export type GetFindPathResponse = {
+  items: Array<
+    | {
+        from: number;
+        to: number;
+        distance: number;
+        type: "jump";
+      }
+    | {
+        from: number;
+        to: number;
+        distance: number;
+        type: "gate";
+      }
+    | {
+        from: number;
+        to: number;
+        distance: number;
+        type: "smartgate";
+        id: string;
+        name?: string;
+        ownerName: string;
+        itemId: string;
+      }
+  >;
+};
+
+export type GetFindPathError = {
+  message: string;
+};
+
 export type PostEventsData = {
   /**
    * POST /events Request body
@@ -170,6 +234,7 @@ export type GetCharacterIdAssembliesResponse = {
     ownerId?: string;
     ownerName?: string;
     solarSystemId?: number;
+    solarSystemName?: string;
     x?: string;
     y?: string;
     z?: string;
@@ -412,6 +477,7 @@ export type GetAssembliesTypeStateResponse = {
     ownerId?: string;
     ownerName?: string;
     solarSystemId?: number;
+    solarSystemName?: string;
     x?: string;
     y?: string;
     z?: string;
@@ -460,6 +526,7 @@ export type GetAssemblyIdNetworkResponse = {
     ownerId?: string;
     ownerName?: string;
     solarSystemId?: number;
+    solarSystemName?: string;
     x?: string;
     y?: string;
     z?: string;
@@ -531,6 +598,7 @@ export type GetAssemblyIdResponse = {
   ownerId?: string;
   ownerName?: string;
   solarSystemId?: number;
+  solarSystemName?: string;
   x?: string;
   y?: string;
   z?: string;
@@ -547,6 +615,55 @@ export type GetAssemblyIdResponse = {
 };
 
 export type GetAssemblyIdError = {
+  message: string;
+};
+
+export type GetSmartgatesStateData = {
+  path: {
+    /**
+     * GET /smartgates/:state Parameter
+     */
+    state: number | null;
+  };
+  query?: {
+    /**
+     * GET /smartgates/:state Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetSmartgatesStateResponse = {
+  items: Array<{
+    id: string;
+    currentState?: number;
+    previousState?: number;
+    assemblyType: string;
+    isValid?: boolean;
+    anchoredAt?: number;
+    account?: string;
+    ownerId?: string;
+    ownerName?: string;
+    solarSystemId?: number;
+    solarSystemName?: string;
+    x?: string;
+    y?: string;
+    z?: string;
+    name?: string;
+    dappURL?: string;
+    description?: string;
+    networkNodeId?: string;
+    maxEnergyCapacity?: number;
+    energyProduced?: number;
+    totalReservedEnergy?: number;
+    systemId?: string;
+    maxDistance?: string;
+    linkedGateId?: string | null;
+  }>;
+  nextKey?: string;
+};
+
+export type GetSmartgatesStateError = {
   message: string;
 };
 
@@ -947,6 +1064,7 @@ export type GetSolarsystemIdAssembliesResponse = {
     ownerId?: string;
     ownerName?: string;
     solarSystemId?: number;
+    solarSystemName?: string;
     x?: string;
     y?: string;
     z?: string;

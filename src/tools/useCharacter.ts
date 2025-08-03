@@ -10,7 +10,9 @@ function useCharacter() {
     queryKey: ["Character", account.address],
     queryFn: async () => {
       if (!account.address) return null;
-      const character = await getCharacterId({ path: { id: account.address } });
+      const character = await getCharacterId({
+        path: { id: account.address.toLowerCase() },
+      });
       if (!character.data) return null;
       return character.data;
     },

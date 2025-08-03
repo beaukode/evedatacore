@@ -1,4 +1,4 @@
-import { worldAbi } from "@shared/mudweb3";
+import { worldAbi } from "@/api/mudweb3";
 import GateConfigErrors from "./GateConfigErrors.abi.json";
 import GateConfigSystemAbi from "./GateConfigSystem.abi.json";
 

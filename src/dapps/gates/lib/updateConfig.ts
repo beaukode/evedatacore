@@ -1,5 +1,5 @@
 import { encodeFunctionData, TransactionReceipt, Hex } from "viem";
-import { MudWeb3Client } from "@shared/mudweb3";
+import { MudWeb3Client } from "@/api/mudweb3";
 import { gatesAbi } from "./abi";
 
 export type UpdateConfigParameters = {

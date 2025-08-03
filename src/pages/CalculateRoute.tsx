@@ -3,7 +3,7 @@ import { Alert, Box, Grid2 as Grid, Typography } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import { getCalcPathFromTo } from "@/api/evedatacore";
+import { getFindPath } from "@/api/evedatacore-v2/generated/sdk.gen";
 import RoutePlannerForm from "./Calculators/RoutePlannerForm";
 import RoutePlannerRoute from "./Calculators/RoutePlannerRoute";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
@@ -23,34 +23,29 @@ const CalculateRoute: React.FC = () => {
     queryFn: async () => {
       if (!queryData) return;
       let characterId: string | undefined = undefined;
-      let corpId: number | undefined = undefined;
       if (
         (queryData.smartGates === "restricted" ||
           (queryData.smartGates !== "none" &&
             queryData.onlySmartGates !== "all")) &&
-        character.character
+        character.character?.account
       ) {
-        characterId = character.character.id.toString();
-        corpId = character.character.tribeId;
+        characterId = character.character.account;
       }
-      return getCalcPathFromTo({
+      return getFindPath({
         path: {
           from: queryData.system1,
           to: queryData.system2,
-        },
-        query: {
-          jumpDistance: queryData.jumpDistance,
+          distance: queryData.jumpDistance,
           optimize: queryData.optimize,
-          characterId,
-          smartGates: queryData.smartGates,
-          onlySmartGates: queryData.onlySmartGates,
-          corpId,
+          character: characterId ?? "0x",
+          useSmartGates: queryData.smartGates,
+          restrictSmartGates: queryData.onlySmartGates,
         },
       }).then((r) => {
         if (r.error) {
           throw new Error(r.error.message);
         }
-        return r.data.path;
+        return r.data.items;
       });
     },
     retry: false,

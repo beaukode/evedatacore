@@ -1,8 +1,8 @@
 import { lyDistance } from "../";
 import { SolarSystemsIndex } from "../solarSystemsIndex";
-import { GetCalcPathFromToResponse } from "@/api/evedatacore";
+import { GetFindPathResponse } from "@/api/evedatacore-v2/generated/types.gen";
 
-type RouteData = GetCalcPathFromToResponse["path"];
+type RouteData = GetFindPathResponse["items"];
 
 export type EnrichedRouteStep = RouteData[number] & {
   fromName: string;
