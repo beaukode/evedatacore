@@ -75,6 +75,8 @@ const AutoCompleteSolarSystem = React.forwardRef<
           }}
         />
       )}
+      autoHighlight
+      autoSelect
       filterOptions={filterOptions}
       {...rest}
     />
