@@ -1,5 +1,5 @@
 import React from "react";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, createFilterOptions, TextField } from "@mui/material";
 import { SolarSystemsIndex } from "@/tools/solarSystemsIndex";
 
 interface AutoCompleteSolarSystemProps
@@ -19,16 +19,20 @@ export type SolarSystemValue = {
   id: number;
 };
 
+const filterOptions = createFilterOptions({
+  trim: true,
+});
+
 const AutoCompleteSolarSystem = React.forwardRef<
   unknown,
   AutoCompleteSolarSystemProps
 >(({ label, value, onChange, error, solarSystemsIndex, ...rest }, ref) => {
   const [inputValue, setInputValue] = React.useState<string>("");
-
   const options: Array<SolarSystemValue> = React.useMemo(() => {
-    if (inputValue.length < 1) return [];
+    const trimmedInputValue = inputValue.trim();
+    if (trimmedInputValue.length < 1) return [];
     return solarSystemsIndex
-      .searchByName(inputValue)
+      .searchByName(trimmedInputValue)
       .slice(0, 50)
       .map((ss) => ({ label: ss.solarSystemName, id: ss.solarSystemId }));
   }, [solarSystemsIndex, inputValue]);
@@ -64,13 +68,14 @@ const AutoCompleteSolarSystem = React.forwardRef<
           inputRef={ref}
           {...params}
           error={!!error}
-          helperText={error}
+          helperText={error ? "Please select a solar system" : undefined}
           label={label}
           slotProps={{
             inputLabel: { shrink: value === null ? undefined : true },
           }}
         />
       )}
+      filterOptions={filterOptions}
       {...rest}
     />
   );
