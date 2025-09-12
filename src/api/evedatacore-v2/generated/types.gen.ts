@@ -124,6 +124,8 @@ export type GetCharactersResponse = {
     exists?: boolean;
     name?: string;
     tribeId?: number;
+    tribeName?: string;
+    tribeTicker?: string;
     balance?: string;
   }>;
   nextKey?: string;
@@ -378,6 +380,8 @@ export type GetCharacterIdResponse = {
   exists?: boolean;
   name?: string;
   tribeId?: number;
+  tribeName?: string;
+  tribeTicker?: string;
   balance?: string;
 };
 
@@ -437,6 +441,8 @@ export type GetTribeIdCharactersResponse = {
     exists?: boolean;
     name?: string;
     tribeId?: number;
+    tribeName?: string;
+    tribeTicker?: string;
     balance?: string;
   }>;
   nextKey?: string;

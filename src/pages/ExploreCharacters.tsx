@@ -6,12 +6,14 @@ import useQuerySearch from "@/tools/useQuerySearch";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ButtonTribe from "@/components/buttons/ButtonTribe";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import { getCharacters } from "@/api/evedatacore-v2";
 
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Tribe", width: columnWidths.common },
   { label: "Address", width: columnWidths.address },
   { label: "Created At", width: columnWidths.datetime },
 ];
@@ -38,7 +40,7 @@ const ExploreCharacters: React.FC = () => {
     return filterInProps(
       data,
       debouncedSearch.text,
-      ["account", "name", "id"],
+      ["account", "name", "id", "tribeName", "tribeTicker"],
       (sm) => sm.account !== "0x0000000000000000000000000000000000000000"
     );
   }, [data, debouncedSearch.text]);
@@ -65,6 +67,14 @@ const ExploreCharacters: React.FC = () => {
                 fastRender={context.isScrolling}
               />
             </Box>
+          </TableCell>
+          <TableCell>
+            <ButtonTribe
+              id={sm.tribeId}
+              name={sm.tribeName}
+              ticker={sm.tribeTicker}
+              fastRender={context.isScrolling}
+            />
           </TableCell>
           <TableCell>{sm.account}</TableCell>
           <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>

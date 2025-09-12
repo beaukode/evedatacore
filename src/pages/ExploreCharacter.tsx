@@ -13,7 +13,7 @@ import BasicListItem from "@/components/ui/BasicListItem";
 import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import TableFunctions from "@/components/tables/TableFunctions";
-import ButtonCorporation from "@/components/buttons/ButtonCorporation";
+import ButtonTribe from "@/components/buttons/ButtonTribe";
 import { getCharacterId } from "@/api/evedatacore-v2";
 
 const ExploreCharacter: React.FC = () => {
@@ -46,11 +46,11 @@ const ExploreCharacter: React.FC = () => {
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{data?.id}</BasicListItem>
           <BasicListItem title="Address">{data?.account}</BasicListItem>
-          <BasicListItem title="Corporation Id" disableGutters>
-            <ButtonCorporation
-              name={data?.tribeId?.toString()}
-              id={data?.tribeId?.toString()}
-              fastRender={false}
+          <BasicListItem title="Tribe" disableGutters>
+            <ButtonTribe
+              id={data?.tribeId}
+              name={data?.tribeName}
+              ticker={data?.tribeTicker}
             />
           </BasicListItem>
           <BasicListItem title="Created At">
