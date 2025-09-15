@@ -42,9 +42,15 @@ import type {
   GetKillsData,
   GetKillsError,
   GetKillsResponse,
+  GetTribesData,
+  GetTribesError,
+  GetTribesResponse,
   GetTribeIdCharactersData,
   GetTribeIdCharactersError,
   GetTribeIdCharactersResponse,
+  GetTribeIdData,
+  GetTribeIdError,
+  GetTribeIdResponse,
   GetAssembliesTypeStateData,
   GetAssembliesTypeStateError,
   GetAssembliesTypeStateResponse,
@@ -262,6 +268,19 @@ export const getKills = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const getTribes = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<GetTribesData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetTribesResponse,
+    GetTribesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/tribes",
+  });
+};
+
 export const getTribeIdCharacters = <ThrowOnError extends boolean = false>(
   options: OptionsLegacyParser<GetTribeIdCharactersData, ThrowOnError>,
 ) => {
@@ -272,6 +291,19 @@ export const getTribeIdCharacters = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/tribe/{id}/characters",
+  });
+};
+
+export const getTribeId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetTribeIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetTribeIdResponse,
+    GetTribeIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/tribe/{id}",
   });
 };
 

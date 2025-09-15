@@ -418,6 +418,30 @@ export type GetKillsError = {
   message: string;
 };
 
+export type GetTribesData = {
+  query?: {
+    /**
+     * GET /tribes Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetTribesResponse = {
+  items: Array<{
+    id: string;
+    name?: string;
+    foundedAt?: number;
+    memberCount?: number;
+    ticker?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetTribesError = {
+  message: string;
+};
+
 export type GetTribeIdCharactersData = {
   path: {
     /**
@@ -449,6 +473,29 @@ export type GetTribeIdCharactersResponse = {
 };
 
 export type GetTribeIdCharactersError = {
+  message: string;
+};
+
+export type GetTribeIdData = {
+  path: {
+    /**
+     * GET /tribe/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetTribeIdResponse = {
+  id: string;
+  memberCount?: number;
+  foundedAt?: number;
+  name?: string;
+  ticker?: string;
+  description?: string;
+  url?: string;
+};
+
+export type GetTribeIdError = {
   message: string;
 };
 
