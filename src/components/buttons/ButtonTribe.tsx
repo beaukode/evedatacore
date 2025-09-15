@@ -17,18 +17,22 @@ const ButtonTribe: React.FC<ButtonTribeProps> = ({
   fastRender,
 }) => {
   if (!id) return null;
-  if (!name) return id;
-  if (!ticker) return id;
+  name = name || id.toString();
   if (fastRender) {
     return (
       <LooksOutlinedButton sx={{ justifyContent: "flex-start" }}>
-        <Chip
-          label={ticker}
-          size="small"
-          color="secondary"
-          sx={{ borderRadius: 1 }}
-        />
-        &nbsp;
+        {ticker && (
+          <>
+            <Chip
+              label={ticker}
+              size="small"
+              color="secondary"
+              sx={{ borderRadius: 1 }}
+            />
+            &nbsp;
+          </>
+        )}
+
         {name}
       </LooksOutlinedButton>
     );
@@ -37,16 +41,20 @@ const ButtonTribe: React.FC<ButtonTribeProps> = ({
     <Button
       sx={{ justifyContent: "flex-start" }}
       component={NavLink}
-      to={`/explore/corporations/${id}`}
+      to={`/explore/tribes/${id}`}
       variant="outlined"
     >
-      <Chip
-        label={ticker}
-        size="small"
-        color="secondary"
-        sx={{ borderRadius: 1 }}
-      />
-      &nbsp;
+      {ticker && (
+        <>
+          <Chip
+            label={ticker}
+            size="small"
+            color="secondary"
+            sx={{ borderRadius: 1 }}
+          />
+          &nbsp;
+        </>
+      )}
       {name}
     </Button>
   );

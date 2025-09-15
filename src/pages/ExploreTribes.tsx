@@ -8,13 +8,13 @@ import { filterInProps } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import ButtonCorporation from "@/components/buttons/ButtonCorporation";
+import ButtonTribe from "@/components/buttons/ButtonTribe";
 
 const columns: DataTableColumn[] = [
   { label: "Id", width: columnWidths.common, grow: true },
 ];
 
-const ExploreCorporations: React.FC = () => {
+const ExploreTribes: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
@@ -30,33 +30,33 @@ const ExploreCorporations: React.FC = () => {
     },
   });
 
-  const corporations = React.useMemo(() => {
+  const tribes = React.useMemo(() => {
     if (!data) return [];
-    const corps: Record<number, { id: string }> = {};
+    const tribes: Record<number, { id: string }> = {};
     for (const character of data) {
-      if (character.tribeId && !corps[character.tribeId]) {
-        corps[character.tribeId] = {
+      if (character.tribeId && !tribes[character.tribeId]) {
+        tribes[character.tribeId] = {
           id: character.tribeId.toString(),
         };
       }
     }
-    const corpsArray = Object.values(corps);
-    return filterInProps(corpsArray, debouncedSearch.text, ["id"]);
+    const tribesArray = Object.values(tribes);
+    return filterInProps(tribesArray, debouncedSearch.text, ["id"]);
   }, [data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
       _: number,
-      corp: (typeof corporations)[number],
+      tribe: (typeof tribes)[number],
       context: DataTableContext
     ) => {
       return (
-        <React.Fragment key={corp.id}>
+        <React.Fragment key={tribe.id}>
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
-              <ButtonCorporation
-                name={corp.id}
-                id={corp.id}
+              <ButtonTribe
+                name={tribe.id}
+                id={parseInt(tribe.id, 10)}
                 fastRender={context.isScrolling}
               />
             </Box>
@@ -69,12 +69,12 @@ const ExploreCorporations: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Corporations</title>
+        <title>Tribes</title>
       </Helmet>
       <DataTableLayout
-        title="Corporations"
+        title="Tribes"
         columns={columns}
-        data={corporations}
+        data={tribes}
         itemContent={itemContent}
         loading={isFetching}
       >
@@ -94,4 +94,4 @@ const ExploreCorporations: React.FC = () => {
   );
 };
 
-export default ExploreCorporations;
+export default ExploreTribes;

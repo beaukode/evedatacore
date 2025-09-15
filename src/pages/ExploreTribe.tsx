@@ -21,26 +21,26 @@ const columns: DataTableColumn[] = [
   { label: "Created At", width: columnWidths.datetime },
 ];
 
-const ExploreCorporation: React.FC = () => {
+const ExploreTribe: React.FC = () => {
   const { id } = useParams();
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
 
-  const corporationId = Number.parseInt(id ?? "0");
+  const tribeId = Number.parseInt(id ?? "0");
 
   const query = usePaginatedQuery({
-    queryKey: ["CorporationCharacters", id],
+    queryKey: ["TribeCharacters", id],
     queryFn: async ({ pageParam }) => {
       if (!id) return { items: [] };
       const r = await getTribeIdCharacters({
-        path: { id: Number(corporationId) },
+        path: { id: Number(tribeId) },
         query: { startKey: pageParam },
       });
       if (!r.data) return { items: [] };
       return r.data;
     },
-    enabled: !!corporationId,
+    enabled: !!tribeId,
   });
 
   const members = React.useMemo(() => {
@@ -75,16 +75,12 @@ const ExploreCorporation: React.FC = () => {
     []
   );
 
-  if (
-    !corporationId ||
-    Number.isNaN(corporationId) ||
-    (!query.isFetching && !query.data)
-  ) {
+  if (!tribeId || Number.isNaN(tribeId) || (!query.isFetching && !query.data)) {
     return <Error404 />;
   }
 
   const data = query.data;
-  const title = `Corporation ${corporationId}`;
+  const title = `Tribe ${tribeId}`;
 
   return (
     <Box
@@ -131,4 +127,4 @@ const ExploreCorporation: React.FC = () => {
   );
 };
 
-export default ExploreCorporation;
+export default ExploreTribe;
