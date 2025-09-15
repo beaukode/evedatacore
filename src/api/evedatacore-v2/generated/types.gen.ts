@@ -481,7 +481,7 @@ export type GetTribeIdData = {
     /**
      * GET /tribe/:id Parameter
      */
-    id: string;
+    id: number;
   };
 };
 
