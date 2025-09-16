@@ -81,7 +81,7 @@ const Explore: React.FC = () => {
         <Route path="/characters" element={<ExploreCharacters />} />
         <Route path="/characters/:address" element={<ExploreCharacter />} />
         <Route path="/tribes" element={<ExploreTribes />} />
-        <Route path="/tribes/:id" element={<ExploreTribe />} />
+        <Route path="/tribes/:id/*" element={<ExploreTribe />} />
         <Route path="/assemblies" element={<ExploreAssemblies />} />
         <Route path="/assemblies/:id" element={<ExploreAssembly />} />
         <Route path="/killmails" element={<ExploreKillmails />} />

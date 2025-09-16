@@ -2,6 +2,7 @@ import React from "react";
 import { Chip, Button } from "@mui/material";
 import { NavLink } from "react-router";
 import LooksOutlinedButton from "../ui/LooksOutlinedButton";
+import { snakeCase } from "lodash-es";
 
 interface ButtonTribeProps {
   id?: number;
@@ -37,11 +38,17 @@ const ButtonTribe: React.FC<ButtonTribeProps> = ({
       </LooksOutlinedButton>
     );
   }
+  let link = `/explore/tribes/${id}`;
+  if (name) {
+    const slug = snakeCase(name).replace(/_/g, "-");
+    link += `/${ticker}-${slug}`;
+  }
+
   return (
     <Button
       sx={{ justifyContent: "flex-start" }}
       component={NavLink}
-      to={`/explore/tribes/${id}`}
+      to={link}
       variant="outlined"
     >
       {ticker && (
