@@ -20,7 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
   { label: "Address", width: columnWidths.address },
-  { label: "Created At", width: columnWidths.datetime },
+  { label: "Joined At", width: columnWidths.datetime },
 ];
 
 const ExploreTribe: React.FC = () => {
@@ -81,7 +81,7 @@ const ExploreTribe: React.FC = () => {
             </Box>
           </TableCell>
           <TableCell>{sm.account}</TableCell>
-          <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
+          <TableCell>{tsToDateTime(sm.tribeJoinedAt)}</TableCell>
         </React.Fragment>
       );
     },

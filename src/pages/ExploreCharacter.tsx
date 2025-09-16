@@ -46,6 +46,12 @@ const ExploreCharacter: React.FC = () => {
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{data?.id}</BasicListItem>
           <BasicListItem title="Address">{data?.account}</BasicListItem>
+          <BasicListItem title="Created At">
+            {tsToDateTime(data?.createdAt)}
+          </BasicListItem>
+          <BasicListItem title="Eve balance">
+            {formatCrypto(data?.balance || "0")}
+          </BasicListItem>
           <BasicListItem title="Tribe" disableGutters>
             <ButtonTribe
               id={data?.tribeId}
@@ -53,11 +59,8 @@ const ExploreCharacter: React.FC = () => {
               ticker={data?.tribeTicker}
             />
           </BasicListItem>
-          <BasicListItem title="Created At">
-            {tsToDateTime(data?.createdAt)}
-          </BasicListItem>
-          <BasicListItem title="Eve balance">
-            {formatCrypto(data?.balance || "0")}
+          <BasicListItem title="Joined At">
+            {tsToDateTime(data?.tribeJoinedAt)}
           </BasicListItem>
         </List>
       </PaperLevel1>

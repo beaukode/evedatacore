@@ -126,6 +126,7 @@ export type GetCharactersResponse = {
     tribeId?: number;
     tribeName?: string;
     tribeTicker?: string;
+    tribeJoinedAt?: number;
     balance?: string;
   }>;
   nextKey?: string;
@@ -382,6 +383,7 @@ export type GetCharacterIdResponse = {
   tribeId?: number;
   tribeName?: string;
   tribeTicker?: string;
+  tribeJoinedAt?: number;
   balance?: string;
 };
 
@@ -467,6 +469,7 @@ export type GetTribeIdCharactersResponse = {
     tribeId?: number;
     tribeName?: string;
     tribeTicker?: string;
+    tribeJoinedAt?: number;
     balance?: string;
   }>;
   nextKey?: string;
@@ -481,7 +484,7 @@ export type GetTribeIdData = {
     /**
      * GET /tribe/:id Parameter
      */
-    id: number;
+    id: number | null;
   };
 };
 
