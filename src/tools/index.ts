@@ -71,7 +71,7 @@ export function bigPercentage(value: string, max: string): string {
   const m = new Big(max);
   if (m.eq(0)) return "0";
   try {
-    return v.div(m).toFixed(2);
+    return v.div(m).mul(100).toFixed(2);
   } catch (e) {
     console.error(e);
     return "Error";
