@@ -45,9 +45,9 @@ function buildSmartgateStep(
   itemName?: string
 ): TextRouteStep {
   const name = itemName ? shorten(itemName, 10, "…") : shorten(id, 6, "…");
-  const content = `[<a href="showinfo:84955//${itemId}">${name}</a>]→ <a href="showinfo:5//${to}">${toName}</a>`;
+  const content = `[<a href="showinfo:88086//${itemId}">${name}</a>]→ <a href="showinfo:5//${to}">${toName}</a>`;
   const ingameContent =
-    `<font size="14" color="#bfffffff"> [</font><font size="14" color="#ffd98d00"><a href="showinfo:84955//${itemId}">${name}</a></font>` +
+    `<font size="14" color="#bfffffff"> [</font><font size="14" color="#ffd98d00"><a href="showinfo:88086//${itemId}">${name}</a></font>` +
     `<font size="14" color="#bfffffff">]→ </font><font size="14" color="#ffd98d00"><a href="showinfo:5//${to}">${toName}</a></font>`;
   return {
     content,
