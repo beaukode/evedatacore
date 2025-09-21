@@ -128,7 +128,7 @@ describe("gameNotepadRoute", () => {
       '5→ <a href="showinfo:5//30000146">New Caldari</a>'
     );
     expect(result[0]).toContain(
-      '[<a href="showinfo:84955//12345">Smart…Alpha</a>]→ <a href="showinfo:5//30000148">Niyabainen</a>'
+      '[<a href="showinfo:88086//12345">Smart…Alpha</a>]→ <a href="showinfo:5//30000148">Niyabainen</a>'
     );
   });
 
@@ -212,7 +212,7 @@ describe("gameNotepadRoute", () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toContain("Jita → Perimeter");
     expect(result[0]).toContain(
-      '[<a href="showinfo:84955//654321">Smart…e XYZ</a>]→ <a href="showinfo:5//30000144">Perimeter</a>'
+      '[<a href="showinfo:88086//654321">Smart…e XYZ</a>]→ <a href="showinfo:5//30000144">Perimeter</a>'
     );
   });
 
