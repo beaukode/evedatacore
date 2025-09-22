@@ -13,7 +13,7 @@ import ButtonTribe from "@/components/buttons/ButtonTribe";
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
   { label: "Members", width: 100 },
-  { label: "Created At", width: columnWidths.datetime },
+  { label: "Founded At", width: columnWidths.datetime },
 ];
 
 const ExploreTribes: React.FC = () => {
