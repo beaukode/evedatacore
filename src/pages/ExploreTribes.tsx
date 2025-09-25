@@ -1,28 +1,30 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Box, TextField, TableCell } from "@mui/material";
-import { getCharacters } from "@/api/evedatacore-v2";
+import { getTribes } from "@/api/evedatacore-v2";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { filterInProps } from "@/tools";
+import { filterInProps, tsToDateTime } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import ButtonCorporation from "@/components/buttons/ButtonCorporation";
+import ButtonTribe from "@/components/buttons/ButtonTribe";
 
 const columns: DataTableColumn[] = [
-  { label: "Id", width: columnWidths.common, grow: true },
+  { label: "Name", width: columnWidths.common, grow: true },
+  { label: "Members", width: 100 },
+  { label: "Founded At", width: columnWidths.datetime },
 ];
 
-const ExploreCorporations: React.FC = () => {
+const ExploreTribes: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
 
   const { data, isFetching } = usePaginatedQuery({
-    queryKey: ["Smartcharacters"],
+    queryKey: ["Tribes"],
     queryFn: async ({ pageParam }) => {
-      const r = await getCharacters({
+      const r = await getTribes({
         query: { startKey: pageParam },
       });
       if (!r.data) return { items: [], nextKey: undefined };
@@ -30,37 +32,27 @@ const ExploreCorporations: React.FC = () => {
     },
   });
 
-  const corporations = React.useMemo(() => {
+  const tribes = React.useMemo(() => {
     if (!data) return [];
-    const corps: Record<number, { id: string }> = {};
-    for (const character of data) {
-      if (character.tribeId && !corps[character.tribeId]) {
-        corps[character.tribeId] = {
-          id: character.tribeId.toString(),
-        };
-      }
-    }
-    const corpsArray = Object.values(corps);
-    return filterInProps(corpsArray, debouncedSearch.text, ["id"]);
+    return filterInProps(data, debouncedSearch.text, ["id", "name", "ticker"]);
   }, [data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
-    (
-      _: number,
-      corp: (typeof corporations)[number],
-      context: DataTableContext
-    ) => {
+    (_: number, tribe: (typeof tribes)[number], context: DataTableContext) => {
       return (
-        <React.Fragment key={corp.id}>
+        <React.Fragment key={tribe.id}>
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
-              <ButtonCorporation
-                name={corp.id}
-                id={corp.id}
+              <ButtonTribe
+                name={tribe.name}
+                id={parseInt(tribe.id, 10)}
+                ticker={tribe.ticker}
                 fastRender={context.isScrolling}
               />
             </Box>
           </TableCell>
+          <TableCell>{tribe.memberCount}</TableCell>
+          <TableCell>{tsToDateTime(tribe.foundedAt)}</TableCell>
         </React.Fragment>
       );
     },
@@ -69,12 +61,12 @@ const ExploreCorporations: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Corporations</title>
+        <title>Tribes</title>
       </Helmet>
       <DataTableLayout
-        title="Corporations"
+        title="Tribes"
         columns={columns}
-        data={corporations}
+        data={tribes}
         itemContent={itemContent}
         loading={isFetching}
       >
@@ -94,4 +86,4 @@ const ExploreCorporations: React.FC = () => {
   );
 };
 
-export default ExploreCorporations;
+export default ExploreTribes;

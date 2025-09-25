@@ -12,41 +12,54 @@ import { DataTableContext } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import { DataTableColumn } from "@/components/DataTable";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
+import ExternalLink from "@/components/ui/ExternalLink";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import { getTribeIdCharacters } from "@/api/evedatacore-v2";
+import { getTribeIdCharacters, getTribeId } from "@/api/evedatacore-v2";
+import { useQuery } from "@tanstack/react-query";
 
 const columns: DataTableColumn[] = [
   { label: "Name", width: columnWidths.common, grow: true },
   { label: "Address", width: columnWidths.address },
-  { label: "Created At", width: columnWidths.datetime },
+  { label: "Joined At", width: columnWidths.datetime },
 ];
 
-const ExploreCorporation: React.FC = () => {
+const ExploreTribe: React.FC = () => {
   const { id } = useParams();
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
 
-  const corporationId = Number.parseInt(id ?? "0");
+  const tribeId = Number.parseInt(id ?? "0");
 
-  const query = usePaginatedQuery({
-    queryKey: ["CorporationCharacters", id],
+  const query = useQuery({
+    queryKey: ["Tribe", id],
+    queryFn: async () => {
+      const r = await getTribeId({ path: { id: tribeId } });
+      return r.data;
+    },
+  });
+
+  const membersQuery = usePaginatedQuery({
+    queryKey: ["TribeMembers", id],
     queryFn: async ({ pageParam }) => {
       if (!id) return { items: [] };
       const r = await getTribeIdCharacters({
-        path: { id: Number(corporationId) },
+        path: { id: Number(tribeId) },
         query: { startKey: pageParam },
       });
       if (!r.data) return { items: [] };
       return r.data;
     },
-    enabled: !!corporationId,
+    enabled: !!tribeId,
   });
 
   const members = React.useMemo(() => {
-    if (!query.data) return [];
-    return filterInProps(query.data, debouncedSearch.text, ["name", "account"]);
-  }, [query.data, debouncedSearch]);
+    if (!membersQuery.data) return [];
+    return filterInProps(membersQuery.data, debouncedSearch.text, [
+      "name",
+      "account",
+    ]);
+  }, [membersQuery.data, debouncedSearch]);
 
   const itemContent = React.useCallback(
     (_: number, sm: (typeof members)[number], context: DataTableContext) => {
@@ -68,23 +81,20 @@ const ExploreCorporation: React.FC = () => {
             </Box>
           </TableCell>
           <TableCell>{sm.account}</TableCell>
-          <TableCell>{tsToDateTime(sm.createdAt)}</TableCell>
+          <TableCell>{tsToDateTime(sm.tribeJoinedAt)}</TableCell>
         </React.Fragment>
       );
     },
     []
   );
 
-  if (
-    !corporationId ||
-    Number.isNaN(corporationId) ||
-    (!query.isFetching && !query.data)
-  ) {
+  if (!tribeId || Number.isNaN(tribeId) || (!query.isFetching && !query.data)) {
     return <Error404 />;
   }
 
   const data = query.data;
-  const title = `Corporation ${corporationId}`;
+  const title =
+    data?.name && data.ticker ? `[${data.ticker}] ${data.name}` : "...";
 
   return (
     <Box
@@ -94,17 +104,35 @@ const ExploreCorporation: React.FC = () => {
       display={"flex"}
       flexDirection={"column"}
     >
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      {!query.isLoading && data && (
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+      )}
       <PaperLevel1
         sx={{ mb: 0 }}
         title={title}
-        loading={query.isFetching}
+        loading={membersQuery.isFetching}
         backButton
       >
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
-          <BasicListItem title="Members count">{data?.length}</BasicListItem>
+          <BasicListItem title="Id">{data?.id}</BasicListItem>
+          <BasicListItem title="Ticker">{data?.ticker}</BasicListItem>
+          <BasicListItem title="Name">{data?.name}</BasicListItem>
+          <BasicListItem title="Founded At">
+            {tsToDateTime(data?.foundedAt)}
+          </BasicListItem>
+          <BasicListItem title="Description">{data?.description}</BasicListItem>
+          <BasicListItem title="Url">
+            {data?.url && (
+              <ExternalLink href={data?.url} title={title}>
+                {data?.url}
+              </ExternalLink>
+            )}
+          </BasicListItem>
+          <BasicListItem title="Members count">
+            {data?.memberCount}
+          </BasicListItem>
         </List>
       </PaperLevel1>
       <DataTableLayout
@@ -113,7 +141,7 @@ const ExploreCorporation: React.FC = () => {
         data={members}
         itemContent={itemContent}
         sx={{ mx: 0 }}
-        loading={query.isFetching}
+        loading={membersQuery.isFetching}
       >
         <TextField
           label="Search"
@@ -131,4 +159,4 @@ const ExploreCorporation: React.FC = () => {
   );
 };
 
-export default ExploreCorporation;
+export default ExploreTribe;

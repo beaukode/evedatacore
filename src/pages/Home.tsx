@@ -39,8 +39,8 @@ const Home: React.FC = () => {
           characters
         </InternalLink>
         ,{" "}
-        <InternalLink to="/explore/corporations" title="Explore corporations">
-          corporations
+        <InternalLink to="/explore/tribes" title="Explore tribes">
+          tribes
         </InternalLink>
         ,{" "}
         <InternalLink to="/explore/assemblies" title="Explore assemblies">

@@ -19,14 +19,14 @@ import ExploreSystems from "./ExploreSystems";
 import ExploreSystem from "./ExploreSystem";
 import ExploreFunctions from "./ExploreFunctions";
 import ExploreFunction from "./ExploreFunction";
-import ExploreCorporations from "./ExploreCorporations";
-import ExploreCorporation from "./ExploreCorporation";
+import ExploreTribe from "./ExploreTribe";
+import ExploreTribes from "./ExploreTribes";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
   "/explore/": 0,
   "/explore/characters": 0,
-  "/explore/corporations": 1,
+  "/explore/tribes": 1,
   "/explore/assemblies": 2,
   "/explore/killmails": 3,
   "/explore/types": 4,
@@ -53,11 +53,7 @@ const Explore: React.FC = () => {
             component={NavLink}
             to="/explore/characters"
           />
-          <Tab
-            label="Corporations"
-            component={NavLink}
-            to="/explore/corporations"
-          />
+          <Tab label="Tribes" component={NavLink} to="/explore/tribes" />
           <Tab
             label="Assemblies"
             component={NavLink}
@@ -84,8 +80,8 @@ const Explore: React.FC = () => {
         <Route path="" element={<ExploreCharacters />} />
         <Route path="/characters" element={<ExploreCharacters />} />
         <Route path="/characters/:address" element={<ExploreCharacter />} />
-        <Route path="/corporations" element={<ExploreCorporations />} />
-        <Route path="/corporations/:id" element={<ExploreCorporation />} />
+        <Route path="/tribes" element={<ExploreTribes />} />
+        <Route path="/tribes/:id/*" element={<ExploreTribe />} />
         <Route path="/assemblies" element={<ExploreAssemblies />} />
         <Route path="/assemblies/:id" element={<ExploreAssembly />} />
         <Route path="/killmails" element={<ExploreKillmails />} />
