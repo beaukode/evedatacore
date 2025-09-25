@@ -5,7 +5,7 @@ import { Box, Link, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { shorten, tsToDateTime } from "@/tools";
-import { assemblyTypeMap, AssemblyType } from "@/api/mudsql";
+import { assemblyTypeMap } from "@/api/mudsql";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -41,7 +41,7 @@ const ExploreAssembly: React.FC = () => {
 
   const data = query.data;
 
-  const { name, type, typeId, state, owner } = React.useMemo(() => {
+  const { name, state, owner } = React.useMemo(() => {
     if (!data) return { name: "...", owner: "0x0" as Hex };
     const typeId =
       assemblyTypeMap[data.assemblyType as keyof typeof assemblyTypeMap];
@@ -53,8 +53,6 @@ const ExploreAssembly: React.FC = () => {
     const owner = (data.account ?? "0x0") as Hex;
     return {
       name: `${data.name || shorten(data.id)} [${type}]`,
-      type,
-      typeId,
       state,
       owner,
     };
@@ -101,8 +99,8 @@ const ExploreAssembly: React.FC = () => {
         {data && (
           <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
             <BasicListItem title="Id">{data.id}</BasicListItem>
-            <BasicListItem title="Type">
-              {type} [{typeId}]
+            <BasicListItem title="Item ID">
+              {data.itemId} [{data.typeId}]
             </BasicListItem>
             <BasicListItem title="Owner" disableGutters>
               <ButtonCharacter address={owner} name={data.ownerName} />
@@ -194,7 +192,7 @@ const ExploreAssembly: React.FC = () => {
       </PaperLevel1>
       {data && (
         <>
-          {typeId === AssemblyType.Gate && (
+          {data.assemblyType === "SG" && (
             <AssemblyBehavior
               systemId={data.systemId}
               assemblyId={id}
@@ -203,7 +201,7 @@ const ExploreAssembly: React.FC = () => {
               onChange={() => query.refetch()}
             />
           )}
-          {typeId === AssemblyType.Gate && (
+          {data.assemblyType === "SG" && (
             <SmartGateLink
               sourceGateId={id}
               linkedGateId={data.linkedGateId}
@@ -211,7 +209,7 @@ const ExploreAssembly: React.FC = () => {
               sourceGateState={data.currentState ?? 0}
             />
           )}
-          {typeId === AssemblyType.Gate && (
+          {data.assemblyType === "SG" && (
             <SmartGateOther
               currentGateId={id}
               owner={owner}
@@ -222,7 +220,7 @@ const ExploreAssembly: React.FC = () => {
               }}
             />
           )}
-          {typeId === AssemblyType.Turret && (
+          {data.assemblyType === "ST" && (
             <AssemblyBehavior
               systemId={data.systemId}
               assemblyId={id}
@@ -231,11 +229,11 @@ const ExploreAssembly: React.FC = () => {
               onChange={() => query.refetch()}
             />
           )}
-          {typeId === AssemblyType.Storage && (
+          {data.assemblyType === "SSU" && (
             <SmartStorageInventory id={id} owner={owner} />
           )}
-          {typeId === AssemblyType.NetworkNode && <NetworkNode id={id} />}
-          {typeId !== AssemblyType.NetworkNode && data?.networkNodeId && (
+          {data.assemblyType === "NWN" && <NetworkNode id={id} />}
+          {data.assemblyType !== "NWN" && data?.networkNodeId && (
             <NetworkNode id={data.networkNodeId} />
           )}
         </>
