@@ -45,6 +45,9 @@ const ExploreCharacter: React.FC = () => {
       <PaperLevel1 title={name} loading={query.isFetching} backButton>
         <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
           <BasicListItem title="Id">{data?.id}</BasicListItem>
+          <BasicListItem title="Item ID">
+            {data?.itemId} [{data?.typeId}]
+          </BasicListItem>
           <BasicListItem title="Address">{data?.account}</BasicListItem>
           <BasicListItem title="Created At">
             {tsToDateTime(data?.createdAt)}

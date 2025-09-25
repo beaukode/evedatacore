@@ -128,6 +128,8 @@ export type GetCharactersResponse = {
     tribeTicker?: string;
     tribeJoinedAt?: number;
     balance?: string;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -251,6 +253,8 @@ export type GetCharacterIdAssembliesResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -385,6 +389,8 @@ export type GetCharacterIdResponse = {
   tribeTicker?: string;
   tribeJoinedAt?: number;
   balance?: string;
+  itemId?: number;
+  typeId?: number;
 };
 
 export type GetCharacterIdError = {
@@ -471,6 +477,8 @@ export type GetTribeIdCharactersResponse = {
     tribeTicker?: string;
     tribeJoinedAt?: number;
     balance?: string;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -547,6 +555,8 @@ export type GetAssembliesTypeStateResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -596,6 +606,8 @@ export type GetAssemblyIdNetworkResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   maxEnergyCapacity?: number;
   energyProduced?: number;
@@ -668,6 +680,8 @@ export type GetAssemblyIdResponse = {
   systemId?: string;
   maxDistance?: string;
   linkedGateId?: string | null;
+  itemId?: number;
+  typeId?: number;
 };
 
 export type GetAssemblyIdError = {
@@ -715,6 +729,8 @@ export type GetSmartgatesStateResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -1134,6 +1150,8 @@ export type GetSolarsystemIdAssembliesResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
