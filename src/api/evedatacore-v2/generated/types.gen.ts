@@ -124,7 +124,12 @@ export type GetCharactersResponse = {
     exists?: boolean;
     name?: string;
     tribeId?: number;
+    tribeName?: string;
+    tribeTicker?: string;
+    tribeJoinedAt?: number;
     balance?: string;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -248,6 +253,8 @@ export type GetCharacterIdAssembliesResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -378,7 +385,12 @@ export type GetCharacterIdResponse = {
   exists?: boolean;
   name?: string;
   tribeId?: number;
+  tribeName?: string;
+  tribeTicker?: string;
+  tribeJoinedAt?: number;
   balance?: string;
+  itemId?: number;
+  typeId?: number;
 };
 
 export type GetCharacterIdError = {
@@ -414,6 +426,30 @@ export type GetKillsError = {
   message: string;
 };
 
+export type GetTribesData = {
+  query?: {
+    /**
+     * GET /tribes Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetTribesResponse = {
+  items: Array<{
+    id: string;
+    name?: string;
+    foundedAt?: number;
+    memberCount?: number;
+    ticker?: string;
+  }>;
+  nextKey?: string;
+};
+
+export type GetTribesError = {
+  message: string;
+};
+
 export type GetTribeIdCharactersData = {
   path: {
     /**
@@ -437,12 +473,40 @@ export type GetTribeIdCharactersResponse = {
     exists?: boolean;
     name?: string;
     tribeId?: number;
+    tribeName?: string;
+    tribeTicker?: string;
+    tribeJoinedAt?: number;
     balance?: string;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
 
 export type GetTribeIdCharactersError = {
+  message: string;
+};
+
+export type GetTribeIdData = {
+  path: {
+    /**
+     * GET /tribe/:id Parameter
+     */
+    id: number | null;
+  };
+};
+
+export type GetTribeIdResponse = {
+  id: string;
+  memberCount?: number;
+  foundedAt?: number;
+  name?: string;
+  ticker?: string;
+  description?: string;
+  url?: string;
+};
+
+export type GetTribeIdError = {
   message: string;
 };
 
@@ -491,6 +555,8 @@ export type GetAssembliesTypeStateResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -540,6 +606,8 @@ export type GetAssemblyIdNetworkResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   maxEnergyCapacity?: number;
   energyProduced?: number;
@@ -612,6 +680,8 @@ export type GetAssemblyIdResponse = {
   systemId?: string;
   maxDistance?: string;
   linkedGateId?: string | null;
+  itemId?: number;
+  typeId?: number;
 };
 
 export type GetAssemblyIdError = {
@@ -659,6 +729,8 @@ export type GetSmartgatesStateResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
@@ -1078,6 +1150,8 @@ export type GetSolarsystemIdAssembliesResponse = {
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
+    itemId?: number;
+    typeId?: number;
   }>;
   nextKey?: string;
 };
