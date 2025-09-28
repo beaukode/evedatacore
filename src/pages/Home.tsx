@@ -75,7 +75,7 @@ const Home: React.FC = () => {
         <br />
         <br />
         Data displayed is very accurate and fresh as it comes directly from the
-        blockchain tables via the Mud indexer.
+        blockchain tables.
         <br />
         <br />
         Additionally, you'll find{" "}
