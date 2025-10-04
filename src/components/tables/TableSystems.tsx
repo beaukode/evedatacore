@@ -64,53 +64,58 @@ const TableSystems: React.FC<TableSystemsProps> = ({
 
   const query = namespace ? queryByNamespace : queryByOwner;
 
-  const systems = query.data || [];
+  const systems = query.data;
 
   return (
     <PaperLevel1 title="Systems" loading={query.isFetching}>
-      {systems && systems.length === 0 && (
-        <Typography variant="body1">None</Typography>
-      )}
-      {systems && systems.length > 0 && (
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              {!hideNamespaceColumn && <TableCell>Namespace</TableCell>}
-              <TableCell>Contract</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {systems.map((sys) => {
-              return (
-                <TableRow key={sys.id}>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <ButtonSystem id={sys.id} name={sys.name} />
-                      {!sys.publicAccess && privateIcon}
-                    </Box>
-                  </TableCell>
-                  {!hideNamespaceColumn && (
-                    <TableCell>
-                      <ButtonNamespace
-                        id={sys.namespaceId}
-                        name={sys.namespace}
-                      />
-                    </TableCell>
-                  )}
-                  <TableCell>
-                    <ExternalLink
-                      href={`https://explorer.pyropechain.com/address/${sys.contract}`}
-                      title={sys.contract}
-                    >
-                      {sys.contract}
-                    </ExternalLink>
-                  </TableCell>
+      {!systems && <Typography variant="body1">&nbsp;</Typography>}
+      {systems && (
+        <>
+          {systems && systems.length === 0 && (
+            <Typography variant="body1">None</Typography>
+          )}
+          {systems && systems.length > 0 && (
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  {!hideNamespaceColumn && <TableCell>Namespace</TableCell>}
+                  <TableCell>Contract</TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              </TableHead>
+              <TableBody>
+                {systems.map((sys) => {
+                  return (
+                    <TableRow key={sys.id}>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <ButtonSystem id={sys.id} name={sys.name} />
+                          {!sys.publicAccess && privateIcon}
+                        </Box>
+                      </TableCell>
+                      {!hideNamespaceColumn && (
+                        <TableCell>
+                          <ButtonNamespace
+                            id={sys.namespaceId}
+                            name={sys.namespace}
+                          />
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        <ExternalLink
+                          href={`https://explorer.pyropechain.com/address/${sys.contract}`}
+                          title={sys.contract}
+                        >
+                          {sys.contract}
+                        </ExternalLink>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </>
       )}
     </PaperLevel1>
   );

@@ -76,77 +76,85 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
       loading={query.isFetching}
       sx={{ overflowX: "auto" }}
     >
-      {functions && functions.length === 0 && (
-        <Typography variant="body1">None</Typography>
-      )}
-      {functions && functions.length > 0 && (
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Signature</TableCell>
-              <TableCell>Selectors (world/system)</TableCell>
-              {!hideColumns.includes("namespace") && (
-                <TableCell width={180}>Namespace</TableCell>
-              )}
-              {!hideColumns.includes("owner") && (
-                <TableCell width={250}>Owner</TableCell>
-              )}
-              {!hideColumns.includes("system") && (
-                <TableCell width={250}>System</TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {functions.map((fn) => {
-              return (
-                <TableRow key={fn.id}>
-                  <TableCell sx={{ fontFamily: "monospace" }}>
-                    <ButtonGeneric to={`/explore/functions/${fn.id}`}>
-                      {fn.signature}
-                    </ButtonGeneric>
-                  </TableCell>
-                  <TableCell>
-                    {fn.id} / {fn.systemSelector}
-                  </TableCell>
+      {!functions && <Typography variant="body1">&nbsp;</Typography>}
+      {functions && (
+        <>
+          {functions.length === 0 && (
+            <Typography variant="body1">None</Typography>
+          )}
+          {functions.length > 0 && (
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Signature</TableCell>
+                  <TableCell>Selectors (world/system)</TableCell>
                   {!hideColumns.includes("namespace") && (
-                    <TableCell>
-                      <ButtonNamespace
-                        id={fn.namespaceId}
-                        name={fn.namespace}
-                      />
-                    </TableCell>
+                    <TableCell width={180}>Namespace</TableCell>
                   )}
                   {!hideColumns.includes("owner") && (
-                    <TableCell>
-                      {fn.account && (
-                        <>
-                          {fn.ownerName && (
-                            <ButtonCharacter
-                              address={fn.account}
-                              name={fn.ownerName}
-                            />
-                          )}
-                          {!fn.ownerName && (
-                            <Box component="span" sx={{ px: 1 }}>
-                              {fn.account}
-                            </Box>
-                          )}
-                        </>
-                      )}
-                    </TableCell>
+                    <TableCell width={250}>Owner</TableCell>
                   )}
                   {!hideColumns.includes("system") && (
-                    <TableCell>
-                      {fn.systemId && fn.systemName && (
-                        <ButtonSystem id={fn.systemId} name={fn.systemName} />
-                      )}
-                    </TableCell>
+                    <TableCell width={250}>System</TableCell>
                   )}
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              </TableHead>
+              <TableBody>
+                {functions.map((fn) => {
+                  return (
+                    <TableRow key={fn.id}>
+                      <TableCell sx={{ fontFamily: "monospace" }}>
+                        <ButtonGeneric to={`/explore/functions/${fn.id}`}>
+                          {fn.signature}
+                        </ButtonGeneric>
+                      </TableCell>
+                      <TableCell>
+                        {fn.id} / {fn.systemSelector}
+                      </TableCell>
+                      {!hideColumns.includes("namespace") && (
+                        <TableCell>
+                          <ButtonNamespace
+                            id={fn.namespaceId}
+                            name={fn.namespace}
+                          />
+                        </TableCell>
+                      )}
+                      {!hideColumns.includes("owner") && (
+                        <TableCell>
+                          {fn.account && (
+                            <>
+                              {fn.ownerName && (
+                                <ButtonCharacter
+                                  address={fn.account}
+                                  name={fn.ownerName}
+                                />
+                              )}
+                              {!fn.ownerName && (
+                                <Box component="span" sx={{ px: 1 }}>
+                                  {fn.account}
+                                </Box>
+                              )}
+                            </>
+                          )}
+                        </TableCell>
+                      )}
+                      {!hideColumns.includes("system") && (
+                        <TableCell>
+                          {fn.systemId && fn.systemName && (
+                            <ButtonSystem
+                              id={fn.systemId}
+                              name={fn.systemName}
+                            />
+                          )}
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </>
       )}
     </PaperLevel1>
   );

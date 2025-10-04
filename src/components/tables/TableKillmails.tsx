@@ -57,7 +57,11 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
   const query = characterId ? queryByCharacter : queryBySolarSystem;
 
   return (
-    <PaperLevel1 title="Killmails" loading={query.isFetching}>
+    <PaperLevel1
+      title="Killmails"
+      loading={query.isFetching || !query.isEnabled}
+    >
+      {!query.data && <Typography variant="body1">&nbsp;</Typography>}
       {query.data && (
         <>
           {query.data.length === 0 && (

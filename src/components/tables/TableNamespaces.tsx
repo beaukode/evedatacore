@@ -30,34 +30,39 @@ const TableNamespaces: React.FC<NamespacesProps> = ({ owner }) => {
     staleTime: 1000 * 60,
   });
 
-  const namespaces = query.data || [];
+  const namespaces = query.data;
 
   return (
     <PaperLevel1 title="Namespaces" loading={query.isFetching}>
-      {!query.isFetching && namespaces.length === 0 && (
-        <Typography variant="body1">None</Typography>
-      )}
-      {namespaces.length > 0 && (
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Id</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {namespaces.map((ns) => {
-              return (
-                <TableRow key={ns.id}>
-                  <TableCell>
-                    <ButtonNamespace id={ns.id} name={ns.name} />
-                  </TableCell>
-                  <TableCell>{ns.id}</TableCell>
+      {!namespaces && <Typography variant="body1">&nbsp;</Typography>}
+      {namespaces && (
+        <>
+          {namespaces.length === 0 && (
+            <Typography variant="body1">None</Typography>
+          )}
+          {namespaces.length > 0 && (
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Id</TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              </TableHead>
+              <TableBody>
+                {namespaces.map((ns) => {
+                  return (
+                    <TableRow key={ns.id}>
+                      <TableCell>
+                        <ButtonNamespace id={ns.id} name={ns.name} />
+                      </TableCell>
+                      <TableCell>{ns.id}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </>
       )}
     </PaperLevel1>
   );

@@ -96,6 +96,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
           this user
         </Alert>
       )}
+      {!assemblies && <Typography variant="body1">&nbsp;</Typography>}
       {assemblies && (
         <>
           {assemblies.length === 0 && (
