@@ -15,6 +15,7 @@ type ExtractItemType<T> = T extends { items: (infer I)[] } ? I : never;
 type UsePaginatedQueryReturn<T> = {
   data?: ExtractItemType<T>[];
   isFetching: boolean;
+  isFetched: boolean;
   isEnabled: boolean;
   hasNextPage: boolean;
   refetch: () => void;
@@ -32,6 +33,7 @@ function usePaginatedQuery<T extends { nextKey?: string; items: unknown[] }>(
     hasNextPage,
     isFetching,
     isError,
+    isFetched,
     error,
     refetch,
   } = useInfiniteQuery({
@@ -58,6 +60,7 @@ function usePaginatedQuery<T extends { nextKey?: string; items: unknown[] }>(
     return {
       data: undefined,
       isFetching: false,
+      isFetched: false,
       hasNextPage: false,
       isEnabled: options.enabled === undefined ? true : options.enabled,
       isError: true,
@@ -68,6 +71,7 @@ function usePaginatedQuery<T extends { nextKey?: string; items: unknown[] }>(
     return {
       data: memoizedData,
       isFetching,
+      isFetched,
       hasNextPage,
       isEnabled: options.enabled === undefined ? true : options.enabled,
       isError: false,

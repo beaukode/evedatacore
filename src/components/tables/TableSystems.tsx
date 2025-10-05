@@ -19,17 +19,20 @@ import {
   getCharacterIdSystems,
   getNamespaceIdSystems,
 } from "@/api/evedatacore-v2";
+import { useNotify } from "@/tools/useNotify";
 
 interface TableSystemsProps {
   namespace?: string;
   owner?: string;
   hideNamespaceColumn?: boolean;
+  onFetched?: () => void;
 }
 
 const TableSystems: React.FC<TableSystemsProps> = ({
   namespace,
   owner,
   hideNamespaceColumn,
+  onFetched,
 }) => {
   const privateIcon = React.useMemo(
     () => (
@@ -63,6 +66,8 @@ const TableSystems: React.FC<TableSystemsProps> = ({
   });
 
   const query = namespace ? queryByNamespace : queryByOwner;
+
+  useNotify(query.isFetched, onFetched);
 
   const systems = query.data;
 

@@ -20,12 +20,14 @@ import {
   getCharacterIdFunctions,
 } from "@/api/evedatacore-v2";
 import { hexToResource, resourceToHex } from "@latticexyz/common";
+import { useNotify } from "@/tools/useNotify";
 
 interface TableFunctionsProps {
   namespace?: string;
   system?: string;
   owner?: string;
   hideColumns: Array<"namespace" | "owner" | "system">;
+  onFetched?: () => void;
 }
 
 const TableFunctions: React.FC<TableFunctionsProps> = ({
@@ -33,6 +35,7 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
   system,
   owner,
   hideColumns,
+  onFetched,
 }) => {
   const queryByNamespace = usePaginatedQuery({
     queryKey: ["Functions", namespace, system],
@@ -68,6 +71,8 @@ const TableFunctions: React.FC<TableFunctionsProps> = ({
   });
 
   const query = system || namespace ? queryByNamespace : queryByOwner;
+  useNotify(query.isFetched, onFetched);
+
   const functions = query.data;
 
   return (

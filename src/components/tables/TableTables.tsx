@@ -19,17 +19,20 @@ import {
   getCharacterIdTables,
   getNamespaceIdTables,
 } from "@/api/evedatacore-v2";
+import { useNotify } from "@/tools/useNotify";
 
 interface TablesProps {
   owner?: string;
   namespace?: string;
   hideNamespaceColumn?: boolean;
+  onFetched?: () => void;
 }
 
 const TableTables: React.FC<TablesProps> = ({
   owner,
   namespace,
   hideNamespaceColumn,
+  onFetched,
 }) => {
   const queryKey: string[] = ["Tables"];
   if (owner) queryKey.push(`owner:${owner}`);
@@ -46,6 +49,8 @@ const TableTables: React.FC<TablesProps> = ({
       return r.data;
     },
   });
+
+  useNotify(query.isFetched, onFetched);
 
   const tables = query.data;
 

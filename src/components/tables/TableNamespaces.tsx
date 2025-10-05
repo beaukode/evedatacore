@@ -11,12 +11,14 @@ import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { getCharacterIdNamespaces } from "@/api/evedatacore-v2";
+import { useNotify } from "@/tools/useNotify";
 
 interface NamespacesProps {
   owner: string;
+  onFetched?: () => void;
 }
 
-const TableNamespaces: React.FC<NamespacesProps> = ({ owner }) => {
+const TableNamespaces: React.FC<NamespacesProps> = ({ owner, onFetched }) => {
   const query = usePaginatedQuery({
     queryKey: ["Namespaces", owner],
     queryFn: async ({ pageParam }) => {
@@ -29,6 +31,8 @@ const TableNamespaces: React.FC<NamespacesProps> = ({ owner }) => {
     },
     staleTime: 1000 * 60,
   });
+
+  useNotify(query.isFetched, onFetched);
 
   const namespaces = query.data;
 
