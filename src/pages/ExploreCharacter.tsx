@@ -15,9 +15,19 @@ import TableKillmails from "@/components/tables/TableKillmails";
 import TableFunctions from "@/components/tables/TableFunctions";
 import ButtonTribe from "@/components/buttons/ButtonTribe";
 import { getCharacterId } from "@/api/evedatacore-v2";
+import TableLogbook from "@/components/tables/TableLogbook";
 
 const ExploreCharacter: React.FC = () => {
   const { address } = useParams();
+  const [fetched, setFetched] = React.useState({
+    character: false,
+    assemblies: false,
+    killmails: false,
+    namespaces: false,
+    tables: false,
+    systems: false,
+    functions: false,
+  });
 
   const query = useQuery({
     queryKey: ["SmartcharactersById", address],
@@ -28,6 +38,14 @@ const ExploreCharacter: React.FC = () => {
     },
     enabled: !!address,
   });
+
+  React.useEffect(() => {
+    setFetched((s) => ({ ...s, character: true }));
+  }, [query.isFetched]);
+
+  const isLogbookEnabled = React.useMemo(() => {
+    return Object.values(fetched).every((f) => f);
+  }, [fetched]);
 
   if (!address || (!query.isLoading && !query.data)) {
     return <Error404 />;
@@ -67,12 +85,32 @@ const ExploreCharacter: React.FC = () => {
           </BasicListItem>
         </List>
       </PaperLevel1>
-      <TableAssemblies owner={address} />
-      <TableKillmails characterId={data?.id} />
-      <TableNamespaces owner={address} />
-      <TableTables owner={address} />
-      <TableSystems owner={address} />
-      <TableFunctions owner={address} hideColumns={["owner"]} />
+      <TableAssemblies
+        owner={address}
+        onFetched={() => setFetched((s) => ({ ...s, assemblies: true }))}
+      />
+      <TableKillmails
+        characterId={data?.id}
+        onFetched={() => setFetched((s) => ({ ...s, killmails: true }))}
+      />
+      <TableNamespaces
+        owner={address}
+        onFetched={() => setFetched((s) => ({ ...s, namespaces: true }))}
+      />
+      <TableTables
+        owner={address}
+        onFetched={() => setFetched((s) => ({ ...s, tables: true }))}
+      />
+      <TableSystems
+        owner={address}
+        onFetched={() => setFetched((s) => ({ ...s, systems: true }))}
+      />
+      <TableFunctions
+        owner={address}
+        hideColumns={["owner"]}
+        onFetched={() => setFetched((s) => ({ ...s, functions: true }))}
+      />
+      <TableLogbook enabled={isLogbookEnabled} owner={address} />
     </Box>
   );
 };
