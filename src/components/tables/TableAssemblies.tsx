@@ -23,15 +23,18 @@ import {
   getSolarsystemIdAssemblies,
 } from "@/api/evedatacore-v2";
 import { assemblyTypeMap } from "@/api/mudsql";
+import { useNotify } from "@/tools/useNotify";
 
 interface TableAssembliesProps {
   owner?: string;
   solarSystemId?: string;
+  onFetched?: () => void;
 }
 
 const TableAssemblies: React.FC<TableAssembliesProps> = ({
   owner,
   solarSystemId,
+  onFetched,
 }) => {
   const [showUnanchored, setShowUnanchored] = React.useState(false);
 
@@ -66,6 +69,8 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
 
   const query = owner ? queryByOwner : queryBySolarSystem;
 
+  useNotify(query.isFetched, onFetched);
+
   const assemblies = React.useMemo(() => {
     if (!query.data) return undefined;
     if (showUnanchored) return query.data;
@@ -96,6 +101,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
           this user
         </Alert>
       )}
+      {!assemblies && <Typography variant="body1">&nbsp;</Typography>}
       {assemblies && (
         <>
           {assemblies.length === 0 && (

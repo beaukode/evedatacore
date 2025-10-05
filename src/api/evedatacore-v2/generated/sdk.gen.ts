@@ -36,6 +36,9 @@ import type {
   GetCharacterIdFunctionsData,
   GetCharacterIdFunctionsError,
   GetCharacterIdFunctionsResponse,
+  GetCharacterIdLogbookData,
+  GetCharacterIdLogbookError,
+  GetCharacterIdLogbookResponse,
   GetCharacterIdData,
   GetCharacterIdError,
   GetCharacterIdResponse,
@@ -239,6 +242,19 @@ export const getCharacterIdFunctions = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/character/{id}/functions",
+  });
+};
+
+export const getCharacterIdLogbook = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetCharacterIdLogbookData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetCharacterIdLogbookResponse,
+    GetCharacterIdLogbookError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/character/{id}/logbook",
   });
 };
 

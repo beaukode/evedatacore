@@ -19,17 +19,20 @@ import {
   getCharacterIdTables,
   getNamespaceIdTables,
 } from "@/api/evedatacore-v2";
+import { useNotify } from "@/tools/useNotify";
 
 interface TablesProps {
   owner?: string;
   namespace?: string;
   hideNamespaceColumn?: boolean;
+  onFetched?: () => void;
 }
 
 const TableTables: React.FC<TablesProps> = ({
   owner,
   namespace,
   hideNamespaceColumn,
+  onFetched,
 }) => {
   const queryKey: string[] = ["Tables"];
   if (owner) queryKey.push(`owner:${owner}`);
@@ -47,51 +50,59 @@ const TableTables: React.FC<TablesProps> = ({
     },
   });
 
-  const tables = query.data || [];
+  useNotify(query.isFetched, onFetched);
+
+  const tables = query.data;
 
   return (
     <PaperLevel1 title="Tables" loading={query.isFetching}>
-      {!query.isFetching && tables.length === 0 && (
-        <Typography variant="body1">None</Typography>
-      )}
-      {tables.length > 0 && (
-        <Table size="small" stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              {!hideNamespaceColumn && <TableCell>Namespace</TableCell>}
-              <TableCell>Fields</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tables.map((t) => {
-              return (
-                <TableRow key={t.tableId}>
-                  <TableCell>
-                    {t.type === "offchainTable" ? (
-                      <Box display="flex" alignItems="center">
-                        <ButtonTable id={t.tableId} name={t.name} />
-                        <Tooltip title="Off-chain table">
-                          <OffChainIcon color="secondary" />
-                        </Tooltip>
-                      </Box>
-                    ) : (
-                      <ButtonTable id={t.tableId} name={t.name} />
-                    )}
-                  </TableCell>
-                  {!hideNamespaceColumn && (
-                    <TableCell>
-                      <ButtonNamespace id={t.namespaceId} name={t.namespace} />
-                    </TableCell>
-                  )}
-                  <TableCell>
-                    <DisplayTableFieldsChips table={t} />
-                  </TableCell>
+      {!tables && <Typography variant="body1">&nbsp;</Typography>}
+      {tables && (
+        <>
+          {tables.length === 0 && <Typography variant="body1">None</Typography>}
+          {tables.length > 0 && (
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  {!hideNamespaceColumn && <TableCell>Namespace</TableCell>}
+                  <TableCell>Fields</TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              </TableHead>
+              <TableBody>
+                {tables.map((t) => {
+                  return (
+                    <TableRow key={t.tableId}>
+                      <TableCell>
+                        {t.type === "offchainTable" ? (
+                          <Box display="flex" alignItems="center">
+                            <ButtonTable id={t.tableId} name={t.name} />
+                            <Tooltip title="Off-chain table">
+                              <OffChainIcon color="secondary" />
+                            </Tooltip>
+                          </Box>
+                        ) : (
+                          <ButtonTable id={t.tableId} name={t.name} />
+                        )}
+                      </TableCell>
+                      {!hideNamespaceColumn && (
+                        <TableCell>
+                          <ButtonNamespace
+                            id={t.namespaceId}
+                            name={t.namespace}
+                          />
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        <DisplayTableFieldsChips table={t} />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </>
       )}
     </PaperLevel1>
   );
