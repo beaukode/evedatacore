@@ -16,15 +16,18 @@ import {
   getCharacterIdKills,
   getSolarsystemIdKills,
 } from "@/api/evedatacore-v2";
+import { useNotify } from "@/tools/useNotify";
 
 interface TableKillmailsProps {
   characterId?: string;
   solarSystemId?: string;
+  onFetched?: () => void;
 }
 
 const TableKillmails: React.FC<TableKillmailsProps> = ({
   characterId,
   solarSystemId,
+  onFetched,
 }) => {
   const queryByCharacter = usePaginatedQuery({
     queryKey: ["KillsByCharacter", characterId],
@@ -56,8 +59,14 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
 
   const query = characterId ? queryByCharacter : queryBySolarSystem;
 
+  useNotify(query.isFetched, onFetched);
+
   return (
-    <PaperLevel1 title="Killmails" loading={query.isFetching}>
+    <PaperLevel1
+      title="Killmails"
+      loading={query.isFetching || !query.isEnabled}
+    >
+      {!query.data && <Typography variant="body1">&nbsp;</Typography>}
       {query.data && (
         <>
           {query.data.length === 0 && (

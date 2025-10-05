@@ -369,6 +369,271 @@ export type GetCharacterIdFunctionsError = {
   message: string;
 };
 
+export type GetCharacterIdLogbookData = {
+  path: {
+    /**
+     * GET /character/:id/logbook Parameter
+     */
+    id: string;
+  };
+  query?: {
+    /**
+     * GET /character/:id/logbook Parameter
+     */
+    startKey?: string;
+  };
+};
+
+export type GetCharacterIdLogbookResponse = {
+  items: Array<
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        assemblyId: string;
+        assemblyName?: string;
+        assemblyType:
+          | "SG"
+          | "ST"
+          | "SSU"
+          | "NWN"
+          | "smart_hangar"
+          | "manufacturer";
+        solarSystemId: number;
+        solarSystemName: string;
+        type: "Notify:AssemblyDestroyed";
+      }
+    | {
+        id: string;
+        date: string;
+        victim: {
+          characterId: string;
+          characterName: string;
+          tribeId: number;
+          tribeName: string;
+          tribeTicker: string;
+          account: string;
+        };
+        killer: {
+          characterId: string;
+          characterName: string;
+          tribeId: number;
+          tribeName: string;
+          tribeTicker: string;
+          account: string;
+        };
+        killedAt: number;
+        lossType: number;
+        solarSystemId: number;
+        solarSystemName: string;
+        type: "Notify:Kill";
+      }
+    | {
+        id: string;
+        date: string;
+        state: number;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        assemblyId: string;
+        assemblyName?: string;
+        assemblyType:
+          | "SG"
+          | "ST"
+          | "SSU"
+          | "NWN"
+          | "smart_hangar"
+          | "manufacturer";
+        solarSystemId: number;
+        solarSystemName: string;
+        type: "Notify:NetworkNodeState";
+      }
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        assemblyId: string;
+        assemblyName?: string;
+        assemblyType:
+          | "SG"
+          | "ST"
+          | "SSU"
+          | "NWN"
+          | "smart_hangar"
+          | "manufacturer";
+        solarSystemId: number;
+        solarSystemName: string;
+        type: "Notify:NewNetworkNode";
+      }
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        type: "Notify:NewPlayer";
+      }
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        assemblyId: string;
+        assemblyName?: string;
+        assemblyType:
+          | "SG"
+          | "ST"
+          | "SSU"
+          | "NWN"
+          | "smart_hangar"
+          | "manufacturer";
+        solarSystemId: number;
+        solarSystemName: string;
+        linkedGate?: {
+          assemblyId: string;
+          assemblyName?: string;
+          assemblyType:
+            | "SG"
+            | "ST"
+            | "SSU"
+            | "NWN"
+            | "smart_hangar"
+            | "manufacturer";
+        };
+        linkedGateSolarSystem?: {
+          solarSystemId: number;
+          solarSystemName: string;
+        };
+        system?: {
+          systemId: string;
+          systemName: string;
+          systemNamespace?: string;
+        };
+        type: "Notify:SmartGateLink";
+      }
+    | {
+        id: string;
+        date: string;
+        state: number;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        assemblyId: string;
+        assemblyName?: string;
+        assemblyType:
+          | "SG"
+          | "ST"
+          | "SSU"
+          | "NWN"
+          | "smart_hangar"
+          | "manufacturer";
+        solarSystemId: number;
+        solarSystemName: string;
+        linkedGate?: {
+          assemblyId: string;
+          assemblyName?: string;
+          assemblyType:
+            | "SG"
+            | "ST"
+            | "SSU"
+            | "NWN"
+            | "smart_hangar"
+            | "manufacturer";
+        };
+        linkedGateSolarSystem?: {
+          solarSystemId: number;
+          solarSystemName: string;
+        };
+        system?: {
+          systemId: string;
+          systemName: string;
+          systemNamespace?: string;
+        };
+        type: "Notify:SmartGateState";
+      }
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        assemblyId: string;
+        assemblyName?: string;
+        assemblyType:
+          | "SG"
+          | "ST"
+          | "SSU"
+          | "NWN"
+          | "smart_hangar"
+          | "manufacturer";
+        solarSystemId: number;
+        solarSystemName: string;
+        linkedGate?: {
+          assemblyId: string;
+          assemblyName?: string;
+          assemblyType:
+            | "SG"
+            | "ST"
+            | "SSU"
+            | "NWN"
+            | "smart_hangar"
+            | "manufacturer";
+        };
+        linkedGateSolarSystem?: {
+          solarSystemId: number;
+          solarSystemName: string;
+        };
+        system?: {
+          systemId: string;
+          systemName: string;
+          systemNamespace?: string;
+        };
+        type: "Notify:SmartGateSystem";
+      }
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        type: "Notify:TribeJoin";
+      }
+    | {
+        id: string;
+        date: string;
+        characterId: string;
+        characterName: string;
+        tribeId: number;
+        tribeName: string;
+        tribeTicker: string;
+        type: "Notify:TribeLeave";
+      }
+  >;
+  nextKey?: string;
+};
+
+export type GetCharacterIdLogbookError = {
+  message: string;
+};
+
 export type GetCharacterIdData = {
   path: {
     /**
