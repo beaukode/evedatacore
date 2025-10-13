@@ -13,7 +13,7 @@ import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
-import { getAssembliesTypeState } from "@/api/evedatacore-v2";
+import { Assembly, getAssembliesTypeState } from "@/api/evedatacore-v2";
 import {
   AssemblyType,
   assemblyTypeMap,
@@ -30,11 +30,28 @@ import ButtonAssembly from "@/components/buttons/ButtonAssembly";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 
-const columns: DataTableColumn[] = [
-  { label: "Assembly", width: columnWidths.common, grow: true },
-  { label: "Owner", width: columnWidths.common },
-  { label: "Solar system", width: columnWidths.common },
-  { label: "Anchored At", width: columnWidths.datetime },
+const columns: DataTableColumn<Assembly>[] = [
+  {
+    label: "Assembly",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.name?.localeCompare(b.name ?? "") ?? 0,
+  },
+  {
+    label: "Owner",
+    width: columnWidths.common,
+    sort: (a, b) => a.ownerName?.localeCompare(b.ownerName ?? "") ?? 0,
+  },
+  {
+    label: "Solar system",
+    width: columnWidths.common,
+  },
+  {
+    label: "Anchored At",
+    width: columnWidths.datetime,
+    sort: (a, b) => (a.anchoredAt ?? 0) - (b.anchoredAt ?? 0),
+    initialSort: "desc",
+  },
 ];
 
 const ExploreAssemblies: React.FC = () => {
