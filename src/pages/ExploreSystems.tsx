@@ -14,13 +14,34 @@ import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import ExternalLink from "@/components/ui/ExternalLink";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
 import { columnWidths } from "@/constants";
-import { getSystems, GetSystemsResponse } from "@/api/evedatacore-v2";
+import { getSystems, System } from "@/api/evedatacore-v2";
 
-const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common, grow: true },
-  { label: "Namespace", width: columnWidths.common },
-  { label: "Owner", width: columnWidths.address },
-  { label: "Contract", width: columnWidths.address },
+const columns: DataTableColumn<System>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.name.localeCompare(b.name ?? ""),
+    initialSort: "asc",
+  },
+  {
+    label: "Namespace",
+    width: columnWidths.common,
+    sort: (a, b) => a.namespace?.localeCompare(b.namespace ?? "") ?? 0,
+  },
+  {
+    label: "Owner",
+    width: columnWidths.address,
+    sort: (a, b) =>
+      (a.ownerName ?? a.account ?? "").localeCompare(
+        b.ownerName ?? b.account ?? ""
+      ) ?? 0,
+  },
+  {
+    label: "Contract",
+    width: columnWidths.address,
+    sort: (a, b) => a.contract.localeCompare(b.contract),
+  },
 ];
 
 const ExploreSystems: React.FC = () => {
@@ -71,8 +92,7 @@ const ExploreSystems: React.FC = () => {
   );
 
   const filterNamespace = React.useCallback(
-    (t: GetSystemsResponse["items"][number]) =>
-      search.owner === "0" || t.account === search.owner,
+    (t: System) => search.owner === "0" || t.account === search.owner,
     [search.owner]
   );
 

@@ -25,12 +25,27 @@ import DisplayTableFieldsChips from "@/components/DisplayTableFieldsChips";
 import DisplayTableContent from "@/components/DisplayTableContent";
 import ExternalLink from "@/components/ui/ExternalLink";
 import { columnWidths } from "@/constants";
-import { getTables } from "@/api/evedatacore-v2";
+import { getTables, Table } from "@/api/evedatacore-v2";
 
-const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common, grow: true },
-  { label: "Namespace", width: columnWidths.common },
-  { label: "Owner", width: columnWidths.address },
+const columns: DataTableColumn<Table>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.label.localeCompare(b.label),
+    initialSort: "asc",
+  },
+  {
+    label: "Namespace",
+    width: columnWidths.common,
+    sort: (a, b) => a.namespace.localeCompare(b.namespace) ?? 0,
+  },
+  {
+    label: "Owner",
+    width: columnWidths.address,
+    sort: (a, b) =>
+      (a.ownerName ?? a.account).localeCompare(b.ownerName ?? b.account) ?? 0,
+  },
   { label: "Fields", width: 200 },
 ];
 

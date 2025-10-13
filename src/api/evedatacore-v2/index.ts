@@ -5,7 +5,11 @@ import {
   GetCharactersResponse,
   GetTribesResponse,
   GetAssembliesTypeStateResponse,
-  GetKillsResponse
+  GetKillsResponse,
+  GetNamespacesResponse,
+  GetTablesResponse,
+  GetSystemsResponse,
+  GetFunctionsResponse,
 } from "./generated";
 
 client.setConfig({
@@ -17,3 +21,7 @@ export type Tribe = GetTribesResponse["items"][number];
 export type Character = GetCharactersResponse["items"][number];
 export type Assembly = GetAssembliesTypeStateResponse["items"][number];
 export type Kill = GetKillsResponse["items"][number];
+export type Namespace = GetNamespacesResponse["items"][number];
+export type Table = GetTablesResponse["items"][number];
+export type System = GetSystemsResponse["items"][number];
+export type Function = GetFunctionsResponse["items"][number];
