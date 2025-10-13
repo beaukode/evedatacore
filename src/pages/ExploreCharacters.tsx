@@ -9,13 +9,31 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonTribe from "@/components/buttons/ButtonTribe";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import { getCharacters } from "@/api/evedatacore-v2";
+import { Character, getCharacters } from "@/api/evedatacore-v2";
 
-const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common, grow: true },
-  { label: "Tribe", width: columnWidths.common },
-  { label: "Address", width: columnWidths.address },
-  { label: "Created At", width: columnWidths.datetime },
+const columns: DataTableColumn<Character>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.name?.localeCompare(b.name ?? "") ?? 0,
+  },
+  {
+    label: "Tribe",
+    width: columnWidths.common,
+    sort: (a, b) => a.tribeName?.localeCompare(b.tribeName ?? "") ?? 0,
+  },
+  {
+    label: "Address",
+    width: columnWidths.address,
+    sort: (a, b) => a.account?.localeCompare(b.account ?? "") ?? 0,
+  },
+  {
+    label: "Created At",
+    width: columnWidths.datetime,
+    sort: (a, b) => (a.createdAt ?? 0) - (b.createdAt ?? 0),
+    initialSort: "desc",
+  },
 ];
 
 const ExploreCharacters: React.FC = () => {
