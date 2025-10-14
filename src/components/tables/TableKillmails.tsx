@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  TableCell,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { TableCell, Typography, Box } from "@mui/material";
 import { tsToDateTime } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -15,8 +8,11 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import {
   getCharacterIdKills,
   getSolarsystemIdKills,
+  Kill,
 } from "@/api/evedatacore-v2";
 import { useNotify } from "@/tools/useNotify";
+import DataTable, { DataTableColumn } from "../DataTable";
+import { columnWidths } from "@/constants";
 
 interface TableKillmailsProps {
   characterId?: string;
@@ -57,7 +53,63 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
     enabled: !!solarSystemId,
   });
 
+  const columns: DataTableColumn<Kill>[] = React.useMemo(() => {
+    const columns: DataTableColumn<Kill>[] = [
+      {
+        label: "Date",
+        width: columnWidths.datetime,
+        sort: (a, b) => (a.killedAt ?? 0) - (b.killedAt ?? 0),
+        initialSort: "desc",
+      },
+      {
+        label: "Killer",
+        width: columnWidths.common,
+        sort: (a, b) => a.killerName?.localeCompare(b.killerName ?? "") ?? 0,
+      },
+      {
+        label: "Victim",
+        width: columnWidths.common,
+        sort: (a, b) => a.victimName?.localeCompare(b.victimName ?? "") ?? 0,
+      },
+      {
+        label: "Loss Type",
+        width: columnWidths.common,
+      },
+    ];
+    if (!solarSystemId) {
+      columns.push({
+        label: "Solar System",
+        width: columnWidths.common,
+      });
+    }
+    return columns;
+  }, [solarSystemId]);
+
+  const itemContent = React.useCallback(
+    (_: number, km: Kill) => {
+      return (
+        <React.Fragment key={km.id}>
+          <TableCell>{tsToDateTime(km.killedAt)}</TableCell>
+          <TableCell>
+            <ButtonCharacter name={km.killerName} address={km.killerAccount} />
+          </TableCell>
+          <TableCell>
+            <ButtonCharacter name={km.victimName} address={km.victimAccount} />
+          </TableCell>
+          <TableCell>{km.lossType === 0 ? "Ship" : "(Unknown)"}</TableCell>
+          {!solarSystemId && (
+            <TableCell>
+              <ButtonSolarsystem solarSystemId={km.solarSystemId} />
+            </TableCell>
+          )}
+        </React.Fragment>
+      );
+    },
+    [solarSystemId]
+  );
+
   const query = characterId ? queryByCharacter : queryBySolarSystem;
+  const kills = query.data;
 
   useNotify(query.isFetched, onFetched);
 
@@ -65,54 +117,32 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
     <PaperLevel1
       title="Killmails"
       loading={query.isFetching || !query.isEnabled}
+      sx={{
+        overflowX: "auto",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
+      }}
     >
-      {!query.data && <Typography variant="body1">&nbsp;</Typography>}
-      {query.data && (
+      {!kills && <Typography variant="body1">&nbsp;</Typography>}
+      {kills && (
         <>
-          {query.data.length === 0 && (
-            <Typography variant="body1">None</Typography>
-          )}
-          {query.data.length > 0 && (
-            <Table size="small" stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Killer</TableCell>
-                  <TableCell>Victim</TableCell>
-                  <TableCell>Loss Type</TableCell>
-                  {!solarSystemId && <TableCell>Solar System</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {query.data.map((km) => {
-                  return (
-                    <TableRow key={km.id}>
-                      <TableCell>{tsToDateTime(km.killedAt)}</TableCell>
-                      <TableCell>
-                        <ButtonCharacter
-                          name={km.killerName}
-                          address={km.killerAccount}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <ButtonCharacter
-                          name={km.victimName}
-                          address={km.victimAccount}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {km.lossType === 0 ? "Ship" : "(Unknown)"}
-                      </TableCell>
-                      {!solarSystemId && (
-                        <TableCell>
-                          <ButtonSolarsystem solarSystemId={km.solarSystemId} />
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+          {kills.length === 0 && <Typography variant="body1">None</Typography>}
+          {kills.length > 0 && (
+            <Box
+              flexGrow={1}
+              flexBasis={100}
+              height="100%"
+              minHeight={`min(50vh, ${37 + 50 * kills.length}px)`}
+              overflow="hidden"
+            >
+              <DataTable
+                data={kills}
+                columns={columns}
+                itemContent={itemContent}
+              />
+            </Box>
           )}
         </>
       )}
