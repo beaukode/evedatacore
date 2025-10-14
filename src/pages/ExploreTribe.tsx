@@ -14,13 +14,31 @@ import { DataTableColumn } from "@/components/DataTable";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ExternalLink from "@/components/ui/ExternalLink";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import { getTribeIdCharacters, getTribeId } from "@/api/evedatacore-v2";
+import {
+  getTribeIdCharacters,
+  getTribeId,
+  Character,
+} from "@/api/evedatacore-v2";
 import { useQuery } from "@tanstack/react-query";
 
-const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common, grow: true },
-  { label: "Address", width: columnWidths.address },
-  { label: "Joined At", width: columnWidths.datetime },
+const columns: DataTableColumn<Character>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.name?.localeCompare(b.name ?? "") ?? 0,
+    initialSort: "asc",
+  },
+  {
+    label: "Address",
+    width: columnWidths.address,
+    sort: (a, b) => a.account?.localeCompare(b.account ?? "") ?? 0,
+  },
+  {
+    label: "Joined At",
+    width: columnWidths.datetime,
+    sort: (a, b) => (a.tribeJoinedAt ?? 0) - (b.tribeJoinedAt ?? 0),
+  },
 ];
 
 const ExploreTribe: React.FC = () => {

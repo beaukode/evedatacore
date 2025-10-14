@@ -5,6 +5,7 @@ import {
   Table,
   TableHead,
   TableBody,
+  TableSortLabel,
 } from "@mui/material";
 import { ListRange as VirtuosoListRange, TableVirtuoso } from "react-virtuoso";
 import { useLocation, useNavigate } from "react-router";
@@ -20,24 +21,43 @@ export type DataTableItemContentCallback<T extends Record<string, unknown>> = (
   context: DataTableContext
 ) => React.ReactNode;
 
-type ColumnAttributes = {
+type ColumnAttributes<T extends Record<string, unknown>> = {
   label: React.ReactNode;
+  sort?: (a: T, b: T) => number;
+  initialSort?: "asc" | "desc";
   sx?: React.ComponentProps<typeof TableCell>["sx"];
   width?: number;
   grow?: boolean;
 };
 
-export type DataTableColumn = ColumnAttributes;
+export type DataTableColumn<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = ColumnAttributes<T>;
 
 interface DataTableProps<T extends Record<string, unknown>> {
   data: T[];
-  columns: DataTableColumn[];
+  columns: DataTableColumn<T>[];
   itemContent: DataTableItemContentCallback<T>;
   rememberScroll?: boolean;
   dynamicWidth?: boolean;
 }
 
-const DataTable = <T extends Record<string, unknown>>({
+type Sort = { index: number | undefined; direction: "asc" | "desc" };
+
+function getInitialSortBy<T extends Record<string, unknown>>(
+  columns: DataTableColumn<T>[]
+): Sort {
+  for (let i = 0; i < columns.length; i++) {
+    if (columns[i]?.initialSort) {
+      return { index: i, direction: columns[i]!.initialSort! };
+    }
+  }
+  return { index: undefined, direction: "asc" };
+}
+
+const DataTable = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>({
   data,
   itemContent,
   columns: rawColumns,
@@ -46,6 +66,10 @@ const DataTable = <T extends Record<string, unknown>>({
 }: DataTableProps<T>) => {
   const [isScrolling, setIsScrolling] = React.useState(false);
   const [scroll, setScroll] = React.useState<number | undefined>(undefined);
+  const [sortBy, setSortBy] = React.useState<Sort>(() =>
+    getInitialSortBy(rawColumns)
+  );
+  const initialSortBy = React.useRef(getInitialSortBy(rawColumns));
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -78,7 +102,7 @@ const DataTable = <T extends Record<string, unknown>>({
         width: "100%",
       } as const);
 
-  const columns: ColumnAttributes[] = React.useMemo(() => {
+  const columns: ColumnAttributes<T>[] = React.useMemo(() => {
     return rawColumns.map((v) => {
       if (typeof v === "string") {
         return { label: v };
@@ -87,10 +111,47 @@ const DataTable = <T extends Record<string, unknown>>({
     });
   }, [rawColumns]);
 
+  const sortedData = React.useMemo(() => {
+    const { index, direction } = sortBy;
+    // If the sort is the same as the initial sort, return the data as is
+    if (
+      index === undefined ||
+      (index === initialSortBy.current.index &&
+        direction === initialSortBy.current.direction)
+    ) {
+      return data;
+    }
+    // Copy the data to avoid mutating the original data
+    return [...data].sort((a, b) => {
+      if (columns[index]) {
+        const r = columns[index].sort?.(a, b) ?? 0;
+        return direction === "asc" ? r : -r;
+      }
+      return 0;
+    });
+  }, [data, sortBy, columns]);
+
+  function createSortHandler(newIndex: number) {
+    return () => {
+      setSortBy(({ index, direction }) => {
+        if (index === newIndex) {
+          return {
+            index,
+            direction: direction === "asc" ? "desc" : "asc",
+          };
+        }
+        return {
+          index: newIndex,
+          direction: "asc",
+        };
+      });
+    };
+  }
+
   return (
     <>
       <TableVirtuoso
-        data={data}
+        data={sortedData}
         context={{ isScrolling }}
         isScrolling={setIsScrolling}
         rangeChanged={(range) =>
@@ -99,14 +160,34 @@ const DataTable = <T extends Record<string, unknown>>({
         initialTopMostItemIndex={initialScrollTo || 0}
         fixedHeaderContent={() => (
           <TableRow>
-            {columns.map(({ label, grow, sx }, i) =>
+            {columns.map(({ label, grow, sx, sort }, i) =>
               grow ? (
                 <TableCell colSpan={2} key={i} sx={sx}>
-                  {label}
+                  {sort ? (
+                    <TableSortLabel
+                      active={sortBy.index === i}
+                      direction={sortBy.direction}
+                      onClick={createSortHandler(i)}
+                    >
+                      {label}
+                    </TableSortLabel>
+                  ) : (
+                    <>{label}</>
+                  )}
                 </TableCell>
               ) : (
                 <TableCell key={i} sx={sx}>
-                  {label}
+                  {sort ? (
+                    <TableSortLabel
+                      active={sortBy.index === i}
+                      direction={sortBy.direction}
+                      onClick={createSortHandler(i)}
+                    >
+                      {label}
+                    </TableSortLabel>
+                  ) : (
+                    <>{label}</>
+                  )}
                 </TableCell>
               )
             )}

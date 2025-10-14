@@ -9,11 +9,21 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
 import { DataTableContext, DataTableColumn } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
-import { getNamespaces } from "@/api/evedatacore-v2";
+import { getNamespaces, Namespace } from "@/api/evedatacore-v2";
 
-const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common },
-  { label: "Owner", width: columnWidths.address },
+const columns: DataTableColumn<Namespace>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    sort: (a, b) => a.name.localeCompare(b.name),
+    initialSort: "asc",
+  },
+  {
+    label: "Owner",
+    width: columnWidths.address,
+    sort: (a, b) =>
+      (a.ownerName ?? a.account).localeCompare(b.ownerName ?? b.account),
+  },
 ];
 
 const ExploreNamespaces: React.FC = () => {

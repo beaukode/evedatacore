@@ -7,10 +7,22 @@ import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import { DataTableContext } from "@/components/DataTable";
 import { DataTableColumn } from "@/components/DataTable";
+import { SolarSystem } from "@/api/stillness";
 
-const columns: DataTableColumn[] = [
-  { label: "Id", width: 120 },
-  { label: "Name", width: 400, grow: true },
+const columns: DataTableColumn<SolarSystem>[] = [
+  {
+    label: "Id",
+    width: 120,
+    sort: (a, b) => a.solarSystemId - b.solarSystemId,
+    initialSort: "asc",
+  },
+  {
+    label: "Name",
+    width: 400,
+    grow: true,
+    sort: (a, b) =>
+      a.solarSystemName.localeCompare(b.solarSystemName ?? "") ?? 0,
+  },
 ];
 
 const ExploreSolarsystems: React.FC = () => {
