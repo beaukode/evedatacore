@@ -35,7 +35,12 @@ const columns: DataTableColumn<Assembly>[] = [
     label: "Assembly",
     width: columnWidths.common,
     grow: true,
-    sort: (a, b) => a.name?.localeCompare(b.name ?? "") ?? 0,
+    sort: (a, b) => {
+      if (a.name && b.name) return a.name.localeCompare(b.name);
+      if (a.name) return -1;
+      if (b.name) return 1;
+      return a.id.localeCompare(b.id);
+    },
   },
   {
     label: "Owner",
