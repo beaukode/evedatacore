@@ -49,7 +49,7 @@ const columns: DataTableColumn<Assembly>[] = [
   },
   {
     label: "Solar system",
-    width: columnWidths.common,
+    width: columnWidths.solarSystem,
   },
   {
     label: "Anchored At",

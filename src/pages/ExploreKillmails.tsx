@@ -28,8 +28,8 @@ const columns: DataTableColumn<Kill>[] = [
     width: columnWidths.common,
     sort: (a, b) => a.victimName?.localeCompare(b.victimName ?? "") ?? 0,
   },
-  { label: "Loss Type", width: columnWidths.common / 2 },
-  { label: "Solar System", width: columnWidths.common / 2 },
+  { label: "Loss Type", width: columnWidths.solarSystem },
+  { label: "Solar System", width: columnWidths.solarSystem },
 ];
 
 const ExploreKillmails: React.FC = () => {

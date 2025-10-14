@@ -99,7 +99,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
         sort: (a, b) => a.ownerName?.localeCompare(b.ownerName ?? "") ?? 0,
       });
     if (!solarSystemId)
-      columns.push({ label: "Solar system", width: columnWidths.common });
+      columns.push({ label: "Solar system", width: columnWidths.solarSystem });
     columns.push({
       label: "Anchored At",
       width: columnWidths.datetime,

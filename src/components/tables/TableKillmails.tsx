@@ -73,13 +73,13 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
       },
       {
         label: "Loss Type",
-        width: columnWidths.common,
+        width: columnWidths.solarSystem,
       },
     ];
     if (!solarSystemId) {
       columns.push({
         label: "Solar System",
-        width: columnWidths.common,
+        width: columnWidths.solarSystem,
       });
     }
     return columns;
