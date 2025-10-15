@@ -8,7 +8,7 @@ import DataTable, {
 interface DataTableLayoutProps<T extends Record<string, unknown>>
   extends React.ComponentProps<typeof Paper> {
   title: string;
-  columns: DataTableColumn[];
+  columns: DataTableColumn<T>[];
   loading?: boolean;
   data: T[];
   itemContent: DataTableItemContentCallback<T>;

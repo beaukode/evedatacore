@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  TableCell,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-  Typography,
-  Tooltip,
-  Box,
-} from "@mui/material";
+import { TableCell, Typography, Tooltip, Box } from "@mui/material";
 import PrivateIcon from "@mui/icons-material/Lock";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -18,8 +9,11 @@ import ExternalLink from "@/components/ui/ExternalLink";
 import {
   getCharacterIdSystems,
   getNamespaceIdSystems,
+  System,
 } from "@/api/evedatacore-v2";
 import { useNotify } from "@/tools/useNotify";
+import { columnWidths } from "@/constants";
+import DataTable, { DataTableColumn } from "../DataTable";
 
 interface TableSystemsProps {
   namespace?: string;
@@ -71,54 +65,93 @@ const TableSystems: React.FC<TableSystemsProps> = ({
 
   const systems = query.data;
 
+  const columns: DataTableColumn<System>[] = React.useMemo(() => {
+    const columns: DataTableColumn<System>[] = [
+      {
+        label: "Name",
+        width: columnWidths.common,
+        sort: (a, b) => a.name.localeCompare(b.name),
+        initialSort: "asc",
+      },
+    ];
+
+    if (!hideNamespaceColumn) {
+      columns.push({
+        label: "Namespace",
+        width: columnWidths.common,
+        sort: (a, b) => a.namespace?.localeCompare(b.namespace ?? "") ?? 0,
+      });
+    }
+
+    columns.push({
+      label: "Contract",
+      width: columnWidths.address,
+      sort: (a, b) => a.contract.localeCompare(b.contract),
+    });
+    return columns;
+  }, [hideNamespaceColumn]);
+
+  const itemContent = React.useCallback(
+    (_: number, sys: System) => {
+      return (
+        <React.Fragment key={sys.id}>
+          <TableCell>
+            <Box display="flex" alignItems="center">
+              <ButtonSystem id={sys.id} name={sys.name} />
+              {!sys.publicAccess && privateIcon}
+            </Box>
+          </TableCell>
+          {!hideNamespaceColumn && (
+            <TableCell>
+              <ButtonNamespace id={sys.namespaceId} name={sys.namespace} />
+            </TableCell>
+          )}
+          <TableCell>
+            <ExternalLink
+              href={`https://explorer.pyropechain.com/address/${sys.contract}`}
+              title={sys.contract}
+            >
+              {sys.contract}
+            </ExternalLink>
+          </TableCell>
+        </React.Fragment>
+      );
+    },
+    [hideNamespaceColumn, privateIcon]
+  );
+
   return (
-    <PaperLevel1 title="Systems" loading={query.isFetching}>
+    <PaperLevel1
+      title="Systems"
+      loading={query.isFetching}
+      sx={{
+        overflowX: "auto",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
+      }}
+    >
       {!systems && <Typography variant="body1">&nbsp;</Typography>}
       {systems && (
         <>
-          {systems && systems.length === 0 && (
+          {systems.length === 0 && (
             <Typography variant="body1">None</Typography>
           )}
-          {systems && systems.length > 0 && (
-            <Table size="small" stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  {!hideNamespaceColumn && <TableCell>Namespace</TableCell>}
-                  <TableCell>Contract</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {systems.map((sys) => {
-                  return (
-                    <TableRow key={sys.id}>
-                      <TableCell>
-                        <Box display="flex" alignItems="center">
-                          <ButtonSystem id={sys.id} name={sys.name} />
-                          {!sys.publicAccess && privateIcon}
-                        </Box>
-                      </TableCell>
-                      {!hideNamespaceColumn && (
-                        <TableCell>
-                          <ButtonNamespace
-                            id={sys.namespaceId}
-                            name={sys.namespace}
-                          />
-                        </TableCell>
-                      )}
-                      <TableCell>
-                        <ExternalLink
-                          href={`https://explorer.pyropechain.com/address/${sys.contract}`}
-                          title={sys.contract}
-                        >
-                          {sys.contract}
-                        </ExternalLink>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+          {systems.length > 0 && (
+            <Box
+              flexGrow={1}
+              flexBasis={100}
+              height="100%"
+              minHeight={`min(50vh, ${37 + 50 * systems.length}px)`}
+              overflow="hidden"
+            >
+              <DataTable
+                data={systems}
+                columns={columns}
+                itemContent={itemContent}
+              />
+            </Box>
           )}
         </>
       )}

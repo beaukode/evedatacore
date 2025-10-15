@@ -11,15 +11,36 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { DataTableContext, DataTableColumn } from "@/components/DataTable";
 import ButtonGeneric from "@/components/buttons/ButtonGeneric";
 import { columnWidths } from "@/constants";
-import { getFunctions, GetFunctionsResponse } from "@/api/evedatacore-v2";
+import { getFunctions, Function } from "@/api/evedatacore-v2";
 import SelectOwner from "@/components/form/SelectOwner";
 import SelectNamespace from "@/components/form/SelectNamespace";
 
-const columns: DataTableColumn[] = [
-  { label: "Signature", width: 600, grow: true },
-  { label: "Namespace", width: columnWidths.common },
-  { label: "Owner", width: columnWidths.address },
-  { label: "System", width: columnWidths.common },
+const columns: DataTableColumn<Function>[] = [
+  {
+    label: "Signature",
+    width: 600,
+    grow: true,
+    sort: (a, b) => a.signature.localeCompare(b.signature),
+    initialSort: "asc",
+  },
+  {
+    label: "Namespace",
+    width: columnWidths.common,
+    sort: (a, b) => a.namespace?.localeCompare(b.namespace ?? "") ?? 0,
+  },
+  {
+    label: "Owner",
+    width: columnWidths.address,
+    sort: (a, b) =>
+      (a.ownerName ?? a.account ?? "").localeCompare(
+        b.ownerName ?? b.account ?? ""
+      ) ?? 0,
+  },
+  {
+    label: "System",
+    width: columnWidths.common,
+    sort: (a, b) => a.systemName?.localeCompare(b.systemName ?? "") ?? 0,
+  },
 ];
 
 const ExploreFunctions: React.FC = () => {
@@ -61,8 +82,7 @@ const ExploreFunctions: React.FC = () => {
   }, [query.data, search.owner, search.namespace, debouncedSearch.text]);
 
   const filterNamespace = React.useCallback(
-    (t: GetFunctionsResponse["items"][number]) =>
-      search.owner === "0" || t.account === search.owner,
+    (t: Function) => search.owner === "0" || t.account === search.owner,
     [search.owner]
   );
 

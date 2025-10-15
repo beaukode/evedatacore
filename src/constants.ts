@@ -103,4 +103,5 @@ export const columnWidths = {
   common: 300,
   address: 400,
   datetime: 210,
+  solarSystem: 150,
 };

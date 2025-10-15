@@ -9,14 +9,27 @@ import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import { filterInProps, tsToDateTime } from "@/tools";
 import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import { getKills } from "@/api/evedatacore-v2";
+import { getKills, Kill } from "@/api/evedatacore-v2";
 
-const columns: DataTableColumn[] = [
-  { label: "Date", width: columnWidths.datetime },
-  { label: "Killer", width: columnWidths.common },
-  { label: "Victim", width: columnWidths.common },
-  { label: "Loss Type", width: columnWidths.common / 2 },
-  { label: "Solar System", width: columnWidths.common / 2 },
+const columns: DataTableColumn<Kill>[] = [
+  {
+    label: "Date",
+    width: columnWidths.datetime,
+    sort: (a, b) => (a.killedAt ?? 0) - (b.killedAt ?? 0),
+    initialSort: "desc",
+  },
+  {
+    label: "Killer",
+    width: columnWidths.common,
+    sort: (a, b) => a.killerName?.localeCompare(b.killerName ?? "") ?? 0,
+  },
+  {
+    label: "Victim",
+    width: columnWidths.common,
+    sort: (a, b) => a.victimName?.localeCompare(b.victimName ?? "") ?? 0,
+  },
+  { label: "Loss Type", width: columnWidths.solarSystem },
+  { label: "Solar System", width: columnWidths.solarSystem },
 ];
 
 const ExploreKillmails: React.FC = () => {

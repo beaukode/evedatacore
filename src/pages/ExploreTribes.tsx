@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Box, TextField, TableCell } from "@mui/material";
-import { getTribes } from "@/api/evedatacore-v2";
+import { getTribes, Tribe } from "@/api/evedatacore-v2";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import useQuerySearch from "@/tools/useQuerySearch";
 import { filterInProps, tsToDateTime } from "@/tools";
@@ -10,10 +10,24 @@ import { columnWidths } from "@/constants";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import ButtonTribe from "@/components/buttons/ButtonTribe";
 
-const columns: DataTableColumn[] = [
-  { label: "Name", width: columnWidths.common, grow: true },
-  { label: "Members", width: 100 },
-  { label: "Founded At", width: columnWidths.datetime },
+const columns: DataTableColumn<Tribe>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.name?.localeCompare(b.name ?? "") ?? 0,
+  },
+  {
+    label: "Members",
+    width: 100,
+    sort: (a, b) => (a.memberCount ?? 0) - (b.memberCount ?? 0),
+  },
+  {
+    label: "Founded At",
+    width: columnWidths.datetime,
+    sort: (a, b) => (a.foundedAt ?? 0) - (b.foundedAt ?? 0),
+    initialSort: "desc",
+  },
 ];
 
 const ExploreTribes: React.FC = () => {

@@ -1,22 +1,31 @@
 import React from "react";
-import {
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Typography, TableCell, Box } from "@mui/material";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import ButtonNamespace from "@/components/buttons/ButtonNamespace";
-import { getCharacterIdNamespaces } from "@/api/evedatacore-v2";
+import { getCharacterIdNamespaces, Namespace } from "@/api/evedatacore-v2";
 import { useNotify } from "@/tools/useNotify";
+import { columnWidths } from "@/constants";
+import DataTable, { DataTableColumn } from "../DataTable";
 
 interface NamespacesProps {
   owner: string;
   onFetched?: () => void;
 }
+
+const columns: DataTableColumn<Namespace>[] = [
+  {
+    label: "Name",
+    width: columnWidths.common,
+    grow: true,
+    sort: (a, b) => a.name.localeCompare(b.name),
+    initialSort: "asc",
+  },
+  {
+    label: "Id",
+    width: 600,
+  },
+];
 
 const TableNamespaces: React.FC<NamespacesProps> = ({ owner, onFetched }) => {
   const query = usePaginatedQuery({
@@ -36,8 +45,29 @@ const TableNamespaces: React.FC<NamespacesProps> = ({ owner, onFetched }) => {
 
   const namespaces = query.data;
 
+  const itemContent = React.useCallback((_: number, ns: Namespace) => {
+    return (
+      <React.Fragment key={ns.id}>
+        <TableCell colSpan={2}>
+          <ButtonNamespace id={ns.id} name={ns.name} />
+        </TableCell>
+        <TableCell>{ns.id}</TableCell>
+      </React.Fragment>
+    );
+  }, []);
+
   return (
-    <PaperLevel1 title="Namespaces" loading={query.isFetching}>
+    <PaperLevel1
+      title="Namespaces"
+      loading={query.isFetching}
+      sx={{
+        overflowX: "auto",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
+      }}
+    >
       {!namespaces && <Typography variant="body1">&nbsp;</Typography>}
       {namespaces && (
         <>
@@ -45,26 +75,19 @@ const TableNamespaces: React.FC<NamespacesProps> = ({ owner, onFetched }) => {
             <Typography variant="body1">None</Typography>
           )}
           {namespaces.length > 0 && (
-            <Table size="small" stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Id</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {namespaces.map((ns) => {
-                  return (
-                    <TableRow key={ns.id}>
-                      <TableCell>
-                        <ButtonNamespace id={ns.id} name={ns.name} />
-                      </TableCell>
-                      <TableCell>{ns.id}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+            <Box
+              flexGrow={1}
+              flexBasis={100}
+              height="100%"
+              minHeight={`min(50vh, ${37 + 50 * namespaces.length}px)`}
+              overflow="hidden"
+            >
+              <DataTable
+                data={namespaces}
+                columns={columns}
+                itemContent={itemContent}
+              />
+            </Box>
           )}
         </>
       )}

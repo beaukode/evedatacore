@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCell, Typography } from "@mui/material";
+import { Box, TableCell, Typography } from "@mui/material";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
@@ -73,7 +73,13 @@ const TableLogbook: React.FC<TableLogbookProps> = ({ owner, enabled }) => {
     <PaperLevel1
       title="Logbook"
       loading={query.isFetching}
-      sx={{ overflowX: "auto" }}
+      sx={{
+        overflowX: "auto",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
+      }}
     >
       {!records && (
         <Typography variant="body1" ref={ref}>
@@ -86,13 +92,19 @@ const TableLogbook: React.FC<TableLogbookProps> = ({ owner, enabled }) => {
             <Typography variant="body1">None</Typography>
           )}
           {records.length > 0 && (
-            <div style={{ height: "50vh" }}>
+            <Box
+              flexGrow={1}
+              flexBasis={100}
+              height="100%"
+              minHeight={`min(50vh, ${37 + 33 * records.length}px)`}
+              overflow="hidden"
+            >
               <DataTable
                 data={records}
                 columns={columns}
                 itemContent={itemContent}
               />
-            </div>
+            </Box>
           )}
         </>
       )}

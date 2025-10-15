@@ -1,10 +1,6 @@
 import React from "react";
 import {
   TableCell,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
   Typography,
   Box,
   Alert,
@@ -21,9 +17,12 @@ import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import {
   getCharacterIdAssemblies,
   getSolarsystemIdAssemblies,
+  Assembly,
 } from "@/api/evedatacore-v2";
 import { assemblyTypeMap } from "@/api/mudsql";
 import { useNotify } from "@/tools/useNotify";
+import DataTable, { DataTableColumn } from "../DataTable";
+import { columnWidths } from "@/constants";
 
 interface TableAssembliesProps {
   owner?: string;
@@ -79,10 +78,84 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
     );
   }, [query.data, showUnanchored]);
 
+  const columns: DataTableColumn<Assembly>[] = React.useMemo(() => {
+    const columns: DataTableColumn<Assembly>[] = [
+      {
+        label: "Assembly",
+        width: columnWidths.common,
+        grow: true,
+        sort: (a, b) => {
+          if (a.name && b.name) return a.name.localeCompare(b.name);
+          if (a.name) return -1;
+          if (b.name) return 1;
+          return a.id.localeCompare(b.id);
+        },
+      },
+    ];
+    if (!owner)
+      columns.push({
+        label: "Owner",
+        width: columnWidths.common,
+        sort: (a, b) => a.ownerName?.localeCompare(b.ownerName ?? "") ?? 0,
+      });
+    if (!solarSystemId)
+      columns.push({ label: "Solar system", width: columnWidths.solarSystem });
+    columns.push({
+      label: "Anchored At",
+      width: columnWidths.datetime,
+      sort: (a, b) => (a.anchoredAt ?? 0) - (b.anchoredAt ?? 0),
+      initialSort: "desc",
+    });
+    return columns;
+  }, [owner, solarSystemId]);
+
+  const itemContent = React.useCallback(
+    (_: number, sa: Assembly) => {
+      return (
+        <React.Fragment key={sa.id}>
+          <TableCell colSpan={2}>
+            <Box display="flex" alignItems="center">
+              <DisplayAssemblyIcon
+                typeId={
+                  assemblyTypeMap[
+                    sa.assemblyType as keyof typeof assemblyTypeMap
+                  ]
+                }
+                stateId={sa.currentState}
+                sx={{ mr: 1 }}
+                tooltip
+              />
+              <ButtonAssembly id={sa.id} name={sa.name} />
+            </Box>
+          </TableCell>
+          {!owner && (
+            <TableCell>
+              <ButtonCharacter address={sa.account} name={sa.ownerName} />
+            </TableCell>
+          )}
+          {!solarSystemId && (
+            <TableCell>
+              <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
+            </TableCell>
+          )}
+          <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
+        </React.Fragment>
+      );
+    },
+    [owner, solarSystemId]
+  );
+
   return (
     <PaperLevel1
       title="Assemblies"
       loading={query.isFetching}
+      sx={{
+        overflowX: "auto",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
+      }}
       titleAdornment={
         <FormControlLabel
           control={
@@ -108,55 +181,19 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
             <Typography variant="body1">None</Typography>
           )}
           {assemblies.length > 0 && (
-            <Table size="small" stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Id</TableCell>
-                  {!owner && <TableCell width={180}>Owner</TableCell>}
-                  {!solarSystemId && (
-                    <TableCell width={250}>Solar system</TableCell>
-                  )}
-                  <TableCell width={250}>Anchored At</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {assemblies.map((sa) => {
-                  return (
-                    <TableRow key={sa.id}>
-                      <TableCell>
-                        <Box display="flex" alignItems="center">
-                          <DisplayAssemblyIcon
-                            typeId={
-                              assemblyTypeMap[
-                                sa.assemblyType as keyof typeof assemblyTypeMap
-                              ]
-                            }
-                            stateId={sa.currentState}
-                            sx={{ mr: 1 }}
-                            tooltip
-                          />
-                          <ButtonAssembly id={sa.id} name={sa.name} />
-                        </Box>
-                      </TableCell>
-                      {!owner && (
-                        <TableCell>
-                          <ButtonCharacter
-                            address={sa.account}
-                            name={sa.ownerName}
-                          />
-                        </TableCell>
-                      )}
-                      {!solarSystemId && (
-                        <TableCell>
-                          <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
-                        </TableCell>
-                      )}
-                      <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+            <Box
+              flexGrow={1}
+              flexBasis={100}
+              height="100%"
+              minHeight={`min(50vh, ${37 + 50 * assemblies.length}px)`}
+              overflow="hidden"
+            >
+              <DataTable
+                data={assemblies}
+                columns={columns}
+                itemContent={itemContent}
+              />
+            </Box>
           )}
         </>
       )}

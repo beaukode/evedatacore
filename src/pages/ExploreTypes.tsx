@@ -13,13 +13,32 @@ import ButtonItem from "@/components/buttons/ButtonItem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
 import { useTypesIndex } from "@/contexts/AppContext";
+import { IndexedType } from "@/tools/typesIndex";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 
-const columns: DataTableColumn[] = [
-  { label: "Id", width: 80 },
-  { label: "Name", width: 400, grow: true },
-  { label: "Category", width: 200 },
-  { label: "Group", width: 300 },
+const columns: DataTableColumn<IndexedType>[] = [
+  {
+    label: "Id",
+    width: 80,
+    sort: (a, b) => Number.parseInt(a.id, 10) - Number.parseInt(b.id, 10),
+  },
+  {
+    label: "Name",
+    width: 400,
+    grow: true,
+    sort: (a, b) => a.name.localeCompare(b.name ?? "") ?? 0,
+    initialSort: "asc",
+  },
+  {
+    label: "Category",
+    width: 200,
+    sort: (a, b) => a.categoryName.localeCompare(b.categoryName ?? "") ?? 0,
+  },
+  {
+    label: "Group",
+    width: 300,
+    sort: (a, b) => a.groupName.localeCompare(b.groupName ?? "") ?? 0,
+  },
 ];
 
 const ExploreTypes: React.FC = () => {
