@@ -95,6 +95,11 @@ export const ships: Record<string, Ship> = {
     fuel: 270585,
     fuelType: "SOF-40",
   },
+  Maul: {
+    mass: 548435920,
+    fuel: 24160,
+    fuelType: "SOF-40",
+  },
 } as const;
 
 export type ShipType = keyof typeof ships;
