@@ -35,7 +35,11 @@ import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
 import BasicListItem from "@/components/ui/BasicListItem";
 import { filterInProps, shorten } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
-import { getCharacters, GetCharactersResponse } from "@/api/evedatacore-v2";
+import {
+  getCharacters,
+  GetCharactersResponse,
+  getTribes,
+} from "@/api/evedatacore-v2";
 import { GateConfig, getGateConfig } from "../lib/getGateConfig";
 import { Assembly, configDiff, getConfigSystemId } from "../lib/utils";
 import { updateConfig } from "../lib/updateConfig";
@@ -110,16 +114,22 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
     return keyBy(queryCharacters.data || [], "id");
   }, [queryCharacters.data]);
 
-  const corporations = React.useMemo(() => {
-    const map = (queryCharacters.data || []).reduce(
-      (acc, c) => {
-        acc[c.tribeId ?? 1000167] = true;
-        return acc;
-      },
-      [] as Record<number, boolean>
-    );
-    return Object.keys(map).map(Number);
-  }, [queryCharacters.data]);
+  const queryTribes = usePaginatedQuery({
+    queryKey: ["Tribes"],
+    queryFn: async ({ pageParam }) => {
+      const r = await getTribes({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
+  });
+
+  const tribes = queryTribes.data || [];
+
+  const tribesById = React.useMemo(() => {
+    return keyBy(queryTribes.data || [], "id");
+  }, [queryTribes.data]);
 
   const diff = React.useMemo(() => {
     if (!config || !queryGateConfig.data) return;
@@ -211,31 +221,36 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
               </TableCell>
             </TableRow>
           ))}
-          {config.corporationsExceptions.map((id) => (
-            <TableRow key={id}>
-              <TableCell>Corporation #{id}</TableCell>
-              <TableCell align="right">
-                <IconButton
-                  color="primary"
-                  disabled={mutation.isPending}
-                  title="Remove"
-                  onClick={() => {
-                    setConfig((s) => {
-                      if (!s) return s;
-                      return {
-                        ...s,
-                        corporationsExceptions: s.corporationsExceptions.filter(
-                          (c) => c !== id
-                        ),
-                      };
-                    });
-                  }}
-                >
-                  <DeleteIcon fontSize="small" style={{ marginRight: 0 }} />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
+          {config.corporationsExceptions.map((id) => {
+            const tribe = tribesById[id];
+            if (!tribe) return null;
+            return (
+              <TableRow key={id}>
+                <TableCell>
+                  [{tribe.ticker}] {tribe.name}
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    color="primary"
+                    disabled={mutation.isPending}
+                    title="Remove"
+                    onClick={() => {
+                      setConfig((s) => {
+                        if (!s) return s;
+                        return {
+                          ...s,
+                          corporationsExceptions:
+                            s.corporationsExceptions.filter((c) => c !== id),
+                        };
+                      });
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" style={{ marginRight: 0 }} />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
       <Box sx={{ m: 2, display: "flex", alignItems: "center" }}>
@@ -299,9 +314,9 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
             label="Corporation"
           >
             <MenuItem value={0}>Select a corporation</MenuItem>
-            {corporations?.map((c) => (
-              <MenuItem key={c} value={c}>
-                {c}
+            {tribes?.map((t) => (
+              <MenuItem key={t.id} value={t.id}>
+                [{t.ticker}] {t.name}
               </MenuItem>
             ))}
           </Select>
