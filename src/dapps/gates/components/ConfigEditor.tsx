@@ -47,7 +47,7 @@ function filterOptions(
   options: Character[],
   state: FilterOptionsState<Character>
 ) {
-  const filtered = filterInProps(options, state.inputValue, [
+  const filtered = filterInProps(options, state.inputValue.toLowerCase(), [
     "name",
     "account",
   ]);
