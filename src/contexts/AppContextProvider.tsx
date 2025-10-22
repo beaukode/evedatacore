@@ -7,6 +7,11 @@ import ConditionalMount from "@/components/ui/ConditionalMount";
 import ConnectDialog from "@/components/web3/ConnectDialog";
 import { chainId, indexerBaseUrl, worldAddress } from "@/config";
 import useEventsTracking from "./useEventsTracking";
+import { Hex } from "viem";
+
+const impersonateAddress = import.meta.env.VITE_WEB3_IMPERSONATE as
+  | Hex
+  | undefined;
 
 interface AppContextProviderProps {
   children: React.ReactNode;
@@ -32,6 +37,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   const { pushEvent } = useEventsTracking();
 
   const account = useAccount();
+
   const publicClient = usePublicClient({ chainId });
   const { data: walletClient } = useWalletClient({ chainId });
 
@@ -51,7 +57,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   }, [publicClient, walletClient]);
 
   React.useEffect(() => {
-    const address = account.address;
+    const address = impersonateAddress ?? account.address;
     if (account.isConnected && address) {
       mudWeb3.characterGetId({ ownerAddress: address }).then((id) => {
         if (id) {
