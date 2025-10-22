@@ -10,6 +10,7 @@ import {
   InputLabel,
   List,
   MenuItem,
+  Paper,
   Select,
   Skeleton,
   Switch,
@@ -181,11 +182,16 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
       <Table size="small" stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell>Exception list</TableCell>
+            <TableCell>Characters exceptions</TableCell>
             <TableCell width={50}>&nbsp;</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
+          {config.charactersExceptions.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={2}>None</TableCell>
+            </TableRow>
+          )}
           {config.charactersExceptions.map((id) => (
             <TableRow key={id}>
               <TableCell>
@@ -221,39 +227,12 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
               </TableCell>
             </TableRow>
           ))}
-          {config.corporationsExceptions.map((id) => {
-            const tribe = tribesById[id];
-            if (!tribe) return null;
-            return (
-              <TableRow key={id}>
-                <TableCell>
-                  [{tribe.ticker}] {tribe.name}
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    color="primary"
-                    disabled={mutation.isPending}
-                    title="Remove"
-                    onClick={() => {
-                      setConfig((s) => {
-                        if (!s) return s;
-                        return {
-                          ...s,
-                          corporationsExceptions:
-                            s.corporationsExceptions.filter((c) => c !== id),
-                        };
-                      });
-                    }}
-                  >
-                    <DeleteIcon fontSize="small" style={{ marginRight: 0 }} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            );
-          })}
         </TableBody>
       </Table>
-      <Box sx={{ m: 2, display: "flex", alignItems: "center" }}>
+      <Paper
+        elevation={2}
+        sx={{ m: 2, p: 2, display: "flex", alignItems: "center" }}
+      >
         <Autocomplete
           options={characters}
           value={character}
@@ -302,18 +281,67 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
         >
           <AddIcon fontSize="small" style={{ marginRight: 0 }} />
         </IconButton>
-      </Box>
-      <Box sx={{ m: 2, display: "flex", alignItems: "center" }}>
+      </Paper>
+      <Table size="small" stickyHeader>
+        <TableHead>
+          <TableRow>
+            <TableCell>Tribes exceptions</TableCell>
+            <TableCell width={50}>&nbsp;</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {config.corporationsExceptions.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={2}>None</TableCell>
+            </TableRow>
+          )}
+          {config.corporationsExceptions.map((id) => {
+            const tribe = tribesById[id];
+            if (!tribe) return null;
+            return (
+              <TableRow key={id}>
+                <TableCell>
+                  [{tribe.ticker}] {tribe.name}
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    color="primary"
+                    disabled={mutation.isPending}
+                    title="Remove"
+                    onClick={() => {
+                      setConfig((s) => {
+                        if (!s) return s;
+                        return {
+                          ...s,
+                          corporationsExceptions:
+                            s.corporationsExceptions.filter((c) => c !== id),
+                        };
+                      });
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" style={{ marginRight: 0 }} />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+
+      <Paper
+        elevation={2}
+        sx={{ m: 2, p: 2, display: "flex", alignItems: "center" }}
+      >
         <FormControl variant="standard" fullWidth>
-          <InputLabel id="select-corporation-label">Corporation</InputLabel>
+          <InputLabel id="select-corporation-label">Tribe</InputLabel>
           <Select
             labelId="select-corporation-label"
             id="select-corporation"
             value={corporation}
             onChange={(e) => setCorporation(Number(e.target.value))}
-            label="Corporation"
+            label="Tribe"
           >
-            <MenuItem value={0}>Select a corporation</MenuItem>
+            <MenuItem value={0}>Select a tribe</MenuItem>
             {tribes?.map((t) => (
               <MenuItem key={t.id} value={t.id}>
                 [{t.ticker}] {t.name}
@@ -343,7 +371,7 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
         >
           <AddIcon fontSize="small" style={{ marginRight: 0 }} />
         </IconButton>
-      </Box>
+      </Paper>
       <Box sx={{ display: "flex", mx: 2, justifyContent: "flex-end" }}>
         <Button
           variant="contained"
