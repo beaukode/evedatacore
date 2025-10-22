@@ -183,8 +183,8 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
                   <Skeleton />
                 ) : (
                   <>
-                    {charactersById[id]?.name} [Corp:{" "}
-                    {charactersById[id]?.tribeId}]{" "}
+                    [{charactersById[id]?.tribeTicker}]{" "}
+                    {charactersById[id]?.name}{" "}
                     {shorten(charactersById[id]?.account)}
                   </>
                 )}
@@ -243,7 +243,7 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
           options={characters}
           value={character}
           getOptionLabel={(c) =>
-            `${c.name} [Corp: ${c.tribeId}] ${shorten(c.account)}`
+            `[${c.tribeTicker}] ${c.name} ${shorten(c.account)}`
           }
           isOptionEqualToValue={(option, value) => option.id === value.id}
           onChange={(_, newValue) => setCharacter(newValue)}
@@ -261,7 +261,7 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
             >
               {c.id === ""
                 ? `${c.name}`
-                : `${c.name} [Corp: ${c.tribeId}] ${shorten(c.account)}`}
+                : `[${c.tribeTicker}] ${c.name} ${shorten(c.account)}`}
             </li>
           )}
           disabled={queryCharacters.isFetching || queryCharacters.hasNextPage}
