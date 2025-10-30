@@ -103,7 +103,7 @@ const Index: React.FC = () => {
                   </TableCell>
                   <TableCell>{getGateDestination(gate)}</TableCell>
                   <TableCell>
-                    {isGateManaged(gate) ? (
+                    {isGateManaged(gate) && gate.datacoreGate ? (
                       <Typography variant="inherit">Managed</Typography>
                     ) : (
                       <Typography variant="inherit" color="warning">

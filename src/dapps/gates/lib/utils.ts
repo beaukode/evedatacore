@@ -1,9 +1,14 @@
 import { Hex, isHex } from "viem";
 import { difference } from "lodash-es";
-import { GateConfig } from "./getGateConfig";
 import { GetAssemblyIdResponse } from "@/api/evedatacore-v2";
 
 export type Assembly = GetAssemblyIdResponse;
+
+export type GateConfig = {
+  defaultRule: boolean;
+  corporationsExceptions: number[];
+  charactersExceptions: string[];
+};
 
 export function getDappUrl(): string {
   const VITE_DAPP_GATES_URL = import.meta.env.VITE_DAPP_GATES_URL;

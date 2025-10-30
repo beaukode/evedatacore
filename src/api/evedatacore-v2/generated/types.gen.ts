@@ -255,6 +255,12 @@ export type GetCharacterIdAssembliesResponse = {
     linkedGateId?: string | null;
     itemId?: number;
     typeId?: number;
+    datacoreGate?: {
+      defaultRule: boolean;
+      createdAt: number;
+      characters?: Array<string>;
+      tribes?: Array<number>;
+    };
   }>;
   nextKey?: string;
 };
@@ -947,6 +953,12 @@ export type GetAssemblyIdResponse = {
   linkedGateId?: string | null;
   itemId?: number;
   typeId?: number;
+  datacoreGate?: {
+    defaultRule: boolean;
+    createdAt: number;
+    characters?: Array<string>;
+    tribes?: Array<number>;
+  };
 };
 
 export type GetAssemblyIdError = {

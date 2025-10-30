@@ -39,7 +39,8 @@ export async function setupGate(
         callData: setDappURLCall,
       },
       {
-        systemId: eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
+        systemId:
+          eveworld.namespaces.evefrontier.systems.SmartGateSystem.systemId,
         callData: configureSmartGateCall,
       },
       {
