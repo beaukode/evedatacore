@@ -26,23 +26,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { keyBy } from "lodash-es";
-import {
-  useMudSql,
-  useMudWeb3,
-  usePushTrackingEvent,
-} from "@/contexts/AppContext";
+import { useMudWeb3, usePushTrackingEvent } from "@/contexts/AppContext";
 import { Web3ErrorAlert } from "@/components/web3/Web3ErrorAlert";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
 import BasicListItem from "@/components/ui/BasicListItem";
 import { filterInProps, shorten } from "@/tools";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import {
+  getAssemblyId,
   getCharacters,
   GetCharactersResponse,
   getTribes,
 } from "@/api/evedatacore-v2";
-import { GateConfig, getGateConfig } from "../lib/getGateConfig";
-import { Assembly, configDiff, getConfigSystemId } from "../lib/utils";
+import {
+  Assembly,
+  configDiff,
+  getConfigSystemId,
+  GateConfig,
+} from "../lib/utils";
 import { updateConfig } from "../lib/updateConfig";
 
 type Character = GetCharactersResponse["items"][number];
@@ -83,17 +84,24 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
   const [corporation, setCorporation] = React.useState<number>(0);
   const [config, setConfig] = React.useState<GateConfig>();
   const pushTrackingEvent = usePushTrackingEvent();
-  const mudSql = useMudSql();
   const mudWeb3 = useMudWeb3();
 
   const queryGateConfig = useQuery({
     queryKey: ["GatesDapp", "SmartgateConfig", gate.id],
-    queryFn: async () => getGateConfig(mudSql)(gate.id).then((r) => r ?? null),
+    queryFn: async () => {
+      const r = await getAssemblyId({ path: { id: gate.id } });
+      if (!r.data) return null;
+      return r.data.datacoreGate;
+    },
   });
 
   React.useEffect(() => {
     if (queryGateConfig.data) {
-      setConfig(queryGateConfig.data);
+      setConfig({
+        defaultRule: queryGateConfig.data.defaultRule,
+        corporationsExceptions: queryGateConfig.data.tribes || [],
+        charactersExceptions: queryGateConfig.data.characters || [],
+      });
     }
   }, [queryGateConfig.data]);
 
@@ -134,7 +142,14 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
 
   const diff = React.useMemo(() => {
     if (!config || !queryGateConfig.data) return;
-    return configDiff(queryGateConfig.data, config);
+    return configDiff(
+      {
+        defaultRule: queryGateConfig.data.defaultRule,
+        corporationsExceptions: queryGateConfig.data.tribes || [],
+        charactersExceptions: queryGateConfig.data.characters || [],
+      },
+      config
+    );
   }, [config, queryGateConfig.data]);
 
   const mutation = useMutation({
@@ -357,13 +372,12 @@ const ConfigEditor: React.FC<ConfigEditorProps> = ({ gate }) => {
             if (!corporation) return;
             setConfig((s) => {
               if (!s) return s;
-              if (s.corporationsExceptions.includes(corporation.toString()))
-                return s;
+              if (s.corporationsExceptions.includes(corporation)) return s;
               return {
                 ...s,
                 corporationsExceptions: [
                   ...s.corporationsExceptions,
-                  corporation.toString(),
+                  corporation,
                 ],
               };
             });
