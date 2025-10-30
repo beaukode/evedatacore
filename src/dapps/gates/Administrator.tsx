@@ -4,11 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import SolarsystemName from "@/components/ui/SolarsystemName";
-import { useMudSql } from "@/contexts/AppContext";
 import { shorten } from "@/tools";
 import BasicListItem from "@/components/ui/BasicListItem";
 import Error404 from "@/pages/Error404";
-import { getGateConfig } from "./lib/getGateConfig";
 import { isGateManaged } from "./lib/utils";
 import Setup from "./components/Setup";
 import ConfigEditor from "./components/ConfigEditor";
@@ -16,7 +14,6 @@ import { getAssemblyId } from "@/api/evedatacore-v2";
 
 const Administrator: React.FC = () => {
   const { id } = useParams();
-  const mudSql = useMudSql();
 
   const query = useQuery({
     queryKey: ["GatesDapp", "Smartgate", id],
@@ -43,14 +40,6 @@ const Administrator: React.FC = () => {
   });
 
   const destination = queryDestination.data;
-
-  const queryGateConfig = useQuery({
-    queryKey: ["GatesDapp", "SmartgateConfig", id],
-    queryFn: async () => getGateConfig(mudSql)(id || "").then((r) => r ?? null),
-    enabled: !!id,
-  });
-
-  const config = queryGateConfig.data;
 
   const title = gate
     ? gate.name || shorten(gate.id) || "Gate not found"
@@ -83,14 +72,13 @@ const Administrator: React.FC = () => {
                 )}
               </BasicListItem>
             </List>
-            {isGateManaged(gate) && config ? (
+            {isGateManaged(gate) && gate.datacoreGate ? (
               <ConfigEditor gate={gate} />
             ) : (
               <Setup
                 gate={gate}
                 onSuccess={() => {
                   query.refetch();
-                  queryGateConfig.refetch();
                 }}
               />
             )}
