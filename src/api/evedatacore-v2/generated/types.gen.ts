@@ -247,9 +247,6 @@ export type GetCharacterIdAssembliesResponse = {
     dappURL?: string;
     description?: string;
     networkNodeId?: string;
-    maxEnergyCapacity?: number;
-    energyProduced?: number;
-    totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
@@ -820,9 +817,6 @@ export type GetAssembliesTypeStateResponse = {
     dappURL?: string;
     description?: string;
     networkNodeId?: string;
-    maxEnergyCapacity?: number;
-    energyProduced?: number;
-    totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
@@ -871,18 +865,12 @@ export type GetAssemblyIdNetworkResponse = {
     dappURL?: string;
     description?: string;
     networkNodeId?: string;
-    maxEnergyCapacity?: number;
-    energyProduced?: number;
-    totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
     itemId?: number;
     typeId?: number;
   }>;
-  maxEnergyCapacity?: number;
-  energyProduced?: number;
-  totalReservedEnergy?: number;
   nextKey?: string;
 };
 
@@ -945,9 +933,6 @@ export type GetAssemblyIdResponse = {
   dappURL?: string;
   description?: string;
   networkNodeId?: string;
-  maxEnergyCapacity?: number;
-  energyProduced?: number;
-  totalReservedEnergy?: number;
   systemId?: string;
   maxDistance?: string;
   linkedGateId?: string | null;
@@ -1000,9 +985,6 @@ export type GetSmartgatesStateResponse = {
     dappURL?: string;
     description?: string;
     networkNodeId?: string;
-    maxEnergyCapacity?: number;
-    energyProduced?: number;
-    totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;
@@ -1421,9 +1403,6 @@ export type GetSolarsystemIdAssembliesResponse = {
     dappURL?: string;
     description?: string;
     networkNodeId?: string;
-    maxEnergyCapacity?: number;
-    energyProduced?: number;
-    totalReservedEnergy?: number;
     systemId?: string;
     maxDistance?: string;
     linkedGateId?: string | null;

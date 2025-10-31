@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  List,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +11,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { tsToDateTime } from "@/tools";
 import PaperLevel1 from "./ui/PaperLevel1";
-import BasicListItem from "./ui/BasicListItem";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import { getAssemblyIdNetwork } from "@/api/evedatacore-v2";
@@ -42,18 +40,6 @@ const NetworkNode: React.FC<NetworkNodeProps> = ({ id }) => {
         {unknown && <Typography variant="body1">Unknown</Typography>}
         {data && (
           <>
-            <List
-              sx={{ width: "100%", overflow: "hidden", pb: 2 }}
-              disablePadding
-            >
-              <BasicListItem
-                title="Energy (reserved / produced / max)"
-                disableGutters
-              >
-                {data.totalReservedEnergy} / {data.energyProduced} /{" "}
-                {data.maxEnergyCapacity}
-              </BasicListItem>
-            </List>
             <Table size="small" stickyHeader>
               <TableHead>
                 <TableRow>
