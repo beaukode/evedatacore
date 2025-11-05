@@ -139,4 +139,4 @@ const DisplayAssemblyIcon: React.FC<DisplayAssemblyIconProps> = React.memo(
   }
 );
 
-export default DisplayAssemblyIcon;
+export default React.memo(DisplayAssemblyIcon);
