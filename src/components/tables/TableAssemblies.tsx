@@ -19,7 +19,6 @@ import {
   getSolarsystemIdAssemblies,
   Assembly,
 } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@/api/mudsql";
 import { useNotify } from "@/tools/useNotify";
 import DataTable, { DataTableColumn } from "../DataTable";
 import { columnWidths } from "@/constants";
@@ -116,11 +115,7 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <DisplayAssemblyIcon
-                typeId={
-                  assemblyTypeMap[
-                    sa.assemblyType as keyof typeof assemblyTypeMap
-                  ]
-                }
+                typeId={sa.typeId}
                 stateId={sa.currentState}
                 sx={{ mr: 1 }}
                 tooltip

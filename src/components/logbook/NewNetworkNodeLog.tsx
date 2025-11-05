@@ -16,7 +16,7 @@ const NewNetworkNodeLog: React.FC<NewNetworkNodeLogProps> = ({ log }) => {
       &#x1F3D7;&#xFE0F; is building a{" "}
       <AssemblyLink
         id={log.assemblyId}
-        type="starbase"
+        type={log.assemblyTypeId}
         name={log.assemblyName}
       />{" "}
       in <SolarSystemLink id={log.solarSystemId} name={log.solarSystemName} />

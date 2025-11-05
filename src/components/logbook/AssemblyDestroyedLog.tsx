@@ -6,15 +6,6 @@ interface AssemblyDestroyedLogProps {
   log: LogBookRecord;
 }
 
-const smartAssembliesLabels = {
-  ["SG"]: "gate",
-  ["ST"]: "turret",
-  ["SSU"]: "storage unit",
-  ["NWN"]: "network node",
-  ["smart_hangar"]: "hangar",
-  ["manufacturer"]: "manufacturer",
-};
-
 const AssemblyDestroyedLog: React.FC<AssemblyDestroyedLogProps> = ({ log }) => {
   if (log.type !== "Notify:AssemblyDestroyed") {
     return null;
@@ -23,7 +14,7 @@ const AssemblyDestroyedLog: React.FC<AssemblyDestroyedLogProps> = ({ log }) => {
   const assemblyLink = (
     <AssemblyLink
       id={log.assemblyId}
-      type={smartAssembliesLabels[log.assemblyType]}
+      type={log.assemblyTypeId}
       name={log.assemblyName}
     />
   );

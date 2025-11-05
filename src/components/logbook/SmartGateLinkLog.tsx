@@ -14,7 +14,7 @@ const SmartGateLinkLog: React.FC<SmartGateLinkLogProps> = ({ log }) => {
   const assemblyLink = (
     <AssemblyLink
       id={log.assemblyId}
-      type="gate"
+      type={log.assemblyTypeId}
       name={log.assemblyName}
     />
   );
@@ -26,7 +26,7 @@ const SmartGateLinkLog: React.FC<SmartGateLinkLogProps> = ({ log }) => {
     const linkedAssemblyLink = (
       <AssemblyLink
         id={log.linkedGate.assemblyId}
-        type="gate"
+        type={log.linkedGate.assemblyTypeId}
         name={log.linkedGate.assemblyName}
       />
     );

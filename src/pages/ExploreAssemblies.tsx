@@ -14,16 +14,7 @@ import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import useQuerySearch from "@/tools/useQuerySearch";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { Assembly, getAssembliesTypeState } from "@/api/evedatacore-v2";
-import {
-  AssemblyType,
-  assemblyTypeMap,
-  assemblyTypeReverseMap,
-} from "@/api/mudsql";
-import {
-  columnWidths,
-  smartAssembliesTypes,
-  smartAssemblyStates,
-} from "@/constants";
+import { asmTypeLabels, columnWidths, smartAssemblyStates } from "@/constants";
 import { DataTableColumn, DataTableContext } from "@/components/DataTable";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import ButtonAssembly from "@/components/buttons/ButtonAssembly";
@@ -62,7 +53,7 @@ const columns: DataTableColumn<Assembly>[] = [
 const ExploreAssemblies: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
-    type: AssemblyType.NetworkNode.toString(),
+    type: "NWN",
     state: "3",
   });
 
@@ -71,9 +62,7 @@ const ExploreAssemblies: React.FC = () => {
     queryFn: async ({ pageParam }) => {
       const r = await getAssembliesTypeState({
         path: {
-          type: assemblyTypeReverseMap[
-            Number.parseInt(search.type, 10) as AssemblyType
-          ],
+          type: search.type,
           state: Number.parseInt(search.state, 10),
         },
         query: {
@@ -107,11 +96,7 @@ const ExploreAssemblies: React.FC = () => {
           <TableCell colSpan={2}>
             <Box display="flex" alignItems="center">
               <DisplayAssemblyIcon
-                typeId={
-                  assemblyTypeMap[
-                    sa.assemblyType as keyof typeof assemblyTypeMap
-                  ]
-                }
+                typeId={sa.typeId}
                 stateId={sa.currentState}
                 sx={{ mr: 1 }}
                 tooltip={!context.isScrolling}
@@ -183,7 +168,7 @@ const ExploreAssemblies: React.FC = () => {
             label="Type"
             fullWidth
           >
-            {Object.entries(smartAssembliesTypes).map(([id, name]) => (
+            {Object.entries(asmTypeLabels).map(([id, name]) => (
               <MenuItem value={`${id}`} key={id}>
                 {name}
               </MenuItem>
