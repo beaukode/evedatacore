@@ -226,7 +226,7 @@ const ExploreAssembly: React.FC = () => {
               onChange={() => query.refetch()}
             />
           )}
-          {data.assemblyType === "SSU" && (
+          {[88082, 88083, 77917].includes(data.typeId ?? 0) && (
             <SmartStorageInventory id={id} owner={owner} />
           )}
           {data.assemblyType === "NWN" && <NetworkNode id={id} />}
