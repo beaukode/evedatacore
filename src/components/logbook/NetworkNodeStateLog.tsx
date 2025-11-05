@@ -12,7 +12,11 @@ const NetworkNodeStateLog: React.FC<NetworkNodeStateLogProps> = ({ log }) => {
   }
 
   const assemblyLink = (
-    <AssemblyLink id={log.assemblyId} type="starbase" name={log.assemblyName} />
+    <AssemblyLink
+      id={log.assemblyId}
+      type={log.assemblyTypeId}
+      name={log.assemblyName}
+    />
   );
 
   const solarSystemLink = (

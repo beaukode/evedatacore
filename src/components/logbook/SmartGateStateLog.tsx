@@ -12,7 +12,11 @@ const SmartGateStateLog: React.FC<SmartGateStateLogProps> = ({ log }) => {
   }
 
   const assemblyLink = (
-    <AssemblyLink id={log.assemblyId} type="gate" name={log.assemblyName} />
+    <AssemblyLink
+      id={log.assemblyId}
+      type={log.assemblyTypeId}
+      name={log.assemblyName}
+    />
   );
   const solarSystemLink = (
     <SolarSystemLink id={log.solarSystemId} name={log.solarSystemName} />

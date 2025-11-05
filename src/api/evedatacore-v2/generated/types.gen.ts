@@ -399,13 +399,8 @@ export type GetCharacterIdLogbookResponse = {
         tribeTicker: string;
         assemblyId: string;
         assemblyName?: string;
-        assemblyType:
-          | "SG"
-          | "ST"
-          | "SSU"
-          | "NWN"
-          | "smart_hangar"
-          | "manufacturer";
+        assemblyType: string;
+        assemblyTypeId: number;
         solarSystemId: number;
         solarSystemName: string;
         type: "Notify:AssemblyDestroyed";
@@ -446,13 +441,8 @@ export type GetCharacterIdLogbookResponse = {
         tribeTicker: string;
         assemblyId: string;
         assemblyName?: string;
-        assemblyType:
-          | "SG"
-          | "ST"
-          | "SSU"
-          | "NWN"
-          | "smart_hangar"
-          | "manufacturer";
+        assemblyType: string;
+        assemblyTypeId: number;
         solarSystemId: number;
         solarSystemName: string;
         type: "Notify:NetworkNodeState";
@@ -467,13 +457,8 @@ export type GetCharacterIdLogbookResponse = {
         tribeTicker: string;
         assemblyId: string;
         assemblyName?: string;
-        assemblyType:
-          | "SG"
-          | "ST"
-          | "SSU"
-          | "NWN"
-          | "smart_hangar"
-          | "manufacturer";
+        assemblyType: string;
+        assemblyTypeId: number;
         solarSystemId: number;
         solarSystemName: string;
         type: "Notify:NewNetworkNode";
@@ -495,25 +480,15 @@ export type GetCharacterIdLogbookResponse = {
         tribeTicker: string;
         assemblyId: string;
         assemblyName?: string;
-        assemblyType:
-          | "SG"
-          | "ST"
-          | "SSU"
-          | "NWN"
-          | "smart_hangar"
-          | "manufacturer";
+        assemblyType: string;
+        assemblyTypeId: number;
         solarSystemId: number;
         solarSystemName: string;
         linkedGate?: {
           assemblyId: string;
           assemblyName?: string;
-          assemblyType:
-            | "SG"
-            | "ST"
-            | "SSU"
-            | "NWN"
-            | "smart_hangar"
-            | "manufacturer";
+          assemblyType: string;
+          assemblyTypeId: number;
         };
         linkedGateSolarSystem?: {
           solarSystemId: number;
@@ -537,25 +512,15 @@ export type GetCharacterIdLogbookResponse = {
         tribeTicker: string;
         assemblyId: string;
         assemblyName?: string;
-        assemblyType:
-          | "SG"
-          | "ST"
-          | "SSU"
-          | "NWN"
-          | "smart_hangar"
-          | "manufacturer";
+        assemblyType: string;
+        assemblyTypeId: number;
         solarSystemId: number;
         solarSystemName: string;
         linkedGate?: {
           assemblyId: string;
           assemblyName?: string;
-          assemblyType:
-            | "SG"
-            | "ST"
-            | "SSU"
-            | "NWN"
-            | "smart_hangar"
-            | "manufacturer";
+          assemblyType: string;
+          assemblyTypeId: number;
         };
         linkedGateSolarSystem?: {
           solarSystemId: number;
@@ -578,25 +543,15 @@ export type GetCharacterIdLogbookResponse = {
         tribeTicker: string;
         assemblyId: string;
         assemblyName?: string;
-        assemblyType:
-          | "SG"
-          | "ST"
-          | "SSU"
-          | "NWN"
-          | "smart_hangar"
-          | "manufacturer";
+        assemblyType: string;
+        assemblyTypeId: number;
         solarSystemId: number;
         solarSystemName: string;
         linkedGate?: {
           assemblyId: string;
           assemblyName?: string;
-          assemblyType:
-            | "SG"
-            | "ST"
-            | "SSU"
-            | "NWN"
-            | "smart_hangar"
-            | "manufacturer";
+          assemblyType: string;
+          assemblyTypeId: number;
         };
         linkedGateSolarSystem?: {
           solarSystemId: number;
