@@ -14,7 +14,6 @@ import PaperLevel1 from "./ui/PaperLevel1";
 import DisplayAssemblyIcon from "./DisplayAssemblyIcon";
 import ButtonAssembly from "./buttons/ButtonAssembly";
 import { getAssemblyIdNetwork } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@/api/mudsql";
 
 interface NetworkNodeProps {
   id: string;
@@ -54,11 +53,7 @@ const NetworkNode: React.FC<NetworkNodeProps> = ({ id }) => {
                       <TableCell>
                         <Box display="flex" alignItems="center">
                           <DisplayAssemblyIcon
-                            typeId={
-                              assemblyTypeMap[
-                                sa.assemblyType as keyof typeof assemblyTypeMap
-                              ]
-                            }
+                            typeId={sa.typeId}
                             stateId={sa.currentState}
                             sx={{ mr: 1 }}
                             tooltip

@@ -19,7 +19,6 @@ import DialogGateLink from "./dialogs/DialogGateLink";
 import ConditionalMount from "./ui/ConditionalMount";
 import ButtonWeb3Interaction from "./buttons/ButtonWeb3Interaction";
 import { getCharacterIdAssemblies } from "@/api/evedatacore-v2";
-import { assemblyTypeMap } from "@/api/mudsql";
 
 interface SmartGateOtherProps {
   owner: string;
@@ -127,11 +126,7 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <DisplayAssemblyIcon
-                        typeId={
-                          assemblyTypeMap[
-                            gate.assemblyType as keyof typeof assemblyTypeMap
-                          ]
-                        }
+                        typeId={gate.typeId}
                         stateId={gate.currentState}
                         sx={{ mr: 1 }}
                         tooltip

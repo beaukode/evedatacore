@@ -5,12 +5,11 @@ import { Box, Link, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { shorten, tsToDateTime } from "@/tools";
-import { assemblyTypeMap } from "@/api/mudsql";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
-import { smartAssembliesTypes, smartAssemblyStates } from "@/constants";
+import { asmTypeLabel, AssemblyTypeId, smartAssemblyStates } from "@/constants";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
 import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
@@ -43,16 +42,14 @@ const ExploreAssembly: React.FC = () => {
 
   const { name, state, owner } = React.useMemo(() => {
     if (!data) return { name: "...", owner: "0x0" as Hex };
-    const typeId =
-      assemblyTypeMap[data.assemblyType as keyof typeof assemblyTypeMap];
-    const type = smartAssembliesTypes[typeId] || "Unknown";
+    const label = asmTypeLabel[data.typeId as AssemblyTypeId] || "Unknown";
     const state =
       smartAssemblyStates[
         data.currentState as keyof typeof smartAssemblyStates
       ] || "Unknown";
     const owner = (data.account ?? "0x0") as Hex;
     return {
-      name: `${data.name || shorten(data.id)} [${type}]`,
+      name: `${data.name || shorten(data.id)} [${label}]`,
       state,
       owner,
     };

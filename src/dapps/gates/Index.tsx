@@ -17,7 +17,6 @@ import SolarsystemName from "@/components/ui/SolarsystemName";
 import DisplayAssemblyIcon from "@/components/DisplayAssemblyIcon";
 import { Assembly, isGateManaged } from "./lib/utils";
 import { getCharacterIdAssemblies } from "@/api/evedatacore-v2";
-import { AssemblyState, assemblyTypeMap } from "@/api/mudsql";
 
 const Index: React.FC = () => {
   const smartCharacter = useSmartCharacter();
@@ -45,8 +44,7 @@ const Index: React.FC = () => {
     return query.data.filter(
       (gate) =>
         gate.assemblyType === "SG" &&
-        (gate.currentState === AssemblyState.Online ||
-          gate.currentState === AssemblyState.Anchored)
+        (gate.currentState === 3 || gate.currentState === 2)
     );
   }, [query.data]);
   const gatesById = keyBy(gates, "id");
@@ -81,11 +79,7 @@ const Index: React.FC = () => {
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <DisplayAssemblyIcon
-                        typeId={
-                          assemblyTypeMap[
-                            gate.assemblyType as keyof typeof assemblyTypeMap
-                          ]
-                        }
+                        typeId={gate.typeId}
                         stateId={gate.currentState}
                         sx={{ mr: 1 }}
                         tooltip
