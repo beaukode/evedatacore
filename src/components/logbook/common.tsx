@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "@mui/material";
 import { NavLink } from "react-router";
+import { asmTypeLabel, AssemblyTypeId } from "@/constants";
 
 interface CharacterLinkProps {
   account: string;
@@ -54,7 +55,7 @@ export const SolarSystemLink: React.FC<SolarSystemLinkProps> = ({
 
 interface AssemblyLinkProps {
   id: string;
-  type: string;
+  type: number;
   name?: string;
 }
 
@@ -63,9 +64,10 @@ export const AssemblyLink: React.FC<AssemblyLinkProps> = ({
   name,
   type,
 }) => {
+  const typeLabel = asmTypeLabel[type as AssemblyTypeId] ?? "Unknown assembly";
   return (
     <Link component={NavLink} to={`/explore/assemblies/${id}`}>
-      {name ? `${type} ${name}` : type}
+      {name ? `${typeLabel} ${name}` : typeLabel}
     </Link>
   );
 };
