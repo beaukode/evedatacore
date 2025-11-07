@@ -124,11 +124,9 @@ const ExploreAssembly: React.FC = () => {
               <ButtonSolarsystem solarSystemId={data.solarSystemId} />
             </BasicListItem>
             <BasicListItem title="Location">
-              <Box sx={{ pl: 4 }}>
-                <span style={{ textWrap: "nowrap" }}>x: {data.x}</span>{" "}
-                <span style={{ textWrap: "nowrap" }}>y: {data.y}</span>{" "}
-                <span style={{ textWrap: "nowrap" }}>z: {data.z}</span>
-              </Box>
+              <span style={{ textWrap: "nowrap" }}>x: {data.x}</span>{" "}
+              <span style={{ textWrap: "nowrap" }}>y: {data.y}</span>{" "}
+              <span style={{ textWrap: "nowrap" }}>z: {data.z}</span>
             </BasicListItem>
             <BasicListItem
               title={
