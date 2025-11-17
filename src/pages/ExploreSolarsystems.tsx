@@ -2,44 +2,55 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { TextField, TableCell } from "@mui/material";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import DataTableLayout from "@/components/layouts/DataTableLayout";
-import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import { DataTableContext } from "@/components/DataTable";
 import { DataTableColumn } from "@/components/DataTable";
-import { SolarSystem } from "@/api/stillness";
+import { getSolarsystems, SolarSystem } from "@/api/evedatacore-v2";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
+import { filterInProps } from "@/tools";
+import ButtonGeneric from "@/components/buttons/ButtonGeneric";
 
 const columns: DataTableColumn<SolarSystem>[] = [
   {
     label: "Id",
     width: 120,
-    sort: (a, b) => a.solarSystemId - b.solarSystemId,
-    initialSort: "asc",
   },
   {
     label: "Name",
     width: 400,
     grow: true,
-    sort: (a, b) =>
-      a.solarSystemName.localeCompare(b.solarSystemName ?? "") ?? 0,
+  },
+  {
+    label: "Occupied L-Points",
+    width: 200,
+  },
+  {
+    label: "Total L-Points",
+    width: 200,
   },
 ];
 
 const ExploreSolarsystems: React.FC = () => {
-  const ssIndex = useSolarSystemsIndex();
-
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
 
+  const { data, isFetching } = usePaginatedQuery({
+    queryKey: ["Solarsystems"],
+    queryFn: async ({ pageParam }) => {
+      const r = await getSolarsystems({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
+    },
+    staleTime: 1000 * 60,
+  });
+
   const solarsystems = React.useMemo(() => {
-    if (!ssIndex) return [];
-    const ss = ssIndex.getById(debouncedSearch.text);
-    if (ss) {
-      return [ss];
-    }
-    return ssIndex.searchByName(debouncedSearch.text);
-  }, [debouncedSearch.text, ssIndex]);
+    if (!data) return [];
+    return filterInProps(data, debouncedSearch.text, ["id", "name"]);
+  }, [data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (
@@ -48,14 +59,18 @@ const ExploreSolarsystems: React.FC = () => {
       context: DataTableContext
     ) => {
       return (
-        <React.Fragment key={ss.solarSystemId}>
-          <TableCell>{ss.solarSystemId}</TableCell>
+        <React.Fragment key={ss.id}>
+          <TableCell>{ss.id}</TableCell>
           <TableCell colSpan={2}>
-            <ButtonSolarsystem
-              solarSystemId={ss.solarSystemId}
+            <ButtonGeneric
               fastRender={context.isScrolling}
-            />
+              to={`/explore/solarsystems/${ss.id}`}
+            >
+              {ss.name}
+            </ButtonGeneric>
           </TableCell>
+          <TableCell>{ss.lpoints.occupied}</TableCell>
+          <TableCell>{ss.lpoints.count}</TableCell>
         </React.Fragment>
       );
     },
@@ -69,8 +84,8 @@ const ExploreSolarsystems: React.FC = () => {
       <DataTableLayout
         title="Solar systems"
         columns={columns}
-        loading={!ssIndex}
-        data={solarsystems || []}
+        loading={isFetching}
+        data={solarsystems}
         itemContent={itemContent}
       >
         <TextField
