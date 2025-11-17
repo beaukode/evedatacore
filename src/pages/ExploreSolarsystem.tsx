@@ -57,6 +57,9 @@ const ExploreSolarsystem: React.FC = () => {
                     </span>
                   </Box>
                 </BasicListItem>
+                <BasicListItem title="L-Points">
+                  {data.lpoints.occupied} occupied / {data.lpoints.count} total
+                </BasicListItem>
               </List>
             )}
           </PaperLevel1>
