@@ -173,4 +173,5 @@ export const columnWidths = {
   address: 400,
   datetime: 210,
   solarSystem: 150,
+  lpoint: 100,
 };

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { filterInProps, tsToDateTime } from "@/tools";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
+import LPointLocation from "@/components/ui/LPointLocation";
 import useQuerySearch from "@/tools/useQuerySearch";
 import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { Assembly, getAssembliesTypeState } from "@/api/evedatacore-v2";
@@ -41,6 +42,10 @@ const columns: DataTableColumn<Assembly>[] = [
   {
     label: "Solar system",
     width: columnWidths.solarSystem,
+  },
+  {
+    label: "L-Point",
+    width: columnWidths.lpoint,
   },
   {
     label: "Anchored At",
@@ -119,6 +124,13 @@ const ExploreAssemblies: React.FC = () => {
             <ButtonSolarsystem
               solarSystemId={sa.solarSystemId}
               fastRender={context.isScrolling}
+            />
+          </TableCell>
+          <TableCell>
+            <LPointLocation
+              lpoint={sa.lpoint}
+              fastRender={context.isScrolling}
+              showDistance={sa.assemblyType !== "NWN"}
             />
           </TableCell>
           <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
