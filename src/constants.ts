@@ -175,3 +175,5 @@ export const columnWidths = {
   solarSystem: 150,
   lpoint: 100,
 };
+
+export const numberFormatter = new Intl.NumberFormat();

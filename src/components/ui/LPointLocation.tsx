@@ -1,6 +1,7 @@
 import React from "react";
 import { Tooltip } from "@mui/material";
 import { GetAssembliesTypeStateResponse } from "@/api/evedatacore-v2";
+import { numberFormatter } from "@/constants";
 
 type LPoint = GetAssembliesTypeStateResponse["items"][number]["lpoint"];
 
@@ -9,8 +10,6 @@ interface LPointLocationProps {
   fastRender?: boolean;
   showDistance?: boolean;
 }
-
-const formatter = new Intl.NumberFormat();
 
 const LPointLocation: React.FC<LPointLocationProps> = ({
   lpoint,
@@ -28,7 +27,7 @@ const LPointLocation: React.FC<LPointLocationProps> = ({
   }
   return (
     <Tooltip
-      title={`Distance to L-Point: ~${formatter.format(Number(lpoint.distance))} meters`}
+      title={`Distance to L-Point: ~${numberFormatter.format(Number(lpoint.distance))} meters`}
     >
       <span style={{ cursor: "default" }}>
         P{lpoint.planet}
