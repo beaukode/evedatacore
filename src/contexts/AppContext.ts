@@ -57,7 +57,7 @@ export function useShowConnectDialog() {
 
 export function useSolarSystemsIndex() {
   const query = useQuery({
-    queryKey: ["Solarsystems"],
+    queryKey: ["SolarsystemsIndex"],
     queryFn: async () =>
       getSolarsystems().then((r) => createSolarSystemsIndex(r.data)),
     staleTime: Infinity,

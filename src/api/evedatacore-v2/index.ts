@@ -10,6 +10,7 @@ import {
   GetTablesResponse,
   GetSystemsResponse,
   GetFunctionsResponse,
+  GetSolarsystemsResponse,
 } from "./generated";
 
 client.setConfig({
@@ -25,3 +26,4 @@ export type Namespace = GetNamespacesResponse["items"][number];
 export type Table = GetTablesResponse["items"][number];
 export type System = GetSystemsResponse["items"][number];
 export type Function = GetFunctionsResponse["items"][number];
+export type SolarSystem = GetSolarsystemsResponse["items"][number];

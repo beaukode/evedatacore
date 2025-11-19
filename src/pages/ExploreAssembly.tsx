@@ -1,7 +1,7 @@
 import React from "react";
 import { Hex } from "viem";
 import { Helmet } from "react-helmet";
-import { Box, Link, List } from "@mui/material";
+import { Box, Link, List, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { shorten, tsToDateTime } from "@/tools";
@@ -9,7 +9,12 @@ import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import ButtonCharacter from "@/components/buttons/ButtonCharacter";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import BasicListItem from "@/components/ui/BasicListItem";
-import { asmTypeLabel, AssemblyTypeId, smartAssemblyStates } from "@/constants";
+import {
+  asmTypeLabel,
+  AssemblyTypeId,
+  numberFormatter,
+  smartAssemblyStates,
+} from "@/constants";
 import SmartGateLink from "@/components/SmartGateLink";
 import SmartStorageInventory from "@/components/SmartStorageInventory";
 import DialogOnOffAssembly from "@/components/dialogs/DialogOnOffAssembly";
@@ -120,10 +125,33 @@ const ExploreAssembly: React.FC = () => {
             <BasicListItem title="Anchored at">
               {tsToDateTime(data.anchoredAt)}
             </BasicListItem>
-            <BasicListItem title="Solar system" disableGutters>
-              <ButtonSolarsystem solarSystemId={data.solarSystemId} />
+            <BasicListItem title="Location" disableGutters>
+              <ButtonSolarsystem solarSystemId={data.solarSystemId} />{" "}
+              {data.lpoint && (
+                <>
+                  <span style={{ textWrap: "nowrap" }}>
+                    P{data.lpoint?.planet}
+                    {data.lpoint?.lpoint}
+                  </span>
+                  {data.assemblyType !== "NWN" && (
+                    <Typography
+                      variant="caption"
+                      color="textPrimary"
+                      component="span"
+                      sx={{ textWrap: "nowrap" }}
+                    >
+                      {" "}
+                      at ~
+                      {numberFormatter.format(
+                        Number(data.lpoint?.distance)
+                      )}{" "}
+                      meters
+                    </Typography>
+                  )}
+                </>
+              )}
             </BasicListItem>
-            <BasicListItem title="Location">
+            <BasicListItem title="World coordinates">
               <span style={{ textWrap: "nowrap" }}>x: {data.x}</span>{" "}
               <span style={{ textWrap: "nowrap" }}>y: {data.y}</span>{" "}
               <span style={{ textWrap: "nowrap" }}>z: {data.z}</span>

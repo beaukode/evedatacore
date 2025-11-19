@@ -105,12 +105,17 @@ import type {
   GetTableIdData,
   GetTableIdError,
   GetTableIdResponse,
+  GetSolarsystemsError,
+  GetSolarsystemsResponse,
   GetSolarsystemIdAssembliesData,
   GetSolarsystemIdAssembliesError,
   GetSolarsystemIdAssembliesResponse,
   GetSolarsystemIdKillsData,
   GetSolarsystemIdKillsError,
   GetSolarsystemIdKillsResponse,
+  GetSolarsystemIdData,
+  GetSolarsystemIdError,
+  GetSolarsystemIdResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -544,6 +549,19 @@ export const getTableId = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const getSolarsystems = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSolarsystemsResponse,
+    GetSolarsystemsError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/solarsystems",
+  });
+};
+
 export const getSolarsystemIdAssemblies = <
   ThrowOnError extends boolean = false,
 >(
@@ -569,5 +587,18 @@ export const getSolarsystemIdKills = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/solarsystem/{id}/kills",
+  });
+};
+
+export const getSolarsystemId = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetSolarsystemIdData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    GetSolarsystemIdResponse,
+    GetSolarsystemIdError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/solarsystem/{id}",
   });
 };

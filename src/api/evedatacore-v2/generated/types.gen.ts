@@ -240,6 +240,11 @@ export type GetCharacterIdAssembliesResponse = {
     ownerName?: string;
     solarSystemId?: number;
     solarSystemName?: string;
+    lpoint?: {
+      distance: string;
+      planet: number;
+      lpoint: string;
+    };
     x?: string;
     y?: string;
     z?: string;
@@ -765,6 +770,11 @@ export type GetAssembliesTypeStateResponse = {
     ownerName?: string;
     solarSystemId?: number;
     solarSystemName?: string;
+    lpoint?: {
+      distance: string;
+      planet: number;
+      lpoint: string;
+    };
     x?: string;
     y?: string;
     z?: string;
@@ -813,6 +823,11 @@ export type GetAssemblyIdNetworkResponse = {
     ownerName?: string;
     solarSystemId?: number;
     solarSystemName?: string;
+    lpoint?: {
+      distance: string;
+      planet: number;
+      lpoint: string;
+    };
     x?: string;
     y?: string;
     z?: string;
@@ -881,6 +896,11 @@ export type GetAssemblyIdResponse = {
   ownerName?: string;
   solarSystemId?: number;
   solarSystemName?: string;
+  lpoint?: {
+    distance: string;
+    planet: number;
+    lpoint: string;
+  };
   x?: string;
   y?: string;
   z?: string;
@@ -933,6 +953,11 @@ export type GetSmartgatesStateResponse = {
     ownerName?: string;
     solarSystemId?: number;
     solarSystemName?: string;
+    lpoint?: {
+      distance: string;
+      planet: number;
+      lpoint: string;
+    };
     x?: string;
     y?: string;
     z?: string;
@@ -1323,6 +1348,26 @@ export type GetTableIdError = {
   message: string;
 };
 
+export type GetSolarsystemsResponse = {
+  items: Array<{
+    id: string;
+    name: string;
+    location: {
+      x: string;
+      y: string;
+      z: string;
+    };
+    lpoints: {
+      count: number;
+      occupied: number;
+    };
+  }>;
+};
+
+export type GetSolarsystemsError = {
+  message: string;
+};
+
 export type GetSolarsystemIdAssembliesData = {
   path: {
     /**
@@ -1351,6 +1396,11 @@ export type GetSolarsystemIdAssembliesResponse = {
     ownerName?: string;
     solarSystemId?: number;
     solarSystemName?: string;
+    lpoint?: {
+      distance: string;
+      planet: number;
+      lpoint: string;
+    };
     x?: string;
     y?: string;
     z?: string;
@@ -1403,5 +1453,32 @@ export type GetSolarsystemIdKillsResponse = {
 };
 
 export type GetSolarsystemIdKillsError = {
+  message: string;
+};
+
+export type GetSolarsystemIdData = {
+  path: {
+    /**
+     * GET /solarsystem/:id Parameter
+     */
+    id: string;
+  };
+};
+
+export type GetSolarsystemIdResponse = {
+  id: string;
+  name: string;
+  location: {
+    x: string;
+    y: string;
+    z: string;
+  };
+  lpoints: {
+    count: number;
+    occupied: number;
+  };
+};
+
+export type GetSolarsystemIdError = {
   message: string;
 };
