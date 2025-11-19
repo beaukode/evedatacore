@@ -14,19 +14,24 @@ const columns: DataTableColumn<SolarSystem>[] = [
   {
     label: "Id",
     width: 120,
+    sort: (a, b) => Number.parseInt(a.id, 10) - Number.parseInt(b.id, 10),
   },
   {
     label: "Name",
     width: 400,
     grow: true,
+    initialSort: "asc",
+    sort: (a, b) => a.name.localeCompare(b.name ?? ""),
   },
   {
     label: "Occupied L-Points",
-    width: 200,
+    width: 210,
+    sort: (a, b) => (a.lpoints.occupied ?? 0) - (b.lpoints.occupied ?? 0),
   },
   {
     label: "Total L-Points",
-    width: 200,
+    width: 210,
+    sort: (a, b) => (a.lpoints.count ?? 0) - (b.lpoints.count ?? 0),
   },
 ];
 
