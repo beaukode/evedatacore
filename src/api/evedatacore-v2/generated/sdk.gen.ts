@@ -105,6 +105,7 @@ import type {
   GetTableIdData,
   GetTableIdError,
   GetTableIdResponse,
+  GetSolarsystemsData,
   GetSolarsystemsError,
   GetSolarsystemsResponse,
   GetSolarsystemIdAssembliesData,
@@ -550,7 +551,7 @@ export const getTableId = <ThrowOnError extends boolean = false>(
 };
 
 export const getSolarsystems = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<GetSolarsystemsData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     GetSolarsystemsResponse,
