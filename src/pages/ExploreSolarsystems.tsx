@@ -6,9 +6,9 @@ import DataTableLayout from "@/components/layouts/DataTableLayout";
 import { DataTableContext } from "@/components/DataTable";
 import { DataTableColumn } from "@/components/DataTable";
 import { getSolarsystems, SolarSystem } from "@/api/evedatacore-v2";
+import usePaginatedQuery from "@/tools/usePaginatedQuery";
 import { filterInProps } from "@/tools";
 import ButtonGeneric from "@/components/buttons/ButtonGeneric";
-import { useQuery } from "@tanstack/react-query";
 
 const columns: DataTableColumn<SolarSystem>[] = [
   {
@@ -40,12 +40,16 @@ const ExploreSolarsystems: React.FC = () => {
     text: "",
   });
 
-  const { data, isFetching } = useQuery({
+  const { data, isFetching } = usePaginatedQuery({
     queryKey: ["Solarsystems"],
-    queryFn: async () => {
-      const r = await getSolarsystems();
-      return r.data?.items || [];
+    queryFn: async ({ pageParam }) => {
+      const r = await getSolarsystems({
+        query: { startKey: pageParam },
+      });
+      if (!r.data) return { items: [], nextKey: undefined };
+      return r.data;
     },
+    staleTime: 1000 * 60,
   });
 
   const solarsystems = React.useMemo(() => {

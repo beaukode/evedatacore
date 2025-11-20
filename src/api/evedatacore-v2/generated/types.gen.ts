@@ -1348,6 +1348,15 @@ export type GetTableIdError = {
   message: string;
 };
 
+export type GetSolarsystemsData = {
+  query?: {
+    /**
+     * GET /solarsystems Parameter
+     */
+    startKey?: string;
+  };
+};
+
 export type GetSolarsystemsResponse = {
   items: Array<{
     id: string;
@@ -1362,6 +1371,7 @@ export type GetSolarsystemsResponse = {
       occupied: number;
     };
   }>;
+  nextKey?: string;
 };
 
 export type GetSolarsystemsError = {
