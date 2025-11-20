@@ -20,7 +20,6 @@ const columns: DataTableColumn<SolarSystem>[] = [
     label: "Name",
     width: 400,
     grow: true,
-    initialSort: "asc",
     sort: (a, b) => a.name.localeCompare(b.name ?? ""),
   },
   {
