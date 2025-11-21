@@ -8,6 +8,7 @@ import {
   Switch,
 } from "@mui/material";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
+import LPointLocation from "@/components/ui/LPointLocation";
 import ButtonAssembly from "../buttons/ButtonAssembly";
 import DisplayAssemblyIcon from "../DisplayAssemblyIcon";
 import ButtonSolarsystem from "../buttons/ButtonSolarsystem";
@@ -100,6 +101,10 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
     if (!solarSystemId)
       columns.push({ label: "Solar system", width: columnWidths.solarSystem });
     columns.push({
+      label: "L-Point",
+      width: columnWidths.lpoint,
+    });
+    columns.push({
       label: "Anchored At",
       width: columnWidths.datetime,
       sort: (a, b) => (a.anchoredAt ?? 0) - (b.anchoredAt ?? 0),
@@ -133,6 +138,12 @@ const TableAssemblies: React.FC<TableAssembliesProps> = ({
               <ButtonSolarsystem solarSystemId={sa.solarSystemId} />
             </TableCell>
           )}
+          <TableCell>
+            <LPointLocation
+              lpoint={sa.lpoint}
+              showDistance={sa.assemblyType !== "NWN"}
+            />
+          </TableCell>
           <TableCell>{tsToDateTime(sa.anchoredAt)}</TableCell>
         </React.Fragment>
       );
