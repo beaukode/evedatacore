@@ -50,7 +50,7 @@ const Menu: React.FC = () => {
             text="Calculate"
             icon={<CalculateIcon />}
           />
-          <MenuItem to="/dev/web3" text="Dev" icon={<DevIcon />} />
+          <MenuItem to="/dev" text="Dev" icon={<DevIcon />} />
           <MenuItem
             to="https://discord.gg/Jv4B5dJpez"
             text="Discord"

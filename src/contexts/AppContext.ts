@@ -2,7 +2,6 @@ import React from "react";
 import { Hex } from "viem";
 import { getSolarsystems, getTypes } from "@/api/stillness";
 import { createSolarSystemsIndex } from "@/tools/solarSystemsIndex";
-import { MudSqlClient } from "@/api/mudsql";
 import { useQuery } from "@tanstack/react-query";
 import { createTypesIndex } from "@/tools/typesIndex";
 import { MudWeb3Client } from "@/api/mudweb3";
@@ -21,7 +20,6 @@ export type SmartCharacter =
     };
 
 interface AppContextProps {
-  mudSql: MudSqlClient;
   mudWeb3: MudWeb3Client;
   showConnectDialog: () => void;
   pushTrackingEvent: (key: string) => void;
@@ -38,11 +36,6 @@ export function useAppContext() {
     throw new Error("useAppContext must be used within an AppContextProvider");
   }
   return context;
-}
-
-export function useMudSql() {
-  const { mudSql } = useAppContext();
-  return mudSql;
 }
 
 export function useMudWeb3() {

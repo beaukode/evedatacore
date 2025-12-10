@@ -12,5 +12,6 @@ export const web3Config = import.meta.env.VITE_APP_USE_ANVIL === "true"
   : web3ConfigProd;
 
 export const chainId = web3Config.chainId;
-export const indexerBaseUrl = web3Config.indexerBaseUrl;
 export const worldAddress = web3Config.worldAddress;
+export const explorerBaseUrl = web3Config.explorerBaseUrl;
+export const web3NetworkName = web3Config.web3NetworkName;
