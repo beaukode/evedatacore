@@ -15,6 +15,7 @@ import ExternalLink from "@/components/ui/ExternalLink";
 import ButtonSystem from "@/components/buttons/ButtonSystem";
 import { columnWidths } from "@/constants";
 import { getSystems, System } from "@/api/evedatacore-v2";
+import { explorerBaseUrl } from "@/config";
 
 const columns: DataTableColumn<System>[] = [
   {
@@ -126,7 +127,7 @@ const ExploreSystems: React.FC = () => {
           </TableCell>
           <TableCell>
             <ExternalLink
-              href={`https://explorer.pyropechain.com/address/${sys.contract}`}
+              href={`${explorerBaseUrl}/address/${sys.contract}`}
               title={sys.contract}
             >
               {sys.contract}

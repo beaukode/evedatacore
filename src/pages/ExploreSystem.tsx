@@ -70,7 +70,7 @@ const ExploreSystem: React.FC = () => {
                 <BasicListItem title="Contract">{data.contract}</BasicListItem>
                 <BasicListItem title="Contract link">
                   <ExternalLink
-                    href={`https://explorer.pyropechain.com/address/${data.contract}`}
+                    href={`${explorerBaseUrl}/address/${data.contract}`}
                     title={data.contract}
                   />
                 </BasicListItem>
