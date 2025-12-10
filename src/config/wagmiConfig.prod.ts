@@ -1,10 +1,10 @@
 import { http } from "viem";
-import { pyrope } from "@latticexyz/common/chains";
+import { optimismSepolia } from "viem/chains";
 import { createConfig } from "wagmi";
 import { coinbaseWallet, metaMask, safe, injected } from "wagmi/connectors";
 
 const transports = {
-  [pyrope.id]: http(),
+  [optimismSepolia.id]: http(),
 };
 
 export const prodWagmiConfig = createConfig({
@@ -25,11 +25,11 @@ export const prodWagmiConfig = createConfig({
   multiInjectedProviderDiscovery: false,
   chains: [
     {
-      ...pyrope,
+      ...optimismSepolia,
     },
   ],
   transports,
   pollingInterval: {
-    [pyrope.id]: 2000,
+    [optimismSepolia.id]: 2000,
   },
 });

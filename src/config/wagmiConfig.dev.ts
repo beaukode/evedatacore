@@ -1,14 +1,11 @@
 import { http } from "viem";
-import { anvil } from "viem/chains";
-import { garnet, redstone, pyrope } from "@latticexyz/common/chains";
+import { anvil, optimismSepolia } from "viem/chains";
 import { createConfig } from "wagmi";
 import { metaMask, coinbaseWallet, safe, injected } from "wagmi/connectors";
 
 const transports = {
   [anvil.id]: http(),
-  [garnet.id]: http(),
-  [redstone.id]: http(),
-  [pyrope.id]: http(),
+  [optimismSepolia.id]: http(),
 };
 
 export const devWagmiConfig = createConfig({
@@ -29,31 +26,7 @@ export const devWagmiConfig = createConfig({
   multiInjectedProviderDiscovery: false,
   chains: [
     {
-      ...redstone,
-      blockExplorers: {
-        ...redstone.blockExplorers,
-        worldsExplorer: {
-          name: "MUD Worlds Explorer",
-          url: "https://explorer.mud.dev/redstone/worlds",
-        },
-      },
-      iconUrl:
-        "https://pbs.twimg.com/profile_images/1724553277147131904/cdma6E3g_400x400.jpg",
-    },
-    {
-      ...garnet,
-      blockExplorers: {
-        ...garnet.blockExplorers,
-        worldsExplorer: {
-          name: "MUD Worlds Explorer",
-          url: "https://explorer.mud.dev/garnet/worlds",
-        },
-      },
-      iconUrl:
-        "https://explorer.garnetchain.com/assets/configs/network_icon.svg",
-    },
-    {
-      ...pyrope,
+      ...optimismSepolia,
     },
     {
       ...anvil,
@@ -73,7 +46,6 @@ export const devWagmiConfig = createConfig({
   transports,
   pollingInterval: {
     [anvil.id]: 2000,
-    [garnet.id]: 2000,
-    [redstone.id]: 2000,
+    [optimismSepolia.id]: 2000,
   },
 });

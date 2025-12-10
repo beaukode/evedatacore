@@ -14,6 +14,7 @@ import {
 import { useNotify } from "@/tools/useNotify";
 import { columnWidths } from "@/constants";
 import DataTable, { DataTableColumn } from "../DataTable";
+import { explorerBaseUrl } from "@/config";
 
 interface TableSystemsProps {
   namespace?: string;
@@ -108,7 +109,7 @@ const TableSystems: React.FC<TableSystemsProps> = ({
           )}
           <TableCell>
             <ExternalLink
-              href={`https://explorer.pyropechain.com/address/${sys.contract}`}
+              href={`${explorerBaseUrl}/address/${sys.contract}`}
               title={sys.contract}
             >
               {sys.contract}

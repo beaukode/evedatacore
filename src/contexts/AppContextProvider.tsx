@@ -1,11 +1,10 @@
 import React from "react";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { createMudSqlClient } from "@/api/mudsql";
 import { createMudWeb3Client } from "@/api/mudweb3";
 import { AppContext, SmartCharacter } from "./AppContext";
 import ConditionalMount from "@/components/ui/ConditionalMount";
 import ConnectDialog from "@/components/web3/ConnectDialog";
-import { chainId, indexerBaseUrl, worldAddress } from "@/config";
+import { chainId, worldAddress } from "@/config";
 import useEventsTracking from "./useEventsTracking";
 import { Hex } from "viem";
 
@@ -25,15 +24,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     isConnected: false,
     isConnecting: true,
   });
-  const mudSql = React.useMemo(
-    () =>
-      createMudSqlClient({
-        indexerBaseUrl,
-        worldAddress,
-        debugSql: import.meta.env.VITE_DEBUG_SQL === "true",
-      }),
-    []
-  );
+
   const { pushEvent } = useEventsTracking();
 
   const account = useAccount();
@@ -106,7 +97,6 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
       </ConditionalMount>
       <AppContext.Provider
         value={{
-          mudSql,
           mudWeb3,
           smartCharacter,
           showConnectDialog: () => setShowConnectDialog(true),

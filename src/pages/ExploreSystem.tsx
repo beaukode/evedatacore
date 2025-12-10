@@ -11,6 +11,7 @@ import BasicListItem from "@/components/ui/BasicListItem";
 import ExternalLink from "@/components/ui/ExternalLink";
 import TableFunctions from "@/components/tables/TableFunctions";
 import { getSystemId } from "@/api/evedatacore-v2";
+import { explorerBaseUrl } from "@/config";
 
 const ExploreSystem: React.FC = () => {
   const { id } = useParams();
@@ -70,7 +71,7 @@ const ExploreSystem: React.FC = () => {
                 <BasicListItem title="Contract">{data.contract}</BasicListItem>
                 <BasicListItem title="Contract link">
                   <ExternalLink
-                    href={`https://explorer.pyropechain.com/address/${data.contract}`}
+                    href={`${explorerBaseUrl}/address/${data.contract}`}
                     title={data.contract}
                   />
                 </BasicListItem>
