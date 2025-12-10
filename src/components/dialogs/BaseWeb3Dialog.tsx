@@ -16,7 +16,7 @@ import { isWeb3TransactionError, Web3TransactionError } from "@/api/mudweb3";
 import ExternalLink from "../ui/ExternalLink";
 import { shorten } from "@/tools";
 import { useShowConnectDialog } from "@/contexts/AppContext";
-import { chainId, explorerBaseUrl } from "@/config";
+import { chainId, explorerBaseUrl, web3NetworkName } from "@/config";
 
 interface BaseWeb3DialogProps {
   open: boolean;
@@ -93,7 +93,7 @@ const BaseWeb3Dialog: React.FC<BaseWeb3DialogProps> = ({
               {state === "connect" &&
                 "This action require you to connect your wallet."}
               {state === "chain" &&
-                "Your wallet is connected to the wrong network, please switch to pyrope."}
+                `Your wallet is connected to the wrong network, please switch to ${web3NetworkName}.`}
               {state === "owner" && "You do not seem to be the owner."}
               {state === "address" &&
                 "Your current address do not match the owner, please switch the matching account."}
