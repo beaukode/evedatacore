@@ -18,15 +18,7 @@ const Home: React.FC = () => {
         Welcome to EVE Datacore website, a collection of tools and data for the
         game EVE Frontier. The game is actually in alpha test and take place in
         a large space universe like EVE Online, but with a different gameplay.
-        The game empowers players to shape the world using the{" "}
-        <ExternalLink title="Redstone blockchain" href="https://redstone.xyz/">
-          Redstone blockchain
-        </ExternalLink>{" "}
-        (Actually{" "}
-        <ExternalLink title="Pyrope testnet" href="https://pyropechain.com/">
-          Pyrope testnet
-        </ExternalLink>{" "}
-        during the alpha).
+        The game empowers players to shape the world using the blockchain.
         <br />
         Visit the website for more informations:{" "}
         <ExternalLink
