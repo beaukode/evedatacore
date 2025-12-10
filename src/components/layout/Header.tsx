@@ -59,7 +59,7 @@ const Header: React.FC = () => {
             </Button>
             <Button
               startIcon={<DevIcon />}
-              to="/dev/web3"
+              to="/dev"
               component={NavLink}
               sx={{ m: 1, fontFamily: "Major Mono Display" }}
               variant={
