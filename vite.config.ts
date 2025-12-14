@@ -21,6 +21,10 @@ export default defineConfig({
         target: "https://evedataco.re/",
         changeOrigin: true,
       },
+      "/static": {
+        target: "https://main.eve.beaukode.net/",
+        changeOrigin: true,
+      },
       "/api": {
         target: process.env.USE_LOCAL_API
           ? "http://localhost:3000/"
