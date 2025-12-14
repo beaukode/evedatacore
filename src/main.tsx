@@ -70,6 +70,36 @@ const theme = createTheme({
         },
       },
     },
+    MuiAccordion: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          "&.Mui-expanded": {
+            marginBottom: theme.spacing(0.5),
+            marginTop: theme.spacing(0.5),
+          },
+        }),
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          // borderTop: `2px solid ${theme.palette.divider}`,
+          borderBottom: `2px dashed ${theme.palette.divider}`,
+          "&.Mui-expanded": {
+            minHeight: 0,
+          },
+        }),
+        content: ({ theme }) => ({
+          "&.Mui-expanded": {
+            marginBottom: theme.spacing(1),
+            marginTop: theme.spacing(1),
+          },
+        }),
+        expandIconWrapper: ({ theme }) => ({
+          color: theme.palette.primary.main,
+        }),
+      },
+    },
   },
   typography: {
     fontFamily: "monospace",

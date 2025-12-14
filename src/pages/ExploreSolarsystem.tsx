@@ -9,6 +9,7 @@ import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import { getSolarsystemId } from "@/api/evedatacore-v2";
 import { useQuery } from "@tanstack/react-query";
+import SystemNeighborsMap from "@/components/maps/SystemNeighborsMap";
 
 const ExploreSolarsystem: React.FC = () => {
   const { id } = useParams();
@@ -36,7 +37,7 @@ const ExploreSolarsystem: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <Grid2 container spacing={2}>
+      {/* <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, sm: 6 }}>
           <PaperLevel1 title={title} loading={query.isFetching} backButton>
             {data && (
@@ -87,7 +88,8 @@ const ExploreSolarsystem: React.FC = () => {
             </PaperLevel1>
           )}
         </Grid2>
-      </Grid2>
+      </Grid2> */}
+      <SystemNeighborsMap systemId={id} />
       <TableAssemblies solarSystemId={id} />
       <TableKillmails solarSystemId={id} />
     </Box>
