@@ -22,10 +22,11 @@ import DistanceIcon from "@mui/icons-material/Straighten";
 import LPointIcon from "@mui/icons-material/Hub";
 import PlanetIcon from "@mui/icons-material/Public";
 import ColorIcon from "@mui/icons-material/Square";
-
-type ToolKey = "select" | "routing" | "wip";
+import { DisplayKey, ToolKey } from "./common";
 
 interface SystemNeighborsMapDrawerProps {
+  display: DisplayKey;
+  onDisplayChange: (display: DisplayKey) => void;
   tool: ToolKey;
   onToolChange: (tool: ToolKey) => void;
 }
@@ -33,12 +34,25 @@ interface SystemNeighborsMapDrawerProps {
 const SystemNeighborsMapDrawer: React.FC<SystemNeighborsMapDrawerProps> = ({
   tool,
   onToolChange,
+  display,
+  onDisplayChange,
 }) => {
+  const handleDisplayChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newDisplay: DisplayKey | null
+  ) => {
+    if (newDisplay) {
+      onDisplayChange(newDisplay);
+    }
+  };
+
   const handleToolChange = (
     _: React.MouseEvent<HTMLElement>,
-    newTool: ToolKey
+    newTool: ToolKey | null
   ) => {
-    onToolChange(newTool);
+    if (newTool) {
+      onToolChange(newTool);
+    }
   };
 
   return (
@@ -49,18 +63,18 @@ const SystemNeighborsMapDrawer: React.FC<SystemNeighborsMapDrawerProps> = ({
         </AccordionSummary>
         <AccordionDetails sx={{ textAlign: "center" }}>
           <ToggleButtonGroup
-            value={tool}
-            onChange={handleToolChange}
+            value={display}
+            onChange={handleDisplayChange}
             size="small"
             exclusive
           >
-            <ToggleButton value="select" title="Distances">
+            <ToggleButton value="distances" title="Distances">
               <DistanceIcon />
             </ToggleButton>
-            <ToggleButton value="routing" title="L-Points">
+            <ToggleButton value="lpoints" title="L-Points">
               <LPointIcon />
             </ToggleButton>
-            <ToggleButton value="wip" title="Planets">
+            <ToggleButton value="planets" title="Planets">
               <PlanetIcon />
             </ToggleButton>
           </ToggleButtonGroup>
@@ -96,7 +110,13 @@ const SystemNeighborsMapDrawer: React.FC<SystemNeighborsMapDrawerProps> = ({
         <AccordionDetails>
           <FormControl sx={{ my: 1 }} fullWidth>
             <InputLabel id="color-label">Color</InputLabel>
-            <Select labelId="color-label" label="Color" size="small" fullWidth>
+            <Select
+              labelId="color-label"
+              label="Color"
+              size="small"
+              value="default"
+              fullWidth
+            >
               <MenuItem value="default">
                 <ListItemIcon>
                   <ColorIcon fontSize="small" color="primary" />
