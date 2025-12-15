@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import React from "react";
 
 type TextNodeProps = {
@@ -7,12 +7,13 @@ type TextNodeProps = {
   onClick?: () => void;
   onMouseOver?: () => void;
   onMouseLeave?: () => void;
+  sx?: SxProps;
   children: React.ReactNode;
   center?: boolean;
 };
 
 const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
-  ({ x, y, onClick, onMouseOver, onMouseLeave, children, center }, ref) => {
+  ({ x, y, onClick, onMouseOver, onMouseLeave, children, center, sx }, ref) => {
     return (
       <>
         <Box
@@ -31,6 +32,7 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
             borderRadius: "10px",
             backgroundColor: center ? "background.default" : "background.paper",
             cursor: "default",
+            ...sx,
           }}
           onClick={onClick}
           onMouseOver={onMouseOver}

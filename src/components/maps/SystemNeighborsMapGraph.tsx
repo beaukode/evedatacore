@@ -2,33 +2,14 @@ import React from "react";
 import * as d3 from "d3-force";
 import { keyBy } from "lodash-es";
 import TextNode from "./nodes/TextNode";
-import InternalLink from "../ui/InternalLink";
-
-export type GraphNode = {
-  id: string;
-  d: number;
-  n: number;
-};
-
-export type GraphNodeAttributes = {
-  id: string;
-  label: string;
-  text: string;
-  isCenter: boolean;
-  isSelected: boolean;
-};
-
-export type GraphConnnection = {
-  source: string;
-  target: string;
-};
+import { GraphConnnection, GraphNode, NodeAttributes } from "./common";
 
 interface SystemNeighborsMapGraphProps {
   nodes: GraphNode[];
-  nodesAttributes: Record<string, GraphNodeAttributes>;
+  nodesAttributes: Record<string, NodeAttributes>;
   connections: GraphConnnection[];
   onNodeClick?: (node: SimulationNode) => void;
-  onNodeOver?: (node: SimulationNode | null) => void;
+  onNodeOver?: (node: GraphNode | null) => void;
 }
 
 type SimulationNode = GraphNode & {
@@ -213,7 +194,6 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
         {Object.values(simulationNodes).map((node) => {
           const attributes = nodesAttributes[node.id];
           if (!attributes) {
-            console.error("no attributes for node", node.id);
             return null;
           }
           return (
@@ -230,21 +210,12 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
               onMouseLeave={() => {
                 onNodeOver?.(null);
               }}
-            >
-              <>
-                <InternalLink
-                  title={`View system ${attributes.label}`}
-                  to={`/explore/solarsystems/${node.id}?from=${attributes.id}`}
-                >
-                  {attributes.label}
-                </InternalLink>
-                <br />
-                {attributes.text}
-              </>
-            </TextNode>
+              sx={attributes.sx}
+              children={attributes.children}
+            />
           );
         })}
-        {centerNode && (
+        {centerNode && nodesAttributes[centerNode.id] && (
           <TextNode
             ref={centerNodeRef}
             x={centerNode.x + GRAPH_WIDTH / 2}
@@ -259,9 +230,9 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
               onNodeOver?.(null);
             }}
             center={true}
-          >
-            {nodesAttributes[centerNode.id]?.label}
-          </TextNode>
+            sx={nodesAttributes[centerNode.id]!.sx}
+            children={nodesAttributes[centerNode.id]!.children}
+          />
         )}
       </div>
     </div>

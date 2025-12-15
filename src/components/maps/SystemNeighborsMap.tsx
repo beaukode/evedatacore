@@ -3,28 +3,13 @@ import { Box, Paper } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import SystemNeighborsMapDrawer from "./SystemNeighborsMapDrawer";
-import SystemNeighborsMapGraph, {
-  GraphConnnection,
-  GraphNode,
-  GraphNodeAttributes,
-} from "./SystemNeighborsMapGraph";
+import { GraphConnnection, GraphNode, SystemMap } from "./common";
+import SystemNeighborsMapGraph from "./SystemNeighborsMapGraph";
+import { useToolbox } from "./toolbox/useToolbox";
 
 interface SystemNeighborsMapProps {
   systemId: string;
 }
-
-type SystemMap = {
-  id: string;
-  name: string;
-  location: [string, string, string];
-  gates?: string[];
-  neighbors: Array<
-    SystemMap & {
-      distance: number;
-      next: number;
-    }
-  >;
-};
 
 const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
   systemId,
@@ -38,16 +23,25 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
       }
       return r.json() as Promise<SystemMap>;
     },
+    initialData: {
+      id: "",
+      name: "",
+      location: ["0", "0", "0"],
+      d_matrix: {},
+      neighbors: [],
+    },
   });
 
+  const toolbox = useToolbox(query.data);
+
   const nodes: GraphNode[] = React.useMemo(() => {
-    if (!query.data) {
+    if (!query.data || query.data.id === "") {
       return [];
     }
     const nodes = query.data.neighbors.map((neighbor) => ({
       id: neighbor.id,
       d: neighbor.distance,
-      n: neighbor.next,
+      n: neighbor.n,
     }));
     nodes.push({
       id: query.data?.id,
@@ -56,31 +50,6 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
     });
     return nodes;
   }, [query.data]);
-
-  const nodesAttributes: Record<string, GraphNodeAttributes> =
-    React.useMemo(() => {
-      if (!query.data) {
-        return {};
-      }
-      const attributes: Record<string, GraphNodeAttributes> = {};
-      attributes[query.data?.id] = {
-        id: query.data.id,
-        label: query.data.name,
-        text: "",
-        isCenter: true,
-        isSelected: false,
-      };
-      for (const neighbor of query.data.neighbors) {
-        attributes[neighbor.id] = {
-          id: neighbor.id,
-          label: neighbor.name,
-          text: neighbor.distance.toFixed(2),
-          isCenter: false,
-          isSelected: false,
-        };
-      }
-      return attributes;
-    }, [query.data]);
 
   const connections: GraphConnnection[] = React.useMemo(() => {
     if (!query.data) {
@@ -127,13 +96,13 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
       >
         <SystemNeighborsMapGraph
           nodes={nodes}
-          nodesAttributes={nodesAttributes}
+          nodesAttributes={toolbox.nodes}
           connections={connections}
           onNodeClick={(node) => {
             console.log("clicked node", node);
           }}
           onNodeOver={(node) => {
-            console.log("hovered node", node);
+            toolbox.onNodeOver(node);
           }}
         />
         <Paper
@@ -146,7 +115,12 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
           }}
           elevation={4}
         >
-          <SystemNeighborsMapDrawer tool="select" onToolChange={() => {}} />
+          <SystemNeighborsMapDrawer
+            display={toolbox.display}
+            onDisplayChange={toolbox.setDisplay}
+            tool={toolbox.tool}
+            onToolChange={toolbox.setTool}
+          />
         </Paper>
       </Box>
     </PaperLevel1>
