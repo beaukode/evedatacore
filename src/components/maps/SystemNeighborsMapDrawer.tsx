@@ -18,7 +18,6 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SelectIcon from "@mui/icons-material/AdsClick";
 import RoutingIcon from "@mui/icons-material/Route";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import DistanceIcon from "@mui/icons-material/Straighten";
 import LPointIcon from "@mui/icons-material/Hub";
 import PlanetIcon from "@mui/icons-material/Public";
@@ -90,9 +89,6 @@ const SystemNeighborsMapDrawer: React.FC = () => {
             </ToggleButton>
             <ToggleButton value="routing" title="Routing" disabled>
               <RoutingIcon />
-            </ToggleButton>
-            <ToggleButton value="wip" title="Work in progress" disabled>
-              <QuestionMarkIcon />
             </ToggleButton>
           </ToggleButtonGroup>
         </AccordionDetails>
