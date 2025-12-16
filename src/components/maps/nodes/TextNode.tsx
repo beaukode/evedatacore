@@ -1,19 +1,27 @@
-import { Box, SxProps } from "@mui/material";
 import React from "react";
+import { Box } from "@mui/material";
+import InternalLink from "@/components/ui/InternalLink";
+import { SNMSelectors, useSNMSelector } from "../SystemNeighborsMap/Store";
 
 type TextNodeProps = {
+  nodeId: string;
   x: number;
   y: number;
   onClick?: () => void;
   onMouseOver?: () => void;
   onMouseLeave?: () => void;
-  sx?: SxProps;
-  children: React.ReactNode;
   center?: boolean;
 };
 
 const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
-  ({ x, y, onClick, onMouseOver, onMouseLeave, children, center, sx }, ref) => {
+  ({ nodeId, x, y, onClick, onMouseOver, onMouseLeave, center }, ref) => {
+    const nodeAttributes = useSNMSelector((s) => {
+      return SNMSelectors.selectNodeAttributes(s, nodeId);
+    });
+    if (!nodeAttributes) {
+      return null;
+    }
+
     return (
       <>
         <Box
@@ -22,7 +30,9 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
             position: "absolute",
             left: x - 40,
             top: y - 21,
-            border: "1px solid #00ff2b",
+            borderColor: "rgba(0, 255, 43, 0.5)",
+            borderWidth: "1px",
+            borderStyle: "solid",
             fontSize: "12px",
             width: "80px",
             height: "42px",
@@ -32,13 +42,22 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
             borderRadius: "10px",
             backgroundColor: center ? "background.default" : "background.paper",
             cursor: "default",
-            ...sx,
+            ...nodeAttributes.sx,
           }}
           onClick={onClick}
           onMouseOver={onMouseOver}
           onMouseLeave={onMouseLeave}
         >
-          {children}
+          <>
+            <InternalLink
+              title={`View system ${nodeAttributes.name}`}
+              to={`/explore/solarsystems/${nodeId}`}
+            >
+              {nodeAttributes.name}
+            </InternalLink>
+            <br />
+            {nodeAttributes.text}
+          </>
         </Box>
       </>
     );

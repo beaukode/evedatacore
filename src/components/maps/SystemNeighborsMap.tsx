@@ -1,11 +1,12 @@
 import React from "react";
 import { Box, Paper } from "@mui/material";
+import { Provider } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import SystemNeighborsMapDrawer from "./SystemNeighborsMapDrawer";
-import { GraphConnnection, GraphNode, SystemMap } from "./common";
 import SystemNeighborsMapGraph from "./SystemNeighborsMapGraph";
-import { useToolbox } from "./toolbox/useToolbox";
+import { GraphConnnection, GraphNode, SystemMap } from "./common";
+import { SNMActions, SNMStore } from "./SystemNeighborsMap/Store";
 
 interface SystemNeighborsMapProps {
   systemId: string;
@@ -31,8 +32,6 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
       neighbors: [],
     },
   });
-
-  const toolbox = useToolbox(query.data);
 
   const nodes: GraphNode[] = React.useMemo(() => {
     if (!query.data || query.data.id === "") {
@@ -79,50 +78,54 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
     return Object.values(connectionsMap);
   }, [query.data]);
 
+  React.useEffect(() => {
+    if (query.data.id !== "") {
+      SNMStore.dispatch(SNMActions.setData(query.data));
+      SNMStore.dispatch(SNMActions.setDisplay("distances"));
+      SNMStore.dispatch(SNMActions.setTool("select"));
+    }
+  }, [query.data]);
+
   return (
     <PaperLevel1
       title="Neighbouring systems"
       loading={query.isFetching}
       sx={{ p: 0 }}
     >
-      <Box
-        sx={{
-          width: "100%",
-          height: "70vh",
-          display: "flex",
-          flexDirection: "row",
-          flexGrow: 1,
-        }}
-      >
-        <SystemNeighborsMapGraph
-          nodes={nodes}
-          nodesAttributes={toolbox.nodes}
-          connections={connections}
-          onNodeClick={(node) => {
-            console.log("clicked node", node);
-          }}
-          onNodeOver={(node) => {
-            toolbox.onNodeOver(node);
-          }}
-        />
-        <Paper
+      <Provider store={SNMStore}>
+        <Box
           sx={{
-            width: 200,
-            flexShrink: 0,
-            flexGrow: 0,
-            overflowY: "auto",
-            overflowX: "hidden",
+            width: "100%",
+            height: "70vh",
+            display: "flex",
+            flexDirection: "row",
+            flexGrow: 1,
           }}
-          elevation={4}
         >
-          <SystemNeighborsMapDrawer
-            display={toolbox.display}
-            onDisplayChange={toolbox.setDisplay}
-            tool={toolbox.tool}
-            onToolChange={toolbox.setTool}
+          <SystemNeighborsMapGraph
+            nodes={nodes}
+            connections={connections}
+            onNodeClick={(node) => {
+              SNMStore.dispatch(SNMActions.onNodeClick(node.id));
+            }}
+            onNodeOver={(node) => {
+              SNMStore.dispatch(SNMActions.onNodeOver(node?.id));
+            }}
           />
-        </Paper>
-      </Box>
+          <Paper
+            sx={{
+              width: 200,
+              flexShrink: 0,
+              flexGrow: 0,
+              overflowY: "auto",
+              overflowX: "hidden",
+            }}
+            elevation={4}
+          >
+            <SystemNeighborsMapDrawer />
+          </Paper>
+        </Box>
+      </Provider>
     </PaperLevel1>
   );
 };
