@@ -23,6 +23,7 @@ export type DisplayKey = "distances" | "lpoints" | "planets";
 export type NodeAttributes = {
   id: string;
   name: string;
+  text?: string;
   sx?: SxProps;
   children?: React.ReactNode;
 };

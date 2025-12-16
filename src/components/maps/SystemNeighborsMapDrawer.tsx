@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Accordion,
   AccordionSummary,
@@ -23,26 +24,19 @@ import LPointIcon from "@mui/icons-material/Hub";
 import PlanetIcon from "@mui/icons-material/Public";
 import ColorIcon from "@mui/icons-material/Square";
 import { DisplayKey, ToolKey } from "./common";
+import { SNMActions, SNMSelectors } from "./SystemNeighborsMap/Store";
 
-interface SystemNeighborsMapDrawerProps {
-  display: DisplayKey;
-  onDisplayChange: (display: DisplayKey) => void;
-  tool: ToolKey;
-  onToolChange: (tool: ToolKey) => void;
-}
+const SystemNeighborsMapDrawer: React.FC = () => {
+  const dispatch = useDispatch();
+  const display = useSelector(SNMSelectors.selectDisplay);
+  const tool = useSelector(SNMSelectors.selectTool);
 
-const SystemNeighborsMapDrawer: React.FC<SystemNeighborsMapDrawerProps> = ({
-  tool,
-  onToolChange,
-  display,
-  onDisplayChange,
-}) => {
   const handleDisplayChange = (
     _: React.MouseEvent<HTMLElement>,
     newDisplay: DisplayKey | null
   ) => {
     if (newDisplay) {
-      onDisplayChange(newDisplay);
+      dispatch(SNMActions.setDisplay(newDisplay));
     }
   };
 
@@ -51,7 +45,7 @@ const SystemNeighborsMapDrawer: React.FC<SystemNeighborsMapDrawerProps> = ({
     newTool: ToolKey | null
   ) => {
     if (newTool) {
-      onToolChange(newTool);
+      dispatch(SNMActions.setTool(newTool));
     }
   };
 

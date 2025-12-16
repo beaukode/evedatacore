@@ -53,6 +53,13 @@ export default defineConfig({
             "react-virtuoso",
           ],
           web3: ["viem", "wagmi"],
+          redux: [
+            "redux",
+            "react-redux",
+            "redux-saga",
+            "@reduxjs/toolkit",
+            "typed-redux-saga",
+          ],
         },
       },
     },
