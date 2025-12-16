@@ -1,99 +1,34 @@
 import { takeEvery, select, put, fork, all } from "typed-redux-saga";
-import { NodeAttributes } from "../common";
+import { Saga, Task } from "redux-saga";
 import slice from "./Slice";
-import { keyBy } from "lodash-es";
-import { Task } from "redux-saga";
+import { SNMDisplayLPointsSaga } from "./tools/SNMDisplayLPoints";
+import { SNMDisplayDistancesSaga } from "./tools/SNMDisplayDistances";
+import { SNMDisplayPlanetsSaga } from "./tools/SNMDisplayPlanets";
+import { SNMToolSelectSaga } from "./tools/SNMToolSelect";
+import { DisplayKey, ToolKey } from "../common";
 
-const SNMDisplayDistancesSaga = function* () {
-  const data = yield* select(slice.selectors.selectData);
-
-  const getDistance = (aId: string, bId: string): number => {
-    return (
-      data.d_matrix[`${aId}-${bId}`] ?? data.d_matrix[`${bId}-${aId}`] ?? 0
-    );
-  };
-
-  const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => ({
-    id: neighbor.id,
-    name: neighbor.name,
-    text: neighbor.distance.toFixed(2),
-  }));
-  nodes.push({
-    id: data.id,
-    name: data.name,
-  });
-  yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
-  yield all([
-    takeEvery(slice.actions.setOverNode, function* ({ payload }) {
-      const selectedNode = yield* select(slice.selectors.selectSelectedNode);
-      const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => {
-        const distance = getDistance(
-          neighbor.id,
-          payload.next || selectedNode || data.id
-        );
-        return {
-          id: neighbor.id,
-          name: neighbor.name,
-          text: distance ? distance.toFixed(2) : "",
-        };
-      });
-      const distance = getDistance(
-        data.id,
-        payload.next || selectedNode || data.id
-      );
-      nodes.push({
-        id: data.id,
-        name: data.name,
-        text: distance ? distance.toFixed(2) : "",
-      });
-      yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
-    }),
-    takeEvery(slice.actions.setSelectedNode, function* ({ payload }) {
-      if (payload.next) {
-        yield put(
-          slice.actions.setNodeAttributes({
-            id: payload.next,
-            attributes: { sx: { borderStyle: "dashed" } },
-          })
-        );
-      }
-      if (payload.prev) {
-        yield put(
-          slice.actions.setNodeAttributes({
-            id: payload.prev,
-            attributes: { sx: { borderStyle: "solid" } },
-          })
-        );
-      }
-    }),
-  ]);
+const displaySagas: Record<DisplayKey, Saga> = {
+  distances: SNMDisplayDistancesSaga,
+  lpoints: SNMDisplayLPointsSaga,
+  planets: SNMDisplayPlanetsSaga,
 };
 
-const SNMDisplayLPointsSaga = function* () {
-  const data = yield* select(slice.selectors.selectData);
-  const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => ({
-    id: neighbor.id,
-    name: neighbor.name,
-    text: "0 / 10",
-  }));
-  nodes.push({
-    id: data.id,
-    name: data.name,
-    text: "0 / 5",
-  });
-  yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
+const toolSagas: Record<ToolKey, Saga> = {
+  select: SNMToolSelectSaga,
+  routing: SNMToolSelectSaga,
 };
 
 export const SNMRootSaga = function* () {
-  let task: Task;
+  let displayTask: Task;
+  let toolTask: Task;
   yield all([
     takeEvery(slice.actions.setDisplay, function* ({ payload }) {
-      task?.cancel();
-      if (payload === "distances") {
-        task = yield* fork(SNMDisplayDistancesSaga);
-      } else if (payload === "lpoints") {
-        task = yield* fork(SNMDisplayLPointsSaga);
-      }
+      displayTask?.cancel();
+      displayTask = yield* fork(displaySagas[payload]);
+    }),
+    takeEvery(slice.actions.setTool, function* ({ payload }) {
+      toolTask?.cancel();
+      toolTask = yield* fork(toolSagas[payload]);
     }),
     takeEvery(slice.actions.onNodeOver, function* ({ payload }) {
       const prevOverNode = yield* select(slice.selectors.selectOverNode);
