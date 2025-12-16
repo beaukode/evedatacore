@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   FormControl,
   InputLabel,
+  ListItem,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -15,17 +16,29 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ColorIcon from "@mui/icons-material/Square";
 import { SNMSelectors, useSNMSelector } from "../Store";
+import { upperFirst } from "lodash-es";
+
+const colors = {
+  default: "primary",
+  red: "red",
+  green: "green",
+};
 
 const PanelSelectedSystem: React.FC = () => {
   const selectedNode = useSNMSelector(SNMSelectors.selectSelectedNode);
-  if (!selectedNode) {
+  const nodeAttributes = useSNMSelector((s) =>
+    selectedNode
+      ? SNMSelectors.selectNodeAttributes(s, selectedNode)
+      : undefined
+  );
+  if (!selectedNode || !nodeAttributes) {
     return null;
   }
 
   return (
     <Accordion elevation={4} expanded={true}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography component="span">EVD-S3G</Typography>
+        <Typography component="span">{nodeAttributes.name}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <FormControl sx={{ my: 1 }} fullWidth>
@@ -35,26 +48,26 @@ const PanelSelectedSystem: React.FC = () => {
             label="Color"
             size="small"
             value="default"
+            renderValue={(value) => {
+              return (
+                <ListItem disablePadding dense>
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <ColorIcon fontSize="small" color="primary" />
+                  </ListItemIcon>
+                  <ListItemText>{upperFirst(value)}</ListItemText>
+                </ListItem>
+              );
+            }}
             fullWidth
           >
-            <MenuItem value="default">
-              <ListItemIcon>
-                <ColorIcon fontSize="small" color="primary" />
-              </ListItemIcon>
-              <ListItemText>Default</ListItemText>
-            </MenuItem>
-            <MenuItem value="red">
-              <ListItemIcon>
-                <ColorIcon fontSize="small" htmlColor="red" />
-              </ListItemIcon>
-              <ListItemText>Red</ListItemText>
-            </MenuItem>
-            <MenuItem value="green">
-              <ListItemIcon>
-                <ColorIcon fontSize="small" htmlColor="green" />
-              </ListItemIcon>
-              <ListItemText>Green</ListItemText>
-            </MenuItem>
+            {Object.entries(colors).map(([key, value]) => (
+              <MenuItem value={key}>
+                <ListItemIcon>
+                  <ColorIcon fontSize="small" htmlColor={value} />
+                </ListItemIcon>
+                <ListItemText>{upperFirst(value)}</ListItemText>
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 
