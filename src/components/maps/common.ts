@@ -17,7 +17,7 @@ export type SystemMap = System & {
   >;
 };
 
-export type ToolKey = "select" | "routing" | "wip";
+export type ToolKey = "select" | "routing";
 export type DisplayKey = "distances" | "lpoints" | "planets";
 
 export type NodeAttributes = {
