@@ -37,7 +37,7 @@ const ExploreSolarsystem: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      {/* <Grid2 container spacing={2}>
+      <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, sm: 6 }}>
           <PaperLevel1 title={title} loading={query.isFetching} backButton>
             {data && (
@@ -88,7 +88,7 @@ const ExploreSolarsystem: React.FC = () => {
             </PaperLevel1>
           )}
         </Grid2>
-      </Grid2> */}
+      </Grid2>
       <SystemNeighborsMap systemId={id} />
       <TableAssemblies solarSystemId={id} />
       <TableKillmails solarSystemId={id} />

@@ -2,11 +2,10 @@ import React from "react";
 import * as d3 from "d3-force";
 import { keyBy } from "lodash-es";
 import TextNode from "./nodes/TextNode";
-import { GraphConnnection, GraphNode, NodeAttributes } from "./common";
+import { GraphConnnection, GraphNode } from "./common";
 
 interface SystemNeighborsMapGraphProps {
   nodes: GraphNode[];
-  nodesAttributes: Record<string, NodeAttributes>;
   connections: GraphConnnection[];
   onNodeClick?: (node: SimulationNode) => void;
   onNodeOver?: (node: GraphNode | null) => void;
@@ -36,7 +35,6 @@ const GRAPH_HEIGHT = 1200;
 
 const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
   nodes,
-  nodesAttributes,
   connections,
   onNodeClick,
   onNodeOver,
@@ -192,13 +190,10 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
           })}
         </svg>
         {Object.values(simulationNodes).map((node) => {
-          const attributes = nodesAttributes[node.id];
-          if (!attributes) {
-            return null;
-          }
           return (
             <TextNode
               key={node.id}
+              nodeId={node.id}
               x={node.x + GRAPH_WIDTH / 2}
               y={node.y + GRAPH_HEIGHT / 2}
               onClick={() => {
@@ -210,13 +205,12 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
               onMouseLeave={() => {
                 onNodeOver?.(null);
               }}
-              sx={attributes.sx}
-              children={attributes.children}
             />
           );
         })}
-        {centerNode && nodesAttributes[centerNode.id] && (
+        {centerNode && (
           <TextNode
+            nodeId={centerNode.id}
             ref={centerNodeRef}
             x={centerNode.x + GRAPH_WIDTH / 2}
             y={centerNode.y + GRAPH_HEIGHT / 2}
@@ -230,8 +224,6 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
               onNodeOver?.(null);
             }}
             center={true}
-            sx={nodesAttributes[centerNode.id]!.sx}
-            children={nodesAttributes[centerNode.id]!.children}
           />
         )}
       </div>
