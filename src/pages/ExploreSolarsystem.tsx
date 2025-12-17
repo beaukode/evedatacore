@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Box, Grid2, List } from "@mui/material";
+import { Box, Button, Grid2, Link, List } from "@mui/material";
 import { useParams } from "react-router";
 import Error404 from "./Error404";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -37,12 +37,41 @@ const ExploreSolarsystem: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <PaperLevel1 title={title} loading={query.isFetching} backButton>
-            {data && (
+      <PaperLevel1
+        title={title}
+        sx={{ p: 0 }}
+        loading={query.isFetching}
+        titleAdornment={
+          <Button
+            component={Link}
+            href={`https://ef-map.com/?system=${data?.id}&zoom=75`}
+            title="View on EF Map"
+            variant="outlined"
+            size="small"
+            color="primary"
+            rel="noopener"
+            target="_blank"
+          >
+            View on EF Map
+          </Button>
+        }
+        backButton
+      >
+        <SystemNeighborsMap systemId={id} />
+      </PaperLevel1>
+      <PaperLevel1 title="Data" loading={query.isFetching}>
+        {data && (
+          <Grid2 container spacing={2}>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
               <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
                 <BasicListItem title="Id">{data.id}</BasicListItem>
+                <BasicListItem title="L-Points">
+                  {data.lpoints.occupied} occupied / {data.lpoints.count} total
+                </BasicListItem>
+              </List>
+            </Grid2>
+            <Grid2 size={{ xs: 12, sm: 6 }}>
+              <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
                 <BasicListItem title="World coordinates">
                   <Box sx={{ pl: 4 }}>
                     <span style={{ textWrap: "nowrap" }}>
@@ -58,38 +87,11 @@ const ExploreSolarsystem: React.FC = () => {
                     </span>
                   </Box>
                 </BasicListItem>
-                <BasicListItem title="L-Points">
-                  {data.lpoints.occupied} occupied / {data.lpoints.count} total
-                </BasicListItem>
               </List>
-            )}
-          </PaperLevel1>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }} display="flex">
-          {data && (
-            <PaperLevel1
-              title=""
-              loading={query.isFetching}
-              sx={{
-                mt: { xs: 0, sm: 6 },
-                flexGrow: 1,
-                overflow: "hidden",
-                minHeight: 300,
-              }}
-            >
-              <iframe
-                src={`https://ef-map.com/embed?system=${data.id}&zoom=50&orbit=1&color=green`}
-                width="100%"
-                height="100%"
-                loading="lazy"
-                sandbox="allow-scripts allow-same-origin allow-popups"
-                style={{ border: 0 }}
-              ></iframe>
-            </PaperLevel1>
-          )}
-        </Grid2>
-      </Grid2>
-      <SystemNeighborsMap systemId={id} />
+            </Grid2>
+          </Grid2>
+        )}
+      </PaperLevel1>
       <TableAssemblies solarSystemId={id} />
       <TableKillmails solarSystemId={id} />
     </Box>
