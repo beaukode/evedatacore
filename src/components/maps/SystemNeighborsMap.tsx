@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import SystemNeighborsMapDrawer from "./SystemNeighborsMapDrawer";
 import SystemNeighborsMapGraph from "./SystemNeighborsMapGraph";
 import { GraphConnnection, GraphNode, SystemMap } from "./common";
-import { SNMActions, SNMStore } from "./SystemNeighborsMap/Store";
+import { SNMActions, getSNMStore, SNMStore } from "./SystemNeighborsMap/Store";
 
 interface SystemNeighborsMapProps {
   systemId: string;
@@ -14,6 +14,8 @@ interface SystemNeighborsMapProps {
 const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
   systemId,
 }) => {
+  const [store, setStore] = React.useState<SNMStore | undefined>(undefined);
+
   const query = useQuery({
     queryKey: ["SystemNeighbors", systemId],
     queryFn: async () => {
@@ -78,13 +80,27 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
   }, [query.data]);
 
   React.useEffect(() => {
-    if (query.data.id !== "") {
-      SNMStore.dispatch(SNMActions.init({ data: query.data }));
+    if (!store) {
+      const store = getSNMStore();
+      setStore(store);
     }
-  }, [query.data]);
+  }, [store]);
+
+  React.useEffect(() => {
+    if (query.data.id !== "" && store) {
+      store.dispatch(SNMActions.init({ data: query.data }));
+      return () => {
+        store.dispatch(SNMActions.dispose());
+      };
+    }
+  }, [query.data, store]);
+
+  if (!store) {
+    return null;
+  }
 
   return (
-    <Provider store={SNMStore}>
+    <Provider store={store}>
       <Box
         sx={{
           width: "100%",
@@ -98,10 +114,10 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
           nodes={nodes}
           connections={connections}
           onNodeClick={(node) => {
-            SNMStore.dispatch(SNMActions.onNodeClick(node.id));
+            store.dispatch(SNMActions.onNodeClick(node.id));
           }}
           onNodeOver={(node) => {
-            SNMStore.dispatch(SNMActions.onNodeOver(node?.id));
+            store.dispatch(SNMActions.onNodeOver(node?.id));
           }}
         />
         <Paper

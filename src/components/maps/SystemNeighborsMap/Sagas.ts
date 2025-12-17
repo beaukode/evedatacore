@@ -60,6 +60,10 @@ export const SNMRootSaga = function* () {
       );
       yield put(slice.actions.setReady());
     }),
+    takeEvery(slice.actions.dispose, () => {
+      displayTask?.cancel();
+      toolTask?.cancel();
+    }),
     takeEvery(slice.actions.setDisplay, function* ({ payload }) {
       displayTask?.cancel();
       displayTask = yield* fork(displaySagas[payload]);
