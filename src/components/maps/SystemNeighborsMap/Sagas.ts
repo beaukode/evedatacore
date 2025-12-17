@@ -1,13 +1,22 @@
-import { takeEvery, select, put, fork, all, call } from "typed-redux-saga";
-import { Saga, Task } from "redux-saga";
+import {
+  takeEvery,
+  select,
+  put,
+  fork,
+  all,
+  call,
+  take,
+} from "typed-redux-saga";
+import { Saga, Task, eventChannel } from "redux-saga";
 import slice from "./Slice";
 import { SNMDisplayLPointsSaga } from "./tools/SNMDisplayLPoints";
 import { SNMDisplayDistancesSaga } from "./tools/SNMDisplayDistances";
 import { SNMDisplayPlanetsSaga } from "./tools/SNMDisplayPlanets";
 import { SNMToolSelectSaga } from "./tools/SNMToolSelect";
 import { DisplayKey, NodeAttributes, ToolKey } from "../common";
-import { db } from "./Database";
+import { db, SystemRecord } from "./Database";
 import { keyBy } from "lodash-es";
+import { liveQuery } from "dexie";
 
 const displaySagas: Record<DisplayKey, Saga> = {
   distances: SNMDisplayDistancesSaga,
@@ -20,18 +29,44 @@ const toolSagas: Record<ToolKey, Saga> = {
   routing: SNMToolSelectSaga,
 };
 
-const loadDatabase = function* () {
-  const ids = yield* select(slice.selectors.selectIds);
-  const records = yield* call(() =>
-    db.systems.where("id").anyOf(ids).toArray()
-  );
-  const recordsMap = keyBy(records, "id");
-  yield put(slice.actions.setDbRecords(recordsMap));
-};
+function createLiveQueryChannel(query: () => Promise<SystemRecord[]>) {
+  return eventChannel((emit) => {
+    const subscription = liveQuery(query).subscribe({
+      next: (data) => emit(data),
+      error: (err) => console.error("liveQuery error:", err),
+    });
+
+    return () => {
+      console.log("liveQuery unsubscribe");
+      subscription.unsubscribe();
+    };
+  });
+}
+
+function* watchSystems(ids: string[]) {
+  const query = () => db.systems.where("id").anyOf(ids).toArray();
+  const liveQueryChannel = yield* call(createLiveQueryChannel, query);
+  let initialHydration = true;
+
+  try {
+    while (true) {
+      const records = yield* take(liveQueryChannel);
+      if (initialHydration) {
+        yield put(slice.actions.setDbRecords(keyBy(records, "id")));
+        initialHydration = false;
+      } else {
+        yield put(slice.actions.updateDbRecords(keyBy(records, "id")));
+      }
+    }
+  } finally {
+    liveQueryChannel.close();
+  }
+}
 
 export const SNMRootSaga = function* () {
   let displayTask: Task;
   let toolTask: Task;
+  let watchSystemsTask: Task;
   yield all([
     takeEvery(slice.actions.init, function* ({ payload: { data } }) {
       // Initialize nodes attributes
@@ -49,7 +84,11 @@ export const SNMRootSaga = function* () {
       });
       yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
 
-      yield* loadDatabase();
+      watchSystemsTask = yield* fork(
+        watchSystems,
+        nodes.map((node) => node.id)
+      );
+
       yield put(slice.actions.setDisplay("distances"));
       yield put(slice.actions.setTool("select"));
       yield put(
@@ -61,6 +100,7 @@ export const SNMRootSaga = function* () {
       yield put(slice.actions.setReady());
     }),
     takeEvery(slice.actions.dispose, () => {
+      watchSystemsTask?.cancel();
       displayTask?.cancel();
       toolTask?.cancel();
     }),
@@ -92,6 +132,23 @@ export const SNMRootSaga = function* () {
           })
         );
       }
+    }),
+    takeEvery(slice.actions.dbUpdateSystem, function* ({ payload }) {
+      yield* call(() =>
+        db.systems
+          .upsert(payload.id, {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            [payload.prop]: payload.value as any,
+            updatedAt: Date.now(),
+          })
+          .then((updated) => {
+            if (!updated) {
+              return db.systems.update(payload.id, {
+                createdAt: Date.now(),
+              });
+            }
+          })
+      );
     }),
   ]);
 };
