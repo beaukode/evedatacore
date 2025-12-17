@@ -29,6 +29,7 @@ export type NodeAttributes = {
 };
 
 export type NodesAttributesMap = Record<string, NodeAttributes>;
+export type PartialNodesAttributesMap = Record<string, Partial<NodeAttributes>>;
 
 export type GraphNode = {
   id: string;

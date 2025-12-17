@@ -3,9 +3,11 @@ import {
   DisplayKey,
   NodeAttributes,
   NodesAttributesMap,
+  PartialNodesAttributesMap,
   SystemMap,
   ToolKey,
 } from "../common";
+import { SystemRecord } from "./Database";
 
 interface SystemNeighborsState {
   ready?: boolean;
@@ -15,6 +17,8 @@ interface SystemNeighborsState {
   selectedNode?: string;
   nodesAttributes: NodesAttributesMap;
   data: SystemMap;
+  ids: string[];
+  dbRecords: Record<string, SystemRecord>;
 }
 
 const initialState: SystemNeighborsState = {
@@ -24,6 +28,8 @@ const initialState: SystemNeighborsState = {
   overNode: undefined,
   selectedNode: undefined,
   nodesAttributes: {},
+  ids: [],
+  dbRecords: {},
   data: {
     id: "",
     name: "",
@@ -49,6 +55,7 @@ const SNMSlice = createSlice({
       }
       state.ready = false;
       state.data = payload.data;
+      state.ids = [payload.data.id, ...payload.data.neighbors.map((n) => n.id)];
     },
     setReady: (state) => {
       state.ready = true;
@@ -77,7 +84,10 @@ const SNMSlice = createSlice({
     ) => {
       state.selectedNode = action.payload.next;
     },
-    setNodesAttributes: (state, action: PayloadAction<NodesAttributesMap>) => {
+    setNodesAttributes: (
+      state,
+      action: PayloadAction<PartialNodesAttributesMap>
+    ) => {
       for (const id in action.payload) {
         state.nodesAttributes[id] = {
           ...state.nodesAttributes[id],
@@ -94,6 +104,18 @@ const SNMSlice = createSlice({
         ...action.payload.attributes,
       } as WritableDraft<NodeAttributes>;
     },
+    setDbRecords: (
+      state,
+      action: PayloadAction<Record<string, SystemRecord>>
+    ) => {
+      state.dbRecords = action.payload;
+    },
+    setDbRecord: (
+      state,
+      action: PayloadAction<{ id: string; record: SystemRecord }>
+    ) => {
+      state.dbRecords[action.payload.id] = action.payload.record;
+    },
   },
   selectors: {
     selectDisplay: (state) => state.display,
@@ -103,7 +125,11 @@ const SNMSlice = createSlice({
     selectNodesAttributes: (state): NodesAttributesMap => state.nodesAttributes,
     selectNodeAttributes: (state, id: string): NodeAttributes | undefined =>
       state.nodesAttributes[id],
+    selectDbRecords: (state) => state.dbRecords,
+    selectDbRecord: (state, id: string): SystemRecord | undefined =>
+      state.dbRecords[id],
     selectData: (state): SystemMap => state.data,
+    selectIds: (state) => state.ids,
   },
 });
 

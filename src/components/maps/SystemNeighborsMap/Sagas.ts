@@ -1,11 +1,13 @@
-import { takeEvery, select, put, fork, all } from "typed-redux-saga";
+import { takeEvery, select, put, fork, all, call } from "typed-redux-saga";
 import { Saga, Task } from "redux-saga";
 import slice from "./Slice";
 import { SNMDisplayLPointsSaga } from "./tools/SNMDisplayLPoints";
 import { SNMDisplayDistancesSaga } from "./tools/SNMDisplayDistances";
 import { SNMDisplayPlanetsSaga } from "./tools/SNMDisplayPlanets";
 import { SNMToolSelectSaga } from "./tools/SNMToolSelect";
-import { DisplayKey, ToolKey } from "../common";
+import { DisplayKey, NodeAttributes, ToolKey } from "../common";
+import { db } from "./Database";
+import { keyBy } from "lodash-es";
 
 const displaySagas: Record<DisplayKey, Saga> = {
   distances: SNMDisplayDistancesSaga,
@@ -18,17 +20,42 @@ const toolSagas: Record<ToolKey, Saga> = {
   routing: SNMToolSelectSaga,
 };
 
+const loadDatabase = function* () {
+  const ids = yield* select(slice.selectors.selectIds);
+  const records = yield* call(() =>
+    db.systems.where("id").anyOf(ids).toArray()
+  );
+  const recordsMap = keyBy(records, "id");
+  yield put(slice.actions.setDbRecords(recordsMap));
+};
+
 export const SNMRootSaga = function* () {
   let displayTask: Task;
   let toolTask: Task;
   yield all([
-    takeEvery(slice.actions.init, function* ({ payload }) {
+    takeEvery(slice.actions.init, function* ({ payload: { data } }) {
+      // Initialize nodes attributes
+      const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => {
+        return {
+          id: neighbor.id,
+          name: neighbor.name,
+          text: "",
+        };
+      });
+      nodes.push({
+        id: data.id,
+        name: data.name,
+        text: "",
+      });
+      yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
+
+      yield* loadDatabase();
       yield put(slice.actions.setDisplay("distances"));
       yield put(slice.actions.setTool("select"));
       yield put(
         slice.actions.setSelectedNode({
           prev: undefined,
-          next: payload.data.id,
+          next: data.id,
         })
       );
       yield put(slice.actions.setReady());
