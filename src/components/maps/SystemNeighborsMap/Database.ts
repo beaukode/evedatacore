@@ -1,7 +1,7 @@
 import { Dexie, type EntityTable } from "dexie";
 
 interface SystemRecord {
-  id: number;
+  id: string;
   notes?: string;
   color?: string;
   content?: string[];

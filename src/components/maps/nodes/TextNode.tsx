@@ -18,6 +18,9 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
     const nodeAttributes = useSNMSelector((s) => {
       return SNMSelectors.selectNodeAttributes(s, nodeId);
     });
+    const dbRecord = useSNMSelector((s) =>
+      SNMSelectors.selectDbRecord(s, nodeId)
+    );
     if (!nodeAttributes) {
       return null;
     }
@@ -30,8 +33,11 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
             position: "absolute",
             left: x - 40,
             top: y - 21,
-            borderColor: "rgba(0, 255, 43, 0.5)",
-            borderWidth: "1px",
+            borderColor:
+              dbRecord?.color === "default"
+                ? "primary.dark"
+                : dbRecord?.color ?? "primary.dark",
+            borderWidth: "2px",
             borderStyle: "solid",
             fontSize: "12px",
             width: "80px",
