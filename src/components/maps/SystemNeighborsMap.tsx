@@ -80,9 +80,7 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
 
   React.useEffect(() => {
     if (query.data.id !== "") {
-      SNMStore.dispatch(SNMActions.setData(query.data));
-      SNMStore.dispatch(SNMActions.setDisplay("distances"));
-      SNMStore.dispatch(SNMActions.setTool("select"));
+      SNMStore.dispatch(SNMActions.init({ data: query.data }));
     }
   }, [query.data]);
 

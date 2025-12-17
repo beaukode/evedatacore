@@ -22,6 +22,17 @@ export const SNMRootSaga = function* () {
   let displayTask: Task;
   let toolTask: Task;
   yield all([
+    takeEvery(slice.actions.init, function* ({ payload }) {
+      yield put(slice.actions.setDisplay("distances"));
+      yield put(slice.actions.setTool("select"));
+      yield put(
+        slice.actions.setSelectedNode({
+          prev: undefined,
+          next: payload.data.id,
+        })
+      );
+      yield put(slice.actions.setReady());
+    }),
     takeEvery(slice.actions.setDisplay, function* ({ payload }) {
       displayTask?.cancel();
       displayTask = yield* fork(displaySagas[payload]);

@@ -8,6 +8,7 @@ import {
 } from "../common";
 
 interface SystemNeighborsState {
+  ready?: boolean;
   display?: DisplayKey;
   tool?: ToolKey;
   overNode?: string;
@@ -17,6 +18,7 @@ interface SystemNeighborsState {
 }
 
 const initialState: SystemNeighborsState = {
+  ready: undefined,
   display: undefined,
   tool: undefined,
   overNode: undefined,
@@ -40,8 +42,16 @@ const SNMSlice = createSlice({
     onNodeOver: (_state, _action: PayloadAction<string | undefined>) => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onNodeClick: (_state, _action: PayloadAction<string>) => {},
-    setData: (state, action: PayloadAction<SystemMap>) => {
-      state.data = action.payload;
+    init: (state, { payload }: PayloadAction<{ data: SystemMap }>) => {
+      // if already initialized or loading, do nothing
+      if (state.ready !== undefined) {
+        return;
+      }
+      state.ready = false;
+      state.data = payload.data;
+    },
+    setReady: (state) => {
+      state.ready = true;
     },
     setDisplay: (state, action: PayloadAction<DisplayKey>) => {
       state.display = action.payload;
