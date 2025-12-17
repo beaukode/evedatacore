@@ -61,7 +61,7 @@ const PanelSelectedSystem: React.FC = () => {
             fullWidth
           >
             {Object.entries(colors).map(([key, value]) => (
-              <MenuItem value={key}>
+              <MenuItem value={key} key={key}>
                 <ListItemIcon>
                   <ColorIcon fontSize="small" htmlColor={value} />
                 </ListItemIcon>
