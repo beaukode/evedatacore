@@ -40,6 +40,16 @@ const initialState: SystemNeighborsState = {
   },
 };
 
+type WritableSystemRecordKeys = keyof Omit<
+  SystemRecord,
+  "id" | "createdAt" | "updatedAt"
+>;
+type DbUpdateSystemPayload<T extends WritableSystemRecordKeys> = PayloadAction<{
+  id: string;
+  prop: T;
+  value: SystemRecord[T];
+}>;
+
 const SNMSlice = createSlice({
   name: "systemNeighbors",
   reducerPath: "map",
@@ -118,6 +128,20 @@ const SNMSlice = createSlice({
     ) => {
       state.dbRecords[action.payload.id] = action.payload.record;
     },
+    updateDbRecords: (
+      state,
+      action: PayloadAction<Record<string, SystemRecord>>
+    ) => {
+      for (const id in action.payload) {
+        if (state.dbRecords[id]?.updatedAt !== action.payload[id]?.updatedAt) {
+          state.dbRecords[id] = action.payload[id]!;
+        }
+      }
+    },
+    dbUpdateSystem: <T extends WritableSystemRecordKeys>(
+      _state: WritableDraft<SystemNeighborsState>,
+      _action: DbUpdateSystemPayload<T>
+    ) => {},
   },
   selectors: {
     selectDisplay: (state) => state.display,
