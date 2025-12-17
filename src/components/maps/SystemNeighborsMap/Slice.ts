@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction, WritableDraft } from "@reduxjs/toolkit";
 import {
   DisplayKey,
@@ -44,9 +45,7 @@ const SNMSlice = createSlice({
   reducerPath: "map",
   initialState,
   reducers: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onNodeOver: (_state, _action: PayloadAction<string | undefined>) => {},
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onNodeClick: (_state, _action: PayloadAction<string>) => {},
     init: (state, { payload }: PayloadAction<{ data: SystemMap }>) => {
       // if already initialized or loading, do nothing
@@ -56,6 +55,9 @@ const SNMSlice = createSlice({
       state.ready = false;
       state.data = payload.data;
       state.ids = [payload.data.id, ...payload.data.neighbors.map((n) => n.id)];
+    },
+    dispose: () => {
+      return initialState;
     },
     setReady: (state) => {
       state.ready = true;
