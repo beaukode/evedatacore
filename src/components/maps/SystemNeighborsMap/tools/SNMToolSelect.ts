@@ -4,7 +4,6 @@ import slice from "../Slice";
 export const SNMToolSelectSaga = function* () {
   yield all([
     takeEvery(slice.actions.setSelectedNode, function* ({ payload }) {
-      console.log("setSelectedNode", payload);
       if (payload.next) {
         yield put(
           slice.actions.setNodeAttributes({
