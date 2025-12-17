@@ -12,15 +12,11 @@ export const SNMDisplayDistancesSaga = function* () {
     );
   };
 
-  const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => ({
+  const nodes: Partial<NodeAttributes>[] = data.neighbors.map((neighbor) => ({
     id: neighbor.id,
-    name: neighbor.name,
     text: neighbor.distance.toFixed(2),
   }));
-  nodes.push({
-    id: data.id,
-    name: data.name,
-  });
+
   yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
   yield all([
     takeEvery(slice.actions.setOverNode, function* ({ payload }) {
