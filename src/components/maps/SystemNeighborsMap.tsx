@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Paper } from "@mui/material";
 import { Provider } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import PaperLevel1 from "@/components/ui/PaperLevel1";
 import SystemNeighborsMapDrawer from "./SystemNeighborsMapDrawer";
 import SystemNeighborsMapGraph from "./SystemNeighborsMapGraph";
 import { GraphConnnection, GraphNode, SystemMap } from "./common";
@@ -85,46 +84,40 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
   }, [query.data]);
 
   return (
-    <PaperLevel1
-      title="Neighbouring systems"
-      loading={query.isFetching}
-      sx={{ p: 0 }}
-    >
-      <Provider store={SNMStore}>
-        <Box
-          sx={{
-            width: "100%",
-            height: "70vh",
-            display: "flex",
-            flexDirection: "row",
-            flexGrow: 1,
+    <Provider store={SNMStore}>
+      <Box
+        sx={{
+          width: "100%",
+          height: "70vh",
+          display: "flex",
+          flexDirection: "row",
+          flexGrow: 1,
+        }}
+      >
+        <SystemNeighborsMapGraph
+          nodes={nodes}
+          connections={connections}
+          onNodeClick={(node) => {
+            SNMStore.dispatch(SNMActions.onNodeClick(node.id));
           }}
+          onNodeOver={(node) => {
+            SNMStore.dispatch(SNMActions.onNodeOver(node?.id));
+          }}
+        />
+        <Paper
+          sx={{
+            width: 200,
+            flexShrink: 0,
+            flexGrow: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+          elevation={4}
         >
-          <SystemNeighborsMapGraph
-            nodes={nodes}
-            connections={connections}
-            onNodeClick={(node) => {
-              SNMStore.dispatch(SNMActions.onNodeClick(node.id));
-            }}
-            onNodeOver={(node) => {
-              SNMStore.dispatch(SNMActions.onNodeOver(node?.id));
-            }}
-          />
-          <Paper
-            sx={{
-              width: 200,
-              flexShrink: 0,
-              flexGrow: 0,
-              overflowY: "auto",
-              overflowX: "hidden",
-            }}
-            elevation={4}
-          >
-            <SystemNeighborsMapDrawer />
-          </Paper>
-        </Box>
-      </Provider>
-    </PaperLevel1>
+          <SystemNeighborsMapDrawer />
+        </Paper>
+      </Box>
+    </Provider>
   );
 };
 
