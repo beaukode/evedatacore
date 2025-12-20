@@ -84,6 +84,7 @@ export async function systemWrite<
     const receipt = await client.waitForTransactionReceipt({
       hash: tx,
       timeout: 60 * 1000,
+      confirmations: 2,
     });
 
     if (receipt.status === "reverted") {
