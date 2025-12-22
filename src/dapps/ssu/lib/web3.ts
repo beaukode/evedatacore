@@ -1,5 +1,5 @@
 import { TransactionReceipt, Hex } from "viem";
-import { MudWeb3Client, eveworld } from "@/api/mudweb3";
+import { InventoryItemTransfert, MudWeb3Client, eveworld } from "@/api/mudweb3";
 import { SsuAbi, ssuAbi } from "./abi";
 
 export type SetupDelegationParameters = {
@@ -77,5 +77,52 @@ export async function isSystemAllowed(
     functionName: "isSystemAllowed",
     systemAddress: args.ssuSystemId,
     args: [args.ssuId],
+  });
+}
+
+export type TakeItemsParameters = {
+  ssuId: bigint;
+  ssuSystemId: Hex;
+  to: Hex;
+  transferts: InventoryItemTransfert[];
+};
+
+export type TakeItemsReturnType = TransactionReceipt;
+
+export async function takeItems(
+  client: MudWeb3Client,
+  args: TakeItemsParameters
+): Promise<TakeItemsReturnType> {
+  return client.systemWrite({
+    systemAddress: args.ssuSystemId,
+    abi: ssuAbi,
+    functionName: "transferToEphemeral",
+    args: [
+      args.ssuId,
+      args.to,
+      args.transferts.map(({ inventoryItemId, quantity }) => ({
+        smartObjectId: inventoryItemId,
+        quantity,
+      })),
+    ],
+  });
+}
+
+export type GiveItemsParameters = {
+  ssuId: bigint;
+  ssuSystemId: Hex;
+  from: Hex;
+  transferts: InventoryItemTransfert[];
+};
+
+export type GiveItemsReturnType = TransactionReceipt;
+
+export async function giveItems(
+  client: MudWeb3Client,
+  args: GiveItemsParameters
+) {
+  return client.storageEphemeralToInventory({
+    storageId: args.ssuId,
+    transferts: args.transferts,
   });
 }
