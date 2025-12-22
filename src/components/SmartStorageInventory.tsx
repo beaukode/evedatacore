@@ -136,7 +136,7 @@ const SmartStorageInventory: React.FC<SmartStorageInventoryProps> = ({
                 header={
                   <>
                     <ButtonCharacter
-                      address={inv.ownerId}
+                      address={inv.account}
                       name={inv.ownerName}
                     />
                     <ButtonWeb3Interaction

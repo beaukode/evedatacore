@@ -1,4 +1,5 @@
 import { FixedGetTypesResponse, Type } from "@/api/stillness";
+import { pick } from "lodash-es";
 
 export type IndexedType = Type & {
   id: string;
@@ -8,7 +9,10 @@ export type IndexedType = Type & {
   categoryName: string;
 };
 
-export type InventoryItem = IndexedType & {
+export type InventoryItem = Pick<
+  IndexedType,
+  "id" | "smartItemId" | "name" | "image"
+> & {
   quantity: number;
 };
 
@@ -100,10 +104,16 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
       .map(([itemId, quantity]) => {
         const type = indexBySmartItemId[itemId];
         if (!type) {
-          return undefined;
+          return {
+            id: itemId,
+            smartItemId: itemId,
+            name: itemId.toString(),
+            image: "",
+            quantity,
+          };
         }
         return {
-          ...type,
+          ...pick(type, ["id", "smartItemId", "name", "image"]),
           quantity,
         };
       })
