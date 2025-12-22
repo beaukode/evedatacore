@@ -82,7 +82,7 @@ export async function systemSimulate<
     const response = await client.simulateContract({
       account: client.writeClient?.account,
       address: client.mudAddresses.world,
-      abi: worldAbi,
+      abi: [...(args.abi || []), ...worldAbi] as unknown as Abi,
       functionName: "call",
       args: [args.systemAddress, data],
       blockNumber: args.blockNumber,
