@@ -52,11 +52,29 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
   const queryOnchainState = useQuery({
     queryKey: ["SsuDapp", "OnchainState", ssu.id],
     queryFn: async () => {
-      const takeAllowed = await isSystemAllowed(mudWeb3, {
-        ssuId: BigInt(ssu.id),
-        ssuSystemId: getSsuSystemId(),
-      });
-      return { takeAllowed };
+      if (!ssu.ownerId) {
+        return { takeAllowed: false, isSameTribe: false };
+      }
+      if (!smartCharacter.isConnected || !smartCharacter.characterId) {
+        return { takeAllowed: false, isSameTribe: false };
+      }
+      const [takeAllowed, ownerTribeId, currentTribeId] = await Promise.all([
+        isSystemAllowed(mudWeb3, {
+          ssuId: BigInt(ssu.id),
+          ssuSystemId: getSsuSystemId(),
+        }),
+        mudWeb3.characterGetTribeId({
+          smartObjectId: BigInt(ssu.ownerId),
+        }),
+        mudWeb3.characterGetTribeId({
+          smartObjectId: BigInt(smartCharacter.characterId),
+        }),
+      ]);
+      return {
+        takeAllowed,
+        isSameTribe:
+          ownerTribeId && currentTribeId && ownerTribeId === currentTribeId,
+      };
     },
   });
 
@@ -147,14 +165,28 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
   const isLoading =
     query.isLoading || !typesIndex || queryOnchainState.isLoading;
 
+  // if (queryOnchainState.data?.isSameTribe === false) {
+  //   return (
+  //     <Box p={2}>
+  //       <Alert severity="error">Access is restricted to tribe members.</Alert>
+  //     </Box>
+  //   );
+  // }
+
   return (
     <>
       <Tabs value={currentTab} variant="fullWidth" scrollButtons>
-        <Tab label="Give" component={NavLink} to={`/dapps/ssu/${ssu.id}`} />
+        <Tab
+          label="Give"
+          component={NavLink}
+          to={`/dapps/ssu/${ssu.id}`}
+          disabled={isLoading}
+        />
         <Tab
           label="Take"
           component={NavLink}
           to={`/dapps/ssu/${ssu.id}/take`}
+          disabled={isLoading}
         />
       </Tabs>
       {currentTab === 0 && (
