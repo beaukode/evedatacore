@@ -92,8 +92,6 @@ const Configure: React.FC<ConfigureProps> = ({ ssu }) => {
     );
   }
 
-  console.log(queryOnchainState.data, allow, queryOnchainState.data === allow);
-
   return (
     <Box p={2}>
       <FormControl>
