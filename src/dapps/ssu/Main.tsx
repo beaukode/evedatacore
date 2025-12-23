@@ -1,7 +1,8 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import ReloadIcon from "@mui/icons-material/Cached";
 import { useParams, useSearchParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSmartCharacter } from "@/contexts/AppContext";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import Error404 from "@/pages/Error404";
@@ -12,6 +13,7 @@ import Inventory from "./components/Inventory";
 
 const Main: React.FC = () => {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const enableBackButton = searchParams.get("back") === "true";
   const smartCharacter = useSmartCharacter();
@@ -45,6 +47,22 @@ const Main: React.FC = () => {
         loading={query.isLoading}
         sx={{ p: 0 }}
         backButton={enableBackButton}
+        titleAdornment={
+          <IconButton
+            color="primary"
+            onClick={async () => {
+              await queryClient.resetQueries({
+                queryKey: ["SsuDapp", "SmartStorage", id],
+              });
+              await queryClient.invalidateQueries({
+                queryKey: ["SsuDapp", "SmartStorage", id],
+              });
+            }}
+            disabled={query.isFetching}
+          >
+            <ReloadIcon />
+          </IconButton>
+        }
       >
         {ssu && (
           <>
