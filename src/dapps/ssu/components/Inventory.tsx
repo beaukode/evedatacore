@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, LinearProgress, Tab, Tabs } from "@mui/material";
+import { Alert, Box, Button, LinearProgress, Tab, Tabs } from "@mui/material";
 import Upload from "@mui/icons-material/Upload";
 import Download from "@mui/icons-material/Download";
 import { NavLink, useLocation } from "react-router";
@@ -11,7 +11,7 @@ import {
 } from "@/contexts/AppContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import ItemInventoryForm from "@/components/ui/ItemInventoryForm";
-import { giveItems, takeItems } from "../lib/web3";
+import { giveItems, isSystemAllowed, takeItems } from "../lib/web3";
 import { getSsuSystemId } from "../lib/utils";
 import { Hex } from "viem";
 import { Web3SuccessAlert } from "@/components/web3/Web3SuccessAlert";
@@ -46,6 +46,17 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
         path: { id: ssu.id },
       });
       return r.data;
+    },
+  });
+
+  const queryOnchainState = useQuery({
+    queryKey: ["SsuDapp", "OnchainState", ssu.id],
+    queryFn: async () => {
+      const takeAllowed = await isSystemAllowed(mudWeb3, {
+        ssuId: BigInt(ssu.id),
+        ssuSystemId: getSsuSystemId(),
+      });
+      return { takeAllowed };
     },
   });
 
@@ -133,7 +144,8 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
     retry: false,
   });
 
-  const isLoading = query.isLoading || !typesIndex;
+  const isLoading =
+    query.isLoading || !typesIndex || queryOnchainState.isLoading;
 
   return (
     <>
@@ -182,31 +194,39 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
           <LinearProgress
             sx={{ visibility: isLoading ? "visible" : "hidden" }}
           />
-          <ItemInventoryForm
-            items={mainInventory.items}
-            quantities={mainQuantities}
-            onQuantityChange={(itemId, quantity) =>
-              setMainQuantities({ ...mainQuantities, [itemId]: quantity })
-            }
-            disabled={isLoading || takeMutation.isPending}
-          />
-          <Web3ErrorAlert sx={{ mt: 2 }} error={takeMutation.error} />
-          <Web3SuccessAlert sx={{ mt: 2 }} receipt={takeMutation.data} />
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-            <Button
-              variant="contained"
-              color="warning"
-              startIcon={<Download />}
-              onClick={() => {
-                giveMutation.reset();
-                takeMutation.mutate();
-              }}
-              disabled={isLoading || giveMutation.isPending}
-              loading={takeMutation.isPending}
-            >
-              Take items
-            </Button>
-          </Box>
+          {queryOnchainState.data?.takeAllowed ? (
+            <>
+              <ItemInventoryForm
+                items={mainInventory.items}
+                quantities={mainQuantities}
+                onQuantityChange={(itemId, quantity) =>
+                  setMainQuantities({ ...mainQuantities, [itemId]: quantity })
+                }
+                disabled={isLoading || takeMutation.isPending}
+              />
+              <Web3ErrorAlert sx={{ mt: 2 }} error={takeMutation.error} />
+              <Web3SuccessAlert sx={{ mt: 2 }} receipt={takeMutation.data} />
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  startIcon={<Download />}
+                  onClick={() => {
+                    giveMutation.reset();
+                    takeMutation.mutate();
+                  }}
+                  disabled={isLoading || giveMutation.isPending}
+                  loading={takeMutation.isPending}
+                >
+                  Take items
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <Alert severity="error">
+              The SSU owner do not allow you to take items.
+            </Alert>
+          )}
         </Box>
       )}
     </>
