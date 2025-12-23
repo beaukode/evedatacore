@@ -123,7 +123,7 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
         ssuId: BigInt(ssu.id),
         ssuSystemId: getSsuSystemId(),
         to: currentCharacter,
-        transferts: Object.entries(userQuantities).map(
+        transferts: Object.entries(mainQuantities).map(
           ([itemId, quantity]) => ({
             inventoryItemId: BigInt(itemId),
             quantity: BigInt(quantity),
@@ -133,7 +133,7 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
     },
     onSuccess() {
       query.refetch();
-      setUserQuantities({});
+      setMainQuantities({});
     },
     retry: false,
   });
@@ -165,13 +165,13 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
   const isLoading =
     query.isLoading || !typesIndex || queryOnchainState.isLoading;
 
-  // if (queryOnchainState.data?.isSameTribe === false) {
-  //   return (
-  //     <Box p={2}>
-  //       <Alert severity="error">Access is restricted to tribe members.</Alert>
-  //     </Box>
-  //   );
-  // }
+  if (queryOnchainState.data?.isSameTribe === false) {
+    return (
+      <Box p={2}>
+        <Alert severity="error">Access is restricted to tribe members.</Alert>
+      </Box>
+    );
+  }
 
   return (
     <>
