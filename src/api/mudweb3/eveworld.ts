@@ -76,6 +76,15 @@ export const eveworld = defineWorld({
           },
           key: ["account"],
         },
+        Characters: {
+          schema: {
+            smartObjectId: "uint256",
+            exists: "bool",
+            tribeId: "uint256",
+            createdAt: "uint256",
+          },
+          key: ["smartObjectId"],
+        },
         SmartTurretConfig: {
           schema: {
             smartObjectId: "uint256",

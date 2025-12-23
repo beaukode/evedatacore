@@ -67,7 +67,9 @@ const ItemInventoryForm: React.FC<ItemInventoryFormProps> = ({
                   type="number"
                   size="small"
                   variant="outlined"
-                  onChange={(e) => onQuantityChange(smartItemId, Number(e.target.value))}
+                  onChange={(e) =>
+                    onQuantityChange(smartItemId, Number(e.target.value))
+                  }
                   slotProps={{
                     htmlInput: {
                       sx: { textAlign: "right" },
@@ -77,8 +79,12 @@ const ItemInventoryForm: React.FC<ItemInventoryFormProps> = ({
                     input: {
                       endAdornment: (
                         <InputAdornment position="end">
-                          <Typography variant="caption" color="primary">
-                            /{quantity}
+                          <Typography
+                            variant="caption"
+                            color="primary"
+                            sx={{ whiteSpace: "preserve" }}
+                          >
+                            /{quantity.toString().padEnd(10, " ")}
                           </Typography>
                         </InputAdornment>
                       ),
