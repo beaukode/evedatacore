@@ -21,6 +21,11 @@ import {
   characterGetId,
 } from "./read/characterGetId";
 import {
+  GetCharacterTribeIdParameters,
+  GetCharacterTribeIdReturnType,
+  characterGetTribeId,
+} from "./read/characterGetTribe";
+import {
   GateCanJumpParameters,
   GateCanJumpReturnType,
   gateCanJump,
@@ -83,6 +88,9 @@ export type MudWeb3ReadActions = {
   characterGetId: (
     args: GetSmartCharacterIdParameters
   ) => Promise<GetSmartCharacterIdReturnType>;
+  characterGetTribeId: (
+    args: GetCharacterTribeIdParameters
+  ) => Promise<GetCharacterTribeIdReturnType>;
   gateCanJump: (args: GateCanJumpParameters) => Promise<GateCanJumpReturnType>;
   gateGetSystem: (
     args: GateGetSystemParameters
@@ -144,6 +152,11 @@ export function mudWeb3ReadActions(
       args: GetSmartCharacterIdParameters
     ): Promise<GetSmartCharacterIdReturnType> => {
       return characterGetId(client, args);
+    },
+    characterGetTribeId: async (
+      args: GetCharacterTribeIdParameters
+    ): Promise<GetCharacterTribeIdReturnType> => {
+      return characterGetTribeId(client, args);
     },
     gateGetSystem: async (
       args: GateGetSystemParameters
