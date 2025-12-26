@@ -2,10 +2,10 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import DappLayout from "@/components/layouts/DappLayout";
 import Error404 from "@/pages/Error404";
-import Index from "./ssu/Index";
-import Main from "./ssu/Main";
+import Index from "./ssu-tribe/Index";
+import Main from "./ssu-tribe/Main";
 
-const Ssu: React.FC = () => {
+const SsuTribe: React.FC = () => {
   return (
     <DappLayout title="Tribe Smart Storage">
       <Routes>
@@ -17,4 +17,4 @@ const Ssu: React.FC = () => {
   );
 };
 
-export default Ssu;
+export default SsuTribe;

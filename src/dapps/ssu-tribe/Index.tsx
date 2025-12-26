@@ -81,7 +81,7 @@ const Index: React.FC = () => {
                         name={ssu.name}
                         key={ssu.id}
                         id={ssu.id}
-                        to={`/dapps/ssu/${ssu.id}?back=true`}
+                        to={`/dapps/ssu-tribe/${ssu.id}?back=true`}
                       />
                     </Box>
                   </TableCell>
