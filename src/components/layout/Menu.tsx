@@ -3,6 +3,7 @@ import { Drawer, IconButton, List } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
+import DAppsIcon from "@mui/icons-material/Extension";
 import DevIcon from "@mui/icons-material/Code";
 import AboutIcon from "@mui/icons-material/HelpCenter";
 import DiscordIcon from "@/components/icons/Discord";
@@ -50,6 +51,7 @@ const Menu: React.FC = () => {
             text="Calculate"
             icon={<CalculateIcon />}
           />
+          <MenuItem to="/dapps-directory" text="DApps" icon={<DAppsIcon />} />
           <MenuItem to="/dev" text="Dev" icon={<DevIcon />} />
           <MenuItem
             to="https://discord.gg/Jv4B5dJpez"
