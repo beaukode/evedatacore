@@ -179,13 +179,13 @@ const Inventory: React.FC<InventoryProps> = ({ ssu }) => {
         <Tab
           label="Give"
           component={NavLink}
-          to={`/dapps/ssu/${ssu.id}`}
+          to={`/dapps/ssu-tribe/${ssu.id}`}
           disabled={isLoading}
         />
         <Tab
           label="Take"
           component={NavLink}
-          to={`/dapps/ssu/${ssu.id}/take`}
+          to={`/dapps/ssu-tribe/${ssu.id}/take`}
           disabled={isLoading}
         />
       </Tabs>
