@@ -1,14 +1,14 @@
 import React from "react";
 import { Paper, Tabs, Tab } from "@mui/material";
 import { NavLink, Route, Routes, useLocation } from "react-router";
-import DAppsDirectoryTribeStorage from "./DAppsDirectoryTribeStorage";
 import Error404 from "./Error404";
+import PrismicPage from "@/components/prismic/PrismicPage";
 
 const routesMap: Record<string, number> = {
   "/dapps-directory": 0,
   "/dapps-directory/": 0,
   "/dapps-directory/tribe-storage": 0,
-  "/dapps-directory/gates": 1,
+  "/dapps-directory/gate-access": 1,
 };
 
 const DAppsDirectory: React.FC = () => {
@@ -35,9 +35,16 @@ const DAppsDirectory: React.FC = () => {
         </Tabs>
       </Paper>
       <Routes>
-        <Route path="" element={<DAppsDirectoryTribeStorage />} />
-        <Route path="/" element={<DAppsDirectoryTribeStorage />} />
-        <Route path="/tribe-storage" element={<DAppsDirectoryTribeStorage />} />
+        <Route path="" element={<PrismicPage uid="tribe-storage" />} />
+        <Route path="/" element={<PrismicPage uid="tribe-storage" />} />
+        <Route
+          path="/tribe-storage"
+          element={<PrismicPage uid="tribe-storage" />}
+        />
+        <Route
+          path="/gate-access"
+          element={<PrismicPage uid="gate-access" />}
+        />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </>
