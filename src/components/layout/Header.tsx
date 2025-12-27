@@ -5,6 +5,7 @@ import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
 import DiscordIcon from "@/components/icons/Discord";
+import DAppsIcon from "@mui/icons-material/Extension";
 import Menu from "@/components/layout/Menu";
 import HeaderLogo from "@/components/layout/HeaderLogo";
 import DevIcon from "@mui/icons-material/Code";
@@ -56,6 +57,19 @@ const Header: React.FC = () => {
               }
             >
               Calculate
+            </Button>
+            <Button
+              startIcon={<DAppsIcon />}
+              to="/dapps-directory"
+              component={NavLink}
+              sx={{ m: 1, fontFamily: "Major Mono Display" }}
+              variant={
+                location.pathname.startsWith("/dapps")
+                  ? "outlined"
+                  : "contained"
+              }
+            >
+              DApps
             </Button>
             <Button
               startIcon={<DevIcon />}
