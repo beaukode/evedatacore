@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid2, useTheme } from "@mui/material";
+import { Divider, Grid2, useTheme } from "@mui/material";
 import { PrismicRichText } from "@prismicio/react";
 import { PageDocumentDataBodyTextImageSlice } from "@/api/prismic";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -19,6 +19,7 @@ const SliceTextImage: React.FC<SliceProps> = ({ slice }) => {
         {slice.items.map((item, index) => {
           return (
             <React.Fragment key={index}>
+              {index > 0 && <Divider sx={{ width: "100%" }} />}
               <Grid2
                 size={12 - parseGridWidth(item.image_grid_width)}
                 sx={{

@@ -1,4 +1,5 @@
 import React from "react";
+import { Divider } from "@mui/material";
 import { PageDocumentDataBodyTextSlice } from "@/api/prismic";
 import { PrismicRichText } from "@prismicio/react";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
@@ -13,7 +14,12 @@ const SliceText: React.FC<SliceProps> = ({ slice }) => {
   return (
     <PaperLevel1 title={title} sx={sx}>
       {slice.items.map((item, index) => {
-        return <PrismicRichText key={index} field={item.content} />;
+        return (
+          <>
+            {index > 0 && <Divider sx={{ width: "100%" }} />}
+            <PrismicRichText key={index} field={item.content} />
+          </>
+        );
       })}
     </PaperLevel1>
   );
