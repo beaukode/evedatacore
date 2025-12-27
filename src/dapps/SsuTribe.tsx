@@ -7,7 +7,7 @@ import Main from "./ssu-tribe/Main";
 
 const SsuTribe: React.FC = () => {
   return (
-    <DappLayout title="Tribe Smart Storage">
+    <DappLayout title="Tribe Storage">
       <Routes>
         <Route path="" element={<Index />} />
         <Route path="/:id/*" element={<Main />} />
