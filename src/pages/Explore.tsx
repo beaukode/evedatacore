@@ -21,6 +21,7 @@ import ExploreFunctions from "./ExploreFunctions";
 import ExploreFunction from "./ExploreFunction";
 import ExploreTribe from "./ExploreTribe";
 import ExploreTribes from "./ExploreTribes";
+import ExploreConfig from "./ExploreConfig";
 
 const routesMap: Record<string, number> = {
   "/explore": 0,
@@ -35,6 +36,7 @@ const routesMap: Record<string, number> = {
   "/explore/tables": 7,
   "/explore/systems": 8,
   "/explore/functions": 9,
+  "/explore/config": 10,
 };
 
 const Explore: React.FC = () => {
@@ -74,6 +76,7 @@ const Explore: React.FC = () => {
           <Tab label="Tables" component={NavLink} to="/explore/tables" />
           <Tab label="Systems" component={NavLink} to="/explore/systems" />
           <Tab label="Functions" component={NavLink} to="/explore/functions" />
+          <Tab label="Config" component={NavLink} to="/explore/config" />
         </Tabs>
       </Paper>
       <Routes>
@@ -97,6 +100,7 @@ const Explore: React.FC = () => {
         <Route path="/systems/:id" element={<ExploreSystem />} />
         <Route path="/functions" element={<ExploreFunctions />} />
         <Route path="/functions/:id" element={<ExploreFunction />} />
+        <Route path="/config" element={<ExploreConfig />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </>
