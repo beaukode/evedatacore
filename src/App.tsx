@@ -5,14 +5,14 @@ import Home from "@/pages/Home";
 import Error404 from "@/pages/Error404";
 import About from "@/pages/About";
 import Calculate from "@/pages/Calculate";
-import Dev from "@/pages/Dev";
 import DApps from "@/dapps/DApps";
 import Header from "./components/layout/Header";
+import DAppsDirectory from "./pages/DAppsDirectory";
 
 function App() {
   const location = useLocation();
 
-  const isDApp = location.pathname.startsWith("/dapps");
+  const isDApp = location.pathname.startsWith("/dapps/");
 
   return (
     <Paper
@@ -30,7 +30,7 @@ function App() {
         <Route path="/dapps/*" element={<DApps />} />
         <Route path="/explore/*" element={<Explore />} />
         <Route path="/calculate/*" element={<Calculate />} />
-        <Route path="/dev/*" element={<Dev />} />
+        <Route path="/dapps-directory/*" element={<DAppsDirectory />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Error404 />} />
       </Routes>

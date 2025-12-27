@@ -5,9 +5,9 @@ import ExploreDataIcon from "@mui/icons-material/TravelExplore";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
 import DiscordIcon from "@/components/icons/Discord";
+import DAppsIcon from "@mui/icons-material/Extension";
 import Menu from "@/components/layout/Menu";
 import HeaderLogo from "@/components/layout/HeaderLogo";
-import DevIcon from "@mui/icons-material/Code";
 import { ConnectButton } from "@/components/web3/ConnectButton";
 
 const Header: React.FC = () => {
@@ -58,15 +58,17 @@ const Header: React.FC = () => {
               Calculate
             </Button>
             <Button
-              startIcon={<DevIcon />}
-              to="/dev"
+              startIcon={<DAppsIcon />}
+              to="/dapps-directory"
               component={NavLink}
               sx={{ m: 1, fontFamily: "Major Mono Display" }}
               variant={
-                location.pathname.startsWith("/dev") ? "outlined" : "contained"
+                location.pathname.startsWith("/dapps")
+                  ? "outlined"
+                  : "contained"
               }
             >
-              Dev
+              DApps
             </Button>
             <IconButton
               color="primary"
