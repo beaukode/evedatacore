@@ -9,7 +9,7 @@ import ListItemLink from "@/components/ui/ListItemLink";
 import BasicListItem from "@/components/ui/BasicListItem";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 
-const DevConfig: React.FC = () => {
+const ExploreConfig: React.FC = () => {
   const query = useQuery({
     queryKey: ["Config"],
     queryFn: async () => await getConfig().then((r) => r.data.pop()),
@@ -110,4 +110,4 @@ const DevConfig: React.FC = () => {
   );
 };
 
-export default DevConfig;
+export default ExploreConfig;

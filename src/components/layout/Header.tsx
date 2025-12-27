@@ -8,7 +8,6 @@ import DiscordIcon from "@/components/icons/Discord";
 import DAppsIcon from "@mui/icons-material/Extension";
 import Menu from "@/components/layout/Menu";
 import HeaderLogo from "@/components/layout/HeaderLogo";
-import DevIcon from "@mui/icons-material/Code";
 import { ConnectButton } from "@/components/web3/ConnectButton";
 
 const Header: React.FC = () => {
@@ -70,17 +69,6 @@ const Header: React.FC = () => {
               }
             >
               DApps
-            </Button>
-            <Button
-              startIcon={<DevIcon />}
-              to="/dev"
-              component={NavLink}
-              sx={{ m: 1, fontFamily: "Major Mono Display" }}
-              variant={
-                location.pathname.startsWith("/dev") ? "outlined" : "contained"
-              }
-            >
-              Dev
             </Button>
             <IconButton
               color="primary"
