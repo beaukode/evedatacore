@@ -122,7 +122,7 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
         />
         <Paper
           sx={{
-            width: 200,
+            width: 300,
             flexShrink: 0,
             flexGrow: 0,
             overflowY: "auto",

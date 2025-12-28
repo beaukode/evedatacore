@@ -16,13 +16,14 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ColorIcon from "@mui/icons-material/Square";
+import { upperFirst } from "lodash-es";
 import {
   SNMActions,
   SNMSelectors,
   useSNMDispatch,
   useSNMSelector,
 } from "../Store";
-import { upperFirst } from "lodash-es";
+import SystemContentCheckboxGroup from "./SystemContentCheckboxGroup";
 
 const colors = {
   default: "primary",
@@ -64,6 +65,13 @@ const PanelSelectedSystem: React.FC = () => {
           notes: event.target.value,
         })
       );
+    },
+    [dispatch]
+  );
+
+  const handleContentChange = React.useCallback(
+    (value: string[]) => {
+      dispatch(SNMActions.updateSelectedNodeRecord({ content: value }));
     },
     [dispatch]
   );
@@ -114,7 +122,6 @@ const PanelSelectedSystem: React.FC = () => {
             ))}
           </Select>
         </FormControl>
-
         <TextField
           variant="outlined"
           label="Notes"
@@ -123,6 +130,10 @@ const PanelSelectedSystem: React.FC = () => {
           rows={5}
           multiline
           fullWidth
+        />
+        <SystemContentCheckboxGroup
+          value={nodeRecord.content ?? []}
+          onChange={handleContentChange}
         />
         <Typography variant="caption" color="text.secondary">
           {new Date(nodeRecord.updatedAt).toLocaleString()}
