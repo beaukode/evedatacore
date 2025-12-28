@@ -43,34 +43,41 @@ const PanelSelectedSystem: React.FC = () => {
       ? SNMSelectors.selectNodeAttributes(s, selectedNode)
       : undefined
   );
-  const dbRecord = useSNMSelector((s) =>
-    selectedNode ? SNMSelectors.selectDbRecord(s, selectedNode) : undefined
-  );
+  const nodeRecord = useSNMSelector(SNMSelectors.selectSelectedNodeRecord);
+  const nodeDirty = useSNMSelector(SNMSelectors.selectSelectedNodeDirty);
 
   const handleColorChange = React.useCallback(
     (event: SelectChangeEvent<string>) => {
-      if (!selectedNode) {
-        return;
-      }
       dispatch(
-        SNMActions.dbUpdateSystem({
-          id: selectedNode,
-          prop: "color",
-          value: event.target.value,
+        SNMActions.updateSelectedNodeRecord({
+          color: event.target.value,
         })
       );
     },
-    [dispatch, selectedNode]
+    [dispatch]
   );
 
-  if (!selectedNode || !nodeAttributes) {
+  const handleNotesChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch(
+        SNMActions.updateSelectedNodeRecord({
+          notes: event.target.value,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  if (!selectedNode || !nodeAttributes || !nodeRecord) {
     return null;
   }
 
   return (
     <Accordion elevation={4} expanded={true}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography component="span">{nodeAttributes.name}</Typography>
+        <Typography component="span">
+          {nodeAttributes.name} {nodeDirty ? "*" : ""}
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <FormControl sx={{ my: 1 }} fullWidth>
@@ -79,7 +86,7 @@ const PanelSelectedSystem: React.FC = () => {
             labelId="color-label"
             label="Color"
             size="small"
-            value={dbRecord?.color ?? "default"}
+            value={nodeRecord.color ?? "default"}
             onChange={handleColorChange}
             renderValue={(value) => {
               return (
@@ -111,12 +118,14 @@ const PanelSelectedSystem: React.FC = () => {
         <TextField
           variant="outlined"
           label="Notes"
-          multiline
+          value={nodeRecord.notes ?? ""}
+          onChange={handleNotesChange}
           rows={5}
+          multiline
           fullWidth
         />
         <Typography variant="caption" color="text.secondary">
-          2025-12-13 12:00
+          {new Date(nodeRecord.updatedAt).toLocaleString()}
         </Typography>
       </AccordionDetails>
     </Accordion>

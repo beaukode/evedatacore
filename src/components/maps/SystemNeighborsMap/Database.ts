@@ -1,4 +1,5 @@
 import { Dexie, type EntityTable } from "dexie";
+import { omit } from "lodash-es";
 
 interface SystemRecord {
   id: string;
@@ -19,3 +20,18 @@ db.version(1).stores({
 
 export type { SystemRecord };
 export { db };
+
+export function updateSystem(system: SystemRecord) {
+  return db.systems
+    .upsert(system.id, {
+      ...omit(system, "id", "createdAt", "updatedAt"),
+      updatedAt: Date.now(),
+    })
+    .then((updated) => {
+      if (!updated) {
+        return db.systems.update(system.id, {
+          createdAt: Date.now(),
+        });
+      }
+    });
+}
