@@ -14,7 +14,7 @@ import { SNMDisplayDistancesSaga } from "./tools/SNMDisplayDistances";
 import { SNMDisplayPlanetsSaga } from "./tools/SNMDisplayPlanets";
 import { SNMToolSelectSaga } from "./tools/SNMToolSelect";
 import { DisplayKey, NodeAttributes, ToolKey } from "../common";
-import { db, SystemRecord } from "./Database";
+import { db, SystemRecord, updateSystem } from "./Database";
 import { keyBy } from "lodash-es";
 import { liveQuery } from "dexie";
 
@@ -37,7 +37,6 @@ function createLiveQueryChannel(query: () => Promise<SystemRecord[]>) {
     });
 
     return () => {
-      console.log("liveQuery unsubscribe");
       subscription.unsubscribe();
     };
   });
@@ -125,6 +124,8 @@ export const SNMRootSaga = function* () {
         slice.selectors.selectSelectedNode
       );
       if (prevSelectedNode !== payload) {
+        // Flush potential changes to DB backend before setting the new selected node
+        yield put(slice.actions.commitSelectedNodeRecord());
         yield put(
           slice.actions.setSelectedNode({
             prev: prevSelectedNode,
@@ -133,22 +134,17 @@ export const SNMRootSaga = function* () {
         );
       }
     }),
-    takeEvery(slice.actions.dbUpdateSystem, function* ({ payload }) {
-      yield* call(() =>
-        db.systems
-          .upsert(payload.id, {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            [payload.prop]: payload.value as any,
-            updatedAt: Date.now(),
-          })
-          .then((updated) => {
-            if (!updated) {
-              return db.systems.update(payload.id, {
-                createdAt: Date.now(),
-              });
-            }
-          })
+    takeEvery(slice.actions.commitSelectedNodeRecord, function* () {
+      const selectedNodeRecord = yield* select(
+        slice.selectors.selectSelectedNodeRecord
       );
+      const selectedNodeDirty = yield* select(
+        slice.selectors.selectSelectedNodeDirty
+      );
+      if (selectedNodeDirty && selectedNodeRecord) {
+        yield* call(updateSystem, selectedNodeRecord);
+      }
+      yield put(slice.actions.setSelectedNodeDirty(false));
     }),
   ]);
 };

@@ -16,6 +16,8 @@ interface SystemNeighborsState {
   tool?: ToolKey;
   overNode?: string;
   selectedNode?: string;
+  selectedNodeRecord?: SystemRecord;
+  selectedNodeDirty: boolean;
   nodesAttributes: NodesAttributesMap;
   data: SystemMap;
   ids: string[];
@@ -28,6 +30,8 @@ const initialState: SystemNeighborsState = {
   tool: undefined,
   overNode: undefined,
   selectedNode: undefined,
+  selectedNodeRecord: undefined,
+  selectedNodeDirty: false,
   nodesAttributes: {},
   ids: [],
   dbRecords: {},
@@ -95,6 +99,31 @@ const SNMSlice = createSlice({
       }>
     ) => {
       state.selectedNode = action.payload.next;
+      if (action.payload.next) {
+        state.selectedNodeRecord = state.dbRecords[action.payload.next] ?? {
+          id: action.payload.next,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        state.selectedNodeDirty = false;
+      }
+    },
+    updateSelectedNodeRecord: (
+      state,
+      action: PayloadAction<Partial<SystemRecord>>
+    ) => {
+      if (state.selectedNodeRecord) {
+        state.selectedNodeRecord = {
+          ...state.selectedNodeRecord,
+          ...action.payload,
+          updatedAt: Date.now(),
+        };
+        state.selectedNodeDirty = true;
+      }
+    },
+    commitSelectedNodeRecord: () => {},
+    setSelectedNodeDirty: (state, action: PayloadAction<boolean>) => {
+      state.selectedNodeDirty = action.payload;
     },
     setNodesAttributes: (
       state,
@@ -116,11 +145,15 @@ const SNMSlice = createSlice({
         ...action.payload.attributes,
       } as WritableDraft<NodeAttributes>;
     },
+    // Only used for initial hydration, then use updateDbRecords
     setDbRecords: (
       state,
       action: PayloadAction<Record<string, SystemRecord>>
     ) => {
       state.dbRecords = action.payload;
+      if (state.selectedNode) {
+        state.selectedNodeRecord = state.dbRecords[state.selectedNode];
+      }
     },
     setDbRecord: (
       state,
@@ -148,6 +181,8 @@ const SNMSlice = createSlice({
     selectTool: (state) => state.tool,
     selectOverNode: (state) => state.overNode,
     selectSelectedNode: (state) => state.selectedNode,
+    selectSelectedNodeRecord: (state) => state.selectedNodeRecord,
+    selectSelectedNodeDirty: (state) => state.selectedNodeDirty,
     selectNodesAttributes: (state): NodesAttributesMap => state.nodesAttributes,
     selectNodeAttributes: (state, id: string): NodeAttributes | undefined =>
       state.nodesAttributes[id],

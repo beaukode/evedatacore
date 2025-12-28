@@ -1,4 +1,4 @@
-import { takeEvery, put, all } from "typed-redux-saga";
+import { takeEvery, put, all, debounce } from "typed-redux-saga";
 import slice from "../Slice";
 
 export const SNMToolSelectSaga = function* () {
@@ -20,6 +20,10 @@ export const SNMToolSelectSaga = function* () {
           })
         );
       }
+    }),
+    // Commit changes to DB backend
+    debounce(500, slice.actions.updateSelectedNodeRecord, function* () {
+      yield put(slice.actions.commitSelectedNodeRecord());
     }),
   ]);
 };
