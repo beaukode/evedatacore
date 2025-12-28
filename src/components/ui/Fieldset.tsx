@@ -5,6 +5,7 @@ import { Box, SxProps, Theme, Typography } from "@mui/material";
 interface FieldsetProps {
   title?: React.ReactNode;
   color?: string;
+  hoverColor?: string;
   titleSize?: string;
   borderWidth?: number;
   borderRadius?: number;
@@ -15,6 +16,7 @@ interface FieldsetProps {
 const Fieldset = ({
   title,
   color = "primary.light",
+  hoverColor = "primary.light",
   children,
   sx = {},
   ...props
@@ -24,9 +26,15 @@ const Fieldset = ({
       component="fieldset"
       sx={{
         borderColor: color,
-        borderWidth: 1,
-        borderRadius: (theme) => theme.shape.borderRadius / 2,
+        borderWidth: 2,
+        borderRadius: (theme) => theme.shape.borderRadius / 4,
         my: (theme) => theme.spacing(1),
+        "&:hover": {
+          borderColor: hoverColor,
+          "& legend": {
+            color: hoverColor,
+          },
+        },
         ...sx,
       }}
       {...props}
@@ -34,9 +42,9 @@ const Fieldset = ({
       {title && (
         <Typography
           component="legend"
+          variant="caption"
           sx={{
             color: color,
-            fontSize: (theme) => theme.typography.body1,
           }}
         >
           {title}
