@@ -1,32 +1,18 @@
 import React from "react";
 import { Checkbox, FormControlLabel, FormGroup, useTheme } from "@mui/material";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxIcon from "@mui/icons-material/Square";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import Fieldset from "@/components/ui/Fieldset";
+import { pointOfInterests } from "../../common";
 
 interface SystemContentCheckboxGroupProps {
   value: string[];
   onChange: (value: string[]) => void;
 }
-
-const content: Array<{ name: string; color: string; icon?: string }> = [
-  { name: "Crystalline Shear Field", color: "cyan" },
-  { name: "Platinum Mass Cluster", color: "silver" },
-  { name: "Hydrosulphide Formation", color: "dodgerblue" },
-  { name: "Natural Asteroid Cluster", color: "green" },
-  { name: "Metal Rich", color: "gray" },
-  { name: "Rocky Asteroid", color: "brown" },
-  { name: "Rift", color: "gold" },
-  { name: "Minor Drone Nest", color: "dodgerblue", icon: "shield" },
-  { name: "Feral Enclave", color: "orange", icon: "shield" },
-  { name: "Domination Cluster", color: "red", icon: "shield" },
-  { name: "Unmoored Silo", color: "pink", icon: "circle" },
-  { name: "Ruined Inculator", color: "coral", icon: "circle" },
-];
 
 const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
   value,
@@ -37,8 +23,8 @@ const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
   const checkboxes = React.useMemo(() => {
     const checked: React.ReactNode[] = [];
     const unchecked: React.ReactNode[] = [];
-    for (let i = 0; i < content.length; i++) {
-      const valueItem = content[i];
+    for (let i = 0; i < pointOfInterests.length; i++) {
+      const valueItem = pointOfInterests[i];
       if (!valueItem) continue;
       const isChecked = value.includes(valueItem.name);
       let Icon = CheckBoxOutlineBlankIcon;
