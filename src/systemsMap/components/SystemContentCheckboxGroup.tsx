@@ -7,7 +7,7 @@ import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import Fieldset from "@/components/ui/Fieldset";
-import { pointOfInterests } from "../../common";
+import { pointOfInterests } from "../common";
 
 interface SystemContentCheckboxGroupProps {
   value: string[];

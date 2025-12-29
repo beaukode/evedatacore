@@ -1,7 +1,7 @@
 import { select, put, all, takeEvery } from "typed-redux-saga";
 import { keyBy } from "lodash-es";
 import slice from "../Slice";
-import { NodeAttributes } from "../../common";
+import { NodeAttributes } from "../common";
 
 export const SNMDisplayDistancesSaga = function* () {
   const data = yield* select(slice.selectors.selectData);

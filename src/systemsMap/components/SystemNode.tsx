@@ -1,10 +1,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import InternalLink from "@/components/ui/InternalLink";
-import { SNMSelectors, useSNMSelector } from "../SystemNeighborsMap/Store";
-import SystemContentIcons from "../SystemNeighborsMap/components/SystemContentIcons";
+import { SNMSelectors, useSNMSelector } from "../Store";
+import SystemContentIcons from "./SystemContentIcons";
 
-type TextNodeProps = {
+type SystemNodeProps = {
   nodeId: string;
   x: number;
   y: number;
@@ -14,7 +14,7 @@ type TextNodeProps = {
   center?: boolean;
 };
 
-const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
+const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
   ({ nodeId, x, y, onClick, onMouseOver, onMouseLeave, center }, ref) => {
     const nodeAttributes = useSNMSelector((s) => {
       return SNMSelectors.selectNodeAttributes(s, nodeId);
@@ -81,6 +81,6 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
   }
 );
 
-TextNode.displayName = "TextNode";
+SystemNode.displayName = "TextNode";
 
-export default TextNode;
+export default SystemNode;

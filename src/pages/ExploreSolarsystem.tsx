@@ -9,7 +9,7 @@ import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import { getSolarsystemId } from "@/api/evedatacore-v2";
 import { useQuery } from "@tanstack/react-query";
-import SystemNeighborsMap from "@/components/maps/SystemNeighborsMap";
+import SystemsMap from "@/systemsMap/SystemsMap";
 
 const ExploreSolarsystem: React.FC = () => {
   const { id } = useParams();
@@ -57,7 +57,7 @@ const ExploreSolarsystem: React.FC = () => {
         }
         backButton
       >
-        <SystemNeighborsMap systemId={id} />
+        <SystemsMap systemId={id} />
       </PaperLevel1>
       <PaperLevel1 title="Data" loading={query.isFetching}>
         {data && (

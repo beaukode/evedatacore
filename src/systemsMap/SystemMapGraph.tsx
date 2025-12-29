@@ -1,10 +1,10 @@
 import React from "react";
 import * as d3 from "d3-force";
 import { keyBy } from "lodash-es";
-import TextNode from "./nodes/TextNode";
+import SystemNode from "./components/SystemNode";
 import { GraphConnnection, GraphNode } from "./common";
 
-interface SystemNeighborsMapGraphProps {
+interface SystemMapGraphProps {
   nodes: GraphNode[];
   connections: GraphConnnection[];
   onNodeClick?: (node: SimulationNode) => void;
@@ -33,7 +33,7 @@ const DISTANCE_SCALE = 4;
 const GRAPH_WIDTH = 1200;
 const GRAPH_HEIGHT = 1200;
 
-const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
+const SystemMapGraph: React.FC<SystemMapGraphProps> = ({
   nodes,
   connections,
   onNodeClick,
@@ -191,7 +191,7 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
         </svg>
         {Object.values(simulationNodes).map((node) => {
           return (
-            <TextNode
+            <SystemNode
               key={node.id}
               nodeId={node.id}
               x={node.x + GRAPH_WIDTH / 2}
@@ -209,7 +209,7 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
           );
         })}
         {centerNode && (
-          <TextNode
+          <SystemNode
             nodeId={centerNode.id}
             ref={centerNodeRef}
             x={centerNode.x + GRAPH_WIDTH / 2}
@@ -231,4 +231,4 @@ const SystemNeighborsMapGraph: React.FC<SystemNeighborsMapGraphProps> = ({
   );
 };
 
-export default SystemNeighborsMapGraph;
+export default SystemMapGraph;

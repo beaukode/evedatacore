@@ -16,7 +16,7 @@ import {
   useSNMDispatch,
   useSNMSelector,
 } from "../Store";
-import { ToolKey } from "../../common";
+import { ToolKey } from "../common";
 
 const PanelDisplay: React.FC = () => {
   const dispatch = useSNMDispatch();
