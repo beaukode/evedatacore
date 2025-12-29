@@ -2,6 +2,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import InternalLink from "@/components/ui/InternalLink";
 import { SNMSelectors, useSNMSelector } from "../SystemNeighborsMap/Store";
+import SystemContentIcons from "../SystemNeighborsMap/components/SystemContentIcons";
 
 type TextNodeProps = {
   nodeId: string;
@@ -64,6 +65,16 @@ const TextNode = React.forwardRef<HTMLDivElement, TextNodeProps>(
             <br />
             {nodeAttributes.text}
           </>
+          <SystemContentIcons
+            value={dbRecord?.content ?? []}
+            maxIcons={6}
+            sx={{
+              position: "absolute",
+              bottom: -20,
+              left: -4,
+              zIndex: 1000,
+            }}
+          />
         </Box>
       </>
     );
