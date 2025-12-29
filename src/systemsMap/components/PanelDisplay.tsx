@@ -17,7 +17,7 @@ import {
   useSNMDispatch,
   useSNMSelector,
 } from "../Store";
-import { DisplayKey } from "../../common";
+import { DisplayKey } from "../common";
 
 const PanelDisplay: React.FC = () => {
   const dispatch = useSNMDispatch();

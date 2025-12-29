@@ -2,18 +2,16 @@ import React from "react";
 import { Box, Paper } from "@mui/material";
 import { Provider } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import SystemNeighborsMapDrawer from "./SystemNeighborsMapDrawer";
-import SystemNeighborsMapGraph from "./SystemNeighborsMapGraph";
+import SystemMapDrawer from "./SystemMapDrawer";
+import SystemMapGraph from "./SystemMapGraph";
 import { GraphConnnection, GraphNode, SystemMap } from "./common";
-import { SNMActions, getSNMStore, SNMStore } from "./SystemNeighborsMap/Store";
+import { SNMActions, getSNMStore, SNMStore } from "./Store";
 
-interface SystemNeighborsMapProps {
+interface SystemsMapProps {
   systemId: string;
 }
 
-const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
-  systemId,
-}) => {
+const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
   const [store, setStore] = React.useState<SNMStore | undefined>(undefined);
 
   const query = useQuery({
@@ -110,7 +108,7 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
           flexGrow: 1,
         }}
       >
-        <SystemNeighborsMapGraph
+        <SystemMapGraph
           nodes={nodes}
           connections={connections}
           onNodeClick={(node) => {
@@ -130,11 +128,11 @@ const SystemNeighborsMap: React.FC<SystemNeighborsMapProps> = ({
           }}
           elevation={4}
         >
-          <SystemNeighborsMapDrawer />
+          <SystemMapDrawer />
         </Paper>
       </Box>
     </Provider>
   );
 };
 
-export default SystemNeighborsMap;
+export default SystemsMap;

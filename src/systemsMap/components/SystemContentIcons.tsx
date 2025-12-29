@@ -4,7 +4,7 @@ import CheckBoxIcon from "@mui/icons-material/Square";
 import ShieldIcon from "@mui/icons-material/Shield";
 import CircleIcon from "@mui/icons-material/Circle";
 import MoreIcon from "@mui/icons-material/MoreHoriz";
-import { pointOfInterests, PointOfInterest } from "../../common";
+import { pointOfInterests, PointOfInterest } from "../common";
 
 interface SystemContentIconsProps {
   value: string[];

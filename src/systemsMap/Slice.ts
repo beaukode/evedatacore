@@ -7,7 +7,7 @@ import {
   PartialNodesAttributesMap,
   SystemMap,
   ToolKey,
-} from "../common";
+} from "./common";
 import { SystemRecord } from "./Database";
 
 interface SystemNeighborsState {
