@@ -136,7 +136,14 @@ const PanelSelectedSystem: React.FC = () => {
           onChange={handleContentChange}
         />
         <Typography variant="caption" color="text.secondary">
-          {new Date(nodeRecord.updatedAt).toLocaleString()}
+          Last updated:{" "}
+          {new Date(nodeRecord.updatedAt).toLocaleString(undefined, {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          })}
         </Typography>
       </AccordionDetails>
     </Accordion>
