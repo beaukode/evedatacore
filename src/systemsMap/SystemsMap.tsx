@@ -101,11 +101,10 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
     <Provider store={store}>
       <Box
         sx={{
+          height: "100%",
           width: "100%",
-          height: "70vh",
           display: "flex",
           flexDirection: "row",
-          flexGrow: 1,
         }}
       >
         <SystemMapGraph

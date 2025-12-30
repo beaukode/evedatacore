@@ -122,7 +122,6 @@ const TableKillmails: React.FC<TableKillmailsProps> = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        flexGrow: 1,
       }}
     >
       {!kills && <Typography variant="body1">&nbsp;</Typography>}

@@ -91,7 +91,7 @@ const Explore: React.FC = () => {
         <Route path="/types" element={<ExploreTypes />} />
         <Route path="/types/:id" element={<ExploreType />} />
         <Route path="/solarsystems" element={<ExploreSolarsystems />} />
-        <Route path="/solarsystems/:id" element={<ExploreSolarsystem />} />
+        <Route path="/solarsystems/:id/*" element={<ExploreSolarsystem />} />
         <Route path="/namespaces" element={<ExploreNamespaces />} />
         <Route path="/namespaces/:id" element={<ExploreNamespace />} />
         <Route path="/tables" element={<ExploreTables />} />

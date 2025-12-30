@@ -58,7 +58,7 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
           <>
             <InternalLink
               title={`View system ${nodeAttributes.name}`}
-              to={`/explore/solarsystems/${nodeId}`}
+              to={`/explore/solarsystems/${nodeId}/map`}
             >
               {nodeAttributes.name}
             </InternalLink>
