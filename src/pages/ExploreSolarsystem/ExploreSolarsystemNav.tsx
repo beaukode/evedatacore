@@ -39,6 +39,12 @@ const ExploreSolarsystemNav: React.FC<ExploreSolarsystemNavProps> = ({
             to={`/explore/solarsystems/${id}/map`}
             replace
           />
+          <Tab
+            label="User data"
+            component={NavLink}
+            to={`/explore/solarsystems/${id}/data`}
+            replace
+          />
         </Tabs>
       </Paper>
     </Box>

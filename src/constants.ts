@@ -173,6 +173,7 @@ export const columnWidths = {
   address: 400,
   datetime: 210,
   solarSystem: 150,
+  solarSystemWithMap: 200,
   lpoint: 100,
 };
 

@@ -1,14 +1,14 @@
 import { Dexie, type EntityTable } from "dexie";
 import { omit } from "lodash-es";
 
-interface SystemRecord {
+export type SystemRecord = {
   id: string;
   notes?: string;
   color?: string;
   content?: string[];
   createdAt: number;
   updatedAt: number;
-}
+};
 
 const db = new Dexie("evedatacore") as Dexie & {
   systems: EntityTable<SystemRecord, "id">;
@@ -18,7 +18,7 @@ db.version(1).stores({
   systems: "++id, createdAt, updatedAt, *content",
 });
 
-export type { SystemRecord };
+// export type { SystemRecord };
 export { db };
 
 export function updateSystem(system: SystemRecord) {
@@ -34,4 +34,8 @@ export function updateSystem(system: SystemRecord) {
         });
       }
     });
+}
+
+export function listSystems() {
+  return db.systems.orderBy("updatedAt").reverse().toArray();
 }

@@ -11,12 +11,20 @@ import TableKillmails from "@/components/tables/TableKillmails";
 import ExploreSolarsystemNav from "./ExploreSolarsystem/ExploreSolarsystemNav";
 import ExploreSolarsystemWorldData from "./ExploreSolarsystem/ExploreSolarsystemWorldData";
 import ExploreSolarsystemMap from "./ExploreSolarsystem/ExploreSolarsystemMap";
+import ExploreSolarsystemUserData from "@/pages/ExploreSolarsystem/ExploreSolarsystemUserData";
+
+const routesMap: Record<string, number> = {
+  map: 1,
+  data: 2,
+};
 
 const ExploreSolarsystem: React.FC = () => {
   const { id } = useParams();
   const location = useLocation();
 
-  const currentTab = location.pathname.split("/").pop() === "map" ? 1 : 0;
+  const path = location.pathname.split("/").pop() ?? "";
+
+  const currentTab = routesMap[path] ?? 0;
 
   const query = useQuery({
     queryKey: ["Solarsystem", id],
@@ -70,7 +78,7 @@ const ExploreSolarsystem: React.FC = () => {
               <ExploreSolarsystemNav id={id ?? ""} currentTab={currentTab} />
             }
             sx={
-              currentTab === 1
+              currentTab !== 0
                 ? { p: 0, height: "70vh", flexGrow: 1 }
                 : undefined
             }
@@ -87,6 +95,7 @@ const ExploreSolarsystem: React.FC = () => {
                 path="/map"
                 element={<ExploreSolarsystemMap solarSystem={query.data} />}
               />
+              <Route path="/data" element={<ExploreSolarsystemUserData />} />
             </Routes>
           </PaperLevel1>
           <Routes>
