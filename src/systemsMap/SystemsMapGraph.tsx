@@ -4,7 +4,7 @@ import { keyBy } from "lodash-es";
 import SystemNode from "./components/SystemNode";
 import { GraphConnnection, GraphNode } from "./common";
 
-interface SystemMapGraphProps {
+interface SystemsMapGraphProps {
   nodes: GraphNode[];
   connections: GraphConnnection[];
   onNodeClick?: (node: SimulationNode) => void;
@@ -33,7 +33,7 @@ const DISTANCE_SCALE = 4;
 const GRAPH_WIDTH = 1200;
 const GRAPH_HEIGHT = 1200;
 
-const SystemMapGraph: React.FC<SystemMapGraphProps> = ({
+const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
   nodes,
   connections,
   onNodeClick,
@@ -231,4 +231,4 @@ const SystemMapGraph: React.FC<SystemMapGraphProps> = ({
   );
 };
 
-export default SystemMapGraph;
+export default SystemsMapGraph;

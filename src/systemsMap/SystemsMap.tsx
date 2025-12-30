@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Paper } from "@mui/material";
 import { Provider } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import SystemMapDrawer from "./SystemMapDrawer";
-import SystemMapGraph from "./SystemMapGraph";
+import SystemsMapDrawer from "./SystemsMapDrawer";
+import SystemsMapGraph from "./SystemsMapGraph";
 import { GraphConnnection, GraphNode, SystemMap } from "./common";
 import { SNMActions, getSNMStore, SNMStore } from "./Store";
 
@@ -107,7 +107,7 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
           flexDirection: "row",
         }}
       >
-        <SystemMapGraph
+        <SystemsMapGraph
           nodes={nodes}
           connections={connections}
           onNodeClick={(node) => {
@@ -127,7 +127,7 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
           }}
           elevation={4}
         >
-          <SystemMapDrawer />
+          <SystemsMapDrawer />
         </Paper>
       </Box>
     </Provider>
