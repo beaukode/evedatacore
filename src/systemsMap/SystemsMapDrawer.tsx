@@ -3,7 +3,7 @@ import PanelDisplay from "./components/PanelDisplay";
 import PanelSelectedSystem from "./components/PanelSelectedSystem";
 import PanelTool from "./components/PanelTool";
 
-const SystemMapDrawer: React.FC = () => {
+const SystemsMapDrawer: React.FC = () => {
   return (
     <>
       <PanelDisplay />
@@ -13,4 +13,4 @@ const SystemMapDrawer: React.FC = () => {
   );
 };
 
-export default SystemMapDrawer;
+export default SystemsMapDrawer;
