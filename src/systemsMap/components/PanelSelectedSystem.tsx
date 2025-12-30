@@ -1,6 +1,8 @@
 import React from "react";
 import {
+  Box,
   FormControl,
+  IconButton,
   InputLabel,
   ListItem,
   ListItemIcon,
@@ -12,7 +14,9 @@ import {
   Typography,
 } from "@mui/material";
 import ColorIcon from "@mui/icons-material/Square";
+import CopyIcon from "@mui/icons-material/ContentCopy";
 import { upperFirst } from "lodash-es";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import {
   SNMActions,
   SNMSelectors,
@@ -20,7 +24,9 @@ import {
   useSNMSelector,
 } from "../Store";
 import SystemContentCheckboxGroup from "./SystemContentCheckboxGroup";
+import SaveIcon from "./SaveIcon";
 import Panel from "./Panel";
+import { copySystemDataToClipboard } from "../common";
 
 const colors = {
   default: "primary",
@@ -34,6 +40,7 @@ const colors = {
 };
 
 const PanelSelectedSystem: React.FC = () => {
+  const solarSystemsIndex = useSolarSystemsIndex();
   const dispatch = useSNMDispatch();
   const selectedNode = useSNMSelector(SNMSelectors.selectSelectedNode);
   const nodeAttributes = useSNMSelector((s) =>
@@ -80,7 +87,22 @@ const PanelSelectedSystem: React.FC = () => {
   return (
     <Panel
       title={nodeAttributes.name}
-      titleAdornment={nodeDirty ? "*" : ""}
+      titleAdornment={
+        <Box display="flex" alignItems="center" gap={0.5}>
+          {nodeDirty && <SaveIcon />}
+          <IconButton
+            color="primary"
+            size="small"
+            onClick={async () => {
+              const name =
+                solarSystemsIndex?.getById(selectedNode)?.solarSystemName ?? "";
+              await copySystemDataToClipboard(name, nodeRecord);
+            }}
+          >
+            <CopyIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      }
       sx={{ flexGrow: 1, flexShrink: 1, flexBasis: "100%" }}
     >
       <FormControl sx={{ my: 1 }} fullWidth>

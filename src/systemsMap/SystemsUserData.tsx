@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, IconButton, LinearProgress, TableCell } from "@mui/material";
 import CopyIcon from "@mui/icons-material/ContentCopy";
-import CircleIcon from "@mui/icons-material/Circle";
+import ColorIcon from "@mui/icons-material/Square";
 import { useQuery } from "@tanstack/react-query";
 import { tsToLocaleString } from "@/tools";
 import DataTable, { DataTableColumn } from "@/components/DataTable";
@@ -50,7 +50,7 @@ const SystemsUserData: React.FC = () => {
         <React.Fragment key={r.id}>
           <TableCell>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <CircleIcon htmlColor={r.color ?? "primary"} />
+              <ColorIcon htmlColor={r.color ?? "primary"} />
               <ButtonSolarsystem solarSystemId={r.id} showMapLink />
             </Box>
           </TableCell>
