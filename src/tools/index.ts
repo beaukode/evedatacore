@@ -106,13 +106,42 @@ export function ldapToDateTime(value?: number) {
   return isoDate.substring(0, 10) + " " + isoDate.substring(11, 19);
 }
 
-export function tsToDateTime(value?: number): string {
-  if (!value) return "";
-  if (value < 31467647000) { // If the timestamp is before 1970-12-31, it's in seconds
+export function tsToDate(value?: number): Date | undefined {
+  if (!value) return undefined;
+  if (value < 31467647000) {
+    // If the timestamp is before 1970-12-31, it's in seconds
     value *= 1000;
   }
-  const isoDate = new Date(value).toISOString();
+  return new Date(value);
+}
+
+export function tsToDateTime(value?: number): string {
+  const date = tsToDate(value);
+  if (!date) return "";
+  const isoDate = date.toISOString();
   return isoDate.substring(0, 10) + " " + isoDate.substring(11, 19);
+}
+
+export type LocaleStringOptions = {
+  time?: boolean;
+};
+
+export function tsToLocaleString(
+  value?: number,
+  options?: LocaleStringOptions
+): string {
+  const date = tsToDate(value);
+  if (!date) return "";
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  };
+  if (options?.time) {
+    dateOptions.hour = "numeric";
+    dateOptions.minute = "numeric";
+  }
+  return date.toLocaleString(undefined, dateOptions);
 }
 
 export function formatLargeNumber(value: string) {
