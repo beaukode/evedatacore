@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { Provider } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import SystemsMapDrawer from "./SystemsMapDrawer";
@@ -117,18 +117,7 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
             store.dispatch(SNMActions.onNodeOver(node?.id));
           }}
         />
-        <Paper
-          sx={{
-            width: 300,
-            flexShrink: 0,
-            flexGrow: 0,
-            overflowY: "auto",
-            overflowX: "hidden",
-          }}
-          elevation={4}
-        >
-          <SystemsMapDrawer />
-        </Paper>
+        <SystemsMapDrawer />
       </Box>
     </Provider>
   );

@@ -1,5 +1,11 @@
 import React from "react";
-import { Checkbox, FormControlLabel, FormGroup, useTheme } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  SxProps,
+  useTheme,
+} from "@mui/material";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/Square";
 import ShieldIcon from "@mui/icons-material/Shield";
@@ -14,11 +20,13 @@ import { pointOfInterests } from "../common";
 interface SystemContentCheckboxGroupProps {
   value: string[];
   onChange: (value: string[]) => void;
+  sx?: SxProps;
 }
 
 const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
   value,
   onChange,
+  sx,
 }) => {
   const theme = useTheme();
 
@@ -62,8 +70,6 @@ const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
                 },
                 padding: 0.5,
               }}
-              disableRipple
-              disableFocusRipple
             />
           }
           slotProps={{
@@ -95,9 +101,9 @@ const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
       title={`Content (${value.length})`}
       color="secondary.main"
       sx={{
-        maxHeight: "20vh",
         overflowY: "auto",
         scrollbarColor: `${theme.palette.secondary.main} transparent`,
+        ...sx,
       }}
     >
       <FormGroup sx={{ fontSize: 10 }}>{checkboxes}</FormGroup>

@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import SelectIcon from "@mui/icons-material/AdsClick";
 import RoutingIcon from "@mui/icons-material/Route";
 import {
@@ -17,6 +9,7 @@ import {
   useSNMSelector,
 } from "../Store";
 import { ToolKey } from "../common";
+import Panel from "./Panel";
 
 const PanelDisplay: React.FC = () => {
   const dispatch = useSNMDispatch();
@@ -32,26 +25,21 @@ const PanelDisplay: React.FC = () => {
   };
 
   return (
-    <Accordion elevation={4} expanded={true}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography component="span">Tool</Typography>
-      </AccordionSummary>
-      <AccordionDetails sx={{ textAlign: "center" }}>
-        <ToggleButtonGroup
-          value={tool}
-          onChange={handleChange}
-          size="small"
-          exclusive
-        >
-          <ToggleButton value="select" title="Select">
-            <SelectIcon />
-          </ToggleButton>
-          <ToggleButton value="routing" title="Routing" disabled>
-            <RoutingIcon />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </AccordionDetails>
-    </Accordion>
+    <Panel title="Tool">
+      <ToggleButtonGroup
+        value={tool}
+        onChange={handleChange}
+        size="small"
+        exclusive
+      >
+        <ToggleButton value="select" title="Select">
+          <SelectIcon />
+        </ToggleButton>
+        <ToggleButton value="routing" title="Routing" disabled>
+          <RoutingIcon />
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </Panel>
   );
 };
 

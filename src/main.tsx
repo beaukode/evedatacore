@@ -83,7 +83,6 @@ const theme = createTheme({
     MuiAccordionSummary: {
       styleOverrides: {
         root: ({ theme }) => ({
-          // borderTop: `2px solid ${theme.palette.divider}`,
           borderBottom: `2px dashed ${theme.palette.divider}`,
           "&.Mui-expanded": {
             minHeight: 0,

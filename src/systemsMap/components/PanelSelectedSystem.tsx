@@ -1,8 +1,5 @@
 import React from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   FormControl,
   InputLabel,
   ListItem,
@@ -14,7 +11,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ColorIcon from "@mui/icons-material/Square";
 import { upperFirst } from "lodash-es";
 import {
@@ -24,6 +20,7 @@ import {
   useSNMSelector,
 } from "../Store";
 import SystemContentCheckboxGroup from "./SystemContentCheckboxGroup";
+import Panel from "./Panel";
 
 const colors = {
   default: "primary",
@@ -81,72 +78,75 @@ const PanelSelectedSystem: React.FC = () => {
   }
 
   return (
-    <Accordion elevation={4} expanded={true}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography component="span">
-          {nodeAttributes.name} {nodeDirty ? "*" : ""}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <FormControl sx={{ my: 1 }} fullWidth>
-          <InputLabel id="color-label">Color</InputLabel>
-          <Select
-            labelId="color-label"
-            label="Color"
-            size="small"
-            value={nodeRecord.color ?? "default"}
-            onChange={handleColorChange}
-            renderValue={(value) => {
-              return (
-                <ListItem disablePadding dense>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <ColorIcon
-                      fontSize="small"
-                      color={value === "default" ? "primary" : undefined}
-                      htmlColor={value}
-                    />
-                  </ListItemIcon>
-                  <ListItemText>{upperFirst(value)}</ListItemText>
-                </ListItem>
-              );
-            }}
-            fullWidth
-          >
-            {Object.entries(colors).map(([key, value]) => (
-              <MenuItem value={key} key={key}>
-                <ListItemIcon>
-                  <ColorIcon fontSize="small" htmlColor={value} />
+    <Panel
+      title={nodeAttributes.name}
+      titleAdornment={nodeDirty ? "*" : ""}
+      sx={{ flexGrow: 1, flexShrink: 1, flexBasis: "100%" }}
+    >
+      <FormControl sx={{ my: 1 }} fullWidth>
+        <InputLabel id="color-label">Color</InputLabel>
+        <Select
+          labelId="color-label"
+          label="Color"
+          size="small"
+          value={nodeRecord.color ?? "default"}
+          onChange={handleColorChange}
+          renderValue={(value) => {
+            return (
+              <ListItem disablePadding dense>
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ColorIcon
+                    fontSize="small"
+                    color={value === "default" ? "primary" : undefined}
+                    htmlColor={value}
+                  />
                 </ListItemIcon>
-                <ListItemText>{upperFirst(key)}</ListItemText>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          variant="outlined"
-          label="Notes"
-          value={nodeRecord.notes ?? ""}
-          onChange={handleNotesChange}
-          rows={5}
-          multiline
+                <ListItemText>{upperFirst(value)}</ListItemText>
+              </ListItem>
+            );
+          }}
           fullWidth
-        />
-        <SystemContentCheckboxGroup
-          value={nodeRecord.content ?? []}
-          onChange={handleContentChange}
-        />
-        <Typography variant="caption" color="text.secondary">
-          Last updated:{" "}
-          {new Date(nodeRecord.updatedAt).toLocaleString(undefined, {
-            day: "numeric",
-            month: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-          })}
-        </Typography>
-      </AccordionDetails>
-    </Accordion>
+        >
+          {Object.entries(colors).map(([key, value]) => (
+            <MenuItem value={key} key={key}>
+              <ListItemIcon>
+                <ColorIcon fontSize="small" htmlColor={value} />
+              </ListItemIcon>
+              <ListItemText>{upperFirst(key)}</ListItemText>
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <TextField
+        variant="outlined"
+        label="Notes"
+        value={nodeRecord.notes ?? ""}
+        onChange={handleNotesChange}
+        rows={2}
+        multiline
+        fullWidth
+      />
+      <SystemContentCheckboxGroup
+        value={nodeRecord.content ?? []}
+        onChange={handleContentChange}
+        sx={{
+          flexGrow: 1,
+          flexShrink: 1,
+          flexBasis: 100,
+          alignSelf: "stretch",
+        }}
+      />
+      <Typography variant="caption" color="text.secondary">
+        Last updated:{" "}
+        {new Date(nodeRecord.updatedAt).toLocaleString(undefined, {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        })}
+      </Typography>
+    </Panel>
   );
 };
 
