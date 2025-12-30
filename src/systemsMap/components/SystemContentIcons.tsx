@@ -3,6 +3,7 @@ import { Box, SxProps, Tooltip } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/Square";
 import ShieldIcon from "@mui/icons-material/Shield";
 import CircleIcon from "@mui/icons-material/Circle";
+import MoonIcon from "@mui/icons-material/Bedtime";
 import MoreIcon from "@mui/icons-material/MoreHoriz";
 import { pointOfInterests, PointOfInterest } from "../common";
 
@@ -59,6 +60,8 @@ const SystemContentIcons: React.FC<SystemContentIconsProps> = ({
             Icon = ShieldIcon;
           } else if (poi.icon === "circle") {
             Icon = CircleIcon;
+          } else if (poi.icon === "moon") {
+            Icon = MoonIcon;
           }
           return (
             <Tooltip key={poi.name} title={poi.name} arrow>

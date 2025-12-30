@@ -4,6 +4,8 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/Square";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
+import MoonIcon from "@mui/icons-material/Bedtime";
+import MoonOutlined from "@mui/icons-material/BedtimeOutlined";
 import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import Fieldset from "@/components/ui/Fieldset";
@@ -35,6 +37,9 @@ const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
       } else if (valueItem.icon === "circle") {
         Icon = CircleOutlinedIcon;
         CheckedIcon = CircleIcon;
+      } else if (valueItem.icon === "moon") {
+        Icon = MoonOutlined;
+        CheckedIcon = MoonIcon;
       }
       const fragment = (
         <FormControlLabel
