@@ -23,7 +23,7 @@ import {
   useSNMDispatch,
   useSNMSelector,
 } from "../Store";
-import SystemContentCheckboxGroup from "./SystemContentCheckboxGroup";
+import PointsOfInterestField from "./PointsOfInterestField";
 import SaveIcon from "./SaveIcon";
 import Panel from "./Panel";
 import { copySystemDataToClipboard } from "../common";
@@ -148,7 +148,7 @@ const PanelSelectedSystem: React.FC = () => {
         multiline
         fullWidth
       />
-      <SystemContentCheckboxGroup
+      <PointsOfInterestField
         value={nodeRecord.content ?? []}
         onChange={handleContentChange}
         sx={{

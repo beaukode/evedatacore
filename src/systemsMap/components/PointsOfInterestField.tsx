@@ -17,13 +17,15 @@ import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import Fieldset from "@/components/ui/Fieldset";
 import { pointOfInterests } from "../common";
 
-interface SystemContentCheckboxGroupProps {
+interface PointsOfInterestFieldProps {
+  title?: string;
   value: string[];
   onChange: (value: string[]) => void;
   sx?: SxProps;
 }
 
-const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
+const PointsOfInterestField: React.FC<PointsOfInterestFieldProps> = ({
+  title = "Points of interest",
   value,
   onChange,
   sx,
@@ -98,7 +100,7 @@ const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
 
   return (
     <Fieldset
-      title={`Content (${value.length})`}
+      title={`${title} (${value.length})`}
       color="secondary.main"
       sx={{
         overflowY: "auto",
@@ -111,4 +113,4 @@ const SystemContentCheckboxGroup: React.FC<SystemContentCheckboxGroupProps> = ({
   );
 };
 
-export default SystemContentCheckboxGroup;
+export default PointsOfInterestField;
