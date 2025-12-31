@@ -1,6 +1,4 @@
 import { SxProps } from "@mui/material";
-import { SystemRecord } from "./Database";
-import { tsToLocaleString } from "@/tools";
 
 export type System = {
   id: string;
@@ -74,31 +72,3 @@ export const pointOfInterests: Array<PointOfInterest> = [
   { name: "Abandoned Processing Plant", color: "brown", icon: "moon" },
   { name: "Destroyed Research Archive", color: "gold", icon: "moon" },
 ];
-
-const emojis = [
-  ":one:",
-  ":two:",
-  ":three:",
-  ":four:",
-  ":five:",
-  ":six:",
-  ":seven:",
-  ":eight:",
-  ":nine:",
-  ":keycap_ten:",
-];
-
-export async function copySystemDataToClipboard(
-  name: string,
-  data: SystemRecord
-) {
-  const parts = [name];
-  (data.content ?? []).forEach((content, index) => {
-    parts.push(`${emojis[index]} ${content}`);
-  });
-  if (data.notes && data.notes.trim().length > 0) {
-    parts.push(data.notes);
-  }
-  parts.push(tsToLocaleString(data.updatedAt, { time: true }));
-  await navigator.clipboard.writeText(parts.join(" - "));
-}

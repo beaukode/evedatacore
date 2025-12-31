@@ -16,7 +16,6 @@ import {
 import ColorIcon from "@mui/icons-material/Square";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { upperFirst } from "lodash-es";
-import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import {
   SNMActions,
   SNMSelectors,
@@ -24,9 +23,9 @@ import {
   useSNMSelector,
 } from "../Store";
 import PointsOfInterestField from "./PointsOfInterestField";
+import { useSystemDataCopy } from "../hooks/useSystemDataCopy";
 import SaveIcon from "./SaveIcon";
 import Panel from "./Panel";
-import { copySystemDataToClipboard } from "../common";
 
 const colors = {
   default: "primary",
@@ -40,7 +39,7 @@ const colors = {
 };
 
 const PanelSelectedSystem: React.FC = () => {
-  const solarSystemsIndex = useSolarSystemsIndex();
+  const systemDataCopy = useSystemDataCopy();
   const dispatch = useSNMDispatch();
   const selectedNode = useSNMSelector(SNMSelectors.selectSelectedNode);
   const nodeAttributes = useSNMSelector((s) =>
@@ -94,9 +93,7 @@ const PanelSelectedSystem: React.FC = () => {
             color="primary"
             size="small"
             onClick={async () => {
-              const name =
-                solarSystemsIndex?.getById(selectedNode)?.solarSystemName ?? "";
-              await copySystemDataToClipboard(name, nodeRecord);
+              await systemDataCopy.copy(nodeRecord);
             }}
           >
             <CopyIcon fontSize="small" />
