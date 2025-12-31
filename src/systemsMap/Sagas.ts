@@ -6,6 +6,7 @@ import {
   all,
   call,
   take,
+  debounce,
 } from "typed-redux-saga";
 import { Saga, Task, eventChannel } from "redux-saga";
 import { keyBy } from "lodash-es";
@@ -145,6 +146,23 @@ export const SNMRootSaga = function* () {
         yield* call(updateSystem, selectedNodeRecord);
       }
       yield put(slice.actions.setSelectedNodeDirty(false));
+    }),
+    debounce(100, slice.actions.setSearch, function* () {
+      const search = yield* select(slice.selectors.selectSearch);
+      const nodes = yield* select(slice.selectors.selectNodesAttributes);
+      const allNodes = Object.values(nodes);
+      const updatedNodes = allNodes
+        .map((node) => {
+          if (search.length > 1 && node.name.toUpperCase().includes(search)) {
+            return { ...node, highlighted: true };
+          } else if (node.highlighted) {
+            return { ...node, highlighted: false };
+          }
+        })
+        .filter((node) => node !== undefined);
+      if (updatedNodes.length > 0) {
+        yield put(slice.actions.setNodesAttributes(keyBy(updatedNodes, "id")));
+      }
     }),
   ]);
 };

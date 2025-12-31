@@ -6,6 +6,7 @@ import SystemsMapDrawer from "./SystemsMapDrawer";
 import SystemsMapGraph from "./SystemsMapGraph";
 import { GraphConnnection, GraphNode, SystemMap } from "./common";
 import { SNMActions, getSNMStore, SNMStore } from "./Store";
+import SystemsMapSearchField from "./SystemsMapSearchField";
 
 interface SystemsMapProps {
   systemId: string;
@@ -105,8 +106,18 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
           width: "100%",
           display: "flex",
           flexDirection: "row",
+          position: "relative",
         }}
       >
+        <SystemsMapSearchField
+          sx={{
+            position: "absolute",
+            top: 12,
+            left: 12,
+            width: 200,
+            zIndex: 1000,
+          }}
+        />
         <SystemsMapGraph
           nodes={nodes}
           connections={connections}

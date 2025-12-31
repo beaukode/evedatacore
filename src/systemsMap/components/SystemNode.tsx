@@ -60,6 +60,15 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
             <InternalLink
               title={`View system ${nodeAttributes.name}`}
               to={`/explore/solarsystems/${nodeId}/map`}
+              sx={
+                nodeAttributes.highlighted
+                  ? {
+                      backgroundColor: "primary.dark",
+                      color: "white",
+                      padding: "2px 4px",
+                    }
+                  : undefined
+              }
             >
               {nodeAttributes.name}
             </InternalLink>

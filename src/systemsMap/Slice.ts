@@ -22,6 +22,7 @@ interface SystemNeighborsState {
   data: SystemMap;
   ids: string[];
   dbRecords: Record<string, SystemRecord>;
+  search: string;
 }
 
 const initialState: SystemNeighborsState = {
@@ -42,6 +43,7 @@ const initialState: SystemNeighborsState = {
     d_matrix: {},
     neighbors: [],
   },
+  search: "",
 };
 
 type WritableSystemRecordKeys = keyof Omit<
@@ -175,6 +177,9 @@ const SNMSlice = createSlice({
       _state: WritableDraft<SystemNeighborsState>,
       _action: DbUpdateSystemPayload<T>
     ) => {},
+    setSearch: (state, action: PayloadAction<string>) => {
+      state.search = action.payload.trim().toUpperCase();
+    },
   },
   selectors: {
     selectDisplay: (state) => state.display,
@@ -191,6 +196,7 @@ const SNMSlice = createSlice({
       state.dbRecords[id],
     selectData: (state): SystemMap => state.data,
     selectIds: (state) => state.ids,
+    selectSearch: (state) => state.search,
   },
 });
 
