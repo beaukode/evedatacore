@@ -7,9 +7,8 @@ import { tsToLocaleString } from "@/tools";
 import DataTable, { DataTableColumn } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
-import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { listSystems, SystemRecord } from "./Database";
-import { copySystemDataToClipboard } from "./common";
+import { useSystemDataCopy } from "./hooks/useSystemDataCopy";
 
 const columns: DataTableColumn<SystemRecord>[] = [
   {
@@ -36,8 +35,7 @@ const columns: DataTableColumn<SystemRecord>[] = [
 ];
 
 const SystemsUserData: React.FC = () => {
-  const solarSystemsIndex = useSolarSystemsIndex();
-
+  const systemDataCopy = useSystemDataCopy();
   const query = useQuery({
     queryKey: ["SolarsystemUserData"],
     queryFn: async () => listSystems(),
@@ -62,9 +60,7 @@ const SystemsUserData: React.FC = () => {
               color="primary"
               size="small"
               onClick={async () => {
-                const name =
-                  solarSystemsIndex?.getById(r.id)?.solarSystemName ?? "";
-                await copySystemDataToClipboard(name, r);
+                await systemDataCopy.copy(r);
               }}
             >
               <CopyIcon />
@@ -73,7 +69,7 @@ const SystemsUserData: React.FC = () => {
         </React.Fragment>
       );
     },
-    [solarSystemsIndex]
+    [systemDataCopy]
   );
 
   return (
