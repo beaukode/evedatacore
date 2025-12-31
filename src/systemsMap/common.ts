@@ -27,6 +27,7 @@ export type NodeAttributes = {
   sx?: SxProps;
   children?: React.ReactNode;
   opacity?: number;
+  highlighted?: boolean;
 };
 
 export type NodesAttributesMap = Record<string, NodeAttributes>;
