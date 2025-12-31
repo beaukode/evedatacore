@@ -49,6 +49,7 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
             borderRadius: "10px",
             backgroundColor: center ? "background.default" : "background.paper",
             cursor: "default",
+            opacity: nodeAttributes.opacity,
             ...nodeAttributes.sx,
           }}
           onClick={onClick}
