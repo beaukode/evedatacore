@@ -17,7 +17,7 @@ const columns: DataTableColumn<SystemRecord>[] = [
     width: columnWidths.solarSystemWithMap,
   },
   {
-    label: "Content",
+    label: "Points of interest",
     width: columnWidths.common,
     grow: true,
   },

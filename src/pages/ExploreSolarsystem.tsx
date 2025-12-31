@@ -11,11 +11,13 @@ import TableKillmails from "@/components/tables/TableKillmails";
 import ExploreSolarsystemNav from "./ExploreSolarsystem/ExploreSolarsystemNav";
 import ExploreSolarsystemWorldData from "./ExploreSolarsystem/ExploreSolarsystemWorldData";
 import ExploreSolarsystemMap from "./ExploreSolarsystem/ExploreSolarsystemMap";
-import ExploreSolarsystemUserData from "@/pages/ExploreSolarsystem/ExploreSolarsystemUserData";
+import ExploreSolarsystemUserData from "./ExploreSolarsystem/ExploreSolarsystemUserData";
+import ExploreSolarsystemSettings from "./ExploreSolarsystem/ExploreSolarsystemSettings";
 
 const routesMap: Record<string, number> = {
   map: 1,
   data: 2,
+  settings: 3,
 };
 
 const ExploreSolarsystem: React.FC = () => {
@@ -96,6 +98,10 @@ const ExploreSolarsystem: React.FC = () => {
                 element={<ExploreSolarsystemMap solarSystem={query.data} />}
               />
               <Route path="/data" element={<ExploreSolarsystemUserData />} />
+              <Route
+                path="/settings"
+                element={<ExploreSolarsystemSettings />}
+              />
             </Routes>
           </PaperLevel1>
           <Routes>

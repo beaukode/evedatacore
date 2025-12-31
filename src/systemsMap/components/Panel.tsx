@@ -5,6 +5,7 @@ interface PanelHeaderProps {
   title: string;
   titleAdornment?: React.ReactNode;
   sx?: SxProps;
+  containerSx?: SxProps;
   children?: React.ReactNode;
 }
 
@@ -12,6 +13,7 @@ const Panel: React.FC<PanelHeaderProps> = ({
   title,
   titleAdornment,
   sx,
+  containerSx,
   children,
 }) => {
   const theme = useTheme();
@@ -45,7 +47,7 @@ const Panel: React.FC<PanelHeaderProps> = ({
         flexDirection="column"
         flexGrow={1}
         flexShrink={1}
-        alignItems="center"
+        sx={containerSx}
       >
         {children}
       </Box>

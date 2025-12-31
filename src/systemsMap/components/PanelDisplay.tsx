@@ -26,7 +26,7 @@ const PanelDisplay: React.FC = () => {
   };
 
   return (
-    <Panel title="Display">
+    <Panel title="Display" containerSx={{ alignItems: "center" }}>
       <ToggleButtonGroup
         value={display}
         onChange={handleChange}

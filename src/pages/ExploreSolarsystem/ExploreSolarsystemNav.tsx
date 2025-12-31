@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Button, Link, Paper, Tab, Tabs } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { NavLink } from "react-router";
 
 interface ExploreSolarsystemNavProps {
@@ -43,6 +44,13 @@ const ExploreSolarsystemNav: React.FC<ExploreSolarsystemNavProps> = ({
             label="User data"
             component={NavLink}
             to={`/explore/solarsystems/${id}/data`}
+            replace
+          />
+          <Tab
+            label={<SettingsIcon />}
+            component={NavLink}
+            to={`/explore/solarsystems/${id}/settings`}
+            sx={{ minWidth: 0 }}
             replace
           />
         </Tabs>
