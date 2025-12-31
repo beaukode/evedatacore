@@ -1,4 +1,5 @@
 import React from "react";
+import { useDebounce, useWindowSize } from "@uidotdev/usehooks";
 import * as d3 from "d3-force";
 import { keyBy } from "lodash-es";
 import SystemNode from "./components/SystemNode";
@@ -41,6 +42,8 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const centerNodeRef = React.useRef<HTMLDivElement>(null);
+  const size = useWindowSize();
+  const debouncedSize = useDebounce(size, 100);
 
   const [simulationNodes, setSimulationNodes] =
     React.useState<SimulationNodeMap>({});
@@ -133,6 +136,11 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
 
   React.useEffect(() => {
     if (centerNodeRef.current) {
+      console.log(
+        "scrollTo",
+        centerNodeRef.current.offsetTop,
+        containerRef.current?.offsetHeight
+      );
       containerRef.current?.scrollTo({
         top:
           centerNodeRef.current.offsetTop -
@@ -143,7 +151,7 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
         behavior: "instant",
       });
     }
-  }, [centerNode]);
+  }, [centerNode, debouncedSize]);
 
   return (
     <div ref={containerRef} style={{ overflow: "hidden", flexGrow: 1 }}>
