@@ -19,23 +19,17 @@ export const SNMDisplayDistancesSaga = function* () {
 
   yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
   yield all([
-    takeEvery(slice.actions.setOverNode, function* ({ payload }) {
+    takeEvery(slice.actions.setSelectedNode, function* () {
       const selectedNode = yield* select(slice.selectors.selectSelectedNode);
       const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => {
-        const distance = getDistance(
-          neighbor.id,
-          payload.next || selectedNode || data.id
-        );
+        const distance = getDistance(neighbor.id, selectedNode || data.id);
         return {
           id: neighbor.id,
           name: neighbor.name,
           text: distance ? distance.toFixed(2) : "",
         };
       });
-      const distance = getDistance(
-        data.id,
-        payload.next || selectedNode || data.id
-      );
+      const distance = getDistance(data.id, selectedNode || data.id);
       nodes.push({
         id: data.id,
         name: data.name,
