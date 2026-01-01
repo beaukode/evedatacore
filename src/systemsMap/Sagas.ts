@@ -91,6 +91,7 @@ export const SNMRootSaga = function* () {
 
       yield put(slice.actions.setDisplay("distances"));
       yield put(slice.actions.setTool("select"));
+      yield* take(slice.actions.setDbRecords);
       yield put(
         slice.actions.setSelectedNode({
           prev: undefined,
