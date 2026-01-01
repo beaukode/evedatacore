@@ -136,11 +136,6 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
 
   React.useEffect(() => {
     if (centerNodeRef.current) {
-      console.log(
-        "scrollTo",
-        centerNodeRef.current.offsetTop,
-        containerRef.current?.offsetHeight
-      );
       containerRef.current?.scrollTo({
         top:
           centerNodeRef.current.offsetTop -
