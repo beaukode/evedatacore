@@ -1,14 +1,22 @@
 import React from "react";
-import { Box, IconButton, LinearProgress, TableCell } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  LinearProgress,
+  TableCell,
+  TextField,
+} from "@mui/material";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import ColorIcon from "@mui/icons-material/Square";
 import { useQuery } from "@tanstack/react-query";
-import { tsToLocaleString } from "@/tools";
+import { useSolarSystemsIndex } from "@/contexts/AppContext";
+import { filterInProps, tsToLocaleString } from "@/tools";
 import DataTable, { DataTableColumn } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
 import { listSystems, SystemRecord } from "./Database";
 import { useSystemDataCopy } from "./hooks/useSystemDataCopy";
+import useQuerySearch from "@/tools/useQuerySearch";
 
 const columns: DataTableColumn<SystemRecord>[] = [
   {
@@ -35,11 +43,31 @@ const columns: DataTableColumn<SystemRecord>[] = [
 ];
 
 const SystemsUserData: React.FC = () => {
+  const [search, setSearch, debouncedSearch] = useQuerySearch({
+    text: "",
+  });
+  const solarSystemIndex = useSolarSystemsIndex();
   const systemDataCopy = useSystemDataCopy();
   const query = useQuery({
     queryKey: ["SolarsystemUserData"],
-    queryFn: async () => listSystems(),
+    queryFn: async () => {
+      const records = listSystems();
+      return (await records).map((r) => ({
+        ...r,
+        textContent: r.content?.join(", ") ?? "",
+        name: solarSystemIndex?.getById(r.id)?.solarSystemName ?? "",
+      }));
+    },
   });
+
+  const rows = React.useMemo(() => {
+    if (!query.data) return [];
+    return filterInProps(query.data, debouncedSearch.text.toLowerCase(), [
+      "name",
+      "textContent",
+      "notes",
+    ]);
+  }, [query.data, debouncedSearch.text]);
 
   const itemContent = React.useCallback(
     (_: number, r: SystemRecord) => {
@@ -79,12 +107,19 @@ const SystemsUserData: React.FC = () => {
           visibility: query.isFetching ? "visible" : "hidden",
         }}
       />
-      <Box flexGrow={1} p={2}>
-        <DataTable
-          data={query.data ?? []}
-          columns={columns}
-          itemContent={itemContent}
+      <Box display="flex" px={2}>
+        <TextField
+          sx={{ minWidth: 200 }}
+          fullWidth
+          label="Search"
+          value={search.text}
+          onChange={(e) =>
+            setSearch("text", e.currentTarget.value.substring(0, 255))
+          }
         />
+      </Box>
+      <Box flexGrow={1} p={2}>
+        <DataTable data={rows} columns={columns} itemContent={itemContent} />
       </Box>
     </Box>
   );
