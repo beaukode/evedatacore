@@ -6,23 +6,27 @@ import {
   FormControl,
   FormControlLabel,
   Grid2,
+  IconButton,
   Radio,
   RadioGroup,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/DownloadForOffline";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useQuery } from "@tanstack/react-query";
 import { useSettings } from "./hooks/useSettings";
 import { useSystemsMapContext } from "./contexts/SystemsMapContext";
 import Panel from "./components/Panel";
 import PointsOfInterestField from "./components/PointsOfInterestField";
 import SystemsSettingCreateDbModal from "./components/SystemsSettingCreateDbModal";
+import SystemsSettingDeleteDbModal from "./components/SystemsSettingDeleteDbModal";
 
 const SystemsSettings: React.FC = () => {
   const { settings, setSettings } = useSettings();
   const { mainDatabase, userDatabase } = useSystemsMapContext();
 
   const [openCreateDbModal, setOpenCreateDbModal] = React.useState(false);
+  const [openDeleteDbModal, setOpenDeleteDbModal] = React.useState(false);
 
   const userDatabases = useQuery({
     queryKey: ["MainDatabase", "userDatabases"],
@@ -78,6 +82,14 @@ const SystemsSettings: React.FC = () => {
               justifyContent="flex-end"
               flexWrap="wrap-reverse"
             >
+              <IconButton
+                title="Delete database"
+                disabled={settings.userDatabase === "main"}
+                color="error"
+                onClick={() => setOpenDeleteDbModal(true)}
+              >
+                <DeleteIcon />
+              </IconButton>
               {/* <Button
                 variant="outlined"
                 color="primary"
@@ -168,6 +180,21 @@ const SystemsSettings: React.FC = () => {
             setSettings({
               ...settings,
               userDatabase: createdSlug,
+            });
+          }
+        }}
+      />
+      <SystemsSettingDeleteDbModal
+        open={openDeleteDbModal}
+        slug={settings.userDatabase}
+        name={userDatabase.name}
+        onClose={(deleted) => {
+          setOpenDeleteDbModal(false);
+          if (deleted) {
+            userDatabases.refetch();
+            setSettings({
+              ...settings,
+              userDatabase: "main",
             });
           }
         }}

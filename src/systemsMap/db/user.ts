@@ -13,11 +13,17 @@ export type SystemRecord = {
 export type UserDatabase = {
   updateSystem: (system: SystemRecord) => Promise<void>;
   listSystems: () => Promise<SystemRecord[]>;
+  countSystems: () => Promise<number>;
   listSystemsByIds: (ids: string[]) => Promise<SystemRecord[]>;
+  deleteDatabase: () => Promise<void>;
   close: () => Promise<void>;
+  name: string;
 };
 
-export async function openUserDatabase(slug: string): Promise<UserDatabase> {
+export async function openUserDatabase(
+  slug: string,
+  name: string
+): Promise<UserDatabase> {
   const db = new Dexie(`evedatacore-${slug}`, {
     autoOpen: false,
   }) as Dexie & {
@@ -47,8 +53,16 @@ export async function openUserDatabase(slug: string): Promise<UserDatabase> {
     return db.systems.orderBy("updatedAt").reverse().toArray();
   }
 
+  async function countSystems() {
+    return db.systems.count();
+  }
+
   async function listSystemsByIds(ids: string[]) {
     return db.systems.where("id").anyOf(ids).toArray();
+  }
+
+  async function deleteDatabase() {
+    await db.delete();
   }
 
   async function close() {
@@ -60,7 +74,10 @@ export async function openUserDatabase(slug: string): Promise<UserDatabase> {
   return {
     updateSystem,
     listSystems,
+    countSystems,
     listSystemsByIds,
+    deleteDatabase,
     close,
+    name,
   };
 }

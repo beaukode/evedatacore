@@ -11,6 +11,8 @@ export type UserDatabaseRecord = {
 export type MainDatabase = {
   listUserDatabases: () => Promise<UserDatabaseRecord[]>;
   createUserDatabase: (slug: string, name: string) => Promise<boolean>;
+  getUserDatabase: (slug: string) => Promise<UserDatabaseRecord | undefined>;
+  deleteUserDatabase: (slug: string) => Promise<void>;
   close: () => Promise<void>;
 };
 
@@ -29,6 +31,10 @@ export async function openMainDatabase() {
     return await db.userDatabases.orderBy("name").toArray();
   }
 
+  async function getUserDatabase(slug: string) {
+    return await db.userDatabases.get(slug);
+  }
+
   async function createUserDatabase(
     slug: string,
     name: string
@@ -44,6 +50,11 @@ export async function openMainDatabase() {
       .then(() => true)
       .catch(() => false); // Already exists
   }
+
+  async function deleteUserDatabase(slug: string) {
+    await db.userDatabases.delete(slug);
+  }
+
   async function close() {
     await db.close({ disableAutoOpen: true });
   }
@@ -63,7 +74,9 @@ export async function openMainDatabase() {
 
   return {
     listUserDatabases,
+    getUserDatabase,
     createUserDatabase,
+    deleteUserDatabase,
     close,
   };
 }
