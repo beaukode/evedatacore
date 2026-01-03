@@ -20,6 +20,7 @@ import Panel from "./components/Panel";
 import PointsOfInterestField from "./components/PointsOfInterestField";
 import SystemsSettingCreateDbModal from "./components/SystemsSettingCreateDbModal";
 import SystemsSettingDeleteDbModal from "./components/SystemsSettingDeleteDbModal";
+import SystemsSettingImportDbModal from "./components/SystemsSettingImportDbModal";
 
 const SystemsSettings: React.FC = () => {
   const { settings, setSettings } = useSettings();
@@ -27,6 +28,7 @@ const SystemsSettings: React.FC = () => {
 
   const [openCreateDbModal, setOpenCreateDbModal] = React.useState(false);
   const [openDeleteDbModal, setOpenDeleteDbModal] = React.useState(false);
+  const [openImportDbModal, setOpenImportDbModal] = React.useState(false);
 
   const userDatabases = useQuery({
     queryKey: ["MainDatabase", "userDatabases"],
@@ -86,20 +88,22 @@ const SystemsSettings: React.FC = () => {
                 title="Delete database"
                 disabled={settings.userDatabase === "main"}
                 color="error"
+                size="small"
                 onClick={() => setOpenDeleteDbModal(true)}
               >
                 <DeleteIcon />
               </IconButton>
-              {/* <Button
+              <Button
                 variant="outlined"
                 color="primary"
                 size="small"
                 startIcon={
                   <DownloadIcon sx={{ transform: "rotate(180deg)" }} />
                 }
+                onClick={() => setOpenImportDbModal(true)}
               >
                 Import
-              </Button> */}
+              </Button>
               <Button
                 variant="outlined"
                 color="primary"
@@ -198,6 +202,10 @@ const SystemsSettings: React.FC = () => {
             });
           }
         }}
+      />
+      <SystemsSettingImportDbModal
+        open={openImportDbModal}
+        onClose={() => setOpenImportDbModal(false)}
       />
     </Box>
   );
