@@ -12,6 +12,7 @@ export type SystemRecord = {
 
 export type UserDatabase = {
   updateSystem: (system: SystemRecord) => Promise<void>;
+  importSystems: (systems: SystemRecord[]) => Promise<void>;
   listSystems: () => Promise<SystemRecord[]>;
   countSystems: () => Promise<number>;
   listSystemsByIds: (ids: string[]) => Promise<SystemRecord[]>;
@@ -49,6 +50,10 @@ export async function openUserDatabase(
       });
   }
 
+  async function importSystems(systems: SystemRecord[]) {
+    await db.systems.bulkPut(systems);
+  }
+
   async function listSystems() {
     return db.systems.orderBy("updatedAt").reverse().toArray();
   }
@@ -73,6 +78,7 @@ export async function openUserDatabase(
 
   return {
     updateSystem,
+    importSystems,
     listSystems,
     countSystems,
     listSystemsByIds,
