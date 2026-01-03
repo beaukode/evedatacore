@@ -30,12 +30,25 @@ export const SystemsMapContextProvider: React.FC<
   }, []);
 
   React.useEffect(() => {
-    let db: UserDatabase | null = null;
-    openUserDatabase(settings.userDatabase).then((userDb) => {
-      db = userDb;
-      setUserDatabase(db);
+    if (!mainDatabase) {
+      return;
+    }
+    mainDatabase.getUserDatabase(settings.userDatabase).then((metadata) => {
+      if (!metadata) {
+        return;
+      }
+      let db: UserDatabase | null = null;
+      openUserDatabase(settings.userDatabase, metadata.name).then((userDb) => {
+        db = userDb;
+        setUserDatabase(db);
+      });
+      return () => {
+        if (db) {
+          db.close();
+        }
+      };
     });
-  }, [settings.userDatabase]);
+  }, [mainDatabase, settings.userDatabase]);
 
   if (!mainDatabase || !userDatabase) {
     return null;
