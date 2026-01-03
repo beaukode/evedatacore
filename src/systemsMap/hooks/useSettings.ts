@@ -2,6 +2,7 @@ import z from "zod";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 
 const settingsSchema = z.object({
+  userDatabase: z.string().default("main"),
   copy: z
     .object({
       numbering: z.boolean(),
