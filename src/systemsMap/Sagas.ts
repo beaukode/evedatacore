@@ -17,7 +17,7 @@ import { SNMDisplayDistancesSaga } from "./tools/SNMDisplayDistances";
 import { SNMDisplayPlanetsSaga } from "./tools/SNMDisplayPlanets";
 import { SNMToolSelectSaga } from "./tools/SNMToolSelect";
 import { DisplayKey, NodeAttributes, ToolKey } from "./common";
-import { db, SystemRecord, updateSystem } from "./Database";
+import { SystemRecord } from "./db";
 
 const displaySagas: Record<DisplayKey, Saga> = {
   distances: SNMDisplayDistancesSaga,
@@ -44,7 +44,8 @@ function createLiveQueryChannel(query: () => Promise<SystemRecord[]>) {
 }
 
 function* watchSystems(ids: string[]) {
-  const query = () => db.systems.where("id").anyOf(ids).toArray();
+  const db = yield* select(slice.selectors.selectDb);
+  const query = () => db.listSystemsByIds(ids);
   const liveQueryChannel = yield* call(createLiveQueryChannel, query);
   let initialHydration = true;
 
@@ -137,6 +138,7 @@ export const SNMRootSaga = function* () {
       }
     }),
     takeEvery(slice.actions.commitSelectedNodeRecord, function* () {
+      const db = yield* select(slice.selectors.selectDb);
       const selectedNodeRecord = yield* select(
         slice.selectors.selectSelectedNodeRecord
       );
@@ -144,7 +146,7 @@ export const SNMRootSaga = function* () {
         slice.selectors.selectSelectedNodeDirty
       );
       if (selectedNodeDirty && selectedNodeRecord) {
-        yield* call(updateSystem, selectedNodeRecord);
+        yield* call(db.updateSystem, selectedNodeRecord);
       }
       yield put(slice.actions.setSelectedNodeDirty(false));
     }),

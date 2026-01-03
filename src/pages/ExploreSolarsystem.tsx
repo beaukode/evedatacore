@@ -10,9 +10,7 @@ import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
 import ExploreSolarsystemNav from "./ExploreSolarsystem/ExploreSolarsystemNav";
 import ExploreSolarsystemWorldData from "./ExploreSolarsystem/ExploreSolarsystemWorldData";
-import ExploreSolarsystemMap from "./ExploreSolarsystem/ExploreSolarsystemMap";
-import ExploreSolarsystemUserData from "./ExploreSolarsystem/ExploreSolarsystemUserData";
-import ExploreSolarsystemSettings from "./ExploreSolarsystem/ExploreSolarsystemSettings";
+import ExploreSolarsystemRouting from "./ExploreSolarsystem/ExploreSolarsystemRouting";
 
 const routesMap: Record<string, number> = {
   map: 1,
@@ -94,14 +92,10 @@ const ExploreSolarsystem: React.FC = () => {
                 }
               />
               <Route
-                path="/map"
-                element={<ExploreSolarsystemMap solarSystem={query.data} />}
+                path="/*"
+                element={<ExploreSolarsystemRouting solarSystem={query.data} />}
               />
-              <Route path="/data" element={<ExploreSolarsystemUserData />} />
-              <Route
-                path="/settings"
-                element={<ExploreSolarsystemSettings />}
-              />
+              <Route path="*" element={<Error404 />} />
             </Routes>
           </PaperLevel1>
           <Routes>

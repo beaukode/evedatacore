@@ -8,9 +8,10 @@ import {
   SystemMap,
   ToolKey,
 } from "./common";
-import { SystemRecord } from "./Database";
+import { SystemRecord, UserDatabase } from "./db";
 
 interface SystemNeighborsState {
+  db?: UserDatabase;
   ready?: boolean;
   display?: DisplayKey;
   tool?: ToolKey;
@@ -63,13 +64,17 @@ const SNMSlice = createSlice({
   reducers: {
     onNodeOver: (_state, _action: PayloadAction<string | undefined>) => {},
     onNodeClick: (_state, _action: PayloadAction<string>) => {},
-    init: (state, { payload }: PayloadAction<{ data: SystemMap }>) => {
+    init: (
+      state,
+      { payload }: PayloadAction<{ data: SystemMap; db: UserDatabase }>
+    ) => {
       // if already initialized or loading, do nothing
       if (state.ready !== undefined) {
         return;
       }
       state.ready = false;
       state.data = payload.data;
+      state.db = payload.db;
       state.ids = [payload.data.id, ...payload.data.neighbors.map((n) => n.id)];
     },
     dispose: () => {
@@ -182,6 +187,7 @@ const SNMSlice = createSlice({
     },
   },
   selectors: {
+    selectDb: (state) => state.db!,
     selectDisplay: (state) => state.display,
     selectTool: (state) => state.tool,
     selectOverNode: (state) => state.overNode,

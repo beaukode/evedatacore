@@ -13,7 +13,12 @@ function createSNMStore() {
   const store = configureStore({
     reducer: { map: slice.reducer },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(middleware),
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredPaths: ["map.db"],
+          ignoredActionPaths: ["payload.db"],
+        },
+      }).concat(middleware),
   });
   sagaMiddleware.run(SNMRootSaga);
   return store;

@@ -14,9 +14,10 @@ import { filterInProps, tsToLocaleString } from "@/tools";
 import DataTable, { DataTableColumn } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
-import { listSystems, SystemRecord } from "./Database";
+import { SystemRecord } from "./db";
 import { useSystemDataCopy } from "./hooks/useSystemDataCopy";
 import useQuerySearch from "@/tools/useQuerySearch";
+import { useSystemsMapContext } from "./contexts/SystemsMapContext";
 
 const columns: DataTableColumn<SystemRecord>[] = [
   {
@@ -46,12 +47,13 @@ const SystemsUserData: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
+  const { userDatabase } = useSystemsMapContext();
   const solarSystemIndex = useSolarSystemsIndex();
   const systemDataCopy = useSystemDataCopy();
   const query = useQuery({
     queryKey: ["SolarsystemUserData"],
     queryFn: async () => {
-      const records = listSystems();
+      const records = userDatabase.listSystems();
       return (await records).map((r) => ({
         ...r,
         textContent: r.content?.join(", ") ?? "",

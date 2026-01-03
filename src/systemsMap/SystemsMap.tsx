@@ -6,6 +6,7 @@ import SystemsMapDrawer from "./SystemsMapDrawer";
 import SystemsMapGraph from "./SystemsMapGraph";
 import { GraphConnnection, GraphNode, SystemMap } from "./common";
 import { SNMActions, getSNMStore, SNMStore } from "./Store";
+import { useSystemsMapContext } from "./contexts/SystemsMapContext";
 import SystemsMapSearchField from "./SystemsMapSearchField";
 
 interface SystemsMapProps {
@@ -14,6 +15,7 @@ interface SystemsMapProps {
 
 const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
   const [store, setStore] = React.useState<SNMStore | undefined>(undefined);
+  const { userDatabase } = useSystemsMapContext();
 
   const query = useQuery({
     queryKey: ["SystemNeighbors", systemId],
@@ -87,12 +89,12 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
 
   React.useEffect(() => {
     if (query.data.id !== "" && store) {
-      store.dispatch(SNMActions.init({ data: query.data }));
+      store.dispatch(SNMActions.init({ data: query.data, db: userDatabase }));
       return () => {
         store.dispatch(SNMActions.dispose());
       };
     }
-  }, [query.data, store]);
+  }, [query.data, store, userDatabase]);
 
   if (!store) {
     return null;
