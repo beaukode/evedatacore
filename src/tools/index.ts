@@ -8,7 +8,7 @@ export function shorten(
   text?: string,
   length: number = 16,
   ellipsis: string = "..."
-): string | undefined {
+): string {
   if (text && text.length > length) {
     return (
       text.substring(0, Math.round(length / 2)) +
@@ -16,7 +16,7 @@ export function shorten(
       text.substring(text.length - Math.round(length / 2))
     );
   }
-  return text;
+  return text || "";
 }
 
 export function filterInProps<T extends Record<string, unknown>>(
