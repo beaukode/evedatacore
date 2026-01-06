@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import InternalLink from "@/components/ui/InternalLink";
 import { SNMSelectors, useSNMSelector } from "../Store";
 import SystemContentIcons from "./SystemContentIcons";
@@ -27,13 +27,22 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
     }
 
     return (
-      <>
+      <Paper
+        ref={ref}
+        sx={{
+          position: "absolute",
+          left: x - 40,
+          top: y - 21,
+          width: "80px",
+          height: "42px",
+          borderRadius: "10px",
+        }}
+      >
         <Box
           ref={ref}
           sx={{
-            position: "absolute",
-            left: x - 40,
-            top: y - 21,
+            width: "100%",
+            height: "100%",
             borderColor:
               dbRecord?.color === "default"
                 ? "primary.dark"
@@ -41,8 +50,6 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
             borderWidth: "2px",
             borderStyle: "solid",
             fontSize: "12px",
-            width: "80px",
-            height: "42px",
             textAlign: "center",
             color: center ? "text.default" : "white",
             padding: "2px 4px",
@@ -80,13 +87,13 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
             maxIcons={6}
             sx={{
               position: "absolute",
-              bottom: -20,
+              bottom: -16,
               left: -4,
               zIndex: 1000,
             }}
           />
         </Box>
-      </>
+      </Paper>
     );
   }
 );
