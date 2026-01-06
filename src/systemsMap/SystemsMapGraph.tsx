@@ -57,6 +57,12 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
   >([]);
 
   const [dragging, setDragging] = React.useState(false);
+  const dragStartRef = React.useRef<{
+    x: number;
+    y: number;
+    scrollLeft: number;
+    scrollTop: number;
+  } | null>(null);
 
   React.useEffect(() => {
     const simulationNodes: SimulationNode[] = nodes.map((node) => ({
@@ -167,6 +173,35 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
     }
   }, [debouncedSize]);
 
+  const handleMouseDown = React.useCallback((e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    setDragging(true);
+    dragStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      scrollLeft: containerRef.current.scrollLeft,
+      scrollTop: containerRef.current.scrollTop,
+    };
+  }, []);
+
+  const handleMouseMove = React.useCallback(
+    (e: React.MouseEvent) => {
+      if (!dragging || !dragStartRef.current || !containerRef.current) return;
+      e.preventDefault();
+      const deltaX = dragStartRef.current.x - e.clientX;
+      const deltaY = dragStartRef.current.y - e.clientY;
+      containerRef.current.scrollLeft =
+        dragStartRef.current.scrollLeft + deltaX;
+      containerRef.current.scrollTop = dragStartRef.current.scrollTop + deltaY;
+    },
+    [dragging]
+  );
+
+  const handleMouseUp = React.useCallback(() => {
+    setDragging(false);
+    dragStartRef.current = null;
+  }, []);
+
   return (
     <div ref={containerRef} style={{ overflow: "hidden", flexGrow: 1 }}>
       <div
@@ -175,10 +210,12 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
           height: GRAPH_HEIGHT,
           position: "relative",
           cursor: dragging ? "grabbing" : "grab",
+          userSelect: "none",
         }}
-        onMouseDown={() => setDragging(true)}
-        onMouseUp={() => setDragging(false)}
-        onMouseLeave={() => setDragging(false)}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
         <MapConnectionsLayer
           connections={simulationConnections}

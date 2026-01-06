@@ -37,6 +37,7 @@ const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
           height: "42px",
           borderRadius: "10px",
         }}
+        onMouseDown={(e) => e.stopPropagation()} // prevent dragging the map
       >
         <Box
           ref={ref}
