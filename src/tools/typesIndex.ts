@@ -1,4 +1,5 @@
 import { FixedGetTypesResponse, Type } from "@/api/stillness";
+import { shorten } from "./index";
 import { pick } from "lodash-es";
 
 export type IndexedType = Type & {
@@ -107,7 +108,7 @@ export function createTypesIndex(data: FixedGetTypesResponse): TypesIndex {
           return {
             id: itemId,
             smartItemId: itemId,
-            name: itemId.toString(),
+            name: shorten(itemId.toString()),
             image: "",
             quantity,
           };
