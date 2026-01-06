@@ -39,16 +39,20 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
     if (!query.data || query.data.id === "") {
       return [];
     }
-    const nodes = query.data.neighbors.map((neighbor) => ({
-      id: neighbor.id,
-      d: neighbor.distance,
-      n: neighbor.n,
-    }));
+    const nodes: GraphNode[] = [];
+    nodes.push(
+      ...query.data.neighbors.map((neighbor) => ({
+        id: neighbor.id,
+        d: neighbor.distance,
+        n: neighbor.n,
+      }))
+    );
     nodes.push({
       id: query.data?.id,
       d: 0,
       n: 0,
     });
+
     return nodes;
   }, [query.data]);
 

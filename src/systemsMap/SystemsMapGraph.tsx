@@ -4,6 +4,7 @@ import * as d3 from "d3-force";
 import { keyBy } from "lodash-es";
 import SystemNode from "./components/SystemNode";
 import { GraphConnnection, GraphNode } from "./common";
+import MapConnectionsLayer from "./components/MapConnectionsLayer";
 
 interface SystemsMapGraphProps {
   nodes: GraphNode[];
@@ -26,7 +27,10 @@ type SimulationLink = {
   strength: number;
 };
 
-type SimulationNodeMap = Record<string, SimulationNode>;
+type SimulationConnection = {
+  source: SimulationNode;
+  target: SimulationNode;
+};
 
 const NEIGHBOR_STRENGTH = 0.2;
 const CENTER_STRENGTH = 1.0;
@@ -45,9 +49,12 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
   const size = useWindowSize();
   const debouncedSize = useDebounce(size, 100);
 
-  const [simulationNodes, setSimulationNodes] =
-    React.useState<SimulationNodeMap>({});
-  const [centerNode, setCenterNode] = React.useState<SimulationNode>();
+  const [simulationNodes, setSimulationNodes] = React.useState<
+    SimulationNode[]
+  >([]);
+  const [simulationConnections, setSimulationConnections] = React.useState<
+    SimulationConnection[]
+  >([]);
 
   const [dragging, setDragging] = React.useState(false);
 
@@ -130,9 +137,21 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
     );
     simulation.tick(simulationSteps);
 
-    setCenterNode(simulationNodes.pop()); // last node is the center node
-    setSimulationNodes(keyBy(simulationNodes, "id"));
-  }, [nodes]);
+    const simulationNodesMap = keyBy(simulationNodes, "id");
+    const simulationConnections: SimulationConnection[] = [];
+    for (const connection of connections) {
+      const sourceNode = simulationNodesMap[connection.source];
+      const targetNode = simulationNodesMap[connection.target];
+      if (sourceNode && targetNode) {
+        simulationConnections.push({
+          source: sourceNode,
+          target: targetNode,
+        });
+      }
+    }
+    setSimulationConnections(simulationConnections);
+    setSimulationNodes(simulationNodes);
+  }, [nodes, connections]);
 
   React.useEffect(() => {
     if (centerNodeRef.current) {
@@ -146,7 +165,7 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
         behavior: "instant",
       });
     }
-  }, [centerNode, debouncedSize]);
+  }, [debouncedSize]);
 
   return (
     <div ref={containerRef} style={{ overflow: "hidden", flexGrow: 1 }}>
@@ -161,38 +180,12 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
         onMouseUp={() => setDragging(false)}
         onMouseLeave={() => setDragging(false)}
       >
-        <svg
+        <MapConnectionsLayer
+          connections={simulationConnections}
           width={GRAPH_WIDTH}
           height={GRAPH_HEIGHT}
-          style={{ top: 0, left: 0 }}
-        >
-          {connections.map((c) => {
-            const sourceNode =
-              centerNode?.id === c.source
-                ? centerNode
-                : simulationNodes[c.source];
-            const targetNode =
-              centerNode?.id === c.target
-                ? centerNode
-                : simulationNodes[c.target];
-            if (!sourceNode || !targetNode) {
-              return null;
-            }
-            return (
-              <g key={`${sourceNode.id}-${targetNode.id}`}>
-                <line
-                  x1={sourceNode.x + GRAPH_WIDTH / 2}
-                  y1={sourceNode.y + GRAPH_HEIGHT / 2}
-                  x2={targetNode.x + GRAPH_WIDTH / 2}
-                  y2={targetNode.y + GRAPH_HEIGHT / 2}
-                  stroke={"gray"}
-                  strokeWidth="2"
-                />
-              </g>
-            );
-          })}
-        </svg>
-        {Object.values(simulationNodes).map((node) => {
+        />
+        {simulationNodes.map((node, index) => {
           return (
             <SystemNode
               key={node.id}
@@ -208,27 +201,13 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
               onMouseLeave={() => {
                 onNodeOver?.(null);
               }}
+              center={index === simulationNodes.length - 1}
+              ref={
+                index === simulationNodes.length - 1 ? centerNodeRef : undefined
+              }
             />
           );
         })}
-        {centerNode && (
-          <SystemNode
-            nodeId={centerNode.id}
-            ref={centerNodeRef}
-            x={centerNode.x + GRAPH_WIDTH / 2}
-            y={centerNode.y + GRAPH_HEIGHT / 2}
-            onClick={() => {
-              onNodeClick?.(centerNode);
-            }}
-            onMouseOver={() => {
-              onNodeOver?.(centerNode);
-            }}
-            onMouseLeave={() => {
-              onNodeOver?.(null);
-            }}
-            center={true}
-          />
-        )}
       </div>
     </div>
   );
