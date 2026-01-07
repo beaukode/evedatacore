@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { kebabCase } from "lodash-es";
 import { useMutation } from "@tanstack/react-query";
-import { useSystemsMapContext } from "../contexts/SystemsMapContext";
+import { useUserDataContext } from "@/contexts/UserDataContext";
 
 interface SystemsSettingCreateDbModalProps {
   open: boolean;
@@ -20,7 +20,7 @@ interface SystemsSettingCreateDbModalProps {
 const SystemsSettingCreateDbModal: React.FC<
   SystemsSettingCreateDbModalProps
 > = ({ open, onClose }) => {
-  const { mainDatabase } = useSystemsMapContext();
+  const { mainDatabase } = useUserDataContext();
   const [slug, setSlug] = React.useState("");
   const [name, setName] = React.useState("");
 

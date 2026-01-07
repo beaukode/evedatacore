@@ -1,16 +1,20 @@
 import React from "react";
 
-import { SystemsMapContext } from "./SystemsMapContext";
-import { MainDatabase, openMainDatabase } from "../db/main";
-import { UserDatabase, openUserDatabase } from "../db/user";
-import { useSettings } from "../hooks/useSettings";
+import { UserDataContext } from "./UserDataContext";
+import {
+  MainDatabase,
+  openMainDatabase,
+  UserDatabase,
+  openUserDatabase,
+} from "@/api/userdata";
+import { useSettings } from "@/map/hooks/useSettings";
 
-interface SystemsMapContextProviderProps {
+interface UserDataContextProviderProps {
   children: React.ReactNode;
 }
 
-export const SystemsMapContextProvider: React.FC<
-  SystemsMapContextProviderProps
+export const UserDataContextProvider: React.FC<
+  UserDataContextProviderProps
 > = ({ children }) => {
   const { settings } = useSettings();
   const [userDatabase, setUserDatabase] = React.useState<UserDatabase>();
@@ -55,8 +59,8 @@ export const SystemsMapContextProvider: React.FC<
   }
 
   return (
-    <SystemsMapContext.Provider value={{ mainDatabase, userDatabase }}>
+    <UserDataContext.Provider value={{ mainDatabase, userDatabase }}>
       {children}
-    </SystemsMapContext.Provider>
+    </UserDataContext.Provider>
   );
 };

@@ -2,7 +2,7 @@ import React from "react";
 import { useSolarSystemsIndex } from "@/contexts/AppContext";
 import { tsToLocaleString } from "@/tools";
 import { useSettings } from "./useSettings";
-import { SystemRecord } from "../Database";
+import { SystemRecord } from "@/api/userdata";
 
 const emojis = [
   ":one:",

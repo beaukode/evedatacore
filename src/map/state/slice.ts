@@ -7,8 +7,8 @@ import {
   PartialNodesAttributesMap,
   SystemMap,
   ToolKey,
-} from "./common";
-import { SystemRecord, UserDatabase } from "./db";
+} from "../common";
+import { SystemRecord, UserDatabase } from "@/api/userdata";
 
 interface SystemNeighborsState {
   db?: UserDatabase;
@@ -57,7 +57,7 @@ type DbUpdateSystemPayload<T extends WritableSystemRecordKeys> = PayloadAction<{
   value: SystemRecord[T];
 }>;
 
-const SNMSlice = createSlice({
+export const slice = createSlice({
   name: "systemNeighbors",
   reducerPath: "map",
   initialState,
@@ -205,5 +205,3 @@ const SNMSlice = createSlice({
     selectSearch: (state) => state.search,
   },
 });
-
-export default SNMSlice;

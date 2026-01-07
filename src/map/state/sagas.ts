@@ -11,23 +11,23 @@ import {
 import { Saga, Task, eventChannel } from "redux-saga";
 import { keyBy } from "lodash-es";
 import { liveQuery } from "dexie";
-import slice from "./Slice";
-import { SNMDisplayLPointsSaga } from "./tools/SNMDisplayLPoints";
-import { SNMDisplayDistancesSaga } from "./tools/SNMDisplayDistances";
-import { SNMDisplayPlanetsSaga } from "./tools/SNMDisplayPlanets";
-import { SNMToolSelectSaga } from "./tools/SNMToolSelect";
-import { DisplayKey, NodeAttributes, ToolKey } from "./common";
-import { SystemRecord } from "./db";
+import { SystemRecord } from "@/api/userdata";
+import { sagaDisplayLPoints } from "./tools/DisplayLPoints";
+import { sagaDisplayDistances } from "./tools/DisplayDistances";
+import { sagaDisplayPlanets } from "./tools/DisplayPlanets";
+import { sagaToolSelect } from "./tools/ToolSelect";
+import { DisplayKey, NodeAttributes, ToolKey } from "../common";
+import { mapActions, mapSelectors } from ".";
 
 const displaySagas: Record<DisplayKey, Saga> = {
-  distances: SNMDisplayDistancesSaga,
-  lpoints: SNMDisplayLPointsSaga,
-  planets: SNMDisplayPlanetsSaga,
+  distances: sagaDisplayDistances,
+  lpoints: sagaDisplayLPoints,
+  planets: sagaDisplayPlanets,
 };
 
 const toolSagas: Record<ToolKey, Saga> = {
-  select: SNMToolSelectSaga,
-  routing: SNMToolSelectSaga,
+  select: sagaToolSelect,
+  routing: sagaToolSelect,
 };
 
 function createLiveQueryChannel(query: () => Promise<SystemRecord[]>) {
@@ -44,7 +44,7 @@ function createLiveQueryChannel(query: () => Promise<SystemRecord[]>) {
 }
 
 function* watchSystems(ids: string[]) {
-  const db = yield* select(slice.selectors.selectDb);
+  const db = yield* select(mapSelectors.selectDb);
   const query = () => db.listSystemsByIds(ids);
   const liveQueryChannel = yield* call(createLiveQueryChannel, query);
   let initialHydration = true;
@@ -53,10 +53,10 @@ function* watchSystems(ids: string[]) {
     while (true) {
       const records = yield* take(liveQueryChannel);
       if (initialHydration) {
-        yield put(slice.actions.setDbRecords(keyBy(records, "id")));
+        yield put(mapActions.setDbRecords(keyBy(records, "id")));
         initialHydration = false;
       } else {
-        yield put(slice.actions.updateDbRecords(keyBy(records, "id")));
+        yield put(mapActions.updateDbRecords(keyBy(records, "id")));
       }
     }
   } finally {
@@ -64,12 +64,12 @@ function* watchSystems(ids: string[]) {
   }
 }
 
-export const SNMRootSaga = function* () {
+export const sagaMapRoot = function* () {
   let displayTask: Task;
   let toolTask: Task;
   let watchSystemsTask: Task;
   yield all([
-    takeEvery(slice.actions.init, function* ({ payload: { data } }) {
+    takeEvery(mapActions.init, function* ({ payload: { data } }) {
       // Initialize nodes attributes
       const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => {
         return {
@@ -83,76 +83,74 @@ export const SNMRootSaga = function* () {
         name: data.name,
         text: "",
       });
-      yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
+      yield put(mapActions.setNodesAttributes(keyBy(nodes, "id")));
 
       watchSystemsTask = yield* fork(
         watchSystems,
         nodes.map((node) => node.id)
       );
 
-      yield put(slice.actions.setDisplay("distances"));
-      yield put(slice.actions.setTool("select"));
-      yield* take(slice.actions.setDbRecords);
+      yield put(mapActions.setDisplay("distances"));
+      yield put(mapActions.setTool("select"));
+      yield* take(mapActions.setDbRecords);
       yield put(
-        slice.actions.setSelectedNode({
+        mapActions.setSelectedNode({
           prev: undefined,
           next: data.id,
         })
       );
-      yield put(slice.actions.setReady());
+      yield put(mapActions.setReady());
     }),
-    takeEvery(slice.actions.dispose, () => {
+    takeEvery(mapActions.dispose, () => {
       watchSystemsTask?.cancel();
       displayTask?.cancel();
       toolTask?.cancel();
     }),
-    takeEvery(slice.actions.setDisplay, function* ({ payload }) {
+    takeEvery(mapActions.setDisplay, function* ({ payload }) {
       displayTask?.cancel();
       displayTask = yield* fork(displaySagas[payload]);
     }),
-    takeEvery(slice.actions.setTool, function* ({ payload }) {
+    takeEvery(mapActions.setTool, function* ({ payload }) {
       toolTask?.cancel();
       toolTask = yield* fork(toolSagas[payload]);
     }),
-    takeEvery(slice.actions.onNodeOver, function* ({ payload }) {
-      const prevOverNode = yield* select(slice.selectors.selectOverNode);
+    takeEvery(mapActions.onNodeOver, function* ({ payload }) {
+      const prevOverNode = yield* select(mapSelectors.selectOverNode);
       if (prevOverNode !== payload) {
         yield put(
-          slice.actions.setOverNode({ prev: prevOverNode, next: payload })
+          mapActions.setOverNode({ prev: prevOverNode, next: payload })
         );
       }
     }),
-    takeEvery(slice.actions.onNodeClick, function* ({ payload }) {
-      const prevSelectedNode = yield* select(
-        slice.selectors.selectSelectedNode
-      );
+    takeEvery(mapActions.onNodeClick, function* ({ payload }) {
+      const prevSelectedNode = yield* select(mapSelectors.selectSelectedNode);
       if (prevSelectedNode !== payload) {
         // Flush potential changes to DB backend before setting the new selected node
-        yield put(slice.actions.commitSelectedNodeRecord());
+        yield put(mapActions.commitSelectedNodeRecord());
         yield put(
-          slice.actions.setSelectedNode({
+          mapActions.setSelectedNode({
             prev: prevSelectedNode,
             next: payload,
           })
         );
       }
     }),
-    takeEvery(slice.actions.commitSelectedNodeRecord, function* () {
-      const db = yield* select(slice.selectors.selectDb);
+    takeEvery(mapActions.commitSelectedNodeRecord, function* () {
+      const db = yield* select(mapSelectors.selectDb);
       const selectedNodeRecord = yield* select(
-        slice.selectors.selectSelectedNodeRecord
+        mapSelectors.selectSelectedNodeRecord
       );
       const selectedNodeDirty = yield* select(
-        slice.selectors.selectSelectedNodeDirty
+        mapSelectors.selectSelectedNodeDirty
       );
       if (selectedNodeDirty && selectedNodeRecord) {
         yield* call(db.updateSystem, selectedNodeRecord);
       }
-      yield put(slice.actions.setSelectedNodeDirty(false));
+      yield put(mapActions.setSelectedNodeDirty(false));
     }),
-    debounce(100, slice.actions.setSearch, function* () {
-      const search = yield* select(slice.selectors.selectSearch);
-      const nodes = yield* select(slice.selectors.selectNodesAttributes);
+    debounce(100, mapActions.setSearch, function* () {
+      const search = yield* select(mapSelectors.selectSearch);
+      const nodes = yield* select(mapSelectors.selectNodesAttributes);
       const allNodes = Object.values(nodes);
       const updatedNodes = allNodes
         .map((node) => {
@@ -164,7 +162,7 @@ export const SNMRootSaga = function* () {
         })
         .filter((node) => node !== undefined);
       if (updatedNodes.length > 0) {
-        yield put(slice.actions.setNodesAttributes(keyBy(updatedNodes, "id")));
+        yield put(mapActions.setNodesAttributes(keyBy(updatedNodes, "id")));
       }
     }),
   ]);

@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useSystemsMapContext } from "../contexts/SystemsMapContext";
+import { useUserDataContext } from "@/contexts/UserDataContext";
 
 interface SystemsSettingDeleteDbModalProps {
   open: boolean;
@@ -20,7 +20,7 @@ interface SystemsSettingDeleteDbModalProps {
 const SystemsSettingDeleteDbModal: React.FC<
   SystemsSettingDeleteDbModalProps
 > = ({ open, slug, name, onClose }) => {
-  const { mainDatabase, userDatabase } = useSystemsMapContext();
+  const { mainDatabase, userDatabase } = useUserDataContext();
 
   const deleteMutation = useMutation({
     mutationFn: async () => {

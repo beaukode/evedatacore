@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Paper } from "@mui/material";
 import InternalLink from "@/components/ui/InternalLink";
-import { SNMSelectors, useSNMSelector } from "../Store";
+import { mapSelectors, useMapSelector } from "../state";
 import SystemContentIcons from "./SystemContentIcons";
 
 type SystemNodeProps = {
@@ -16,11 +16,11 @@ type SystemNodeProps = {
 
 const SystemNode = React.forwardRef<HTMLDivElement, SystemNodeProps>(
   ({ nodeId, x, y, onClick, onMouseOver, onMouseLeave, center }, ref) => {
-    const nodeAttributes = useSNMSelector((s) => {
-      return SNMSelectors.selectNodeAttributes(s, nodeId);
+    const nodeAttributes = useMapSelector((s) => {
+      return mapSelectors.selectNodeAttributes(s, nodeId);
     });
-    const dbRecord = useSNMSelector((s) =>
-      SNMSelectors.selectDbRecord(s, nodeId)
+    const dbRecord = useMapSelector((s) =>
+      mapSelectors.selectDbRecord(s, nodeId)
     );
     if (!nodeAttributes) {
       return null;

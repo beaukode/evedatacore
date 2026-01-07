@@ -14,17 +14,17 @@ import DownloadIcon from "@mui/icons-material/DownloadForOffline";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useQuery } from "@tanstack/react-query";
-import { useSettings } from "./hooks/useSettings";
-import { useSystemsMapContext } from "./contexts/SystemsMapContext";
-import Panel from "./components/Panel";
-import PointsOfInterestField from "./components/PointsOfInterestField";
-import SystemsSettingCreateDbModal from "./components/SystemsSettingCreateDbModal";
-import SystemsSettingDeleteDbModal from "./components/SystemsSettingDeleteDbModal";
-import SystemsSettingImportDbModal from "./components/SystemsSettingImportDbModal";
+import { useUserDataContext } from "@/contexts/UserDataContext";
+import { useSettings } from "@/map/hooks/useSettings";
+import Panel from "@/map/components/Panel";
+import PointsOfInterestField from "@/map/components/PointsOfInterestField";
+import SystemsSettingCreateDbModal from "@/map/components/SystemsSettingCreateDbModal";
+import SystemsSettingDeleteDbModal from "@/map/components/SystemsSettingDeleteDbModal";
+import SystemsSettingImportDbModal from "@/map/components/SystemsSettingImportDbModal";
 
-const SystemsSettings: React.FC = () => {
+const MapSettings: React.FC = () => {
   const { settings, setSettings } = useSettings();
-  const { mainDatabase, userDatabase } = useSystemsMapContext();
+  const { mainDatabase, userDatabase } = useUserDataContext();
 
   const [openCreateDbModal, setOpenCreateDbModal] = React.useState(false);
   const [openDeleteDbModal, setOpenDeleteDbModal] = React.useState(false);
@@ -211,4 +211,4 @@ const SystemsSettings: React.FC = () => {
   );
 };
 
-export default SystemsSettings;
+export default MapSettings;

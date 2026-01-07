@@ -4,24 +4,24 @@ import DistanceIcon from "@mui/icons-material/Straighten";
 import LPointIcon from "@mui/icons-material/Hub";
 import PlanetIcon from "@mui/icons-material/Public";
 import {
-  SNMActions,
-  SNMSelectors,
-  useSNMDispatch,
-  useSNMSelector,
-} from "../Store";
+  mapActions,
+  mapSelectors,
+  useMapDispatch,
+  useMapSelector,
+} from "../state";
 import { DisplayKey } from "../common";
 import Panel from "./Panel";
 
 const PanelDisplay: React.FC = () => {
-  const dispatch = useSNMDispatch();
-  const display = useSNMSelector(SNMSelectors.selectDisplay);
+  const dispatch = useMapDispatch();
+  const display = useMapSelector(mapSelectors.selectDisplay);
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,
     newDisplay: DisplayKey | null
   ) => {
     if (newDisplay) {
-      dispatch(SNMActions.setDisplay(newDisplay));
+      dispatch(mapActions.setDisplay(newDisplay));
     }
   };
 

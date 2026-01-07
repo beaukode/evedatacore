@@ -2,21 +2,19 @@ import React from "react";
 import { SxProps, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-  SNMActions,
-  useSNMSelector,
-  SNMSelectors,
-  useSNMDispatch,
-} from "./Store";
+  mapActions,
+  useMapSelector,
+  mapSelectors,
+  useMapDispatch,
+} from "./state";
 
-interface SystemsMapSearchFieldProps {
+interface MapSearchFieldProps {
   sx?: SxProps;
 }
 
-const SystemsMapSearchField: React.FC<SystemsMapSearchFieldProps> = ({
-  sx,
-}) => {
-  const search = useSNMSelector(SNMSelectors.selectSearch);
-  const dispatch = useSNMDispatch();
+const MapSearchField: React.FC<MapSearchFieldProps> = ({ sx }) => {
+  const search = useMapSelector(mapSelectors.selectSearch);
+  const dispatch = useMapDispatch();
 
   return (
     <TextField
@@ -35,10 +33,10 @@ const SystemsMapSearchField: React.FC<SystemsMapSearchFieldProps> = ({
       sx={sx}
       fullWidth
       onChange={(e) => {
-        dispatch(SNMActions.setSearch(e.target.value));
+        dispatch(mapActions.setSearch(e.target.value));
       }}
     />
   );
 };
 
-export default SystemsMapSearchField;
+export default MapSearchField;

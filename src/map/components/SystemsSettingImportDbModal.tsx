@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import z from "zod";
-import { useSystemsMapContext } from "../contexts/SystemsMapContext";
+import { useUserDataContext } from "@/contexts/UserDataContext";
 import FileButton from "@/components/form/FileButton";
 
 const systemRecordSchema = z.array(
@@ -32,7 +32,7 @@ interface SystemsSettingImportDbModalProps {
 const SystemsSettingImportDbModal: React.FC<
   SystemsSettingImportDbModalProps
 > = ({ open, onClose }) => {
-  const { userDatabase } = useSystemsMapContext();
+  const { userDatabase } = useUserDataContext();
 
   const readfileMutation = useMutation({
     mutationFn: async (file: File) => {

@@ -1,12 +1,12 @@
 import { takeEvery, put, all, debounce } from "typed-redux-saga";
-import slice from "../Slice";
+import { mapActions } from "../";
 
-export const SNMToolSelectSaga = function* () {
+export const sagaToolSelect = function* () {
   yield all([
-    takeEvery(slice.actions.setSelectedNode, function* ({ payload }) {
+    takeEvery(mapActions.setSelectedNode, function* ({ payload }) {
       if (payload.next) {
         yield put(
-          slice.actions.setNodeAttributes({
+          mapActions.setNodeAttributes({
             id: payload.next,
             attributes: { sx: { borderStyle: "dashed" } },
           })
@@ -14,7 +14,7 @@ export const SNMToolSelectSaga = function* () {
       }
       if (payload.prev) {
         yield put(
-          slice.actions.setNodeAttributes({
+          mapActions.setNodeAttributes({
             id: payload.prev,
             attributes: { sx: { borderStyle: "solid" } },
           })
@@ -22,8 +22,8 @@ export const SNMToolSelectSaga = function* () {
       }
     }),
     // Commit changes to DB backend
-    debounce(500, slice.actions.updateSelectedNodeRecord, function* () {
-      yield put(slice.actions.commitSelectedNodeRecord());
+    debounce(500, mapActions.updateSelectedNodeRecord, function* () {
+      yield put(mapActions.commitSelectedNodeRecord());
     }),
   ]);
 };

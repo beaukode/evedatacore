@@ -2,20 +2,20 @@ import React from "react";
 import { Box } from "@mui/material";
 import { Provider } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import SystemsMapDrawer from "./SystemsMapDrawer";
-import SystemsMapGraph from "./SystemsMapGraph";
-import { GraphConnnection, GraphNode, SystemMap } from "./common";
-import { SNMActions, getSNMStore, SNMStore } from "./Store";
-import { useSystemsMapContext } from "./contexts/SystemsMapContext";
-import SystemsMapSearchField from "./SystemsMapSearchField";
+import MapDrawer from "../map/MapDrawer";
+import MapGraph from "../map/MapGraph";
+import { GraphConnnection, GraphNode, SystemMap } from "@/map/common";
+import { mapActions, getMapStore, MapStore } from "@/map/state";
+import { useUserDataContext } from "@/contexts/UserDataContext";
+import MapSearchField from "@/map/MapSearchField";
 
-interface SystemsMapProps {
+interface MapRootProps {
   systemId: string;
 }
 
-const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
-  const [store, setStore] = React.useState<SNMStore | undefined>(undefined);
-  const { userDatabase } = useSystemsMapContext();
+const MapRoot: React.FC<MapRootProps> = ({ systemId }) => {
+  const [store, setStore] = React.useState<MapStore | undefined>(undefined);
+  const { userDatabase } = useUserDataContext();
 
   const query = useQuery({
     queryKey: ["SystemNeighbors", systemId],
@@ -86,16 +86,16 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
 
   React.useEffect(() => {
     if (!store) {
-      const store = getSNMStore();
+      const store = getMapStore();
       setStore(store);
     }
   }, [store]);
 
   React.useEffect(() => {
     if (query.data.id !== "" && store) {
-      store.dispatch(SNMActions.init({ data: query.data, db: userDatabase }));
+      store.dispatch(mapActions.init({ data: query.data, db: userDatabase }));
       return () => {
-        store.dispatch(SNMActions.dispose());
+        store.dispatch(mapActions.dispose());
       };
     }
   }, [query.data, store, userDatabase]);
@@ -115,7 +115,7 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
           position: "relative",
         }}
       >
-        <SystemsMapSearchField
+        <MapSearchField
           sx={{
             position: "absolute",
             top: 12,
@@ -124,20 +124,20 @@ const SystemsMap: React.FC<SystemsMapProps> = ({ systemId }) => {
             zIndex: 1000,
           }}
         />
-        <SystemsMapGraph
+        <MapGraph
           nodes={nodes}
           connections={connections}
           onNodeClick={(node) => {
-            store.dispatch(SNMActions.onNodeClick(node.id));
+            store.dispatch(mapActions.onNodeClick(node.id));
           }}
           onNodeOver={(node) => {
-            store.dispatch(SNMActions.onNodeOver(node?.id));
+            store.dispatch(mapActions.onNodeOver(node?.id));
           }}
         />
-        <SystemsMapDrawer />
+        <MapDrawer />
       </Box>
     </Provider>
   );
 };
 
-export default SystemsMap;
+export default MapRoot;

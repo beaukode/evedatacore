@@ -3,24 +3,24 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import SelectIcon from "@mui/icons-material/AdsClick";
 import RoutingIcon from "@mui/icons-material/Route";
 import {
-  SNMActions,
-  SNMSelectors,
-  useSNMDispatch,
-  useSNMSelector,
-} from "../Store";
+  mapActions,
+  mapSelectors,
+  useMapDispatch,
+  useMapSelector,
+} from "../state";
 import { ToolKey } from "../common";
 import Panel from "./Panel";
 
 const PanelDisplay: React.FC = () => {
-  const dispatch = useSNMDispatch();
-  const tool = useSNMSelector(SNMSelectors.selectTool);
+  const dispatch = useMapDispatch();
+  const tool = useMapSelector(mapSelectors.selectTool);
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,
     newTool: ToolKey | null
   ) => {
     if (newTool) {
-      dispatch(SNMActions.setTool(newTool));
+      dispatch(mapActions.setTool(newTool));
     }
   };
 

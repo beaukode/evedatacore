@@ -14,10 +14,10 @@ import { filterInProps, tsToLocaleString } from "@/tools";
 import DataTable, { DataTableColumn } from "@/components/DataTable";
 import { columnWidths } from "@/constants";
 import ButtonSolarsystem from "@/components/buttons/ButtonSolarsystem";
-import { SystemRecord } from "./db";
-import { useSystemDataCopy } from "./hooks/useSystemDataCopy";
+import { SystemRecord } from "@/api/userdata";
+import { useSystemDataCopy } from "@/map/hooks/useSystemDataCopy";
 import useQuerySearch from "@/tools/useQuerySearch";
-import { useSystemsMapContext } from "./contexts/SystemsMapContext";
+import { useUserDataContext } from "@/contexts/UserDataContext";
 
 const columns: DataTableColumn<SystemRecord>[] = [
   {
@@ -43,11 +43,11 @@ const columns: DataTableColumn<SystemRecord>[] = [
   },
 ];
 
-const SystemsUserData: React.FC = () => {
+const MapUserData: React.FC = () => {
   const [search, setSearch, debouncedSearch] = useQuerySearch({
     text: "",
   });
-  const { userDatabase } = useSystemsMapContext();
+  const { userDatabase } = useUserDataContext();
   const solarSystemIndex = useSolarSystemsIndex();
   const systemDataCopy = useSystemDataCopy();
   const query = useQuery({
@@ -127,4 +127,4 @@ const SystemsUserData: React.FC = () => {
   );
 };
 
-export default SystemsUserData;
+export default MapUserData;

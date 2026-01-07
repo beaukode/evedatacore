@@ -1,7 +1,7 @@
 import { select, put, all, takeEvery } from "typed-redux-saga";
 import { keyBy } from "lodash-es";
-import slice from "../Slice";
-import { NodeAttributes } from "../common";
+import { mapSelectors, mapActions } from "../";
+import { NodeAttributes } from "../../common";
 
 const MIN_OPACITY = 0.3;
 const MAX_OPACITY = 1.0;
@@ -24,8 +24,8 @@ function createOpacityNormalizer(
   };
 }
 
-export const SNMDisplayDistancesSaga = function* () {
-  const data = yield* select(slice.selectors.selectData);
+export const sagaDisplayDistances = function* () {
+  const data = yield* select(mapSelectors.selectData);
 
   const getDistance = (aId: string, bId: string): number => {
     return (
@@ -38,10 +38,10 @@ export const SNMDisplayDistancesSaga = function* () {
     text: neighbor.distance.toFixed(2),
   }));
 
-  yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
+  yield put(mapActions.setNodesAttributes(keyBy(nodes, "id")));
   yield all([
-    takeEvery(slice.actions.setSelectedNode, function* () {
-      const selectedNode = yield* select(slice.selectors.selectSelectedNode);
+    takeEvery(mapActions.setSelectedNode, function* () {
+      const selectedNode = yield* select(mapSelectors.selectSelectedNode);
 
       const normalizer = createOpacityNormalizer(
         data.neighbors
@@ -67,7 +67,7 @@ export const SNMDisplayDistancesSaga = function* () {
         text: distance ? distance.toFixed(2) : "",
         opacity: opacity,
       });
-      yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
+      yield put(mapActions.setNodesAttributes(keyBy(nodes, "id")));
     }),
   ]);
 };

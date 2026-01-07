@@ -17,11 +17,11 @@ import ColorIcon from "@mui/icons-material/Square";
 import CopyIcon from "@mui/icons-material/ContentCopy";
 import { upperFirst } from "lodash-es";
 import {
-  SNMActions,
-  SNMSelectors,
-  useSNMDispatch,
-  useSNMSelector,
-} from "../Store";
+  mapActions,
+  mapSelectors,
+  useMapDispatch,
+  useMapSelector,
+} from "../state";
 import PointsOfInterestField from "./PointsOfInterestField";
 import { useSystemDataCopy } from "../hooks/useSystemDataCopy";
 import SaveIcon from "./SaveIcon";
@@ -40,20 +40,20 @@ const colors = {
 
 const PanelSelectedSystem: React.FC = () => {
   const systemDataCopy = useSystemDataCopy();
-  const dispatch = useSNMDispatch();
-  const selectedNode = useSNMSelector(SNMSelectors.selectSelectedNode);
-  const nodeAttributes = useSNMSelector((s) =>
+  const dispatch = useMapDispatch();
+  const selectedNode = useMapSelector(mapSelectors.selectSelectedNode);
+  const nodeAttributes = useMapSelector((s) =>
     selectedNode
-      ? SNMSelectors.selectNodeAttributes(s, selectedNode)
+      ? mapSelectors.selectNodeAttributes(s, selectedNode)
       : undefined
   );
-  const nodeRecord = useSNMSelector(SNMSelectors.selectSelectedNodeRecord);
-  const nodeDirty = useSNMSelector(SNMSelectors.selectSelectedNodeDirty);
+  const nodeRecord = useMapSelector(mapSelectors.selectSelectedNodeRecord);
+  const nodeDirty = useMapSelector(mapSelectors.selectSelectedNodeDirty);
 
   const handleColorChange = React.useCallback(
     (event: SelectChangeEvent<string>) => {
       dispatch(
-        SNMActions.updateSelectedNodeRecord({
+        mapActions.updateSelectedNodeRecord({
           color: event.target.value,
         })
       );
@@ -64,7 +64,7 @@ const PanelSelectedSystem: React.FC = () => {
   const handleNotesChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(
-        SNMActions.updateSelectedNodeRecord({
+        mapActions.updateSelectedNodeRecord({
           notes: event.target.value,
         })
       );
@@ -74,7 +74,7 @@ const PanelSelectedSystem: React.FC = () => {
 
   const handleContentChange = React.useCallback(
     (value: string[]) => {
-      dispatch(SNMActions.updateSelectedNodeRecord({ content: value }));
+      dispatch(mapActions.updateSelectedNodeRecord({ content: value }));
     },
     [dispatch]
   );

@@ -15,13 +15,13 @@ import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
 import z from "zod";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
-import SystemsMap from "@/systemsMap/SystemsMap";
-import { SystemsMapContextProvider } from "@/systemsMap/contexts/SystemsMapContextProvider";
-import Error404 from "./Error404";
 import { getSolarsystemId } from "@/api/evedatacore-v2";
+import MapRoot from "@/pages/MapRoot";
+import { UserDataContextProvider } from "@/contexts/UserDataContextProvider";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
-import SystemsUserData from "@/systemsMap/SystemsUserData";
-import SystemsSettings from "@/systemsMap/SystemsSettings";
+import MapUserData from "@/pages/MapUserData";
+import MapSettings from "@/pages/MapSettings";
+import Error404 from "./Error404";
 
 const routesMap: Record<string, number> = {
   userdata: 1,
@@ -133,14 +133,14 @@ const Map: React.FC = () => {
           backButton
         >
           {query.data && (
-            <SystemsMapContextProvider>
+            <UserDataContextProvider>
               <Routes>
-                <Route path="/" element={<SystemsMap systemId={id || ""} />} />
-                <Route path="/userdata" element={<SystemsUserData />} />
-                <Route path="/settings" element={<SystemsSettings />} />
+                <Route path="/" element={<MapRoot systemId={id || ""} />} />
+                <Route path="/userdata" element={<MapUserData />} />
+                <Route path="/settings" element={<MapSettings />} />
                 <Route path="*" element={<Error404 />} />
               </Routes>
-            </SystemsMapContextProvider>
+            </UserDataContextProvider>
           )}
         </PaperLevel1>
       </Box>

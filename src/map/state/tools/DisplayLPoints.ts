@@ -1,10 +1,10 @@
 import { select, put } from "typed-redux-saga";
 import { keyBy } from "lodash-es";
-import slice from "../Slice";
-import { NodeAttributes } from "../common";
+import { mapSelectors, mapActions } from "../";
+import { NodeAttributes } from "../../common";
 
-export const SNMDisplayLPointsSaga = function* () {
-  const data = yield* select(slice.selectors.selectData);
+export const sagaDisplayLPoints = function* () {
+  const data = yield* select(mapSelectors.selectData);
   const nodes: Partial<NodeAttributes>[] = data.neighbors.map((neighbor) => ({
     id: neighbor.id,
     text: "0 / 10",
@@ -13,5 +13,5 @@ export const SNMDisplayLPointsSaga = function* () {
     id: data.id,
     text: "0 / 5",
   });
-  yield put(slice.actions.setNodesAttributes(keyBy(nodes, "id")));
+  yield put(mapActions.setNodesAttributes(keyBy(nodes, "id")));
 };

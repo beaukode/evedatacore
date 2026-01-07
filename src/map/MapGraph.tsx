@@ -6,7 +6,7 @@ import SystemNode from "./components/SystemNode";
 import { GraphConnnection, GraphNode } from "./common";
 import MapConnectionsLayer from "./components/MapConnectionsLayer";
 
-interface SystemsMapGraphProps {
+interface MapGraphProps {
   nodes: GraphNode[];
   connections: GraphConnnection[];
   onNodeClick?: (node: SimulationNode) => void;
@@ -38,7 +38,7 @@ const DISTANCE_SCALE = 4;
 const GRAPH_WIDTH = 1200;
 const GRAPH_HEIGHT = 1200;
 
-const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
+const MapGraph: React.FC<MapGraphProps> = ({
   nodes,
   connections,
   onNodeClick,
@@ -250,4 +250,4 @@ const SystemsMapGraph: React.FC<SystemsMapGraphProps> = ({
   );
 };
 
-export default SystemsMapGraph;
+export default MapGraph;
