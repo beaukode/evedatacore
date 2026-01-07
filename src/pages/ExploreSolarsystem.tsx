@@ -1,30 +1,19 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Box } from "@mui/material";
-import { Route, Routes, useLocation, useParams } from "react-router";
-import Error404 from "./Error404";
+import { Box, Link, Button, Grid2, List } from "@mui/material";
+import MapIcon from "@mui/icons-material/Map";
+import ExternalLinkIcon from "@mui/icons-material/Launch";
+import { Link as RouterLink, useParams } from "react-router";
 import PaperLevel1 from "@/components/ui/PaperLevel1";
 import { getSolarsystemId } from "@/api/evedatacore-v2";
 import { useQuery } from "@tanstack/react-query";
 import TableAssemblies from "@/components/tables/TableAssemblies";
 import TableKillmails from "@/components/tables/TableKillmails";
-import ExploreSolarsystemNav from "./ExploreSolarsystem/ExploreSolarsystemNav";
-import ExploreSolarsystemWorldData from "./ExploreSolarsystem/ExploreSolarsystemWorldData";
-import ExploreSolarsystemRouting from "./ExploreSolarsystem/ExploreSolarsystemRouting";
-
-const routesMap: Record<string, number> = {
-  map: 1,
-  data: 2,
-  settings: 3,
-};
+import BasicListItem from "@/components/ui/BasicListItem";
+import Error404 from "./Error404";
 
 const ExploreSolarsystem: React.FC = () => {
   const { id } = useParams();
-  const location = useLocation();
-
-  const path = location.pathname.split("/").pop() ?? "";
-
-  const currentTab = routesMap[path] ?? 0;
 
   const query = useQuery({
     queryKey: ["Solarsystem", id],
@@ -52,65 +41,76 @@ const ExploreSolarsystem: React.FC = () => {
       display="flex"
       flexDirection="column"
     >
-      {query.isLoading && (
-        <>
-          <Helmet>
-            <title>{title}</title>
-          </Helmet>
-          <PaperLevel1
-            title={title}
-            loading={true}
-            titleAdornment={
-              <ExploreSolarsystemNav id={id ?? ""} currentTab={currentTab} />
-            }
-            backButton
-          ></PaperLevel1>
-        </>
-      )}
-      {query.data && (
-        <>
-          <Helmet>
-            <title>{title}</title>
-          </Helmet>
-          <PaperLevel1
-            title={query.data.name}
-            titleAdornment={
-              <ExploreSolarsystemNav id={id ?? ""} currentTab={currentTab} />
-            }
-            sx={
-              currentTab !== 0
-                ? { p: 0, height: "70vh", flexGrow: 1 }
-                : undefined
-            }
-            backButton
-          >
-            <Routes>
-              <Route
-                index
-                element={
-                  <ExploreSolarsystemWorldData solarSystem={query.data} />
-                }
-              />
-              <Route
-                path="/*"
-                element={<ExploreSolarsystemRouting solarSystem={query.data} />}
-              />
-              <Route path="*" element={<Error404 />} />
-            </Routes>
-          </PaperLevel1>
-          <Routes>
-            <Route
-              index
-              element={
-                <>
-                  <TableAssemblies solarSystemId={query.data.id} />
-                  <TableKillmails solarSystemId={query.data.id} />
-                </>
-              }
-            />
-          </Routes>
-        </>
-      )}
+      <>
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <PaperLevel1
+          title={title}
+          titleAdornment={
+            <Box display="flex" gap={2} alignItems="center">
+              <Button
+                component={Link}
+                href={`https://ef-map.com/?system=${id}&zoom=75`}
+                title="View on EF Map"
+                startIcon={<ExternalLinkIcon />}
+                variant="outlined"
+                color="primary"
+                rel="noopener"
+                target="_blank"
+              >
+                EF-Map
+              </Button>
+              <Button
+                component={RouterLink}
+                startIcon={<MapIcon />}
+                to={`/map/${id}`}
+                title="View map of this system"
+                variant="outlined"
+                color="primary"
+              >
+                Map
+              </Button>
+            </Box>
+          }
+          backButton
+        >
+          {data && (
+            <Grid2 container spacing={2}>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+                  <BasicListItem title="Id">{data.id}</BasicListItem>
+                  <BasicListItem title="L-Points">
+                    {data.lpoints.occupied} occupied / {data.lpoints.count}{" "}
+                    total
+                  </BasicListItem>
+                </List>
+              </Grid2>
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <List sx={{ width: "100%", overflow: "hidden" }} disablePadding>
+                  <BasicListItem title="World coordinates">
+                    <Box sx={{ pl: 4 }}>
+                      <span style={{ textWrap: "nowrap" }}>
+                        x: {data.location.x}
+                      </span>
+                      <br />
+                      <span style={{ textWrap: "nowrap" }}>
+                        y: {data.location.y}
+                      </span>
+                      <br />
+                      <span style={{ textWrap: "nowrap" }}>
+                        z: {data.location.z}
+                      </span>
+                    </Box>
+                  </BasicListItem>
+                </List>
+              </Grid2>
+            </Grid2>
+          )}
+        </PaperLevel1>
+        <TableAssemblies solarSystemId={data?.id} />
+        <TableKillmails solarSystemId={data?.id} />
+      </>
     </Box>
   );
 };

@@ -8,6 +8,7 @@ import Calculate from "@/pages/Calculate";
 import DApps from "@/dapps/DApps";
 import Header from "./components/layout/Header";
 import DAppsDirectory from "./pages/DAppsDirectory";
+import Map from "./pages/Map";
 
 function App() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/dapps/*" element={<DApps />} />
         <Route path="/explore/*" element={<Explore />} />
+        <Route path="/map/:id?/*" element={<Map />} />
         <Route path="/calculate/*" element={<Calculate />} />
         <Route path="/dapps-directory/*" element={<DAppsDirectory />} />
         <Route path="/about" element={<About />} />

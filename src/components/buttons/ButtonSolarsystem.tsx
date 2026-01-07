@@ -58,7 +58,7 @@ const ButtonSolarsystem: React.FC<ButtonSolarsystemProps> = ({
         color="primary"
         size="small"
         component={NavLink}
-        to={`/explore/solarsystems/${solarSystem.solarSystemId}/map`}
+        to={`/map/${solarSystem.solarSystemId}`}
       >
         <MapIcon />
       </IconButton>

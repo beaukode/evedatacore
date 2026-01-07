@@ -2,6 +2,7 @@ import React from "react";
 import { AppBar, Box, Button, IconButton, Toolbar } from "@mui/material";
 import { NavLink, useLocation } from "react-router";
 import ExploreDataIcon from "@mui/icons-material/TravelExplore";
+import MapIcon from "@mui/icons-material/Map";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AboutIcon from "@mui/icons-material/HelpCenter";
 import DiscordIcon from "@/components/icons/Discord";
@@ -43,6 +44,17 @@ const Header: React.FC = () => {
               }
             >
               Explore
+            </Button>
+            <Button
+              startIcon={<MapIcon />}
+              to="/map"
+              component={NavLink}
+              sx={{ m: 1, fontFamily: "Major Mono Display" }}
+              variant={
+                location.pathname.startsWith("/map") ? "outlined" : "contained"
+              }
+            >
+              Map
             </Button>
             <Button
               startIcon={<CalculateIcon />}
