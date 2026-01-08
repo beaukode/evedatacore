@@ -61,7 +61,11 @@ const Map: React.FC = () => {
     enabled: !!id,
   });
 
-  if (!id || (!query.isLoading && !query.data)) {
+  if (!id) {
+    return null;
+  }
+
+  if (!query.isLoading && !query.data) {
     return <Error404 />;
   }
 
