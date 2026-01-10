@@ -1,9 +1,5 @@
 import React from "react";
-
-type Connection = {
-  source: { id: string; x: number; y: number };
-  target: { id: string; x: number; y: number };
-};
+import { GraphConnnection, GraphNode } from "../common";
 
 type Direction = "up" | "down" | "left" | "right";
 
@@ -17,9 +13,12 @@ type ComputedConnection = {
   targetY: number;
 };
 
-function getDirection(c: Connection): Direction {
-  const dx = c.target.x - c.source.x;
-  const dy = c.target.y - c.source.y;
+function getDirection(
+  target: Required<GraphNode>,
+  source: Required<GraphNode>
+): Direction {
+  const dx = target.x - source.x;
+  const dy = target.y - source.y;
   if (Math.abs(dx) > Math.abs(dy)) {
     return dx > 0 ? "right" : "left";
   }
@@ -58,40 +57,53 @@ function getHalfCirclePath(
 }
 
 interface MapConnectionsLayerProps {
-  connections: Array<Connection>;
+  connections: GraphConnnection[];
+  nodes: Record<string, GraphNode>;
   width: number;
   height: number;
 }
 
 const MapConnectionsLayer: React.FC<MapConnectionsLayerProps> = ({
   connections,
+  nodes,
   width,
   height,
 }) => {
   const computedConnections = React.useMemo<ComputedConnection[]>(() => {
-    return connections.map((c) => {
-      const id = `${c.source.id}-${c.target.id}`;
-      const direction = getDirection(c);
-      const oppositeDirection = getOppositeDirection(direction);
-      const offsetY = direction === "up" ? -20 : direction === "down" ? 20 : 0;
-      const offsetX =
-        direction === "left" ? -40 : direction === "right" ? 40 : 0;
-      const sourceX = c.source.x + width / 2 + offsetX;
-      const sourceY = c.source.y + height / 2 + offsetY;
-      const targetX = c.target.x + width / 2 + offsetX * -1;
-      const targetY = c.target.y + height / 2 + offsetY * -1;
+    return connections
+      .map((c) => {
+        const source = nodes[c.source];
+        const target = nodes[c.target];
+        if (!source?.x || !source?.y || !target?.x || !target?.y) {
+          return;
+        }
+        const id = `${c.source}-${c.target}`;
+        const direction = getDirection(
+          target as Required<GraphNode>,
+          source as Required<GraphNode>
+        );
+        const oppositeDirection = getOppositeDirection(direction);
+        const offsetY =
+          direction === "up" ? -20 : direction === "down" ? 20 : 0;
+        const offsetX =
+          direction === "left" ? -40 : direction === "right" ? 40 : 0;
+        const sourceX = source.x + width / 2 + offsetX;
+        const sourceY = source.y + height / 2 + offsetY;
+        const targetX = target.x + width / 2 + offsetX * -1;
+        const targetY = target.y + height / 2 + offsetY * -1;
 
-      return {
-        id,
-        sourceX,
-        sourceY,
-        targetX,
-        targetY,
-        direction,
-        oppositeDirection,
-      };
-    });
-  }, [connections, width, height]);
+        return {
+          id,
+          sourceX,
+          sourceY,
+          targetX,
+          targetY,
+          direction,
+          oppositeDirection,
+        };
+      })
+      .filter((c) => c !== undefined);
+  }, [connections, nodes, width, height]);
 
   if (computedConnections.length === 0) {
     return null;

@@ -1,49 +1,58 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction, WritableDraft } from "@reduxjs/toolkit";
 import {
+  ProjectionKey,
   DisplayKey,
+  ToolKey,
   NodeAttributes,
+  GraphNode,
   NodesAttributesMap,
   PartialNodesAttributesMap,
   SystemMap,
-  ToolKey,
+  GraphConnnection,
 } from "../common";
 import { SystemRecord, UserDatabase } from "@/api/userdata";
 
 interface SystemNeighborsState {
+  systemId: string;
+  systemData: SystemMap;
   db?: UserDatabase;
   ready?: boolean;
+  projection?: ProjectionKey;
   display?: DisplayKey;
   tool?: ToolKey;
   overNode?: string;
   selectedNode?: string;
   selectedNodeRecord?: SystemRecord;
   selectedNodeDirty: boolean;
+  nodes: Record<string, GraphNode>;
   nodesAttributes: NodesAttributesMap;
-  data: SystemMap;
-  ids: string[];
   dbRecords: Record<string, SystemRecord>;
   search: string;
+  backgroundLayer: GraphConnnection[];
 }
 
 const initialState: SystemNeighborsState = {
-  ready: undefined,
-  display: undefined,
-  tool: undefined,
-  overNode: undefined,
-  selectedNode: undefined,
-  selectedNodeRecord: undefined,
-  selectedNodeDirty: false,
-  nodesAttributes: {},
-  ids: [],
-  dbRecords: {},
-  data: {
+  systemId: "",
+  systemData: {
     id: "",
     name: "",
     location: ["0", "0", "0"],
     d_matrix: {},
     neighbors: [],
   },
+  ready: undefined,
+  projection: undefined,
+  display: undefined,
+  tool: undefined,
+  overNode: undefined,
+  selectedNode: undefined,
+  selectedNodeRecord: undefined,
+  selectedNodeDirty: false,
+  nodes: {},
+  nodesAttributes: {},
+  dbRecords: {},
+  backgroundLayer: [],
   search: "",
 };
 
@@ -66,22 +75,39 @@ export const slice = createSlice({
     onNodeClick: (_state, _action: PayloadAction<string>) => {},
     init: (
       state,
-      { payload }: PayloadAction<{ data: SystemMap; db: UserDatabase }>
+      { payload }: PayloadAction<{ db: UserDatabase; systemId: string }>
     ) => {
       // if already initialized or loading, do nothing
       if (state.ready !== undefined) {
         return;
       }
       state.ready = false;
-      state.data = payload.data;
+      state.systemId = payload.systemId;
       state.db = payload.db;
-      state.ids = [payload.data.id, ...payload.data.neighbors.map((n) => n.id)];
+    },
+    initData: (
+      state,
+      action: PayloadAction<{
+        systemData: SystemMap;
+        nodesAttributes: NodesAttributesMap;
+        backgroundLayer: GraphConnnection[];
+      }>
+    ) => {
+      state.systemData = action.payload.systemData as WritableDraft<SystemMap>;
+      state.nodesAttributes = action.payload
+        .nodesAttributes as WritableDraft<NodesAttributesMap>;
+      state.backgroundLayer = action.payload.backgroundLayer as WritableDraft<
+        GraphConnnection[]
+      >;
     },
     dispose: () => {
       return initialState;
     },
     setReady: (state) => {
       state.ready = true;
+    },
+    setProjection: (state, action: PayloadAction<ProjectionKey>) => {
+      state.projection = action.payload;
     },
     setDisplay: (state, action: PayloadAction<DisplayKey>) => {
       state.display = action.payload;
@@ -131,6 +157,9 @@ export const slice = createSlice({
     commitSelectedNodeRecord: () => {},
     setSelectedNodeDirty: (state, action: PayloadAction<boolean>) => {
       state.selectedNodeDirty = action.payload;
+    },
+    setNodes: (state, action: PayloadAction<Record<string, GraphNode>>) => {
+      state.nodes = action.payload;
     },
     setNodesAttributes: (
       state,
@@ -185,8 +214,13 @@ export const slice = createSlice({
     setSearch: (state, action: PayloadAction<string>) => {
       state.search = action.payload.trim().toUpperCase();
     },
+    setBackgroundLayer: (state, action: PayloadAction<GraphConnnection[]>) => {
+      state.backgroundLayer = action.payload;
+    },
   },
   selectors: {
+    selectSystemId: (state) => state.systemId,
+    selectSystemData: (state) => state.systemData,
     selectDb: (state) => state.db!,
     selectDisplay: (state) => state.display,
     selectTool: (state) => state.tool,
@@ -194,14 +228,14 @@ export const slice = createSlice({
     selectSelectedNode: (state) => state.selectedNode,
     selectSelectedNodeRecord: (state) => state.selectedNodeRecord,
     selectSelectedNodeDirty: (state) => state.selectedNodeDirty,
+    selectNodes: (state) => state.nodes,
     selectNodesAttributes: (state): NodesAttributesMap => state.nodesAttributes,
     selectNodeAttributes: (state, id: string): NodeAttributes | undefined =>
       state.nodesAttributes[id],
     selectDbRecords: (state) => state.dbRecords,
     selectDbRecord: (state, id: string): SystemRecord | undefined =>
       state.dbRecords[id],
-    selectData: (state): SystemMap => state.data,
-    selectIds: (state) => state.ids,
     selectSearch: (state) => state.search,
+    selectBackgroundLayer: (state) => state.backgroundLayer,
   },
 });

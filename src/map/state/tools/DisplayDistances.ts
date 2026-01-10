@@ -25,7 +25,7 @@ function createOpacityNormalizer(
 }
 
 export const sagaDisplayDistances = function* () {
-  const data = yield* select(mapSelectors.selectData);
+  const data = yield* select(mapSelectors.selectSystemData);
 
   const getDistance = (aId: string, bId: string): number => {
     return (

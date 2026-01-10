@@ -17,6 +17,7 @@ export type SystemMap = System & {
   >;
 };
 
+export type ProjectionKey = "center";
 export type ToolKey = "select" | "routing";
 export type DisplayKey = "distances" | "lpoints" | "planets";
 
@@ -35,6 +36,9 @@ export type PartialNodesAttributesMap = Record<string, Partial<NodeAttributes>>;
 
 export type GraphNode = {
   id: string;
+  name: string;
+  x?: number;
+  y?: number;
   d: number;
   n: number;
 };

@@ -12,12 +12,24 @@ import { Saga, Task, eventChannel } from "redux-saga";
 import { keyBy } from "lodash-es";
 import { liveQuery } from "dexie";
 import { SystemRecord } from "@/api/userdata";
+import { sagaProjectionCenter } from "./tools/ProjectionCenter";
 import { sagaDisplayLPoints } from "./tools/DisplayLPoints";
 import { sagaDisplayDistances } from "./tools/DisplayDistances";
 import { sagaDisplayPlanets } from "./tools/DisplayPlanets";
 import { sagaToolSelect } from "./tools/ToolSelect";
-import { DisplayKey, NodeAttributes, ToolKey } from "../common";
+import {
+  ProjectionKey,
+  DisplayKey,
+  NodeAttributes,
+  SystemMap,
+  ToolKey,
+  GraphConnnection,
+} from "../common";
 import { mapActions, mapSelectors } from ".";
+
+const projectionSagas: Record<ProjectionKey, Saga> = {
+  center: sagaProjectionCenter,
+};
 
 const displaySagas: Record<DisplayKey, Saga> = {
   distances: sagaDisplayDistances,
@@ -64,47 +76,101 @@ function* watchSystems(ids: string[]) {
   }
 }
 
+async function fetchSystemData(systemId: string) {
+  const r = await fetch(`/static/systems/${systemId}.json`);
+  if (!r.ok) {
+    throw new Error(`Failed to fetch system neighbors: ${r.statusText}`);
+  }
+  return r.json() as Promise<SystemMap>;
+}
+
 export const sagaMapRoot = function* () {
+  let projectionTask: Task;
   let displayTask: Task;
   let toolTask: Task;
   let watchSystemsTask: Task;
   yield all([
-    takeEvery(mapActions.init, function* ({ payload: { data } }) {
-      // Initialize nodes attributes
-      const nodes: NodeAttributes[] = data.neighbors.map((neighbor) => {
-        return {
-          id: neighbor.id,
-          name: neighbor.name,
-          text: "",
-        };
-      });
-      nodes.push({
-        id: data.id,
-        name: data.name,
+    takeEvery(mapActions.init, function* ({ payload: { systemId } }) {
+      const systemData = yield* call(fetchSystemData, systemId);
+
+      const nodesAttributes: NodeAttributes[] = systemData.neighbors.map(
+        (node) => {
+          return {
+            id: node.id,
+            name: node.name,
+            text: "",
+          };
+        }
+      );
+      nodesAttributes.push({
+        id: systemData.id,
+        name: systemData.name,
         text: "",
       });
-      yield put(mapActions.setNodesAttributes(keyBy(nodes, "id")));
 
-      watchSystemsTask = yield* fork(
-        watchSystems,
-        nodes.map((node) => node.id)
-      );
+      const connectionsMap: Record<string, GraphConnnection> = {};
+      if (systemData.gates) {
+        for (const gate of systemData.gates) {
+          const key = [systemData.id, gate].sort().join("-");
+          connectionsMap[key] = {
+            source: systemData.id,
+            target: gate,
+          };
+        }
+      }
+      for (const neighbor of systemData.neighbors) {
+        if (neighbor.gates) {
+          for (const gate of neighbor.gates) {
+            const key = [neighbor.id, gate].sort().join("-");
+            connectionsMap[key] = {
+              source: neighbor.id,
+              target: gate,
+            };
+          }
+        }
+      }
+      const backgroundLayer = Object.values(connectionsMap);
 
-      yield put(mapActions.setDisplay("distances"));
-      yield put(mapActions.setTool("select"));
-      yield* take(mapActions.setDbRecords);
       yield put(
-        mapActions.setSelectedNode({
-          prev: undefined,
-          next: data.id,
+        mapActions.initData({
+          systemData,
+          nodesAttributes: keyBy(nodesAttributes, "id"),
+          backgroundLayer,
         })
       );
-      yield put(mapActions.setReady());
     }),
+    takeEvery(
+      mapActions.initData,
+      function* ({ payload: { nodesAttributes } }) {
+        const systemId = yield* select(mapSelectors.selectSystemId);
+
+        watchSystemsTask = yield* fork(
+          watchSystems,
+          Object.keys(nodesAttributes)
+        );
+
+        yield put(mapActions.setProjection("center"));
+        yield put(mapActions.setDisplay("distances"));
+        yield put(mapActions.setTool("select"));
+        yield* take(mapActions.setDbRecords); // Wait DB records hydration
+        yield put(
+          mapActions.setSelectedNode({
+            prev: undefined,
+            next: systemId,
+          })
+        );
+        yield put(mapActions.setReady());
+      }
+    ),
     takeEvery(mapActions.dispose, () => {
       watchSystemsTask?.cancel();
+      projectionTask?.cancel();
       displayTask?.cancel();
       toolTask?.cancel();
+    }),
+    takeEvery(mapActions.setProjection, function* ({ payload }) {
+      projectionTask?.cancel();
+      projectionTask = yield* fork(projectionSagas[payload]);
     }),
     takeEvery(mapActions.setDisplay, function* ({ payload }) {
       displayTask?.cancel();
