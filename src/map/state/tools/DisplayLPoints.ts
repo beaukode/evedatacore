@@ -4,7 +4,7 @@ import { mapSelectors, mapActions } from "../";
 import { NodeAttributes } from "../../common";
 
 export const sagaDisplayLPoints = function* () {
-  const data = yield* select(mapSelectors.selectData);
+  const data = yield* select(mapSelectors.selectSystemData);
   const nodes: Partial<NodeAttributes>[] = data.neighbors.map((neighbor) => ({
     id: neighbor.id,
     text: "0 / 10",
