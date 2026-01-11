@@ -95,7 +95,7 @@ const MapGraph: React.FC<MapGraphProps> = ({ onNodeClick, onNodeOver }) => {
           height={GRAPH_HEIGHT}
         />
         {Object.values(nodes).map((node) => {
-          if (!node.x || !node.y) {
+          if (node.x === undefined || node.y === undefined) {
             return null;
           }
           return (

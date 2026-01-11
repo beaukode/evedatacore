@@ -13,6 +13,7 @@ import { keyBy } from "lodash-es";
 import { liveQuery } from "dexie";
 import { SystemRecord } from "@/api/userdata";
 import { sagaProjectionCenter } from "./tools/ProjectionCenter";
+import { sagaProjectionFlat } from "./tools/ProjectionFlat";
 import { sagaDisplayLPoints } from "./tools/DisplayLPoints";
 import { sagaDisplayDistances } from "./tools/DisplayDistances";
 import { sagaDisplayPlanets } from "./tools/DisplayPlanets";
@@ -29,6 +30,7 @@ import { mapActions, mapSelectors } from ".";
 
 const projectionSagas: Record<ProjectionKey, Saga> = {
   center: sagaProjectionCenter,
+  flat: sagaProjectionFlat,
 };
 
 const displaySagas: Record<DisplayKey, Saga> = {

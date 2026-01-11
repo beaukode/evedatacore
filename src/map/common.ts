@@ -17,7 +17,7 @@ export type SystemMap = System & {
   >;
 };
 
-export type ProjectionKey = "center";
+export type ProjectionKey = "center" | "flat";
 export type ToolKey = "select" | "routing";
 export type DisplayKey = "distances" | "lpoints" | "planets";
 
