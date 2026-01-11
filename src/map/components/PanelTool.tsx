@@ -8,7 +8,7 @@ import {
   useMapDispatch,
   useMapSelector,
 } from "../state";
-import { ToolKey } from "../common";
+import { MapTool } from "../common";
 import Panel from "./Panel";
 
 const PanelDisplay: React.FC = () => {
@@ -17,7 +17,7 @@ const PanelDisplay: React.FC = () => {
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,
-    newTool: ToolKey | null
+    newTool: MapTool | null
   ) => {
     if (newTool) {
       dispatch(mapActions.setTool(newTool));

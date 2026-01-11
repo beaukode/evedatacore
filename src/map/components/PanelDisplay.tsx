@@ -9,7 +9,7 @@ import {
   useMapDispatch,
   useMapSelector,
 } from "../state";
-import { DisplayKey } from "../common";
+import { MapDisplay } from "../common";
 import Panel from "./Panel";
 
 const PanelDisplay: React.FC = () => {
@@ -18,7 +18,7 @@ const PanelDisplay: React.FC = () => {
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,
-    newDisplay: DisplayKey | null
+    newDisplay: MapDisplay | null
   ) => {
     if (newDisplay) {
       dispatch(mapActions.setDisplay(newDisplay));

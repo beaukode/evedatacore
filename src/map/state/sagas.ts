@@ -19,27 +19,27 @@ import { sagaDisplayDistances } from "./tools/DisplayDistances";
 import { sagaDisplayPlanets } from "./tools/DisplayPlanets";
 import { sagaToolSelect } from "./tools/ToolSelect";
 import {
-  ProjectionKey,
-  DisplayKey,
+  MapProjection,
+  MapDisplay,
+  MapTool,
   NodeAttributes,
   SystemMap,
-  ToolKey,
   GraphConnnection,
 } from "../common";
 import { mapActions, mapSelectors } from ".";
 
-const projectionSagas: Record<ProjectionKey, Saga> = {
+const projectionSagas: Record<MapProjection, Saga> = {
   center: sagaProjectionCenter,
   flat: sagaProjectionFlat,
 };
 
-const displaySagas: Record<DisplayKey, Saga> = {
+const displaySagas: Record<MapDisplay, Saga> = {
   distances: sagaDisplayDistances,
   lpoints: sagaDisplayLPoints,
   planets: sagaDisplayPlanets,
 };
 
-const toolSagas: Record<ToolKey, Saga> = {
+const toolSagas: Record<MapTool, Saga> = {
   select: sagaToolSelect,
   routing: sagaToolSelect,
 };
@@ -151,9 +151,9 @@ export const sagaMapRoot = function* () {
           Object.keys(nodesAttributes)
         );
 
-        yield put(mapActions.setProjection("center"));
-        yield put(mapActions.setDisplay("distances"));
-        yield put(mapActions.setTool("select"));
+        yield put(mapActions.setProjection(MapProjection.Center));
+        yield put(mapActions.setDisplay(MapDisplay.Distances));
+        yield put(mapActions.setTool(MapTool.Select));
         yield* take(mapActions.setDbRecords); // Wait DB records hydration
         yield put(
           mapActions.setSelectedNode({

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction, WritableDraft } from "@reduxjs/toolkit";
 import {
-  ProjectionKey,
-  DisplayKey,
-  ToolKey,
+  MapProjection,
+  MapDisplay,
+  MapTool,
   NodeAttributes,
   GraphNode,
   NodesAttributesMap,
@@ -18,9 +18,9 @@ interface SystemNeighborsState {
   systemData: SystemMap;
   db?: UserDatabase;
   ready?: boolean;
-  projection?: ProjectionKey;
-  display?: DisplayKey;
-  tool?: ToolKey;
+  projection?: MapProjection;
+  display?: MapDisplay;
+  tool?: MapTool;
   overNode?: string;
   selectedNode?: string;
   selectedNodeRecord?: SystemRecord;
@@ -106,13 +106,13 @@ export const slice = createSlice({
     setReady: (state) => {
       state.ready = true;
     },
-    setProjection: (state, action: PayloadAction<ProjectionKey>) => {
+    setProjection: (state, action: PayloadAction<MapProjection>) => {
       state.projection = action.payload;
     },
-    setDisplay: (state, action: PayloadAction<DisplayKey>) => {
+    setDisplay: (state, action: PayloadAction<MapDisplay>) => {
       state.display = action.payload;
     },
-    setTool: (state, action: PayloadAction<ToolKey>) => {
+    setTool: (state, action: PayloadAction<MapTool>) => {
       state.tool = action.payload;
     },
     setOverNode: (
@@ -222,6 +222,7 @@ export const slice = createSlice({
     selectSystemId: (state) => state.systemId,
     selectSystemData: (state) => state.systemData,
     selectDb: (state) => state.db!,
+    selectProjection: (state) => state.projection,
     selectDisplay: (state) => state.display,
     selectTool: (state) => state.tool,
     selectOverNode: (state) => state.overNode,
@@ -237,5 +238,6 @@ export const slice = createSlice({
       state.dbRecords[id],
     selectSearch: (state) => state.search,
     selectBackgroundLayer: (state) => state.backgroundLayer,
+    selectIsReady: (state) => state.ready,
   },
 });

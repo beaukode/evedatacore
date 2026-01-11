@@ -17,9 +17,21 @@ export type SystemMap = System & {
   >;
 };
 
-export type ProjectionKey = "center" | "flat";
-export type ToolKey = "select" | "routing";
-export type DisplayKey = "distances" | "lpoints" | "planets";
+export enum MapProjection {
+  Center = "center",
+  Flat = "flat",
+}
+
+export enum MapTool {
+  Select = "select",
+  Routing = "routing",
+}
+
+export enum MapDisplay {
+  Distances = "distances",
+  LPoints = "lpoints",
+  Planets = "planets",
+}
 
 export type NodeAttributes = {
   id: string;
