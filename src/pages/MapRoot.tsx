@@ -6,6 +6,7 @@ import MapGraph from "@/map/MapGraph";
 import { mapActions, getMapStore, MapStore } from "@/map/state";
 import { useUserDataContext } from "@/contexts/UserDataContext";
 import MapSearchField from "@/map/MapSearchField";
+import MapProjectionSelect from "@/map/MapProjectionSelect";
 
 interface MapRootProps {
   systemId: string;
@@ -51,6 +52,15 @@ const MapRoot: React.FC<MapRootProps> = ({ systemId }) => {
             position: "absolute",
             top: 12,
             left: 12,
+            width: 200,
+            zIndex: 1000,
+          }}
+        />
+        <MapProjectionSelect
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 312,
             width: 200,
             zIndex: 1000,
           }}
