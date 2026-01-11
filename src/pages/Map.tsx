@@ -13,8 +13,6 @@ import {
 } from "react-router";
 import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
-import z from "zod";
-import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 import { getSolarsystemId } from "@/api/evedatacore-v2";
 import MapRoot from "@/pages/MapRoot";
 import { UserDataContextProvider } from "@/contexts/UserDataContextProvider";
@@ -22,6 +20,7 @@ import PaperLevel1 from "@/components/ui/PaperLevel1";
 import MapUserData from "@/pages/MapUserData";
 import MapSettings from "@/pages/MapSettings";
 import Error404 from "./Error404";
+import { useLastOptions } from "@/map/hooks/useLastOptions";
 
 const routesMap: Record<string, number> = {
   userdata: 1,
@@ -29,26 +28,21 @@ const routesMap: Record<string, number> = {
 };
 
 const Map: React.FC = () => {
-  const lastIdUpdated = React.useRef(false);
+  const lastIdUpdated = React.useRef<string | undefined>();
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [store, setStore] = useAppLocalStorage(
-    "v2_map_last_visited_id",
-    z.object({
-      id: z.number().int().positive().default(30005122),
-    })
-  );
+  const { lastOptions, setLastOptions } = useLastOptions();
 
   React.useEffect(() => {
     if (!id) {
-      navigate(`/map/${store.id}`, { replace: true });
-    } else if (!lastIdUpdated.current) {
-      setStore({ id: Number(id) });
-      lastIdUpdated.current = true; // Trigger only once
+      navigate(`/map/${lastOptions.id}`, { replace: true });
+    } else if (lastIdUpdated.current !== id) {
+      setLastOptions({ id: Number(id) }, true);
+      lastIdUpdated.current = id;
     }
-  }, [id, store.id, navigate, setStore]);
+  }, [id, lastOptions.id, setLastOptions, navigate]);
 
   const query = useQuery({
     queryKey: ["Solarsystem", id],
