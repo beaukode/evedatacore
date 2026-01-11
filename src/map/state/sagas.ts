@@ -19,6 +19,10 @@ import { sagaDisplayDistances } from "./tools/DisplayDistances";
 import { sagaDisplayPlanets } from "./tools/DisplayPlanets";
 import { sagaToolSelect } from "./tools/ToolSelect";
 import {
+  readLastOptionsSagaContext,
+  updateLastOptionsSagaContext,
+} from "./contexts";
+import {
   MapProjection,
   MapDisplay,
   MapTool,
@@ -144,6 +148,8 @@ export const sagaMapRoot = function* () {
     takeEvery(
       mapActions.initData,
       function* ({ payload: { nodesAttributes } }) {
+        const lastOptions = yield* readLastOptionsSagaContext();
+
         const systemId = yield* select(mapSelectors.selectSystemId);
 
         watchSystemsTask = yield* fork(
@@ -151,9 +157,9 @@ export const sagaMapRoot = function* () {
           Object.keys(nodesAttributes)
         );
 
-        yield put(mapActions.setProjection(MapProjection.Center));
-        yield put(mapActions.setDisplay(MapDisplay.Distances));
-        yield put(mapActions.setTool(MapTool.Select));
+        yield put(mapActions.setProjection(lastOptions.projection));
+        yield put(mapActions.setDisplay(lastOptions.display));
+        yield put(mapActions.setTool(lastOptions.tool));
         yield* take(mapActions.setDbRecords); // Wait DB records hydration
         yield put(
           mapActions.setSelectedNode({
@@ -173,14 +179,17 @@ export const sagaMapRoot = function* () {
     takeEvery(mapActions.setProjection, function* ({ payload }) {
       projectionTask?.cancel();
       projectionTask = yield* fork(projectionSagas[payload]);
+      yield* updateLastOptionsSagaContext({ projection: payload }, true);
     }),
     takeEvery(mapActions.setDisplay, function* ({ payload }) {
       displayTask?.cancel();
       displayTask = yield* fork(displaySagas[payload]);
+      yield* updateLastOptionsSagaContext({ display: payload }, true);
     }),
     takeEvery(mapActions.setTool, function* ({ payload }) {
       toolTask?.cancel();
       toolTask = yield* fork(toolSagas[payload]);
+      yield* updateLastOptionsSagaContext({ tool: payload }, true);
     }),
     takeEvery(mapActions.onNodeOver, function* ({ payload }) {
       const prevOverNode = yield* select(mapSelectors.selectOverNode);

@@ -1,11 +1,5 @@
-import z from "zod";
 import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
-
-const lastOptionsSchema = z.object({
-  id: z.number().int().positive().default(30005122),
-});
-
-export type LastOptions = z.infer<typeof lastOptionsSchema>;
+import { lastOptionsSchema } from "../common";
 
 export function useLastOptions() {
   const [lastOptions, setLastOptions] = useAppLocalStorage(

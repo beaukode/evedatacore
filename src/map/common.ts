@@ -1,4 +1,5 @@
 import { SxProps } from "@mui/material";
+import z from "zod";
 
 export type System = {
   id: string;
@@ -59,6 +60,15 @@ export type GraphConnnection = {
   source: string;
   target: string;
 };
+
+export const lastOptionsSchema = z.object({
+  id: z.number().int().positive().default(30005122),
+  projection: z.nativeEnum(MapProjection).default(MapProjection.Flat),
+  display: z.nativeEnum(MapDisplay).default(MapDisplay.Distances),
+  tool: z.nativeEnum(MapTool).default(MapTool.Select),
+});
+
+export type LastOptions = z.infer<typeof lastOptionsSchema>;
 
 export type PointOfInterestIcon = "shield" | "circle" | "moon";
 

@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import createSagaMiddleware from "redux-saga";
 import { sagaMapRoot } from "./sagas";
 import { slice } from "./slice";
+import { lastOptionsSagaContext } from "./contexts";
 
 export type MapStore = ReturnType<typeof createMapStore>;
 let store: MapStore | undefined = undefined;
 
 function createMapStore() {
-  const sagaMiddleware = createSagaMiddleware();
+  const sagaMiddleware = createSagaMiddleware({
+    context: { lastOptions: lastOptionsSagaContext },
+  });
   const middleware = [sagaMiddleware];
   const store = configureStore({
     reducer: { map: slice.reducer },
