@@ -16,7 +16,7 @@ interface UserDataContextProviderProps {
 export const UserDataContextProvider: React.FC<
   UserDataContextProviderProps
 > = ({ children }) => {
-  const { settings } = useSettings();
+  const { settings, setSettings } = useSettings();
   const [userDatabase, setUserDatabase] = React.useState<UserDatabase>();
   const [mainDatabase, setMainDatabase] = React.useState<MainDatabase>();
 
@@ -39,10 +39,19 @@ export const UserDataContextProvider: React.FC<
     }
     mainDatabase.getUserDatabase(settings.userDatabase).then((metadata) => {
       if (!metadata) {
+        console.log(
+          `User database not found: ${settings.userDatabase}, setting to main.`,
+        );
+        setSettings(
+          {
+            userDatabase: "main",
+          },
+          true,
+        );
         return;
       }
       let db: UserDatabase | null = null;
-      openUserDatabase(settings.userDatabase, metadata.name).then((userDb) => {
+      openUserDatabase(settings.userDatabase, metadata).then((userDb) => {
         db = userDb;
         setUserDatabase(db);
       });
@@ -52,7 +61,7 @@ export const UserDataContextProvider: React.FC<
         }
       };
     });
-  }, [mainDatabase, settings.userDatabase]);
+  }, [mainDatabase, settings.userDatabase, setSettings, setUserDatabase]);
 
   if (!mainDatabase || !userDatabase) {
     return null;
