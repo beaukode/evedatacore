@@ -129,7 +129,7 @@ const Databases: React.FC = () => {
       <SystemsSettingDeleteDbModal
         open={openDeleteDbModal}
         slug={settings.userDatabase}
-        name={userDatabase.name}
+        name={userDatabase.metadata.name}
         onClose={(deleted) => {
           setOpenDeleteDbModal(false);
           if (deleted) {

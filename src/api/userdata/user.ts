@@ -1,5 +1,6 @@
 import Dexie, { EntityTable } from "dexie";
 import { omit } from "lodash-es";
+import { UserDatabaseRecord } from "./main";
 
 export type SystemRecord = {
   id: string;
@@ -18,12 +19,12 @@ export type UserDatabase = {
   listSystemsByIds: (ids: string[]) => Promise<SystemRecord[]>;
   deleteDatabase: () => Promise<void>;
   close: () => Promise<void>;
-  name: string;
+  metadata: UserDatabaseRecord;
 };
 
 export async function openUserDatabase(
   slug: string,
-  name: string
+  metadata: UserDatabaseRecord
 ): Promise<UserDatabase> {
   const db = new Dexie(`evedatacore-${slug}`, {
     autoOpen: false,
@@ -84,6 +85,6 @@ export async function openUserDatabase(
     listSystemsByIds,
     deleteDatabase,
     close,
-    name,
+    metadata,
   };
 }

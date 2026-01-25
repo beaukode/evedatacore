@@ -65,7 +65,7 @@ const SystemsSettingImportDbModal: React.FC<
         readfileMutation.reset();
       }}
     >
-      <DialogTitle>Import data from a file to {userDatabase.name}</DialogTitle>
+      <DialogTitle>Import data from a file to {userDatabase.metadata.name}</DialogTitle>
       <DialogContent>
         <Box textAlign="center">
           <FileButton
