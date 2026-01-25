@@ -16,9 +16,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useUserDataContext } from "@/contexts/UserDataContext";
 import { useSettings } from "@/map/hooks/useSettings";
 import Panel from "@/map/components/Panel";
-import SystemsSettingCreateDbModal from "@/map/components/SystemsSettingCreateDbModal";
-import SystemsSettingDeleteDbModal from "@/map/components/SystemsSettingDeleteDbModal";
-import SystemsSettingImportDbModal from "@/map/components/SystemsSettingImportDbModal";
+import DatabaseCreateModal from "./DatabaseCreateModal";
+import DatabaseDeleteModal from "./DatabaseDeleteModal";
+import DatabaseImportModal from "./DatabaseImportModal";
 
 const Databases: React.FC = () => {
   const { settings, setSettings } = useSettings();
@@ -113,7 +113,7 @@ const Databases: React.FC = () => {
           </RadioGroup>
         </FormControl>
       </Panel>
-      <SystemsSettingCreateDbModal
+      <DatabaseCreateModal
         open={openCreateDbModal}
         onClose={(createdSlug) => {
           setOpenCreateDbModal(false);
@@ -126,7 +126,7 @@ const Databases: React.FC = () => {
           }
         }}
       />
-      <SystemsSettingDeleteDbModal
+      <DatabaseDeleteModal
         open={openDeleteDbModal}
         slug={settings.userDatabase}
         name={userDatabase.metadata.name}
@@ -141,7 +141,7 @@ const Databases: React.FC = () => {
           }
         }}
       />
-      <SystemsSettingImportDbModal
+      <DatabaseImportModal
         open={openImportDbModal}
         onClose={() => setOpenImportDbModal(false)}
       />

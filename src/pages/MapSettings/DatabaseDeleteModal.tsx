@@ -10,16 +10,19 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useUserDataContext } from "@/contexts/UserDataContext";
 
-interface SystemsSettingDeleteDbModalProps {
+interface DatabaseDeleteModalProps {
   open: boolean;
   slug: string;
   name: string;
   onClose: (deleted: boolean) => void;
 }
 
-const SystemsSettingDeleteDbModal: React.FC<
-  SystemsSettingDeleteDbModalProps
-> = ({ open, slug, name, onClose }) => {
+const DatabaseDeleteModal: React.FC<DatabaseDeleteModalProps> = ({
+  open,
+  slug,
+  name,
+  onClose,
+}) => {
   const { mainDatabase, userDatabase } = useUserDataContext();
 
   const deleteMutation = useMutation({
@@ -60,4 +63,4 @@ const SystemsSettingDeleteDbModal: React.FC<
   );
 };
 
-export default SystemsSettingDeleteDbModal;
+export default DatabaseDeleteModal;
