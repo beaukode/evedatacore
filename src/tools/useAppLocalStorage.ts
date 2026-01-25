@@ -1,3 +1,4 @@
+import React from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import z from "zod";
 
@@ -17,21 +18,24 @@ export function useAppLocalStorage<T extends z.AnyZodObject>(
   // If the storage value is not valid, we will use the default value from the schema
   const value = parsed.success ? parsed.data : schema.parse({});
 
-  function setValue<P extends true | false = false>(
-    value: P extends true ? Partial<z.infer<T>> : z.infer<T>,
-    partial: P = false as P
-  ) {
-    const parsed = partial
-      ? schema.partial().safeParse(value)
-      : schema.safeParse(value);
-    if (parsed.success) {
-      if (partial) {
-        setStoreValue((prev) => ({ ...prev, ...parsed.data }));
-      } else {
-        setStoreValue(parsed.data);
+  const setValue = React.useCallback(
+    function <P extends true | false = false>(
+      value: P extends true ? Partial<z.infer<T>> : z.infer<T>,
+      partial: P = false as P
+    ) {
+      const parsed = partial
+        ? schema.partial().safeParse(value)
+        : schema.safeParse(value);
+      if (parsed.success) {
+        if (partial) {
+          setStoreValue((prev) => ({ ...prev, ...parsed.data }));
+        } else {
+          setStoreValue(parsed.data);
+        }
       }
-    }
-  }
+    },
+    [schema, setStoreValue]
+  );
 
   return [value, setValue] as const;
 }
