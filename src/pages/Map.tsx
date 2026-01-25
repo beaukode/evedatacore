@@ -101,7 +101,12 @@ const Map: React.FC = () => {
         <PaperLevel1
           title={title}
           loading={query.isLoading}
-          sx={{ flexGrow: 1, p: 0, mb: 0, height: "70vh" }}
+          sx={{
+            flexGrow: currentTab === 2 ? 0 : 1,
+            p: 0,
+            mb: 0,
+            height: currentTab === 2 ? "auto" : "70vh",
+          }}
           titleAdornment={
             <Box display="flex" gap={2} alignItems="center">
               <Button

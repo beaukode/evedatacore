@@ -8,7 +8,7 @@ const Copy: React.FC = () => {
   const { settings, setSettings } = useSettings();
 
   return (
-    <Panel title="Copy">
+    <Panel title="Copy" sx={{ height: "70vh" }}>
       <FormControlLabel
         control={
           <Checkbox
@@ -49,7 +49,11 @@ const Copy: React.FC = () => {
       <PointsOfInterestField
         title="Exclude points of interest"
         value={settings.copy.exclude}
-        sx={{ mx: 1 }}
+        sx={{
+          flexGrow: 1,
+          flexShrink: 1,
+          flexBasis: 100,
+        }}
         onChange={(value) => {
           setSettings({
             ...settings,
