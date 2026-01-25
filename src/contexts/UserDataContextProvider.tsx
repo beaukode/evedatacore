@@ -42,12 +42,10 @@ export const UserDataContextProvider: React.FC<
         console.log(
           `User database not found: ${settings.userDatabase}, setting to main.`,
         );
-        setSettings(
-          {
-            userDatabase: "main",
-          },
-          true,
-        );
+        setSettings((prev) => ({
+          ...prev,
+          userDatabase: "main",
+        }));
         return;
       }
       let db: UserDatabase | null = null;
