@@ -14,13 +14,13 @@ const Copy: React.FC = () => {
           <Checkbox
             checked={settings.copy.numbering}
             onChange={(event) => {
-              setSettings({
-                ...settings,
+              setSettings((prev) => ({
+                ...prev,
                 copy: {
-                  ...settings.copy,
+                  ...prev.copy,
                   numbering: event.target.checked,
                 },
-              });
+              }));
             }}
           />
         }
@@ -33,13 +33,13 @@ const Copy: React.FC = () => {
             checked={settings.copy.discordEmojis}
             disabled={!settings.copy.numbering}
             onChange={(event) => {
-              setSettings({
-                ...settings,
+              setSettings((prev) => ({
+                ...prev,
                 copy: {
-                  ...settings.copy,
+                  ...prev.copy,
                   discordEmojis: event.target.checked,
                 },
-              });
+              }));
             }}
           />
         }
@@ -55,10 +55,10 @@ const Copy: React.FC = () => {
           flexBasis: 100,
         }}
         onChange={(value) => {
-          setSettings({
-            ...settings,
-            copy: { ...settings.copy, exclude: value },
-          });
+          setSettings((prev) => ({
+            ...prev,
+            copy: { ...prev.copy, exclude: value },
+          }));
         }}
       />
     </Panel>

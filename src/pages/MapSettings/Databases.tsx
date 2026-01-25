@@ -105,10 +105,10 @@ const Databases: React.FC = () => {
                 checked={settings.userDatabase === userDatabase.slug}
                 onChange={(event) => {
                   const target = event.target as HTMLInputElement;
-                  setSettings({
-                    ...settings,
+                  setSettings((prev) => ({
+                    ...prev,
                     userDatabase: target.value,
-                  });
+                  }));
                 }}
               />
             ))}
@@ -121,10 +121,10 @@ const Databases: React.FC = () => {
           setOpenCreateDbModal(false);
           if (createdSlug) {
             userDatabases.refetch();
-            setSettings({
-              ...settings,
+            setSettings((prev) => ({
+              ...prev,
               userDatabase: createdSlug,
-            });
+            }));
           }
         }}
       />
@@ -136,10 +136,10 @@ const Databases: React.FC = () => {
           setOpenDeleteDbModal(false);
           if (deleted) {
             userDatabases.refetch();
-            setSettings({
-              ...settings,
+            setSettings((prev) => ({
+              ...prev,
               userDatabase: "main",
-            });
+            }));
           }
         }}
       />

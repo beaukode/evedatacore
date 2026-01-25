@@ -39,7 +39,7 @@ const Map: React.FC = () => {
     if (!id) {
       navigate(`/map/${lastOptions.id}`, { replace: true });
     } else if (lastIdUpdated.current !== id) {
-      setLastOptions({ id: Number(id) }, true);
+      setLastOptions((prev) => ({ ...prev, id: Number(id) }));
       lastIdUpdated.current = id;
     }
   }, [id, lastOptions.id, setLastOptions, navigate]);
