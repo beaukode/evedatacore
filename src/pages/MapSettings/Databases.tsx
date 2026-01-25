@@ -1,14 +1,15 @@
 import React from "react";
 import {
   Box,
-  Button,
   FormControl,
   FormControlLabel,
   IconButton,
   Radio,
   RadioGroup,
+  Tooltip,
 } from "@mui/material";
-import DownloadIcon from "@mui/icons-material/DownloadForOffline";
+import ImportIcon from "@mui/icons-material/Download";
+import ExportIcon from "@mui/icons-material/Upload";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useQuery } from "@tanstack/react-query";
@@ -47,7 +48,46 @@ const Databases: React.FC = () => {
 
   return (
     <>
-      <Panel title="Databases">
+      <Panel
+        title="Databases"
+        titleAdornment={
+          <Box display="flex">
+            <Tooltip title="Delete" arrow>
+              <IconButton
+                disabled={settings.userDatabase === "main"}
+                color="error"
+                size="small"
+                onClick={() => setOpenDeleteDbModal(true)}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Import" arrow>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={() => setOpenImportDbModal(true)}
+              >
+                <ImportIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Export" arrow>
+              <IconButton color="primary" size="small" onClick={handleExport}>
+                <ExportIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Create" arrow>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={() => setOpenCreateDbModal(true)}
+              >
+                <AddIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        }
+      >
         <FormControl>
           <RadioGroup
             aria-labelledby="active-database-group-label"
@@ -72,50 +112,6 @@ const Databases: React.FC = () => {
             ))}
           </RadioGroup>
         </FormControl>
-        <Box
-          display="flex"
-          gap={1}
-          my={0.5}
-          justifyContent="flex-end"
-          flexWrap="wrap-reverse"
-        >
-          <IconButton
-            title="Delete database"
-            disabled={settings.userDatabase === "main"}
-            color="error"
-            size="small"
-            onClick={() => setOpenDeleteDbModal(true)}
-          >
-            <DeleteIcon />
-          </IconButton>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            startIcon={<DownloadIcon sx={{ transform: "rotate(180deg)" }} />}
-            onClick={() => setOpenImportDbModal(true)}
-          >
-            Import
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            startIcon={<DownloadIcon />}
-            onClick={handleExport}
-          >
-            Export
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            startIcon={<AddIcon />}
-            onClick={() => setOpenCreateDbModal(true)}
-          >
-            Create
-          </Button>
-        </Box>
       </Panel>
       <SystemsSettingCreateDbModal
         open={openCreateDbModal}
