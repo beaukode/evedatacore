@@ -21,17 +21,18 @@ const systemRecordSchema = z.array(
     content: z.array(z.string()).optional(),
     createdAt: z.number(),
     updatedAt: z.number(),
-  })
+  }),
 );
 
-interface SystemsSettingImportDbModalProps {
+interface DatabaseImportModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const SystemsSettingImportDbModal: React.FC<
-  SystemsSettingImportDbModalProps
-> = ({ open, onClose }) => {
+const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
+  open,
+  onClose,
+}) => {
   const { userDatabase } = useUserDataContext();
 
   const readfileMutation = useMutation({
@@ -65,7 +66,9 @@ const SystemsSettingImportDbModal: React.FC<
         readfileMutation.reset();
       }}
     >
-      <DialogTitle>Import data from a file to {userDatabase.metadata.name}</DialogTitle>
+      <DialogTitle>
+        Import data from a file to {userDatabase.metadata.name}
+      </DialogTitle>
       <DialogContent>
         <Box textAlign="center">
           <FileButton
@@ -116,4 +119,4 @@ const SystemsSettingImportDbModal: React.FC<
   );
 };
 
-export default SystemsSettingImportDbModal;
+export default DatabaseImportModal;

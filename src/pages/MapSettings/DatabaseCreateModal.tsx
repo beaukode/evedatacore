@@ -12,14 +12,15 @@ import { kebabCase } from "lodash-es";
 import { useMutation } from "@tanstack/react-query";
 import { useUserDataContext } from "@/contexts/UserDataContext";
 
-interface SystemsSettingCreateDbModalProps {
+interface DatabaseCreateModalProps {
   open: boolean;
   onClose: (createdSlug?: string) => void;
 }
 
-const SystemsSettingCreateDbModal: React.FC<
-  SystemsSettingCreateDbModalProps
-> = ({ open, onClose }) => {
+const DatabaseCreateModal: React.FC<DatabaseCreateModalProps> = ({
+  open,
+  onClose,
+}) => {
   const { mainDatabase } = useUserDataContext();
   const [slug, setSlug] = React.useState("");
   const [name, setName] = React.useState("");
@@ -87,4 +88,4 @@ const SystemsSettingCreateDbModal: React.FC<
   );
 };
 
-export default SystemsSettingCreateDbModal;
+export default DatabaseCreateModal;
