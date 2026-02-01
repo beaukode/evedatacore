@@ -1,23 +1,37 @@
-import Dexie, { EntityTable } from "dexie";
+import Dexie, { EntityTable, Transaction, TransactionMode } from "dexie";
+import z from "zod";
 import { omit } from "lodash-es";
 import { UserDatabaseRecord } from "./main";
 
-export type SystemRecord = {
-  id: string;
-  notes?: string;
-  color?: string;
-  content?: string[];
-  createdAt: number;
-  updatedAt: number;
-};
+export const systemRecordSchema = z.object({
+  id: z.string(),
+  notes: z.string().optional(),
+  color: z.string().optional(),
+  content: z.array(z.string()).optional(),
+  createdAt: z.number(),
+  updatedAt: z.number(),
+});
+
+export interface BulkSystemsOptions {
+  create?: SystemRecord[];
+  update?: SystemRecord[];
+  delete?: string[];
+}
+
+export type SystemRecord = z.infer<typeof systemRecordSchema>;
 
 export type UserDatabase = {
   updateSystem: (system: SystemRecord) => Promise<void>;
   importSystems: (systems: SystemRecord[]) => Promise<void>;
   listSystems: () => Promise<SystemRecord[]>;
+  deleteSystems: (ids: string[]) => Promise<void>;
   countSystems: () => Promise<number>;
   listSystemsByIds: (ids: string[]) => Promise<SystemRecord[]>;
   deleteDatabase: () => Promise<void>;
+  transaction: <R>(
+    mode: TransactionMode,
+    fn: (tx: Transaction) => Promise<R>
+  ) => Promise<R>;
   close: () => Promise<void>;
   metadata: UserDatabaseRecord;
 };
@@ -55,6 +69,10 @@ export async function openUserDatabase(
     await db.systems.bulkPut(systems);
   }
 
+  async function deleteSystems(ids: string[]) {
+    await db.systems.bulkDelete(ids);
+  }
+
   async function listSystems() {
     return db.systems.orderBy("updatedAt").reverse().toArray();
   }
@@ -71,6 +89,13 @@ export async function openUserDatabase(
     await db.delete();
   }
 
+  async function transaction<R>(
+    mode: TransactionMode,
+    fn: (tx: Transaction) => Promise<R>
+  ): Promise<R> {
+    return db.transaction(mode, db.systems, fn);
+  }
+
   async function close() {
     await db.close({ disableAutoOpen: true });
   }
@@ -81,9 +106,11 @@ export async function openUserDatabase(
     updateSystem,
     importSystems,
     listSystems,
+    deleteSystems,
     countSystems,
     listSystemsByIds,
     deleteDatabase,
+    transaction,
     close,
     metadata,
   };
