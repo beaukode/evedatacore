@@ -3,6 +3,20 @@ import { useAppLocalStorage } from "@/tools/useAppLocalStorage";
 
 const settingsSchema = z.object({
   userDatabase: z.string().default("main"),
+  lastImportOptions: z
+    .object({
+      method: z.enum(["replace", "merge", "merge-newer"]).default("merge"),
+    })
+    .default({
+      method: "merge",
+    }),
+  lastExportOptions: z
+    .object({
+      updatedWithin: z.number().default(0),
+    })
+    .default({
+      updatedWithin: 0,
+    }),
   copy: z
     .object({
       numbering: z.boolean(),

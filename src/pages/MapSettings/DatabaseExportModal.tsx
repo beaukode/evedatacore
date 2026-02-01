@@ -13,6 +13,7 @@ import { useUserDataContext } from "@/contexts/UserDataContext";
 import { ExportFileStrategyOptions, exportFileStrategy } from "@/api/userdata";
 import DatabaseOperationReport from "./DatabaseOperationReport";
 import RadioField from "@/components/form/RadioField";
+import { useSettings } from "@/map/hooks/useSettings";
 
 interface DatabaseExportModalProps {
   open: boolean;
@@ -26,9 +27,10 @@ const DatabaseImportModal: React.FC<DatabaseExportModalProps> = ({
   onClose,
 }) => {
   const { userDatabase } = useUserDataContext();
+  const { settings, setSettings } = useSettings();
 
   const [formData, setFormData] = React.useState<FormData>({
-    updatedWithin: 0,
+    updatedWithin: settings.lastExportOptions.updatedWithin,
   });
 
   const strategy = React.useMemo(
@@ -49,6 +51,12 @@ const DatabaseImportModal: React.FC<DatabaseExportModalProps> = ({
 
   const executeMutation = useMutation({
     mutationFn: strategy.execute,
+    onSuccess: () => {
+      setSettings((prev) => ({
+        ...prev,
+        lastExportOptions: formData,
+      }));
+    },
   });
 
   React.useEffect(() => {
@@ -74,9 +82,6 @@ const DatabaseImportModal: React.FC<DatabaseExportModalProps> = ({
       onTransitionExited={() => {
         resetDryRun();
         executeMutation.reset();
-        setFormData({
-          updatedWithin: 0,
-        });
       }}
       fullWidth
     >

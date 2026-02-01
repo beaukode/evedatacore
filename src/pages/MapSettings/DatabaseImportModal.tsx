@@ -21,6 +21,7 @@ import {
 } from "@/api/userdata";
 import DatabaseOperationReport from "./DatabaseOperationReport";
 import RadioField from "@/components/form/RadioField";
+import { useSettings } from "@/map/hooks/useSettings";
 
 interface DatabaseImportModalProps {
   open: boolean;
@@ -40,9 +41,10 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
   onClose,
 }) => {
   const { userDatabase } = useUserDataContext();
+  const { settings, setSettings } = useSettings();
 
   const [formData, setFormData] = React.useState<FormData>({
-    method: "replace",
+    method: settings.lastImportOptions.method,
   });
 
   const strategy = React.useMemo(
@@ -63,6 +65,14 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
 
   const executeMutation = useMutation({
     mutationFn: strategy.execute,
+    onSuccess: () => {
+      if (isCompleteImportOptions(formData)) {
+        setSettings((prev) => ({
+          ...prev,
+          lastImportOptions: formData,
+        }));
+      }
+    },
   });
 
   React.useEffect(() => {
@@ -89,9 +99,6 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
       onTransitionExited={() => {
         resetDryRun();
         executeMutation.reset();
-        setFormData({
-          method: "replace",
-        });
       }}
       fullWidth
     >
