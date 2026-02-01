@@ -19,6 +19,7 @@ import Panel from "@/map/components/Panel";
 import DatabaseCreateModal from "./DatabaseCreateModal";
 import DatabaseDeleteModal from "./DatabaseDeleteModal";
 import DatabaseImportModal from "./DatabaseImportModal";
+import DatabaseExportModal from "./DatabaseExportModal";
 
 const Databases: React.FC = () => {
   const { settings, setSettings } = useSettings();
@@ -27,6 +28,7 @@ const Databases: React.FC = () => {
   const [openCreateDbModal, setOpenCreateDbModal] = React.useState(false);
   const [openDeleteDbModal, setOpenDeleteDbModal] = React.useState(false);
   const [openImportDbModal, setOpenImportDbModal] = React.useState(false);
+  const [openExportDbModal, setOpenExportDbModal] = React.useState(false);
 
   const userDatabases = useQuery({
     queryKey: ["MainDatabase", "userDatabases"],
@@ -34,17 +36,6 @@ const Databases: React.FC = () => {
       return await mainDatabase.listUserDatabases();
     },
   });
-
-  const handleExport = async () => {
-    const data = await userDatabase.listSystems();
-    const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `evedatacore_${settings.userDatabase}_export.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   return (
     <>
@@ -72,7 +63,11 @@ const Databases: React.FC = () => {
               </IconButton>
             </Tooltip>
             <Tooltip title="Export" arrow>
-              <IconButton color="primary" size="small" onClick={handleExport}>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={() => setOpenExportDbModal(true)}
+              >
                 <ExportIcon fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -144,6 +139,10 @@ const Databases: React.FC = () => {
       <DatabaseImportModal
         open={openImportDbModal}
         onClose={() => setOpenImportDbModal(false)}
+      />
+      <DatabaseExportModal
+        open={openExportDbModal}
+        onClose={() => setOpenExportDbModal(false)}
       />
     </>
   );

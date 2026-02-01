@@ -7,46 +7,32 @@ import {
   DialogTitle,
   Box,
   Alert,
-  Typography,
-  IconButton,
 } from "@mui/material";
-import RemoveIcon from "@mui/icons-material/Close";
 import { useMutation } from "@tanstack/react-query";
 import { useUserDataContext } from "@/contexts/UserDataContext";
-import FileButton from "@/components/form/FileButton";
-import {
-  importFileStrategy,
-  ImportFileStrategyOptions,
-  ImportStrategyMethod,
-} from "@/api/userdata";
+import { ExportFileStrategyOptions, exportFileStrategy } from "@/api/userdata";
 import DatabaseOperationReport from "./DatabaseOperationReport";
 import RadioField from "@/components/form/RadioField";
 
-interface DatabaseImportModalProps {
+interface DatabaseExportModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-type FormData = Partial<ImportFileStrategyOptions>;
+type FormData = Omit<ExportFileStrategyOptions, "filename">;
 
-function isCompleteImportOptions(
-  value: Partial<ImportFileStrategyOptions>
-): value is ImportFileStrategyOptions {
-  return value.file !== undefined && value.method !== undefined;
-}
-
-const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
+const DatabaseImportModal: React.FC<DatabaseExportModalProps> = ({
   open,
   onClose,
 }) => {
   const { userDatabase } = useUserDataContext();
 
   const [formData, setFormData] = React.useState<FormData>({
-    method: "replace",
+    updatedWithin: 0,
   });
 
   const strategy = React.useMemo(
-    () => importFileStrategy(userDatabase),
+    () => exportFileStrategy(userDatabase),
     [userDatabase]
   );
 
@@ -66,12 +52,11 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
   });
 
   React.useEffect(() => {
-    if (isCompleteImportOptions(formData)) {
-      dryRun(formData);
-    } else {
-      resetDryRun();
-    }
-  }, [formData, dryRun, resetDryRun]);
+    dryRun({
+      ...formData,
+      filename: `evedatacore_${userDatabase.metadata.name}_export.json`,
+    });
+  }, [formData, dryRun, userDatabase.metadata.name]);
 
   const formDisabled = dryRunPending || !executeMutation.isIdle;
   const error =
@@ -90,7 +75,7 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
         resetDryRun();
         executeMutation.reset();
         setFormData({
-          method: "replace",
+          updatedWithin: 0,
         });
       }}
       fullWidth
@@ -99,62 +84,27 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
         Import data from a file to {userDatabase.metadata.name}
       </DialogTitle>
       <DialogContent>
-        <Box textAlign="center">
-          {formData.file ? (
-            <Box
-              display="flex"
-              alignItems="center"
-              gap={1}
-              justifyContent="center"
-            >
-              <Typography>{formData.file.name}</Typography>
-              <IconButton
-                title="Remove file"
-                color="primary"
-                disabled={formDisabled}
-                onClick={() => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    file: undefined,
-                  }));
-                }}
-              >
-                <RemoveIcon />
-              </IconButton>
-            </Box>
-          ) : (
-            <FileButton
-              accept=".json"
-              onChange={(files) => {
-                if (files[0]) {
-                  setFormData((prev) => ({
-                    ...prev,
-                    file: files[0],
-                  }));
-                }
-              }}
-            >
-              Select a file
-            </FileButton>
-          )}
-        </Box>
         <Box sx={{ mt: 2 }}>
           <RadioField
-            label="Import method"
-            value={formData.method}
+            label="Export data updated within"
+            value={formData.updatedWithin.toString()}
             disabled={formDisabled}
             options={[
-              { label: "Merge and replace", value: "merge" },
-              {
-                label: "Merge and replace if newer",
-                value: "merge-newer",
-              },
-              { label: "Replace all data", value: "replace" },
+              { label: "All data", value: "0" },
+              { label: "Last 1 hour", value: "1" },
+              { label: "Last 3 hours", value: "3" },
+              { label: "Last 6 hours", value: "6" },
+              { label: "Last 12 hours", value: "12" },
+              { label: "Last 24 hours", value: "24" },
+              { label: "Last 48 hours", value: "48" },
+              { label: "Last 72 hours", value: "72" },
+              { label: "Last week (168 hours)", value: "168" },
+              { label: "Last month (720 hours)", value: "720" },
             ]}
             onChange={(value) => {
               setFormData((prev) => ({
                 ...prev,
-                method: value as ImportStrategyMethod,
+                updatedWithin: parseInt(value),
               }));
             }}
           />
@@ -183,17 +133,13 @@ const DatabaseImportModal: React.FC<DatabaseImportModalProps> = ({
             </Button>
             <Button
               onClick={() => {
-                if (isCompleteImportOptions(formData)) {
-                  executeMutation.mutate(formData);
-                }
+                executeMutation.mutate({
+                  ...formData,
+                  filename: `evedatacore_${userDatabase.metadata.name}_export.json`,
+                });
               }}
               loading={dryRunPending || executeMutation.isPending}
-              disabled={
-                !dryRunSuccess ||
-                (dryRunData?.created === 0 &&
-                  dryRunData?.updated === 0 &&
-                  dryRunData?.deleted === 0)
-              }
+              disabled={!dryRunSuccess || dryRunData?.exported === 0}
               variant="contained"
             >
               Confirm

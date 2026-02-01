@@ -1,15 +1,7 @@
 import z from "zod";
 import { SystemRecord, systemRecordSchema, UserDatabase } from "./user";
 import { keyBy } from "lodash-es";
-
-export type ImportStrategyRecordChange = "c" | "u" | "d";
-
-export interface ImportStrategyResult {
-  details: Map<string, ImportStrategyRecordChange>;
-  created: number;
-  updated: number;
-  deleted: number;
-}
+import { StrategyResult } from "./common";
 
 export type ImportStrategyMethod = "replace" | "merge" | "merge-newer";
 
@@ -23,27 +15,26 @@ const inputDataSchema = z.array(systemRecordSchema);
 type InputData = z.infer<typeof inputDataSchema>;
 
 export interface ImportFileStrategyComponentProps {
-  dryRun: (options: ImportFileStrategyOptions) => Promise<ImportStrategyResult>;
-  execute: (
-    options: ImportFileStrategyOptions
-  ) => Promise<ImportStrategyResult>;
+  dryRun: (options: ImportFileStrategyOptions) => Promise<StrategyResult>;
+  execute: (options: ImportFileStrategyOptions) => Promise<StrategyResult>;
 }
 
 export function importFileStrategy(db: UserDatabase) {
   const dryRunHandlers: Record<
     ImportStrategyMethod,
-    (data: InputData) => Promise<ImportStrategyResult>
+    (data: InputData) => Promise<StrategyResult>
   > = {
     replace: async (data) => {
       const currentSystems = await db
         .listSystems()
         .then((systems) => keyBy(systems, "id"));
 
-      const r: ImportStrategyResult = {
+      const r: StrategyResult = {
         details: new Map(),
         created: 0,
         updated: 0,
         deleted: 0,
+        exported: 0,
       };
 
       for (const item of data) {
@@ -67,11 +58,12 @@ export function importFileStrategy(db: UserDatabase) {
         .listSystems()
         .then((systems) => keyBy(systems, "id"));
 
-      const r: ImportStrategyResult = {
+      const r: StrategyResult = {
         details: new Map(),
         created: 0,
         updated: 0,
         deleted: 0,
+        exported: 0,
       };
 
       for (const item of data) {
@@ -90,11 +82,12 @@ export function importFileStrategy(db: UserDatabase) {
         .listSystems()
         .then((systems) => keyBy(systems, "id"));
 
-      const r: ImportStrategyResult = {
+      const r: StrategyResult = {
         details: new Map(),
         created: 0,
         updated: 0,
         deleted: 0,
+        exported: 0,
       };
 
       for (const item of data) {
@@ -114,7 +107,7 @@ export function importFileStrategy(db: UserDatabase) {
 
   const executeHandlers: Record<
     ImportStrategyMethod,
-    (data: InputData, expected: ImportStrategyResult) => Promise<void>
+    (data: InputData, expected: StrategyResult) => Promise<void>
   > = {
     replace: async (data, expected) => {
       const currentSystems = await db
@@ -137,7 +130,8 @@ export function importFileStrategy(db: UserDatabase) {
       if (
         toCreate.length !== expected.created ||
         toUpdate.length !== expected.updated ||
-        toDelete.length !== expected.deleted
+        toDelete.length !== expected.deleted ||
+        0 !== expected.exported
       ) {
         throw new Error("Expected result does not match actual result");
       }
@@ -163,7 +157,8 @@ export function importFileStrategy(db: UserDatabase) {
       if (
         toCreate.length !== expected.created ||
         toUpdate.length !== expected.updated ||
-        0 !== expected.deleted
+        0 !== expected.deleted ||
+        0 !== expected.exported
       ) {
         throw new Error("Expected result does not match actual result");
       }
@@ -190,7 +185,8 @@ export function importFileStrategy(db: UserDatabase) {
       if (
         toCreate.length !== expected.created ||
         toUpdate.length !== expected.updated ||
-        0 !== expected.deleted
+        0 !== expected.deleted ||
+        0 !== expected.exported
       ) {
         throw new Error("Expected result does not match actual result");
       }
@@ -200,7 +196,7 @@ export function importFileStrategy(db: UserDatabase) {
 
   async function dryRun(
     options: ImportFileStrategyOptions
-  ): Promise<ImportStrategyResult> {
+  ): Promise<StrategyResult> {
     const { file, method } = options;
     const text = await file.text();
     const json = JSON.parse(text);
@@ -213,7 +209,7 @@ export function importFileStrategy(db: UserDatabase) {
 
   async function execute(
     options: ImportFileStrategyOptions
-  ): Promise<ImportStrategyResult> {
+  ): Promise<StrategyResult> {
     const { file, method } = options;
     const text = await file.text();
     const json = JSON.parse(text);

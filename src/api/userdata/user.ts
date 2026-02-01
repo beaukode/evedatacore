@@ -23,9 +23,9 @@ export type SystemRecord = z.infer<typeof systemRecordSchema>;
 export type UserDatabase = {
   updateSystem: (system: SystemRecord) => Promise<void>;
   importSystems: (systems: SystemRecord[]) => Promise<void>;
-  listSystems: () => Promise<SystemRecord[]>;
+  listSystems: (updatedWithin?: number) => Promise<SystemRecord[]>;
+  countSystems: (updatedWithin?: number) => Promise<number>;
   deleteSystems: (ids: string[]) => Promise<void>;
-  countSystems: () => Promise<number>;
   listSystemsByIds: (ids: string[]) => Promise<SystemRecord[]>;
   deleteDatabase: () => Promise<void>;
   transaction: <R>(
@@ -73,11 +73,24 @@ export async function openUserDatabase(
     await db.systems.bulkDelete(ids);
   }
 
-  async function listSystems() {
+  async function listSystems(updatedWithin?: number) {
+    if (updatedWithin) {
+      return db.systems
+        .where("updatedAt")
+        .above(Date.now() - updatedWithin * 60 * 60 * 1000)
+        .reverse()
+        .toArray();
+    }
     return db.systems.orderBy("updatedAt").reverse().toArray();
   }
 
-  async function countSystems() {
+  async function countSystems(updatedWithin?: number) {
+    if (updatedWithin) {
+      return db.systems
+        .where("updatedAt")
+        .above(Date.now() - updatedWithin * 60 * 60 * 1000)
+        .count();
+    }
     return db.systems.count();
   }
 
