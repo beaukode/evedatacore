@@ -1,50 +1,60 @@
-import { FixedGetSolarsystemsResponse, SolarSystem } from "@/api/stillness";
-
 export interface SolarSystemsIndex {
-  searchByName: (value: string) => SolarSystem[];
-  getById: (id: string) => SolarSystem | undefined;
+  searchByName: (value: string) => IndexedSolarSystem[];
+  getById: (id: string | number) => SolarSystem | undefined;
 }
 
-type IndexedSolarSystem = SolarSystem & { lSolarSystemName: string };
+type IndexedSolarSystem = SolarSystem & {
+  id: string;
+  lSolarSystemName: string;
+};
 
 interface IndexByName {
   [firstLetter: string]: IndexedSolarSystem[];
 }
 
+export type SolarSystem = {
+  name: string;
+  location: [string, string, string];
+};
+
+type SolarSystemsIndexData = Record<string, SolarSystem>;
+
 export function createSolarSystemsIndex(
-  data: FixedGetSolarsystemsResponse
+  data: SolarSystemsIndexData
 ): SolarSystemsIndex {
   const indexByName: IndexByName = {};
 
-  Object.values(data).forEach((value) => {
-    const solarSystemName = value.solarSystemName.toLowerCase();
-    const firstLetter = solarSystemName.charAt(0).toLowerCase();
+  Object.entries(data).forEach(([id, value]) => {
+    const solarSystemName = value.name.toLowerCase();
+    const firstLetter = solarSystemName.charAt(0);
     if (!indexByName[firstLetter]) {
       indexByName[firstLetter] = [];
     }
     indexByName[firstLetter].push({
       ...value,
+      id,
       lSolarSystemName: solarSystemName,
     });
   });
 
-  function searchByName(value: string): SolarSystem[] {
-    if (!value) {
-      return Object.values(data);
+  function searchByName(value: string): IndexedSolarSystem[] {
+    const lowerValue = value.trimStart().toLowerCase();
+    if (!lowerValue) {
+      return [];
     }
-    const firstLetter = value.charAt(0).toLowerCase();
+    const firstLetter = lowerValue.charAt(0);
 
     if (indexByName[firstLetter]) {
       return indexByName[firstLetter].filter((solarSystem) =>
-        solarSystem.lSolarSystemName.toLowerCase().includes(value.toLowerCase())
+        solarSystem.lSolarSystemName.toLowerCase().includes(lowerValue)
       );
     }
 
     return [];
   }
 
-  function getById(id: string): SolarSystem | undefined {
-    return data[id];
+  function getById(id: string | number): SolarSystem | undefined {
+    return data[id.toString()];
   }
 
   return {

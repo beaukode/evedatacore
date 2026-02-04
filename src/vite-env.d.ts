@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_WEB3_DEBUG: string;
   readonly VITE_WEB3_DISABLE_OWNER_CHECK: string;
   readonly VITE_WEB3_IMPERSONATE: string;
+  readonly VITE_STATIC_VERSION: string;
 }
 
 interface ImportMeta {

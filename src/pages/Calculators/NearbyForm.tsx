@@ -16,10 +16,8 @@ import useQuerySearch from "@/tools/useQuerySearch";
 const schema = z
   .object({
     system: z.coerce
-      .number({ message: "Please select a system" })
-      .int()
-      .positive()
-      .default(30012591),
+      .string({ message: "Please select a system" })
+      .default("30012591"),
     distance: z.coerce.number().int().positive().min(1).max(300).default(75),
   })
   .required();
@@ -28,7 +26,7 @@ type FormData = z.infer<typeof schema>;
 
 function queryToForm(values: Record<keyof FormData, string>) {
   return {
-    system: Number.parseInt(values.system),
+    system: values.system,
     distance: Number.parseInt(values.distance),
   };
 }
@@ -89,10 +87,7 @@ const NearbyForm: React.FC<RoutePlannerFormProps> = ({
                   {...field}
                   onChange={(value) => {
                     field.onChange(value);
-                    setSearch(
-                      "system",
-                      (value ?? formDefaultValues.system).toString()
-                    );
+                    setSearch("system", value ?? formDefaultValues.system);
                   }}
                   error={fieldState.error?.message}
                   label="From system"

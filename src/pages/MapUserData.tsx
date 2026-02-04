@@ -57,7 +57,7 @@ const MapUserData: React.FC = () => {
       return (await records).map((r) => ({
         ...r,
         textContent: r.content?.join(", ") ?? "",
-        name: solarSystemIndex?.getById(r.id)?.solarSystemName ?? "",
+        name: solarSystemIndex?.getById(r.id)?.name ?? "",
       }));
     },
   });

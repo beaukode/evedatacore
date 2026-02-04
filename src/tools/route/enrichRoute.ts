@@ -38,8 +38,8 @@ export function enrichRoute(
       }
       acc.path.push({
         ...step,
-        fromName: from.solarSystemName,
-        toName: to.solarSystemName,
+        fromName: from.name,
+        toName: to.name,
         distance,
       });
       acc.hops += 1;

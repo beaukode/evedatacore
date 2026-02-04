@@ -21,23 +21,21 @@ const ButtonSolarsystem: React.FC<ButtonSolarsystemProps> = ({
   if (solarSystemId === undefined) return null;
   if (!solarSystems) return <Skeleton width={80} />;
 
-  const solarSystem = solarSystems.getById(solarSystemId.toString());
+  const solarSystem = solarSystems.getById(solarSystemId);
   if (!solarSystem) return null;
 
   if (fastRender) {
-    return (
-      <LooksOutlinedButton>{solarSystem.solarSystemName}</LooksOutlinedButton>
-    );
+    return <LooksOutlinedButton>{solarSystem.name}</LooksOutlinedButton>;
   }
 
   const button = (
     <Button
       sx={{ justifyContent: "flex-start" }}
       component={NavLink}
-      to={`/explore/solarsystems/${solarSystem.solarSystemId}`}
+      to={`/explore/solarsystems/${solarSystemId}`}
       variant="outlined"
     >
-      {solarSystem.solarSystemName}
+      {solarSystem.name}
     </Button>
   );
 
@@ -49,16 +47,16 @@ const ButtonSolarsystem: React.FC<ButtonSolarsystemProps> = ({
       <Button
         sx={{ justifyContent: "flex-start" }}
         component={NavLink}
-        to={`/explore/solarsystems/${solarSystem.solarSystemId}`}
+        to={`/explore/solarsystems/${solarSystemId}`}
         variant="outlined"
       >
-        {solarSystem.solarSystemName}
+        {solarSystem.name}
       </Button>
       <IconButton
         color="primary"
         size="small"
         component={NavLink}
-        to={`/map/${solarSystem.solarSystemId}`}
+        to={`/map/${solarSystemId}`}
       >
         <MapIcon />
       </IconButton>

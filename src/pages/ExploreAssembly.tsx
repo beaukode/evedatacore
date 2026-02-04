@@ -236,11 +236,11 @@ const ExploreAssembly: React.FC = () => {
             <SmartGateOther
               currentGateId={id}
               owner={owner}
-              currentGateLocation={{
-                x: data?.x ?? "0",
-                y: data?.y ?? "0",
-                z: data?.z ?? "0",
-              }}
+              currentGateLocation={[
+                data?.x ?? "0",
+                data?.y ?? "0",
+                data?.z ?? "0",
+              ]}
             />
           )}
           {data.assemblyType === "ST" && (

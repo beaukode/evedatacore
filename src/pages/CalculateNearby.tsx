@@ -35,7 +35,7 @@ const CalculateNearby: React.FC = () => {
       if (!queryData) return;
       return getFindNearIdDistance({
         path: {
-          id: queryData.system,
+          id: Number.parseInt(queryData.system),
           distance: queryData.distance,
         },
       }).then((r) => {
@@ -52,7 +52,7 @@ const CalculateNearby: React.FC = () => {
   const fromName = React.useMemo(() => {
     if (!queryData || !solarSystemsIndex) return "";
     return (
-      solarSystemsIndex.getById(queryData.system.toString())?.solarSystemName ??
+      solarSystemsIndex.getById(queryData.system)?.name ??
       ""
     );
   }, [queryData, solarSystemsIndex]);
@@ -74,7 +74,7 @@ const CalculateNearby: React.FC = () => {
     content += query.data
       ?.map(
         (item) =>
-          `<a href="showinfo:5//${item.solarSystemId}">${solarSystemsIndex.getById(item.solarSystemId.toString())?.solarSystemName}</a> ${item.distance}Ly`
+          `<a href="showinfo:5//${item.solarSystemId}">${solarSystemsIndex.getById(item.solarSystemId)?.name}</a> ${item.distance}Ly`
       )
       .join("\n");
     navigator.clipboard

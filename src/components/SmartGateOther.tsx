@@ -67,11 +67,7 @@ const SmartGateOther: React.FC<SmartGateOtherProps> = ({
       .map((gate) => {
         const ly =
           currentGateLocation && gate.x && gate.y && gate.z
-            ? lyDistance(currentGateLocation, {
-                x: gate.x,
-                y: gate.y,
-                z: gate.z,
-              })
+            ? lyDistance(currentGateLocation, [gate.x, gate.y, gate.z])
             : undefined;
         const distance = ly
           ? {

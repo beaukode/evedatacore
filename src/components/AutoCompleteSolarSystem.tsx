@@ -8,15 +8,15 @@ interface AutoCompleteSolarSystemProps
     "onChange" | "renderInput" | "options"
   > {
   label: string;
-  value: number | null;
+  value: string | null;
   error?: string;
-  onChange: (value: number | null) => void;
+  onChange: (value: string | null) => void;
   solarSystemsIndex: SolarSystemsIndex;
 }
 
 export type SolarSystemValue = {
   label: string;
-  id: number;
+  id: string;
 };
 
 const filterOptions = createFilterOptions({
@@ -28,20 +28,20 @@ const AutoCompleteSolarSystem = React.forwardRef<
   AutoCompleteSolarSystemProps
 >(({ label, value, onChange, error, solarSystemsIndex, ...rest }, ref) => {
   const [inputValue, setInputValue] = React.useState<string>("");
-  const options: Array<SolarSystemValue> = React.useMemo(() => {
+  const options: SolarSystemValue[] = React.useMemo(() => {
     const trimmedInputValue = inputValue.trim();
     if (trimmedInputValue.length < 1) return [];
     return solarSystemsIndex
       .searchByName(trimmedInputValue)
       .slice(0, 50)
-      .map((ss) => ({ label: ss.solarSystemName, id: ss.solarSystemId }));
+      .map((ss) => ({ label: ss.name, id: ss.id }));
   }, [solarSystemsIndex, inputValue]);
 
   const currentValue = React.useMemo(() => {
     if (value === null) return null;
-    const solarSystem = solarSystemsIndex.getById(value.toString());
+    const solarSystem = solarSystemsIndex.getById(value);
     return {
-      label: solarSystem?.solarSystemName ?? "Unknown",
+      label: solarSystem?.name ?? "Unknown",
       id: value,
     };
   }, [value, solarSystemsIndex]);

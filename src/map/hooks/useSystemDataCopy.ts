@@ -37,7 +37,7 @@ export function useSystemDataCopy() {
       const system = solarSystemsIndex?.getById(data.id);
       const parts: string[] = [];
       if (system) {
-        parts.push(system.solarSystemName);
+        parts.push(system.name);
       }
       const content = [...(data.content ?? [])];
       content

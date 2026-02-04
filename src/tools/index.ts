@@ -158,26 +158,21 @@ export function toJson(value: unknown): string {
   );
 }
 
-export type Location = { x: string; y: string; z: string };
+export type Location = [string, string, string];
 
 export function lyDistance(locationA: Location, locationB: Location): number {
-  const s1x = new Big(locationA.x);
-  const s1y = new Big(locationA.y);
-  const s1z = new Big(locationA.z);
-  const s2x = new Big(locationB.x);
-  const s2y = new Big(locationB.y);
-  const s2z = new Big(locationB.z);
-  const meters = s1x
-    .minus(s2x)
+  const [x1, y1, z1] = locationA.map((v) => new Big(v)) as [Big, Big, Big];
+  const [x2, y2, z2] = locationB.map((v) => new Big(v)) as [Big, Big, Big];
+  const meters = x1
+    .minus(x2)
     .pow(2)
-    .plus(s1y.minus(s2y).pow(2))
-    .plus(s1z.minus(s2z).pow(2))
+    .plus(y1.minus(y2).pow(2))
+    .plus(z1.minus(z2).pow(2))
     .sqrt();
-  const ly = meters.div(new Big(9.46073047258e15));
-  return ly.toNumber();
+  return metersToLy(meters);
 }
 
-export function metersToLy(meters: string): number {
+export function metersToLy(meters: string | number | Big): number {
   const m = new Big(meters);
   const ly = m.div(new Big(9.46073047258e15));
   return ly.toNumber();

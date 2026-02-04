@@ -97,7 +97,7 @@ const DatabaseOperationReport: React.FC<DatabaseOperationReportProps> = ({
           )}
           {solarSystemsIndex &&
             entries.map(([id, change], index) => {
-              const name = solarSystemsIndex.getById(id)?.solarSystemName;
+              const name = solarSystemsIndex.getById(id)?.name;
               if (!name) return null;
               return (
                 <React.Fragment key={id}>

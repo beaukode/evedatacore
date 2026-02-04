@@ -33,8 +33,8 @@ const CalculateRoute: React.FC = () => {
       }
       return getFindPath({
         path: {
-          from: queryData.system1,
-          to: queryData.system2,
+          from: Number.parseInt(queryData.system1),
+          to: Number.parseInt(queryData.system2),
           distance: queryData.jumpDistance,
           optimize: queryData.optimize,
           character: characterId ?? "0x",
@@ -54,10 +54,7 @@ const CalculateRoute: React.FC = () => {
 
   const destinationName = React.useMemo(() => {
     if (!queryData || !solarSystemsIndex) return "";
-    return (
-      solarSystemsIndex.getById(queryData.system2.toString())
-        ?.solarSystemName ?? ""
-    );
+    return solarSystemsIndex.getById(queryData.system2)?.name ?? "";
   }, [queryData, solarSystemsIndex]);
 
   const handleSubmit: SubmitHandler = React.useCallback(

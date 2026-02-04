@@ -15,3 +15,5 @@ export const chainId = web3Config.chainId;
 export const worldAddress = web3Config.worldAddress;
 export const explorerBaseUrl = web3Config.explorerBaseUrl;
 export const web3NetworkName = web3Config.web3NetworkName;
+
+export const staticVersion = import.meta.env.VITE_STATIC_VERSION;

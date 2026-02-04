@@ -1,10 +1,11 @@
 import React from "react";
 import { Hex } from "viem";
-import { getSolarsystems, getTypes } from "@/api/stillness";
+import { getTypes } from "@/api/stillness";
 import { createSolarSystemsIndex } from "@/tools/solarSystemsIndex";
 import { useQuery } from "@tanstack/react-query";
 import { createTypesIndex } from "@/tools/typesIndex";
 import { MudWeb3Client } from "@/api/mudweb3";
+import { staticVersion } from "@/config";
 
 export type SmartCharacter =
   | {
@@ -51,8 +52,11 @@ export function useShowConnectDialog() {
 export function useSolarSystemsIndex() {
   const query = useQuery({
     queryKey: ["SolarsystemsIndex"],
-    queryFn: async () =>
-      getSolarsystems().then((r) => createSolarSystemsIndex(r.data)),
+    queryFn: async () => {
+      const data = await fetch(`/static/${staticVersion}/systems_index.json`);
+      const json = await data.json();
+      return createSolarSystemsIndex(json);
+    },
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

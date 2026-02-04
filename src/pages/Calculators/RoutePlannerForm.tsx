@@ -20,15 +20,11 @@ import useCharacter from "@/tools/useCharacter";
 const schema = z
   .object({
     system1: z.coerce
-      .number({ message: "Please select a system" })
-      .int()
-      .positive()
-      .default(30001573),
+      .string({ message: "Please select a system" })
+      .default("30001573"),
     system2: z.coerce
-      .number({ message: "Please select a system" })
-      .int()
-      .positive()
-      .default(30013956),
+      .string({ message: "Please select a system" })
+      .default("30013956"),
     jumpDistance: z.coerce
       .number()
       .int()
@@ -48,8 +44,8 @@ type FormData = z.infer<typeof schema>;
 
 function queryToForm(values: Record<keyof FormData, string>) {
   return {
-    system1: Number.parseInt(values.system1),
-    system2: Number.parseInt(values.system2),
+    system1: values.system1,
+    system2: values.system2,
     jumpDistance: Number.parseInt(values.jumpDistance),
     optimize: ["fuel", "distance", "hops"].includes(values.optimize)
       ? (values.optimize as "fuel" | "distance" | "hops")

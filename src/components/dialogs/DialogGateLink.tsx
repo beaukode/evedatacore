@@ -83,10 +83,10 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
   const { sourceSolarSystem, destinationSolarSystem } = React.useMemo(() => {
     if (!solarSystems) return {};
     return {
-      sourceSolarSystem: solarSystems?.getById(
+      sourceSolarSystem: solarSystems.getById(
         sourceGateLocation?.solarSystemId.toString() || ""
       ),
-      destinationSolarSystem: solarSystems?.getById(
+      destinationSolarSystem: solarSystems.getById(
         destinationGateLocation?.solarSystemId.toString() || ""
       ),
     };
@@ -157,7 +157,7 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
             <GateInfo
               id={sourceGateId}
               name={sourceGate?.name}
-              location={sourceSolarSystem?.solarSystemName}
+              location={sourceSolarSystem?.name}
             />
           )}
           <Box m={1}>
@@ -174,7 +174,7 @@ const DialogGateLink: React.FC<DialogGateLinkProps> = ({
             <GateInfo
               id={destinationGateId}
               name={destinationGate?.name}
-              location={destinationSolarSystem?.solarSystemName}
+              location={destinationSolarSystem?.name}
             />
           )}
         </Box>

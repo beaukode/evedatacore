@@ -22,7 +22,7 @@ const SolarsystemName: React.FC<ButtonSolarsystemProps> = ({
   const solarSystem = solarSystems.getById(solarSystemId.toString());
   if (!solarSystem) return null;
 
-  return solarSystem.solarSystemName;
+  return solarSystem.name;
 };
 
 export default SolarsystemName;
